@@ -1,0 +1,8 @@
+[
+ {"id":"extra_seconds","name":"Extra Seconds","category":"Time","description":"A little longer at the cutting board.","effect":"+2 seconds per level","base_cost":3,"growth":1.18,"max_level":20,"requires":{}},
+ {"id":"faster_throwing","name":"Faster Throwing","category":"Harvest","description":"A steady hand at the produce basket.","effect":"Launch interval ×0.90 per level (minimum 0.55s)","base_cost":8,"growth":1.20,"max_level":20,"requires":{}},
+ {"id":"better_prices","name":"Better Prices","category":"Money","description":"Your slices are becoming rather sought after.","effect":"+25% base cut value per level","base_cost":5,"growth":1.22,"max_level":30,"requires":{}},
+ {"id":"sharp_edge","name":"Sharp Edge","category":"Cutting","description":"A considered improvement to a questionable blade.","effect":"+0.5 cutting strength per level","base_cost":6,"growth":1.22,"max_level":20,"requires":{}},
+ {"id":"double_toss","name":"Double Toss","category":"Harvest","description":"One hand was never enough for this institution.","effect":"+1 tomato per launch (maximum 6)","base_cost":30,"growth":1.28,"max_level":5,"requires":{"faster_throwing":2}},
+ {"id":"combo_cash","name":"Combo Cash","category":"Combos","description":"Reward the rhythm of a well-kept kitchen.","effect":"+5% per combo step per level (up to 10 steps)","base_cost":18,"growth":1.25,"max_level":10,"requires":{"better_prices":2}}
+]

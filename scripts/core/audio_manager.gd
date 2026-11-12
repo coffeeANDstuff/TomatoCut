@@ -1,0 +1,34 @@
+class_name AudioManager
+extends Node
+
+var players: Array[AudioStreamPlayer] = []
+var sounds: Dictionary = {}
+var progress: Progression
+var cursor := 0
+
+func _ready() -> void:
+	for id: String in ["slice", "launch", "paper", "bell", "purchase"]:
+		sounds[id] = load("res://assets/audio/%s.wav" % id)
+	for i in range(8):
+		var player := AudioStreamPlayer.new()
+		add_child(player)
+		players.append(player)
+
+func play(id: String) -> void:
+	if progress == null or not sounds.has(id):
+		return
+	var volume: float = progress.settings.master * progress.settings.effects
+	if volume <= 0:
+		return
+	var player := players[cursor % players.size()]
+	cursor += 1
+	player.stream = sounds[id]
+	player.volume_db = linear_to_db(volume) - 8
+	player.pitch_scale = randf_range(0.94, 1.06) if id == "slice" else 1.0
+	player.play()
+
+func _exit_tree() -> void:
+	for player: AudioStreamPlayer in players:
+		player.stop()
+		player.stream = null
+	sounds.clear()
