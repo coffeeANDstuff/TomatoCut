@@ -25,3 +25,10 @@ Original short wet cuts, dull steel scrape, soft launch and paper-click cues. In
 
 ## Asset workflow and review
 Run tools/build_assets.py with Blender to regenerate the authored vertical-slice GLBs and .blend. Keep deterministic seeds. tools/build_audio.py creates the original milestone effects. Integrate every counted asset. Review actual rendered frames as well as import logs; headless checks cannot establish visual quality or 60 FPS. Future production pass must hand-refine meshes, botanical illustrations and material texture detail.
+
+## Integrated multi-cut asset pass (v0.2)
+Standard Red now has prepared halves, quarter wedges and eighth chunks exported from the same Blender flesh/skin/chamber/seed materials. The diagonal eighth cap exposes a small chamber and seeds. Geometry is preserved through mirrored parent frames; recut impulses follow the new swipe. Recut faces use authored planes and are an approximation rather than arbitrary mesh intersections. Additional prepared orientations and hand-refined silhouettes remain a production-art task.
+
+Interactive fragment proxies project sampled shell hulls through the actual 3D fragment transform. Never substitute the original full-tomato circle for a tumbling wedge. The smallest eighths are visual debris, and edge-on/minuscule projections are not reward targets. Preserve this agreement when changing meshes, pivots or scales.
+
+Use `tests/fragment_gallery.gd` to review the three actual fragment models together; it is a development tool, not additional game content. All three are also integrated into real cuts.

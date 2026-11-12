@@ -33,3 +33,33 @@ static func swept_hit(center: Vector2, radius: float, previous: Transform2D, cur
 		old_a = a
 		old_b = b
 	return false
+
+static func swept_polygon_hit(polygon: PackedVector2Array, previous: Transform2D, current: Transform2D) -> bool:
+	if polygon.size() < 3 or previous.origin.distance_to(current.origin) < 0.025:
+		return false
+	var steps := maxi(1, int(ceil(absf(angle_difference(previous.get_rotation(), current.get_rotation())) / 0.12)))
+	var old_a := previous * Vector2(-0.08, -0.10)
+	var old_b := previous * Vector2(0.85, -0.04)
+	for i in range(1, steps+1):
+		var t := float(i) / steps
+		var frame := Transform2D(lerp_angle(previous.get_rotation(), current.get_rotation(), t), previous.origin.lerp(current.origin, t))
+		var a := frame * Vector2(-0.08, -0.10)
+		var b := frame * Vector2(0.85, -0.04)
+		if triangle_polygon_hit(PackedVector2Array([old_a, old_b, b]), polygon) or triangle_polygon_hit(PackedVector2Array([old_a, b, a]), polygon):
+			return true
+		old_a = a
+		old_b = b
+	return false
+
+static func triangle_polygon_hit(triangle: PackedVector2Array, polygon: PackedVector2Array) -> bool:
+	for vertex: Vector2 in triangle:
+		if Geometry2D.is_point_in_polygon(vertex, polygon):
+			return true
+	for vertex: Vector2 in polygon:
+		if triangle_hit(vertex, triangle[0], triangle[1], triangle[2], 0):
+			return true
+	for i in range(3):
+		for j in range(polygon.size()):
+			if Geometry2D.segment_intersects_segment(triangle[i], triangle[(i+1)%3], polygon[j], polygon[(j+1)%polygon.size()]) != null:
+				return true
+	return false

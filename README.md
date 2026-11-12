@@ -1,18 +1,22 @@
 # Tomato Cut
 
-A rather serious institution for slicing tomatoes. An ongoing **Godot 4.6 / GDScript** Windows game project. This first playable milestone implements one tomato and knife, prepared seeded halves, swept mouse slicing, ten-second rounds, results/replay, six data-driven upgrades, combos, saving and a restrained culinary interface. It is not the complete game described in the master design.
+A rather serious institution for slicing tomatoes. An ongoing **Godot 4.6 / GDScript** Windows game project. The v0.2 milestone implements one tomato and knife, seeded halves/wedges/eighths, swept mouse slicing and recutting, ten-second starting rounds, results/replay, nine data-driven upgrades, combos, saving and a restrained culinary interface. It is not the complete game described in the master design.
 
 ## Play the Windows milestone
 
-Unzip `TomatoCut-Windows-v0.1.zip`, then run `TomatoCut.exe`. No Godot editor is required. Use a Vulkan-capable Windows PC for the default Forward+ renderer. If your hardware cannot run it, `Play-Compatibility.bat` starts the same build with Godot's OpenGL compatibility renderer.
+Unzip `TomatoCut-Windows-v0.2.zip`, then run `TomatoCut.exe`. No Godot editor is required. Use a Vulkan-capable Windows PC for the default Forward+ renderer. If your hardware cannot run it, `Play-Compatibility.bat` starts the same build with Godot's OpenGL compatibility renderer.
 
 - Click **Begin slicing** (or **Continue**).
 - Move the mouse through airborne tomatoes. No mouse button is needed to slice.
 - A fresh game has ten seconds, one launch every four seconds and $1 per cut.
 - After the round, choose **Play again** or the seed catalog.
 - **Cultivate** purchases upgrades using earned money. Double Toss reveals after Faster Throwing level 2; Combo Cash after Better Prices level 2.
+- **Extra Cuts** reveals after Sharp Edge level 1. Re-swipe separated pieces in a new direction (or after a brief pause); each original tomato shares one reward budget, up to seven cuts.
+- **Combo Window** reveals after Combo Cash level 1. **Overtime** reveals after Extra Cuts level 1 and Extra Seconds level 2; every ten rewarded cuts adds capped bonus time.
 - Hover navigation icons for one second to see their labels. Settings include volume, reduced motion/effects, popups, fullscreen and VSync.
 - **New game** asks for confirmation. Normal progress saves automatically after rounds, purchases and settings changes.
+
+Version 1 saves migrate automatically to version 2, preserving money, upgrades, discoveries and settings while adding a separate lifetime tomato count.
 
 Windows progress is stored in `%APPDATA%\Godot\app_userdata\Tomato Cut\progress.json`; a `.bak` backup is retained. Invalid saves are recovered or preserved in `.corrupt.*` files, with a visible notice. Closing an unfinished round forfeits that round's unsaved earnings.
 
@@ -49,7 +53,16 @@ Read `TESTING.md` for executed checks and limits. On an available X11 desktop:
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/render_smoke.gd
 ```
 
-This injects real GUI mouse events and writes screenshots to ignored `artifacts/`. It isolates its saves under `user://tests/`. All automated tests keep the player's primary ledger untouched.
+To reproduce the early balance model and inspect prepared fragment assets:
+
+```sh
+godot --headless --path . --script tools/simulate_economy.gd
+godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/fragment_gallery.gd
+```
+
+`BALANCE_REPORT.md` records assumptions and modeled results; it does not replace human balance testing. The fragment gallery is a developer inspection of the exact in-game GLBs.
+
+The rendered smoke test injects real GUI mouse events and writes screenshots to ignored `artifacts/`. It isolates its saves under `user://tests/`. All automated tests keep the player's primary ledger untouched.
 
 Install official **Godot 4.6.3 export templates** using the editor's Export Template Manager. Then:
 

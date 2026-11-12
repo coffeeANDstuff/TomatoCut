@@ -1,5 +1,9 @@
 extends SceneTree
 
+const ECONOMY_MODEL := preload("res://tools/economy_model.gd")
+const TIME_TESTS := preload("res://tests/time_upgrade_tests.gd")
+const RECUT_TESTS := preload("res://tests/recut_tests.gd")
+
 var checks := 0
 var failures := 0
 var game: Node
@@ -17,12 +21,18 @@ func _initialize() -> void:
 	call_deferred("run")
 
 func run() -> void:
+	create_timer(60).timeout.connect(func():
+		push_error("Test runner exceeded 60 seconds without completion.")
+		quit(1))
 	DirAccess.make_dir_recursive_absolute(test_dir)
 	test_progression()
 	test_slicing()
 	test_round()
 	test_saves()
+	TIME_TESTS.run(Callable(self,"check"))
+	test_economy_model()
 	await test_game()
+	await RECUT_TESTS.run(self, Callable(self,"check"))
 	await test_natural_round()
 	# Let the audio mixer release stopped playback references after scene teardown.
 	await create_timer(0.2).timeout
@@ -220,3 +230,15 @@ func test_natural_round() -> void:
 	check(game.tomatoes.get_child_count() == 0 and game.fragments.pieces.is_empty(),"round completion cleans the field")
 	game.queue_free()
 	await process_frame
+
+func test_economy_model() -> void:
+	var investing := ECONOMY_MODEL.simulate(.8,10,431)
+	var baseline := ECONOMY_MODEL.simulate(.8,10,431,false)
+	check(investing.earned > baseline.earned and investing.money >= 0, "modeled investments improve ten-minute earnings without overdrafts")
+	var spent := 0.0
+	for purchase: Dictionary in investing.purchases: spent += purchase.cost
+	check(is_equal_approx(spent, investing.earned-investing.money), "modeled purchases conserve earned currency")
+	check(investing.seconds <= 600 and investing.cuts >= investing.tomatoes, "model counts only completed in-window rounds and separates recuts")
+	check(investing == ECONOMY_MODEL.simulate(.8,10,431), "fixed-seed economy model is reproducible")
+	var misses := ECONOMY_MODEL.simulate(0,2,431)
+	check(misses.earned == 0 and misses.purchases.is_empty(), "missing every fruit cannot earn money or purchase upgrades")

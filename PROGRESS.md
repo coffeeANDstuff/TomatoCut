@@ -1,5 +1,45 @@
 # Progress
 
+## Current session — v0.2 continuation (2026-11-11, America/Los_Angeles)
+
+Continued from commit 62b7967 with a clean working tree and a fresh passing 59-check baseline. Phase 2 multi-cuts were the highest-priority incomplete dependency; existing gameplay and the full master specification were preserved.
+
+### Completed this session
+- **TESTED** — Extra Cuts reveals at Sharp Edge 1; six levels raise the shared original-tomato budget from one to seven rewarded cuts. Root, halves and wedges all use one CutFamily ledger. Stationary contact, continued swipes, newly created descendants and repeated damage cannot duplicate a stroke's reward. Direction reversal, a brief pause (0.18s), or a fresh cursor anchor starts a new stroke.
+- **TESTED** — Recuttable, seeded quarter wedges and final eighth chunks, generated in Blender and integrated into actual play. Projected convex shell proxies follow the full decorative 3D transform. Small/edge-on targets and terminal eighths cannot be farmed. Prepared planes approximate cuts; this is still hybrid slicing.
+- **TESTED** — Fragment and juice pools: at most 64 piece roots and 96 drop roots allocated, including inactive pooled roots. Pool revisions guard candidate snapshots against node reuse during dense cuts. Warm repeated bursts do not increase root allocation. Fragments clean up into hidden pools at expiry/round completion.
+- **TESTED** — Correct unique tomato vs rewarded cut counts in round results and lifetime statistics. Save schema 2 adds lifetime.tomatoes and migrates schema 1 by inferring old unique tomatoes from old cuts, without resetting upgrades/money/settings/discovery. Corrupt-save backup/quarantine behavior remains verified.
+- **TESTED** — Combo Window (Combo Cash 1 prerequisite) adds real combo grace. Overtime requires Extra Cuts 1 AND Extra Seconds 2, grants time every ten rewarded cuts, and obeys four triggers / a 60s total-duration ceiling. Late cuts cannot revive rounds; replay resets time bonuses.
+- **TESTED** — Nine standard upgrade definitions now contain numerical effect coefficients alongside prices/descriptions/prerequisites. Production calculations read those coefficients. Content validation checks duplicate/missing IDs, invalid coefficients/levels, impossible prerequisites and dependency cycles. Purchase eligibility checks prerequisites independently of saved discovery.
+- **TESTED** — Catalog description wrapping, current cut-budget information, scroll-position preservation on purchases and a multi-cut gameplay hint. Knife orientation also resets with its collision anchor.
+- **TESTED** — 117 headless checks, including the unchanged baseline and new cut-family, pooling, migration, timer, validation and deterministic economy accounting regressions. Thirteen rendered GUI/behavior checks cover real input, reveal/purchase, recutting and one-tomato/two-cut results, including 16:9 input-coordinate scaling. Eleven gameplay/UI captures plus a three-shape asset study inspected.
+- **TESTED** — Corrected v0.2 Windows/Linux exports, packaged Linux headless boot, source/Windows ZIP CRC checks, and a clean source extraction/import with all 117 tests passing again. Native Windows remains unrun.
+- **TESTED** — Reproducible ten-minute early economy scenarios at 55%, 80% and 100% first-cut accuracy, with explicit recut/menu-delay assumptions. See BALANCE_REPORT.md. Lower-accuracy policies miss the first-two-minute purchase target; this is a balance finding, not a completed human balance pass.
+
+### Current incomplete scope and limitations
+- **IN PROGRESS** — Phase 2 early pacing and human feel/balance. The nine core upgrades are integrated, not the entire future 40+ upgrade collection. Production defaults are unchanged except for the new purchased effects.
+- **IN PROGRESS** — Phase 3 ledger foundation only. All 24 additional normal varieties, illustrated specimen branches, frequency/quality/dominance and calculated multi-variety spawning remain unimplemented. Standard Red still represents 100% of the harvest.
+- **NOT STARTED** — Remaining 24 knives, equipment/modifications, prestige and all five gated events, mastery/achievements, other five environments, cosmetics, music and final art/accessibility pass.
+- **IN PROGRESS** — Fragment/juice pooling now exists; whole-tomato pooling, long-session stress and target-PC profiling remain. A piece may cache three model variants; the allocation cap refers to piece/drop roots, not every GLB child mesh.
+- **IMPLEMENTED — UNVERIFIED** — Forward+ shipping default; rendered tests use software OpenGL compatibility. **BLOCKED** native Windows / Forward+ / 60 FPS validation still needs a suitable machine. Dummy audio validates loading and playback calls, not audible quality.
+
+### Technical notes for continuation
+- Recut geometry stays in the parent's authored frame; separation follows the current swipe. More prepared cut orientations are an art-polish improvement. Eighths end physical subdivision, preventing unbounded body growth.
+- Fragment hulls are sampled convex proxies, not exact triangle collision. Respect transform/pivot changes when introducing new varieties.
+- A family permits one strike per stroke, even on durable unbroken fruit. Budget is spent only when separation succeeds. Different tomatoes may still be cut by one sweep.
+- Rendering tests convert viewport coordinates through the stretch transform before injecting raw input; actual 16:9 clicks are tested. A prior test-only coordinate bug was diagnosed and corrected.
+- Test runners have timeout failures; a stalled/erroring run must not be reported as passed. No player production save was used by the tests.
+- Asset close-up review exposed an initially open chunk cap; the Blender generator now creates the missing planar closing chord, validates outward cap faces, and the corrected models were rendered again.
+- No remote push or environment publication performed.
+
+## Exact next task
+Implement the first **Cherry tomato seed-catalog branch** end-to-end. Add original small/fast geometry, suitable prepared fragments and botanical specimen art, then an actual unlock purchase and normalized unlocked-only automatic spawning. Integrate Harvest Frequency, Premium Quality and Harvest Dominance with read-only calculated percentages, fallback safety and persistent stable IDs. Start with Standard Red + Cherry; test spawn selection, shared-family recuts, changed rewards/durability, reveal restoration, reset boundaries and saving before expanding the collection. Keep the 25-variety/25-knife vision intact. Use the balance model's slow-start finding to guide a separate human-informed pacing pass.
+
+---
+
+# Historical milestone — v0.1
+The following is the prior session's recorded state; the v0.2 section above supersedes its incomplete-feature statements.
+
 Status vocabulary: **NOT STARTED**, **IN PROGRESS**, **IMPLEMENTED — UNVERIFIED**, **TESTED**, **BLOCKED**.
 
 ## Session — 2026-11-11 (America/Los_Angeles)
@@ -44,6 +84,3 @@ Authored assets are an initial cohesive 3D pass, not final production-quality as
 - Direct .blend import intentionally disabled using art/.gdignore; committed GLBs make editor imports portable.
 - Default renderer is Forward+. Compatibility is a documented launch override, not a silent replacement of the requirement.
 - No remote push, environment draft update or publication performed.
-
-## Exact next task
-Implement Phase 2 **Extra Cuts** using a shared tomato-family reward budget and recuttable descendants with a minimum size. Preserve prepared halves and interiors; introduce wedges/smaller pieces with their own matching slice targets. Separate durability from rewarded-cut limits. Verify fast swipes across several descendants, no stationary or duplicate payouts, one budget shared across a family, bounded bodies and round-end cleanup. Integrate its JSON upgrade/reveal and persistence, then run all existing tests before building new variety content.

@@ -1,7 +1,8 @@
 """Run: blender --background --python tools/build_assets.py (Blender 4.3+)."""
-import bpy, math, random
+import bpy, bmesh, math, random
 from pathlib import Path
 from mathutils import Vector, Matrix
+from mathutils.geometry import convex_hull_2d
 ROOT = Path(__file__).resolve().parents[1]
 random.seed(431)
 bpy.ops.object.select_all(action='SELECT'); bpy.ops.object.delete(use_global=False)
@@ -55,19 +56,62 @@ def export(name):
  bpy.ops.object.delete(use_global=False)
 
 fruit_surface(); crown(); export('assets/models/tomatoes/standard_red.glb')
-fruit_surface(True)
-# The cap is a seed-filled flesh disk on the x=0 plane. The prepared half exposes it during tumble.
-vs=[(-.003,0,0)]+[(-.003,.53*math.cos(i*math.tau/48),.53*math.sin(i*math.tau/48)) for i in range(48)]
-mesh('Cut flesh',vs,[(0,(i+1)%48+1,i+1) for i in range(48)],flesh)
-sphere('Pale central core',(-.014,0,0),(.015,.19,.19),core)
-for j in range(5):
- t=math.tau*j/5
- y=.30*math.cos(t); z=.30*math.sin(t)
- ob=sphere('Seed chamber',(-.012,y,z),(.013,.12,.085),chamber); ob.rotation_euler.x=t
- for k in range(4):
-  a=t+(k-1.5)*.25
-  ob=sphere('Seed',(-.029,.30*math.cos(a),.30*math.sin(a)),(.012,.033,.018),seed); ob.rotation_euler.x=a
+def prepared_half():
+ fruit_surface(True)
+ # The cap is a seed-filled flesh disk on the x=0 plane. The prepared half exposes it during tumble.
+ vs=[(-.003,0,0)]+[(-.003,.53*math.cos(i*math.tau/48),.53*math.sin(i*math.tau/48)) for i in range(48)]
+ mesh('Cut flesh',vs,[(0,(i+1)%48+1,i+1) for i in range(48)],flesh)
+ sphere('Pale central core',(-.014,0,0),(.015,.19,.19),core)
+ for j in range(5):
+  t=math.tau*j/5
+  y=.30*math.cos(t); z=.30*math.sin(t)
+  ob=sphere('Seed chamber',(-.012,y,z),(.013,.12,.085),chamber); ob.rotation_euler.x=t
+  for k in range(4):
+   a=t+(k-1.5)*.25
+   ob=sphere('Seed',(-.029,.30*math.cos(a),.30*math.sin(a)),(.012,.033,.018),seed); ob.rotation_euler.x=a
+
+def clip_fragment(normal):
+ # Apply object transforms before clipping, keeping the pre-export Godot axes.
+ bpy.context.view_layer.update()
+ for ob in list(bpy.context.scene.objects):
+  if ob.type != 'MESH': continue
+  ob.data.transform(ob.matrix_world); ob.matrix_world=Matrix.Identity(4)
+  bm=bmesh.new(); bm.from_mesh(ob.data)
+  bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=0.00001)
+  result=bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),dist=0.00001,plane_co=(0,0,0),plane_no=normal,clear_inner=True)
+  # The skin's original x=0 rim is deliberately open (a separate flesh disk
+  # closes it). A bisected rim is an arc, not an edge loop, so holes_fill alone
+  # cannot cap it. Build a planar convex cap including the closing chord.
+  n=Vector(normal).normalized()
+  u=n.cross(Vector((0,0,1)))
+  if u.length < 0.001: u=n.cross(Vector((0,1,0)))
+  u.normalize(); v=n.cross(u)
+  cut=[vertex for vertex in bm.verts if abs(vertex.co.dot(n)) < 0.0001]
+  if len(cut)>=3:
+   hull=convex_hull_2d([Vector((vertex.co.dot(u),vertex.co.dot(v))) for vertex in cut])
+   if len(hull)>=3:
+    try:
+     face=bm.faces.new([cut[i] for i in hull])
+     ob.data.materials.append(flesh); face.material_index=len(ob.data.materials)-1; face.smooth=False
+     face.normal_update()
+     if face.normal.dot(n)>0: face.normal_flip()
+    except ValueError: pass # Coplanar existing face already closes this object.
+  bm.normal_update()
+  if ob.name.startswith('Prepared right half'):
+   assert any(f.normal.dot(n)<-0.99 and f.calc_area()>0.01 and all(abs(vertex.co.dot(n))<0.0001 for vertex in f.verts) for f in bm.faces), 'Missing outward flesh cap on '+ob.name
+  bm.to_mesh(ob.data); bm.free(); ob.data.update()
+  if not ob.data.polygons: bpy.data.objects.remove(ob,do_unlink=True)
+
+prepared_half()
 export('assets/models/fragments/standard_half.glb')
+# Quarter wedges and eighth chunks retain the original flesh/chambers/seeds.
+prepared_half(); clip_fragment((0,1,0)); export('assets/models/fragments/standard_wedge.glb')
+prepared_half(); clip_fragment((0,1,0)); clip_fragment((1,-1,0))
+# The final diagonal cut exposes a fresh moist chamber, not a featureless cap.
+ob=sphere('Eighth seed chamber',(.174,.186,0),(.009,.09,.17),chamber); ob.rotation_euler.z=-math.pi/4
+for z in [-.095,.095]:
+ ob=sphere('Eighth seed',(.164,.196,z),(.012,.032,.018),seed); ob.rotation_euler.z=-math.pi/4
+export('assets/models/fragments/standard_chunk.glb')
 # Blunt butter blade: actual prism, matching local edge endpoints used by KnifeController.
 outline=[(-.08,-.10),(.70,-.10),(.85,-.035),(.87,.035),(.79,.115),(.59,.15),(-.08,.12)]
 vs=[(x,y,z) for z in [-.025,.025] for x,y in outline]; n=len(outline)
@@ -78,7 +122,7 @@ for x in [-.7,-.3]: sphere('Brass pin',(x,.015,.067),(.025,.025,.012),brass)
 # Small oxidized pits, deliberately sparse.
 for i in range(12): sphere('Patina',(random.uniform(.02,.66),random.uniform(-.065,.08),.027),(.018,.009,.002),wood)
 export('assets/models/knives/rusty_butter.glb')
-# Save the complete source scene for inspection, with the three exported objects imported in separate collections.
-for path in ['assets/models/tomatoes/standard_red.glb','assets/models/fragments/standard_half.glb','assets/models/knives/rusty_butter.glb']:
+# Save all five integrated models together for source inspection.
+for path in ['assets/models/tomatoes/standard_red.glb','assets/models/fragments/standard_half.glb','assets/models/fragments/standard_wedge.glb','assets/models/fragments/standard_chunk.glb','assets/models/knives/rusty_butter.glb']:
  bpy.ops.import_scene.gltf(filepath=str(ROOT/path))
 bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'art/vertical_slice.blend'))

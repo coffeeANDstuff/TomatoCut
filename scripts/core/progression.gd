@@ -6,11 +6,15 @@ var definitions: Array = []
 var money: float = 0.0
 var levels: Dictionary = {}
 var discovered: Array = []
-var lifetime: Dictionary = {"rounds": 0, "cuts": 0, "earnings": 0.0}
+var lifetime: Dictionary = {"rounds": 0, "cuts": 0, "earnings": 0.0, "tomatoes": 0}
 var settings: Dictionary = {"master": 0.8, "effects": 0.8, "reduced_motion": false, "reduced_effects": false, "popups": true, "fullscreen": false, "vsync": true}
 
 func _init() -> void:
 	definitions = JSON.parse_string(FileAccess.get_file_as_string(DEFINITIONS_PATH))
+	var content_errors := ContentValidator.upgrades(definitions)
+	if not content_errors.is_empty():
+		push_error("Invalid upgrade content: " + "; ".join(content_errors))
+		definitions.clear()
 	refresh_discovery()
 
 func level(id: String) -> int:
@@ -28,49 +32,67 @@ func price(id: String) -> float:
 
 func refresh_discovery() -> void:
 	for item: Dictionary in definitions:
-		var allowed := true
-		for key: String in item.requires:
-			if level(key) < int(item.requires[key]):
-				allowed = false
-		if allowed and not item.id in discovered:
+		if prerequisites_met(item) and not item.id in discovered:
 			discovered.append(item.id)
+
+func prerequisites_met(item: Dictionary) -> bool:
+	for key: String in item.requires:
+		if level(key) < int(item.requires[key]):
+			return false
+	return true
 
 func purchase(id: String) -> bool:
 	var d := definition(id)
-	if d.is_empty() or not id in discovered or level(id) >= int(d.max_level) or money < price(id):
+	if d.is_empty() or not prerequisites_met(d) or not id in discovered or level(id) >= int(d.max_level) or money < price(id):
 		return false
 	money -= price(id)
 	levels[id] = level(id) + 1
 	refresh_discovery()
 	return true
 
+func effect_value(id: String, key: String) -> float:
+	return float(definition(id).get("effect_values", {}).get(key,0))
+
 func round_duration() -> float:
-	return 10.0 + 2.0 * level("extra_seconds")
+	return 10.0 + effect_value("extra_seconds","seconds") * level("extra_seconds")
 
 func launch_interval() -> float:
-	return maxf(0.55, 4.0 * pow(0.90, level("faster_throwing")))
+	return maxf(effect_value("faster_throwing","minimum_interval"), 4.0 * pow(effect_value("faster_throwing","interval_multiplier"), level("faster_throwing")))
 
 func launch_count() -> int:
-	return 1 + level("double_toss")
+	return 1 + int(effect_value("double_toss","tomatoes") * level("double_toss"))
+
+func max_cuts() -> int:
+	return 1 + int(effect_value("extra_cuts","cuts") * level("extra_cuts"))
 
 func strength() -> float:
-	return 1.0 + 0.5 * level("sharp_edge")
+	return 1.0 + effect_value("sharp_edge","strength_bonus") * level("sharp_edge")
+
+func combo_window() -> float:
+	return 1.35 + effect_value("combo_window","seconds") * level("combo_window")
+
+func overtime_seconds() -> float:
+	return effect_value("overtime","seconds") * level("overtime")
+
+func round_ceiling() -> float:
+	return effect_value("overtime","ceiling")
 
 func reward(combo: int) -> float:
-	return (1.0 + 0.25 * level("better_prices")) * (1.0 + 0.05 * level("combo_cash") * mini(combo - 1, 10))
+	return (1.0 + effect_value("better_prices","value_bonus") * level("better_prices")) * (1.0 + effect_value("combo_cash","bonus_per_step") * level("combo_cash") * mini(combo - 1, int(effect_value("combo_cash","max_steps"))))
 
-func complete_round(earnings: float, cuts: int) -> void:
+func complete_round(earnings: float, cuts: int, tomatoes_sliced: int = -1) -> void:
 	money += earnings
 	lifetime.rounds += 1
 	lifetime.cuts += cuts
+	lifetime.tomatoes += cuts if tomatoes_sliced < 0 else tomatoes_sliced
 	lifetime.earnings += earnings
 
 func snapshot() -> Dictionary:
-	return {"version": 1, "money": money, "levels": levels.duplicate(), "discovered": discovered.duplicate(), "lifetime": lifetime.duplicate(), "settings": settings.duplicate()}
+	return {"version": 2, "money": money, "levels": levels.duplicate(), "discovered": discovered.duplicate(), "lifetime": lifetime.duplicate(), "settings": settings.duplicate()}
 
 func restore(data: Dictionary) -> bool:
 	# Reject unsupported/ill-typed data before mutating any progress.
-	if data.get("version") != 1 or not _number(data.get("money")) or float(data.money) < 0 or float(data.money) > 1e15:
+	if not _number(data.get("version")) or (data.get("version") != 1 and data.get("version") != 2) or not _number(data.get("money")) or float(data.money) < 0 or float(data.money) > 1e15:
 		return false
 	if not data.get("levels") is Dictionary or not data.get("discovered") is Array or not data.get("lifetime") is Dictionary or not data.get("settings") is Dictionary:
 		return false
@@ -83,6 +105,11 @@ func restore(data: Dictionary) -> bool:
 	for key: String in ["rounds", "cuts", "earnings"]:
 		if not _number(data.lifetime.get(key)) or float(data.lifetime[key]) < 0 or float(data.lifetime[key]) > 1e15:
 			return false
+		if key != "earnings" and float(data.lifetime[key]) != floor(float(data.lifetime[key])):
+			return false
+	var tomato_count: Variant = data.lifetime.get("tomatoes", data.lifetime.cuts) if data.version == 1 else data.lifetime.get("tomatoes")
+	if not _number(tomato_count) or float(tomato_count) < 0 or float(tomato_count) > float(data.lifetime.cuts) or float(tomato_count) != floor(float(tomato_count)):
+		return false
 	for id: Variant in data.discovered:
 		if not id is String or definition(id).is_empty():
 			return false
@@ -98,6 +125,7 @@ func restore(data: Dictionary) -> bool:
 	levels = clean
 	discovered = data.discovered.duplicate()
 	lifetime = data.lifetime.duplicate()
+	lifetime.tomatoes = int(tomato_count)
 	for key: String in settings:
 		if data.settings.has(key):
 			settings[key] = data.settings[key]

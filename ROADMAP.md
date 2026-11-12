@@ -6,7 +6,7 @@ This is a multi-session production project. Preserve the full scope in GAME_DESI
 |---|---|---|---|
 | 0 — Continuity and project | None | Complete master spec, art direction, progress/test logs, valid Godot project | TESTED |
 | 1 — Integrated vertical slice | 0 | Orthographic kitchen; Standard Red + starter knife; fast swept cuts without duplicate/stationary rewards; seeded prepared halves and juice/audio; ten-second round; accurate results/replay | TESTED (technical milestone; human feel review pending) |
-| 2 — Incremental foundation | 1 | Save/reload, corrupt-save recovery, core prices/effects, multi-cuts, combos, rewarding replay and initial economy simulation | IN PROGRESS |
+| 2 — Incremental foundation | 1 | Save/reload, corrupt-save recovery, core prices/effects, multi-cuts, combos, rewarding replay and initial economy simulation | IN PROGRESS — core verified in v0.2; early pacing/human balance remains |
 | 3 — Illustrated seed catalog | 2 | Seven categories, persistent progressive branch reveals, illustrated varieties, normalized automatic harvest with frequency/quality/dominance; no manual spawn controls | IN PROGRESS (ledger foundation only) |
 | 4 — Equipment catalog | 3 | Buy/equip, 3D product previews, distinct matching blade sweeps, modifications | NOT STARTED |
 | 5 — Prestige and events | 4 | Preview/confirm reset, no duplicate seeds, permanent branches/discovery, five separately gated automatic events | NOT STARTED |
@@ -18,4 +18,6 @@ This is a multi-session production project. Preserve the full scope in GAME_DESI
 Do not bulk-generate late-game content until the slice is reliable. Normal variety unlocks are seed-catalog investments, never fruit purchases or loadouts. No special events before dedicated prestige unlocks. No fabricated Windows-playtest or performance claims.
 
 ## Next dependency gate
-Finish Phase 2 before adding bulk content. Next: family-wide rewarded-cut budgets and recuttable smaller fragments for Extra Cuts, preserving the existing two-half presentation and resource limits. Test zero stationary/duplicate rewards across descendants. Follow with economy simulations, then real illustrated variety branches and normalized automatic harvest. Native Windows validation and Forward+ performance remain required before release.
+Phase 2's multi-cut/save/combo/time core and initial simulations now pass. Preserve the family budget, per-stroke protection, descendant hulls and pools. Early pacing still needs human measurements: the model's lower-accuracy policies buy too slowly in the first two minutes; it does not justify wholesale price changes by itself.
+
+The next implementation task is Phase 3's **first complete Cherry variety branch**: original recognizable model/fragments and botanical specimen artwork, real unlock prerequisites, automatic normalized spawn mix, read-only percentages, frequency/quality/dominance upgrades, safe fallback and save restoration. Begin with Standard Red + Cherry end-to-end; do not generate all 25 unfinished varieties. Keep all prestige events locked and preserve the full eventual collection. Native Windows and Forward+ target-PC validation remain required before release.

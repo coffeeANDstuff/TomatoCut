@@ -203,7 +203,7 @@ func gameplay() -> void:
 	combo_label.offset_top = 36
 	combo_label.offset_right = -40
 	combo_label.offset_bottom = 82
-	var hint := label("Sweep the blade through the tomatoes. No clicking required.",16,false,CREAM)
+	var hint := label("Swipe back through the separated pieces for extra cuts." if progress.max_cuts() > 1 else "Sweep the blade through the tomatoes. No clicking required.",16,false,CREAM)
 	hint.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	content.add_child(hint)
@@ -238,7 +238,7 @@ func results(session: RoundSession) -> void:
 	stats.add_theme_constant_override("h_separation",55)
 	stats.add_theme_constant_override("v_separation",12)
 	place(stats,Vector2(42,304),Vector2(535,150),panel)
-	for item: Array in [["Tomatoes sliced",str(session.cuts)],["Rewarded cuts",str(session.cuts)],["Best combo",str(session.best_combo)],["Bonus earnings",Progression.cash(session.bonus)],["Current balance",Progression.cash(progress.money)]]:
+	for item: Array in [["Tomatoes sliced",str(session.tomatoes_sliced)],["Rewarded cuts",str(session.cuts)],["Best combo",str(session.best_combo)],["Bonus earnings",Progression.cash(session.bonus)],["Current balance",Progression.cash(progress.money)]]:
 		stats.add_child(label(item[0],18,false,MUTED))
 		stats.add_child(label(item[1],20,true))
 	place(button("Play again",func(): play_requested.emit(),true),Vector2(40,478),Vector2(540,52),panel)
@@ -246,6 +246,11 @@ func results(session: RoundSession) -> void:
 	place(icon("home","Home",func(): home_requested.emit()),Vector2(472,546),Vector2(108,48),panel)
 
 func catalog(category: String = selected_category) -> void:
+	var previous_scroll := 0
+	if screen == "catalog" and category == selected_category:
+		var old_scroll := content.get_node_or_null("CatalogScroll") as ScrollContainer
+		if old_scroll != null:
+			previous_scroll = old_scroll.scroll_vertical
 	selected_category = category
 	clear("catalog")
 	paper(content)
@@ -261,6 +266,7 @@ func catalog(category: String = selected_category) -> void:
 		categories.add_child(b)
 	place(label("SPECIMEN 001\nStandard Red\n\nBalanced. Dependable.\n100% of your harvest.\n$1 base cut · 1 durability\n\nHarvest is selected\nautomatically.",16,true,MUTED),Vector2(48,560),Vector2(240,200))
 	var scroll := ScrollContainer.new()
+	scroll.name = "CatalogScroll"
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	content.add_child(scroll)
 	scroll.offset_left = 330
@@ -282,14 +288,21 @@ func catalog(category: String = selected_category) -> void:
 		list.add_child(entry)
 		entry.add_child(label("%02d  /  %s" % [count,category.to_upper()],13,false,MUTED))
 		entry.add_child(label(d.name,36,true))
-		entry.add_child(label(d.description,17,false,MUTED))
-		entry.add_child(label(d.effect,18))
+		var description := label(d.description,17,false,MUTED)
+		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		entry.add_child(description)
+		var effect := label(d.effect,18)
+		effect.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		entry.add_child(effect)
+		if d.id == "extra_cuts":
+			entry.add_child(label("Currently %d rewarded cuts per tomato" % progress.max_cuts(),16,false,MUTED))
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation",24)
 		entry.add_child(row)
 		var maxed: bool = progress.level(d.id) >= int(d.max_level)
 		var id: String = d.id
 		var purchase := button("Fully cultivated" if maxed else "Cultivate  ·  " + Progression.cash(progress.price(id)),func(): purchase_requested.emit(id),not maxed)
+		purchase.name = "Purchase_" + id
 		purchase.disabled = maxed or progress.money < progress.price(id)
 		purchase.custom_minimum_size.x = 265
 		row.add_child(purchase)
@@ -298,6 +311,7 @@ func catalog(category: String = selected_category) -> void:
 		entry.add_child(rule)
 	if count == 0:
 		list.add_child(label("A new branch will reveal itself\nas your cultivation progresses.",27,true,MUTED))
+	scroll.set_deferred("scroll_vertical", previous_scroll)
 	place(button("Back to the cutting board",func(): play_requested.emit(),true),Vector2(330,716),Vector2(370,48))
 
 func settings() -> void:

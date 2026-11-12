@@ -73,6 +73,8 @@ func _physics_process(delta: float) -> void:
 		finish_round()
 		return
 	var seconds := int(ceil(session.remaining))
+	if seconds > 3:
+		countdown_cue = 4
 	if seconds <= 3 and seconds < countdown_cue:
 		countdown_cue = seconds
 		audio.play("paper")
@@ -87,6 +89,7 @@ func spawn_tomato() -> Tomato:
 		return null
 	var tomato := Tomato.new()
 	tomatoes.add_child(tomato)
+	tomato.family = CutFamily.new(progress.max_cuts())
 	tomato.position = Vector3(randf_range(-4.6,4.6),-4.5,0)
 	tomato.velocity = Vector2(-tomato.position.x*randf_range(0.12,0.28),randf_range(8.2,9.1))
 	tomato.spin = Vector3(randf_range(-0.4,0.4),randf_range(-0.8,0.8),randf_range(-0.65,0.65))
@@ -116,21 +119,23 @@ func process_blade() -> int:
 	if state != "playing" or not session.running or session.remaining <= 0:
 		return 0
 	var count := 0
+	for at: Vector3 in fragments.slice(knife.previous, knife.current, knife.stroke_id, progress.strength(), progress.settings.reduced_effects):
+		cut_feedback(at, false)
+		count += 1
 	var direction := (knife.current.origin-knife.previous.origin).normalized()
 	for tomato: Tomato in tomatoes.get_children():
 		if tomato.sliced or tomato.is_queued_for_deletion():
 			continue
 		var center := Vector2(tomato.position.x,tomato.position.y)
-		if SliceSystem.swept_hit(center,tomato.radius,knife.previous,knife.current):
+		if SliceSystem.swept_hit(center,tomato.radius,knife.previous,knife.current) and tomato.family.try_strike(knife.stroke_id):
 			tomato.durability -= progress.strength()
 			if tomato.durability > 0:
-				tomato.scale = Vector3(1.05,0.95,1)
+				tomato.damage_time = 0.08
 				continue
 			tomato.sliced = true
-			var reward := session.record_cut(progress)
-			fragments.split(tomato.position,tomato.velocity,direction,progress.settings.reduced_effects)
-			ui.popup_cash("+"+Progression.cash(reward),kitchen.camera.unproject_position(tomato.position))
-			audio.play("slice")
+			tomato.family.record_split()
+			fragments.split(tomato.position,tomato.velocity,direction,progress.settings.reduced_effects,tomato.family)
+			cut_feedback(tomato.position, true)
 			tomato.hide()
 			tomato.queue_free()
 			count += 1
@@ -138,12 +143,17 @@ func process_blade() -> int:
 		ui.update_round(session)
 	return count
 
+func cut_feedback(at: Vector3, first_slice: bool) -> void:
+	var reward := session.record_cut(progress, first_slice)
+	ui.popup_cash("+" + Progression.cash(reward), kitchen.camera.unproject_position(at))
+	audio.play("slice")
+
 func finish_round() -> void:
 	if state != "playing":
 		return
 	state = "results"
 	session.running = false
-	progress.complete_round(session.earnings,session.cuts)
+	progress.complete_round(session.earnings,session.cuts,session.tomatoes_sliced)
 	save_progress()
 	clear_field()
 	ui.results(session)

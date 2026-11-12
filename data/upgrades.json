@@ -1,8 +1,144 @@
 [
- {"id":"extra_seconds","name":"Extra Seconds","category":"Time","description":"A little longer at the cutting board.","effect":"+2 seconds per level","base_cost":3,"growth":1.18,"max_level":20,"requires":{}},
- {"id":"faster_throwing","name":"Faster Throwing","category":"Harvest","description":"A steady hand at the produce basket.","effect":"Launch interval ×0.90 per level (minimum 0.55s)","base_cost":8,"growth":1.20,"max_level":20,"requires":{}},
- {"id":"better_prices","name":"Better Prices","category":"Money","description":"Your slices are becoming rather sought after.","effect":"+25% base cut value per level","base_cost":5,"growth":1.22,"max_level":30,"requires":{}},
- {"id":"sharp_edge","name":"Sharp Edge","category":"Cutting","description":"A considered improvement to a questionable blade.","effect":"+0.5 cutting strength per level","base_cost":6,"growth":1.22,"max_level":20,"requires":{}},
- {"id":"double_toss","name":"Double Toss","category":"Harvest","description":"One hand was never enough for this institution.","effect":"+1 tomato per launch (maximum 6)","base_cost":30,"growth":1.28,"max_level":5,"requires":{"faster_throwing":2}},
- {"id":"combo_cash","name":"Combo Cash","category":"Combos","description":"Reward the rhythm of a well-kept kitchen.","effect":"+5% per combo step per level (up to 10 steps)","base_cost":18,"growth":1.25,"max_level":10,"requires":{"better_prices":2}}
+  {
+    "id": "extra_seconds",
+    "name": "Extra Seconds",
+    "category": "Time",
+    "description": "A little longer at the cutting board.",
+    "effect": "+2 seconds per level",
+    "base_cost": 3,
+    "growth": 1.18,
+    "max_level": 20,
+    "requires": {},
+    "effect_values": {
+      "seconds": 2
+    }
+  },
+  {
+    "id": "faster_throwing",
+    "name": "Faster Throwing",
+    "category": "Harvest",
+    "description": "A steady hand at the produce basket.",
+    "effect": "Launch interval ×0.90 per level (minimum 0.55s)",
+    "base_cost": 8,
+    "growth": 1.2,
+    "max_level": 20,
+    "requires": {},
+    "effect_values": {
+      "interval_multiplier": 0.9,
+      "minimum_interval": 0.55
+    }
+  },
+  {
+    "id": "better_prices",
+    "name": "Better Prices",
+    "category": "Money",
+    "description": "Your slices are becoming rather sought after.",
+    "effect": "+25% base cut value per level",
+    "base_cost": 5,
+    "growth": 1.22,
+    "max_level": 30,
+    "requires": {},
+    "effect_values": {
+      "value_bonus": 0.25
+    }
+  },
+  {
+    "id": "sharp_edge",
+    "name": "Sharp Edge",
+    "category": "Cutting",
+    "description": "A considered improvement to a questionable blade.",
+    "effect": "+0.5 cutting strength per level",
+    "base_cost": 6,
+    "growth": 1.22,
+    "max_level": 20,
+    "requires": {},
+    "effect_values": {
+      "strength_bonus": 0.5
+    }
+  },
+  {
+    "id": "double_toss",
+    "name": "Double Toss",
+    "category": "Harvest",
+    "description": "One hand was never enough for this institution.",
+    "effect": "+1 tomato per launch (maximum 6)",
+    "base_cost": 30,
+    "growth": 1.28,
+    "max_level": 5,
+    "requires": {
+      "faster_throwing": 2
+    },
+    "effect_values": {
+      "tomatoes": 1
+    }
+  },
+  {
+    "id": "combo_cash",
+    "name": "Combo Cash",
+    "category": "Combos",
+    "description": "Reward the rhythm of a well-kept kitchen.",
+    "effect": "+5% per combo step per level (up to 10 steps)",
+    "base_cost": 18,
+    "growth": 1.25,
+    "max_level": 10,
+    "requires": {
+      "better_prices": 2
+    },
+    "effect_values": {
+      "bonus_per_step": 0.05,
+      "max_steps": 10
+    }
+  },
+  {
+    "id": "extra_cuts",
+    "name": "Extra Cuts",
+    "category": "Cutting",
+    "description": "Make more of every carefully cultivated tomato.",
+    "effect": "+1 rewarded cut per tomato per level (up to 7). Swipe again to cut the pieces.",
+    "base_cost": 15,
+    "growth": 1.25,
+    "max_level": 6,
+    "requires": {
+      "sharp_edge": 1
+    },
+    "effect_values": {
+      "cuts": 1
+    }
+  },
+  {
+    "id": "combo_window",
+    "name": "Combo Window",
+    "category": "Combos",
+    "description": "A little room between the movements.",
+    "effect": "+0.15 seconds of combo grace per level",
+    "base_cost": 24,
+    "growth": 1.22,
+    "max_level": 8,
+    "requires": {
+      "combo_cash": 1
+    },
+    "effect_values": {
+      "seconds": 0.15
+    }
+  },
+  {
+    "id": "overtime",
+    "name": "Overtime",
+    "category": "Time",
+    "description": "A productive kitchen earns a little more time.",
+    "effect": "Every 10 rewarded cuts: +0.5s per level. Up to 4 bonuses, with a 60-second round ceiling.",
+    "base_cost": 25,
+    "growth": 1.23,
+    "max_level": 10,
+    "requires": {
+      "extra_cuts": 1,
+      "extra_seconds": 2
+    },
+    "effect_values": {
+      "seconds": 0.5,
+      "milestone_cuts": 10,
+      "max_triggers": 4,
+      "ceiling": 60
+    }
+  }
 ]
