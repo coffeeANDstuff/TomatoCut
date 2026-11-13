@@ -1,0 +1,85 @@
+name: Build and publish game package
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing milestone tag, for example v0.5.0'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+    steps:
+      - name: Check out the tagged source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Check milestone identity
+        run: |
+          python3 - <<'PY'
+          import os,re,subprocess
+          from pathlib import Path
+          tag=os.environ['RELEASE_TAG']
+          assert re.fullmatch(r'v\d+\.\d+\.\d+',tag), 'Expected vX.Y.Z tag'
+          version=re.search(r'config/version="([^"]+)"',Path('project.godot').read_text()).group(1)
+          assert tag == 'v'+version, 'Tag and project version differ'
+          assert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip() == subprocess.check_output(['git','rev-parse',tag+'^{commit}'],text=True).strip()
+          PY
+
+      - name: Install verified Godot editor and export templates
+        run: ./tools/ci_install_godot.sh
+
+      - name: Import and run regressions
+        run: ./tools/check.sh
+
+      - name: Export game builds
+        run: |
+          mkdir -p exports/windows exports/linux
+          godot --headless --path . --export-release 'Windows Desktop'
+          godot --headless --path . --export-release 'Linux Test'
+
+      - name: Check embedded resources and Linux boot
+        run: |
+          source_dir="$PWD"
+          cd "$RUNNER_TEMP"
+          godot --headless --main-pack "$source_dir/exports/windows/TomatoCut.exe" --script "$source_dir/tests/package_smoke.gd"
+          godot --headless --main-pack "$source_dir/exports/linux/TomatoCut.x86_64" --script "$source_dir/tests/package_smoke.gd"
+          "$source_dir/exports/linux/TomatoCut.x86_64" --headless --quit-after 10 -- --save-path=user://tests/release-linux-boot.json
+
+      - name: Build and verify complete downloadable ZIPs
+        run: |
+          test -z "$(git status --porcelain)"
+          python3 tools/package.py
+          python3 tools/verify_package.py "exports/TomatoCut-Full-${RELEASE_TAG}.zip" --extract-source "$RUNNER_TEMP/tomatocut-source-check"
+          godot --headless --path "$RUNNER_TEMP/tomatocut-source-check" --editor --import --quit
+          godot --headless --path "$RUNNER_TEMP/tomatocut-source-check" --script tests/run_tests.gd
+          cd exports
+          sha256sum ./*.zip > SHA256SUMS.txt
+
+      - name: Publish milestone release and downloads
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if ! gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --verify-tag --title "Tomato Cut $RELEASE_TAG — Development milestone" --notes-file RELEASE_NOTES.md --latest
+          fi
+          gh release upload "$RELEASE_TAG" "exports/TomatoCut-Full-${RELEASE_TAG}.zip#FULL PACKAGE — Windows game + complete editable project" "exports/TomatoCut-Windows-${RELEASE_TAG}.zip#Windows game only" "exports/TomatoCut-Source-${RELEASE_TAG}.zip#Editable Godot source and art" exports/SHA256SUMS.txt --clobber
