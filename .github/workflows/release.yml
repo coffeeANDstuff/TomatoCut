@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Existing milestone tag, for example v0.5.0'
+        description: 'Existing milestone tag, for example v0.6.0'
         required: true
         type: string
 
@@ -26,7 +26,7 @@ jobs:
       RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
     steps:
       - name: Check out the tagged source
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
         with:
           ref: ${{ github.event.inputs.tag || github.ref }}
           persist-credentials: false

@@ -35,6 +35,13 @@ static func upgrades(definitions: Array) -> PackedStringArray:
 					errors.append(id + ": invalid effect coefficient")
 				elif key in ["milestone_cuts","max_triggers","max_steps","cuts","tomatoes"] and float(value) != floor(float(value)):
 					errors.append(id + ": count coefficient must be an integer")
+			if id == "critical_slice":
+				var chance: Variant = raw.effect_values.get("chance_per_level")
+				var multiplier: Variant = raw.effect_values.get("damage_multiplier")
+				if not (chance is float or chance is int) or not (maximum is float or maximum is int) or not is_finite(float(chance)) or float(chance) <= 0 or float(chance)*float(maximum) > 1:
+					errors.append(id+": invalid total critical chance")
+				if not (multiplier is float or multiplier is int) or not is_finite(float(multiplier)) or float(multiplier) <= 1 or float(multiplier) > 10:
+					errors.append(id+": invalid critical damage multiplier")
 		if not raw.get("requires") is Dictionary: errors.append(id + ": prerequisites must be a dictionary")
 	for id: String in by_id:
 		var entry: Dictionary = by_id[id]

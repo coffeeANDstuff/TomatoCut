@@ -3,6 +3,7 @@ extends RefCounted
 # A reproducible balance model, not a playtest or a physics substitute.
 # Uses production purchases, prices, reveals, scheduling and round rewards.
 # Assumptions: 6s between rounds; 0.65s launch-to-first-cut; 0.22s per recut;
+# Exact critical-aware completion probabilities come from CuttingProfile.
 # Each required root/fragment strike must hit; extra strikes add 0.22s.
 # Hit accuracy is scaled by sqrt(model_scale) for smaller varieties.
 # P(next successful recut)=adjusted accuracy*0.85.
@@ -20,6 +21,7 @@ static func simulate(accuracy: float, minutes: float, seed_value: int, investing
 	while elapsed < minutes*60:
 		var session := RoundSession.new()
 		session.begin(progress)
+		var profile := progress.cutting_profile()
 		var round_elapsed := 0.0
 		var pending: Array[Dictionary] = []
 		while session.running:
@@ -32,15 +34,16 @@ static func simulate(accuracy: float, minutes: float, seed_value: int, investing
 					var variety := progress.harvest.choose(progress.levels,progress.strength(),rng.randf())
 					var data := progress.harvest.definition(variety)
 					var hit_chance := accuracy*minf(1,sqrt(float(data.model_scale)))
-					var root_strikes := int(ceilf(float(data.durability)/progress.strength()))
-					var piece_strikes := int(ceilf(float(data.fragment_durability)/progress.strength()))
-					if hit_chance <= 0 or rng.randf() > pow(hit_chance,root_strikes): continue
+					var root_strikes := sample_completion(profile.completion_distribution(float(data.durability),hit_chance),rng.randf())
+					if root_strikes == 0: continue
 					var cut_value := progress.harvest.cut_value(variety,progress.levels)
 					var delay := FIRST_CUT_DELAY+(root_strikes-1)*RECUT_DELAY
 					pending.append({"at":round_elapsed+delay,"first":true,"value":cut_value})
 					for recut in range(1,progress.max_cuts()):
-						if rng.randf() > pow(hit_chance*0.85,piece_strikes): break
-						pending.append({"at":round_elapsed+delay+recut*piece_strikes*RECUT_DELAY,"first":false,"value":cut_value})
+						var piece_strikes := sample_completion(profile.completion_distribution(float(data.fragment_durability),hit_chance*.85),rng.randf())
+						if piece_strikes == 0: break
+						delay += piece_strikes*RECUT_DELAY
+						pending.append({"at":round_elapsed+delay,"first":false,"value":cut_value})
 			for i in range(pending.size()-1,-1,-1):
 				if pending[i].at <= round_elapsed:
 					session.record_cut(progress,pending[i].first,pending[i].value)
@@ -68,11 +71,12 @@ static func rate(progress: Progression, accuracy: float) -> float:
 	for variety: String in mix:
 		var data := progress.harvest.definition(variety)
 		var hit_chance := accuracy*minf(1,sqrt(float(data.model_scale)))
-		var root_strikes := int(ceilf(float(data.durability)/progress.strength()))
-		var piece_strikes := int(ceilf(float(data.fragment_durability)/progress.strength()))
+		var profile := progress.cutting_profile()
+		var root_success := success_probability(profile.completion_distribution(float(data.durability),hit_chance))
+		var piece_success := success_probability(profile.completion_distribution(float(data.fragment_durability),hit_chance*.85))
 		var yield_per_tomato := 0.0
-		for cut in range(progress.max_cuts()): yield_per_tomato += pow(hit_chance*.85,cut*piece_strikes)
-		var cuts := float(mix[variety])*pow(hit_chance,root_strikes)*yield_per_tomato
+		for cut in range(progress.max_cuts()): yield_per_tomato += pow(piece_success,cut)
+		var cuts := float(mix[variety])*root_success*yield_per_tomato
 		expected_cuts_per_launch += cuts
 		expected_value_per_launch += cuts*progress.harvest.cut_value(variety,progress.levels)
 	var duration := progress.round_duration()
@@ -83,6 +87,18 @@ static func rate(progress: Progression, accuracy: float) -> float:
 	launches = ceilf((duration-FIRST_CUT_DELAY)/progress.launch_interval())
 	var rhythm := progress.reward(1+mini(8,int(progress.max_cuts()*.6)))/progress.reward(1)
 	return launches*progress.launch_count()*expected_value_per_launch*progress.reward(1)*rhythm/(duration+MENU_SECONDS)
+
+static func success_probability(outcomes: Dictionary) -> float:
+	var total := 0.0
+	for probability: float in outcomes.values(): total += probability
+	return total
+
+static func sample_completion(outcomes: Dictionary, roll: float) -> int:
+	var sample := clampf(roll,0,.999999999)
+	for strikes: int in outcomes:
+		sample -= float(outcomes[strikes])
+		if sample < 0: return strikes
+	return 0 # Failed strike chain: no completed cut, no payout.
 
 static func choose_purchase(progress: Progression, accuracy: float) -> Array[String]:
 	var best: Array[String] = []

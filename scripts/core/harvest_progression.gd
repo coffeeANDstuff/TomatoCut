@@ -31,7 +31,11 @@ func cut_value(id: String, levels: Dictionary) -> float:
 	if entry.is_empty(): return 1.0
 	return float(entry.base_value) * (1.0 + coefficient(entry.quality_upgrade,"value_bonus") * int(levels.get(entry.quality_upgrade,0)))
 
+func cutting_profile(levels: Dictionary, strength: float) -> CuttingProfile:
+	return CuttingProfile.new(strength,coefficient("critical_slice","chance_per_level")*int(levels.get("critical_slice",0)),coefficient("critical_slice","damage_multiplier"))
+
 func distribution(levels: Dictionary, strength: float) -> Dictionary:
+	var profile := cutting_profile(levels,strength)
 	var candidates: Array[Dictionary] = []
 	for entry: Dictionary in varieties:
 		if unlocked(entry.id,levels) and ceilf(float(entry.durability)/maxf(.01,strength)) <= 3:
@@ -40,10 +44,10 @@ func distribution(levels: Dictionary, strength: float) -> Dictionary:
 	var total := 0.0
 	for entry: Dictionary in candidates:
 		var weight := float(entry.base_weight) * (1.0 + coefficient(entry.frequency_upgrade,"weight_bonus") * int(levels.get(entry.frequency_upgrade,0)))
-		var earning_potential := cut_value(entry.id,levels)/ceilf(float(entry.durability)/maxf(.01,strength))
+		var earning_potential := cut_value(entry.id,levels)/profile.expected_strikes(float(entry.durability))
 		for dominant: Dictionary in candidates:
-			var dominant_potential := cut_value(dominant.id,levels)/ceilf(float(dominant.durability)/maxf(.01,strength))
-			if int(dominant.tier) > int(entry.tier) and dominant_potential > earning_potential:
+			var dominant_potential := cut_value(dominant.id,levels)/profile.expected_strikes(float(dominant.durability))
+			if int(dominant.tier) > int(entry.tier) and dominant_potential > earning_potential+0.000001:
 				weight *= maxf(0,1.0-coefficient(dominant.dominance_upgrade,"suppression")*int(levels.get(dominant.dominance_upgrade,0)))
 		if weight > 0:
 			weights[entry.id] = weight

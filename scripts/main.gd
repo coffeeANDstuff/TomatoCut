@@ -14,8 +14,10 @@ var audio: AudioManager
 var state := "home"
 var countdown_cue := 4
 var save_path := "user://progress.json"
+var ability_rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
+	ability_rng.randomize()
 	for argument: String in OS.get_cmdline_user_args():
 		if argument.begins_with("--save-path="):
 			save_path = argument.trim_prefix("--save-path=")
@@ -28,6 +30,7 @@ func _ready() -> void:
 	fragments = FragmentManager.new()
 	add_child(fragments)
 	fragments.resisted.connect(damage_feedback)
+	fragments.critical_strike.connect(critical_feedback)
 	knife = KnifeController.new()
 	add_child(knife)
 	knife.reset()
@@ -131,7 +134,7 @@ func process_blade() -> int:
 	if state != "playing" or not session.running or session.remaining <= 0:
 		return 0
 	var count := 0
-	for hit: Dictionary in fragments.slice(knife.previous, knife.current, knife.stroke_id, progress.strength(), progress.settings.reduced_effects):
+	for hit: Dictionary in fragments.slice(knife.previous, knife.current, knife.stroke_id, progress.strength(), progress.settings.reduced_effects,roll_strike):
 		cut_feedback(hit.position, false, hit.value)
 		count += 1
 	var direction := (knife.current.origin-knife.previous.origin).normalized()
@@ -139,7 +142,9 @@ func process_blade() -> int:
 		if tomato.sliced or tomato.is_queued_for_deletion():
 			continue
 		if tomato.intersects(knife.previous,knife.current) and tomato.family.try_strike(knife.stroke_id):
-			tomato.durability -= progress.strength()
+			var strike := roll_strike()
+			if strike.critical: critical_feedback(tomato.position)
+			tomato.durability -= float(strike.damage)
 			if tomato.durability > 0:
 				tomato.damage_time = 0.08
 				damage_feedback(tomato.position,tomato.durability)
@@ -154,6 +159,14 @@ func process_blade() -> int:
 	if count > 0:
 		ui.update_round(session)
 	return count
+
+func roll_strike() -> Dictionary:
+	var profile := progress.cutting_profile()
+	return profile.resolve(ability_rng.randf() if profile.critical_chance > 0 else 1.0)
+
+func critical_feedback(at: Vector3) -> void:
+	ui.popup_critical(kitchen.camera.unproject_position(at))
+	audio.play("critical")
 
 func damage_feedback(at: Vector3, remaining: float) -> void:
 	var strikes := int(ceilf(remaining/progress.strength()))

@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Botanical catalog discovery milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Critical Slice / seven-category milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -65,6 +65,9 @@ Roma reveals after Cherry Unlock + Sharp Edge 1 and costs $180 to unlock.
 Reverse the swipe or pause briefly to strike a resistant fruit again.
 Red seed dots mark unseen catalog discoveries. View their titles to acknowledge
 them; botanical vines and labels reveal quietly. Reduced motion skips the fades.
+Critical Slice reveals after Roma Unlock + Extra Cuts 1. Its $25 first level
+grants 8% chance for double cutting damage; levels rise to 40% maximum.
+Critical strikes keep the normal cut payout. No extra input is needed.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

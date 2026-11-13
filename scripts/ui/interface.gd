@@ -268,8 +268,14 @@ func catalog(category: String = selected_category) -> void:
 	header("The seed catalog", "SMALL IMPROVEMENTS, CULTIVATED WITH CARE.  •  VOLUME I")
 	var categories := VBoxContainer.new()
 	place(categories,Vector2(48,207),Vector2(230,430))
-	categories.add_theme_constant_override("separation",14)
-	for name: String in ["Time","Harvest","Cutting","Money","Combos","Varieties"]:
+	var abilities_revealed := false
+	for d: Dictionary in progress.definitions:
+		if d.category == "Abilities" and d.id in progress.discovered:
+			abilities_revealed = true
+			break
+	categories.add_theme_constant_override("separation",8 if abilities_revealed else 14)
+	for name: String in ["Time","Harvest","Cutting","Money","Combos","Abilities","Varieties"]:
+		if name == "Abilities" and not abilities_revealed: continue
 		var b := button(name,func(): catalog(name))
 		b.name = "Category_" + name
 		b.custom_minimum_size.x = 220
@@ -278,7 +284,7 @@ func catalog(category: String = selected_category) -> void:
 		if name == category:
 			b.add_theme_stylebox_override("normal",style(Color("d9ddc4"),Color("56705a")))
 		categories.add_child(b)
-		tips.bind(b,name)
+		tips.bind(b,"Special cutting abilities" if name == "Abilities" else name)
 		var badge := DiscoveryBadge.new()
 		badge.name = "DiscoveryBadge_"+name
 		b.add_child(badge)
@@ -290,7 +296,9 @@ func catalog(category: String = selected_category) -> void:
 		if progress.harvest.unlocked(data.id,progress.levels):
 			summary += "%s  %.1f%%\n" % [data.name,float(mix.get(data.id,0))*100]
 	summary += "\nCalculated automatically.\nCultivation shapes the mix."
-	place(label(summary,16,true,MUTED),Vector2(48,605),Vector2(240,175))
+	var summary_label := label(summary,16,true,MUTED)
+	summary_label.name = "HarvestSummary"
+	place(summary_label,Vector2(48,615 if abilities_revealed else 605),Vector2(240,175))
 	var scroll := ScrollContainer.new()
 	scroll.name = "CatalogScroll"
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -346,6 +354,14 @@ func upgrade_entry(d: Dictionary, count: int, list: VBoxContainer, category: Str
 	entry.add_child(effect)
 	if d.id == "extra_cuts":
 		entry.add_child(label("Currently %d rewarded cuts per tomato" % progress.max_cuts(),16,false,MUTED))
+	if d.id == "critical_slice":
+		var profile := progress.cutting_profile()
+		var current := label("Current: %.0f%% chance · ×%.1f cutting damage" % [profile.critical_chance*100,profile.critical_multiplier],18,true)
+		current.name = "CriticalChance"
+		entry.add_child(current)
+		if progress.level(d.id) < int(d.max_level):
+			var next_chance := minf(1,progress.effect_value(d.id,"chance_per_level")*(progress.level(d.id)+1))
+			entry.add_child(label("Next level: %.0f%% chance. Rolls once per accepted strike, including recuts." % (next_chance*100),16,false,MUTED))
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation",24)
 	entry.add_child(row)
@@ -398,11 +414,16 @@ func render_varieties(list: VBoxContainer) -> void:
 		notes.add_child(share)
 		if available:
 			var strikes := int(ceilf(float(data.durability)/progress.strength()))
+			var expected := progress.cutting_profile().expected_strikes(float(data.durability))
 			var payout := progress.reward(1,progress.harvest.cut_value(data.id,progress.levels))
 			var handling := label("%d %s to split · %s per cut" % [strikes,"strike" if strikes == 1 else "strikes",Progression.cash(payout)],18)
 			handling.name = "Handling_" + data.id
 			notes.add_child(handling)
-			notes.add_child(label("Value per strike: " + Progression.cash(payout/strikes),16,false,MUTED))
+			if expected < strikes:
+				var forecast := label("With Critical Slice: %.2f strikes on average" % expected,16,false,MUTED)
+				forecast.name = "ExpectedStrikes_"+data.id
+				notes.add_child(forecast)
+			notes.add_child(label("Expected value per strike: " + Progression.cash(payout/expected),16,false,MUTED))
 		var branch := CatalogVine.new()
 		list.add_child(branch)
 		if not data.unlock_upgrade.is_empty():
@@ -515,15 +536,21 @@ func popup_cash(text: String, screen_position: Vector2) -> void:
 	moving.append({"node":node,"life":0.75})
 
 func popup_damage(text: String, screen_position: Vector2) -> void:
+	popup_impact(text,screen_position,false)
+
+func popup_critical(screen_position: Vector2) -> void:
+	popup_impact("Critical slice",screen_position,true)
+
+func popup_impact(text: String, screen_position: Vector2, critical: bool) -> void:
 	if not progress.settings.damage_indicators:
 		return
 	var node := label(text,22,true,CREAM)
 	node.add_theme_color_override("font_shadow_color",INK)
 	node.add_theme_constant_override("shadow_offset_x",1)
 	node.add_theme_constant_override("shadow_offset_y",1)
-	node.name = "DamageIndicator"
+	node.name = "CriticalIndicator" if critical else "DamageIndicator"
 	root.add_child(node)
-	node.position = screen_position-Vector2(30,50)
+	node.position = screen_position-Vector2(30,78 if critical else 50)
 	moving.append({"node":node,"life":0.75})
 
 func _process(delta: float) -> void:

@@ -91,6 +91,9 @@ func max_cuts() -> int:
 func strength() -> float:
 	return 1.0 + effect_value("sharp_edge","strength_bonus") * level("sharp_edge")
 
+func cutting_profile() -> CuttingProfile:
+	return harvest.cutting_profile(levels,strength())
+
 func combo_window() -> float:
 	return 1.35 + effect_value("combo_window","seconds") * level("combo_window")
 

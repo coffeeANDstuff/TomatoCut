@@ -1,6 +1,42 @@
 # Progress
 
-## Current session — v0.5 (2026-11-12, America/Los_Angeles)
+## Current session — v0.6 (2026-11-12, America/Los_Angeles)
+
+Continued clean main at 87cc53e and verified the **224/224** baseline. The highest-priority incomplete milestone was Critical Slice and the seventh seed-catalog category. Existing fruit/knife assets, ordinary gameplay, upgrades, discovery and saves were retained.
+
+### Completed
+- **TESTED** — Real automatic Critical Slice upgrade: reveal requires Roma Unlock + Extra Cuts 1; first cost $25, growth 1.28, five levels, +8 percentage points of chance per level to 40%, ×2 cutting damage. All coefficients are authored in upgrades.json, validated, purchased and saved. Eighteen upgrades are integrated.
+- **TESTED** — Whole fruit and recut fragments resolve the ability only after a strike passes collision, family budget and stroke checks. The ability uses a separate RNG stream. Missed/stationary/duplicate/expired/exhausted targets never reroll; different accepted families roll independently. Damage alone never awards money, increments combo/cut statistics or spends a shared cut. Completed cuts retain their original premium value and unique-tomato accounting.
+- **TESTED** — CuttingProfile supplies actual damage resolution and exact first-completion probabilities. Harvest Dominance now compares critical-aware expected earnings per connected strike, while candidates still require at most three normal strikes. Lucky damage cannot force unreachable varieties into the mix. Probabilities handle zero/full chance, inclusive RNG endpoints and small positive durability remainders correctly.
+- **TESTED** — Functioning gated Abilities category, original matching line icon, live current/next chance, botanical discovery, costs/limits and seven-category layout at both aspect ratios. Roma presents its average critical-aware strike count and expected value; harvest shares remain read-only.
+- **TESTED** — Local critical label and original short impact cue. The existing damage-indicator preference and reduced motion apply without changing ability power. No additional player input, camera shake, prestige event access or reward multiplier is introduced.
+- **TESTED** — **270** headless regression checks (46 new critical/probability checks), **67** rendered GUI checks across the original, Cherry, Roma, discovery and new ability flows. Deterministic real input demonstrates non-proc damage, critical one-hit Roma, critical recuts, unchanged payouts, duplicate-roll denial, preferences and saved progression. Existing master requirements and art assets remain intact.
+- **TESTED** — Economy simulation now samples critical-aware strike-count outcomes and corresponding delays for roots and fragments. BALANCE_REPORT.md includes an explicit staged 0%/8%/40% comparison plus the existing accuracy/baseline scenarios. This is a model, not human playtesting. The greedy ten-minute policy did not buy Critical Slice with the current three-variety content; strength upgrades often dominate it. New costs/chance remain provisional; no older prices were changed.
+- **TESTED** — Windows/Linux exports and 21 embedded-pack checks per target; matching Linux native headless boot. Candidate full ZIP passes payload/CRC/source/build/version validation, and clean extracted source passes all 270 checks. README/release notes link prominently to v0.6.0. This source snapshot precedes hosted publication; final committed-source and public-download evidence is recorded in the repository handoff after release. Checkout is pinned to official v5.0.0 (Node.js 24); upstream tag/runtime metadata and actionlint were checked, with hosted execution gated by the release tag.
+
+### Remaining and limitations
+- **TESTED** — Phase 3 technical foundation: all seven categories now contain real applicable content, with discovery, cultivation and automatic harvest. This does not claim the final 25-variety/40+-upgrade catalog is complete.
+- **NOT STARTED** — Phase 4 equipment purchase/equip/preview/modifications and other 24 knives; remaining 22 normal varieties, seven other normal cutting abilities, fuller cultivation/mastery branches, prestige with five separately gated events, achievements, remaining five environments, cosmetics, original music and production art/accessibility pass.
+- **IN PROGRESS** — Human early pacing, critical ability price/value balance, durable-fragment feel and late-game performance. The 55% accuracy model still misses the early purchase target; it does not justify price changes without player evidence.
+- **BLOCKED** — Native Windows execution, Forward+ GPU rendering, audible review and target-PC 60 FPS require suitable hardware unavailable here. Software OpenGL/Dummy audio validate functional paths only.
+
+### Continuity
+- One CuttingProfile factory in HarvestProgression reads the authored critical coefficients; Progression exposes it to gameplay. Keep its expected-strike math and real damage resolution consistent. The base strength is passed explicitly so future equipment can join the same pipeline.
+- FragmentManager receives an optional accepted-strike resolver; existing decorative/stress callers retain normal damage behavior. Do not sample RNG while collecting collision candidates or reprocess newly created descendants in the same stroke.
+- Completion probabilities use integer critical-count states to merge equivalent paths. The economy's miss-ending chains are a stated simplification; actual players can miss and retry. Critical-aware dominance assumes connected strikes, with a small equality tolerance to protect same-earning tiers.
+- Ability state fits existing version-2 level/discovery/viewed fields. Existing v1/v2 saves reconstruct a newly eligible unseen ability at level zero; no free power or backwards-version guarantee is implied. Normal ability state resets on a fresh game; prestige reset integration is still future work.
+- Tests isolate saves under user://tests/. A higher-resistance Roma-shaped fragment in critical_tests.gd is an explicit test fixture for partial critical damage, not an added variety or changed authored Roma fragment resistance.
+- GitHub pushes, milestone releases and prominent package delivery remain authorized. Builds stay ignored in exports; no environment draft update or environment publication is part of this work.
+
+## Exact next task
+Build the **first equipment purchase/equip path** for the owned starter Rusty Butter Knife and purchasable Plastic Picnic Knife, following GAME_DESIGN.md §§14–15. Use original distinct 3D/Blender assets, a real rotating product preview, data-driven prices/stats/ownership/equipped state and compatible versioned saves. Match each knife's visible cutting edge and reach to its sweep geometry. Test buy/equip/re-equip/reload/reset, real extended-reach hits and misses, affordability/duplicate denials, and interaction with Critical Slice/family budgets before adding more knives. Keep tomato cultivation in the seed catalog and preserve all 25 knives/varieties and prestige-exclusive events.
+
+---
+
+# Historical milestones
+The current v0.6 section supersedes incomplete-feature statements below.
+
+## Milestone — v0.5 (2026-11-12, America/Los_Angeles)
 
 Continued the clean v0.4 main at ee05f39 after reading the handoff and verifying its **192/192** baseline. Highest-priority incomplete task was Phase 3 catalog discovery feedback. All 3D varieties, cutting, purchases, timers, harvest and save behavior were retained.
 

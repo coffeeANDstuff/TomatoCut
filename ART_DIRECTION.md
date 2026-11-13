@@ -53,3 +53,8 @@ Newly revealed entries keep the existing compact catalog order. A small tomato-r
 `CatalogVine` draws an original thin ink stem with three engraved leaves. For an unseen entry, the vine grows over 0.5s as its existing category/specimen illustration and printed title fade in. The geometry reserves its final space from the start; no moving panels, layout reshuffles or camera shake. Animations bind to their catalog page and stop when it is freed. Reduced Motion shows the complete vine, illustration and label immediately.
 
 Exposure tracking uses the clipped title rectangle and a short dwell; merely opening a category does not consume all its discoveries. One quiet original discovery cue plays per visible batch. Seen entries appear fully printed on later visits. Existing botanical plates and all 3D assets are preserved. Final hand refinement remains a separate production-art pass.
+
+## First automatic cutting ability (v0.6)
+The gated Abilities section uses an original engraved sprout/spark icon from the same line-art generator as the other category icons. Seven-category spacing leaves the read-only harvest summary clear at 16:10 and 16:9. A real revealed ability is required before the category appears; no placeholder section is exposed.
+
+Critical Slice uses a brief cream/ink-shadow label and an original short wet/steel accent. It changes accepted-strike damage in gameplay. Feedback stays local, uses the existing damage-indicator preference and reduced-motion behavior, and introduces no camera shake or prestige-gold styling. Money feedback and cut values retain their usual behavior. Whole fruit, interiors and knife assets are unchanged. Original effects are integrated and exercised with Dummy audio; audible review remains unperformed.

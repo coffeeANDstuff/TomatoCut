@@ -2,6 +2,7 @@ class_name FragmentManager
 extends Node3D
 
 signal resisted(at: Vector3, remaining: float)
+signal critical_strike(at: Vector3)
 
 const MAX_PIECES := 64
 const MAX_DROPS := 96
@@ -53,7 +54,7 @@ func split(at: Vector3, velocity: Vector2, direction: Vector2, reduced: bool = f
 		acquire_piece().configure("half", ledger, at, frame, motion, Vector3(-side * 4.0, -side * 2.2, side * 0.8))
 	emit_juice(at, reduced)
 
-func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: float, reduced: bool) -> Array[Dictionary]:
+func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: float, reduced: bool, damage_roll: Callable = Callable()) -> Array[Dictionary]:
 	var hits: Array[Dictionary] = []
 	var direction := (current.origin - previous.origin).normalized()
 	# Snapshot eligibility before creating descendants. Neither pool reuse nor
@@ -66,7 +67,9 @@ func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: f
 		var piece: FragmentPiece = candidate.piece
 		if piece.revision != candidate.revision or not piece.cuttable() or not piece.family.try_strike(stroke):
 			continue
-		piece.durability -= strength
+		var strike: Dictionary = damage_roll.call() if damage_roll.is_valid() else {"damage":strength,"critical":false}
+		if strike.critical: critical_strike.emit(piece.position)
+		piece.durability -= float(strike.damage)
 		if piece.durability > 0:
 			resisted.emit(piece.position,piece.durability)
 			continue

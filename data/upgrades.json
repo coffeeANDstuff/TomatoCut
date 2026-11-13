@@ -280,5 +280,23 @@
       "suppression": 0.1
     },
     "tomato_id": "roma"
+  },
+  {
+    "id": "critical_slice",
+    "name": "Critical Slice",
+    "category": "Abilities",
+    "description": "A fortunate meeting of firm fruit and a determined blade. Activates automatically on a valid strike.",
+    "effect": "+8 percentage points of critical chance per level (maximum 40%). Critical strikes deal double damage; cut rewards stay the same.",
+    "base_cost": 25,
+    "growth": 1.28,
+    "max_level": 5,
+    "requires": {
+      "unlock_roma": 1,
+      "extra_cuts": 1
+    },
+    "effect_values": {
+      "chance_per_level": 0.08,
+      "damage_multiplier": 2
+    }
   }
 ]

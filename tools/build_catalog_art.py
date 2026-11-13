@@ -20,6 +20,7 @@ icons={
  'cutting':'<path d="m5 24 13-13 9-6c4 7-6 15-9 14l-7 10Z M15 17l4 4"/>',
  'money':'<circle cx="16" cy="16" r="11"/><path d="M21 11c-6-5-13 4-5 5s7 10-5 5m5-14v18"/>',
  'combos':'<circle cx="7" cy="22" r="3"/><circle cx="16" cy="13" r="3"/><circle cx="25" cy="8" r="3"/><path d="m9 20 5-5m5-4 3-2"/>',
+ 'abilities':'<path d="M7 28 22 9m-10 12c-7-1-8-8-6-11 7 0 10 5 6 11Zm5-6c-1-7 4-12 10-12 1 7-3 12-10 12Z M24 19v9m-4-4h9M5 3v4m-2-2h4"/>',
  'varieties':'<path d="M16 28V13M16 19C4 20 3 8 5 6c10-1 12 8 11 13Zm0-6C15 4 23 3 28 4c1 8-7 12-12 9Z M9 28h14"/>'}
 for name,body in icons.items():
  (root.parents[1]/'icons'/('catalog_'+name+'.svg')).write_text('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><g fill="none" stroke="#334e3b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+body+'</g></svg>')
