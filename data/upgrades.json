@@ -140,5 +140,75 @@
       "max_triggers": 4,
       "ceiling": 60
     }
+  },
+  {
+    "id": "unlock_cherry",
+    "name": "Cherry · Variety Unlock",
+    "category": "Varieties",
+    "description": "A small, spirited specimen. Unlocks automatic Cherry harvests.",
+    "effect": "Adds Cherry to the calculated harvest: $3 base value, small and fast.",
+    "base_cost": 40,
+    "growth": 1.0,
+    "max_level": 1,
+    "requires": {
+      "better_prices": 1,
+      "faster_throwing": 1
+    },
+    "effect_values": {
+      "unlock": 1
+    },
+    "tomato_id": "cherry"
+  },
+  {
+    "id": "cherry_frequency",
+    "name": "Cherry · Harvest Frequency",
+    "category": "Varieties",
+    "description": "Cultivate a greater share of this energetic variety.",
+    "effect": "+50% relative Cherry spawn weight per level. Percentages are calculated automatically.",
+    "base_cost": 30,
+    "growth": 1.24,
+    "max_level": 10,
+    "requires": {
+      "unlock_cherry": 1
+    },
+    "effect_values": {
+      "weight_bonus": 0.5
+    },
+    "tomato_id": "cherry"
+  },
+  {
+    "id": "cherry_quality",
+    "name": "Cherry · Premium Quality",
+    "category": "Varieties",
+    "description": "Better-grown fruit commands a better price.",
+    "effect": "+25% Cherry cut value per level. Applies to its separated pieces too.",
+    "base_cost": 35,
+    "growth": 1.25,
+    "max_level": 10,
+    "requires": {
+      "unlock_cherry": 1
+    },
+    "effect_values": {
+      "value_bonus": 0.25
+    },
+    "tomato_id": "cherry"
+  },
+  {
+    "id": "cherry_dominance",
+    "name": "Cherry · Harvest Dominance",
+    "category": "Varieties",
+    "description": "A fine harvest gradually replaces less profitable lower tiers.",
+    "effect": "Reduces lower-tier weight by 10% per level, reaching zero at level 10.",
+    "base_cost": 90,
+    "growth": 1.32,
+    "max_level": 10,
+    "requires": {
+      "cherry_frequency": 3,
+      "cherry_quality": 2
+    },
+    "effect_values": {
+      "suppression": 0.1
+    },
+    "tomato_id": "cherry"
   }
 ]

@@ -3,6 +3,10 @@ extends RefCounted
 
 # All descendants share this ledger. A stroke may strike this fruit only once,
 # including strikes that deal damage without yet separating a piece.
+var variety_id := "standard_red"
+var model_scale := 1.0
+var mass := 1.0
+var cut_value := 1.0
 var limit: int
 var rewarded_cuts := 0
 var last_stroke := -1

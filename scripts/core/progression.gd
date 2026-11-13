@@ -3,6 +3,7 @@ extends RefCounted
 
 const DEFINITIONS_PATH := "res://data/upgrades.json"
 var definitions: Array = []
+var harvest: HarvestProgression
 var money: float = 0.0
 var levels: Dictionary = {}
 var discovered: Array = []
@@ -15,6 +16,10 @@ func _init() -> void:
 	if not content_errors.is_empty():
 		push_error("Invalid upgrade content: " + "; ".join(content_errors))
 		definitions.clear()
+	harvest = HarvestProgression.new(definitions)
+	var harvest_errors := harvest.validate()
+	if not harvest_errors.is_empty():
+		push_error("Invalid tomato content: " + "; ".join(harvest_errors))
 	refresh_discovery()
 
 func level(id: String) -> int:
@@ -77,8 +82,10 @@ func overtime_seconds() -> float:
 func round_ceiling() -> float:
 	return effect_value("overtime","ceiling")
 
-func reward(combo: int) -> float:
-	return (1.0 + effect_value("better_prices","value_bonus") * level("better_prices")) * (1.0 + effect_value("combo_cash","bonus_per_step") * level("combo_cash") * mini(combo - 1, int(effect_value("combo_cash","max_steps"))))
+func reward(combo: int, tomato_value: float = 1.0) -> float:
+	var base := 1.0 + effect_value("better_prices","value_bonus") * level("better_prices")
+	var combo_bonus := 1.0 + effect_value("combo_cash","bonus_per_step") * level("combo_cash") * mini(combo-1,int(effect_value("combo_cash","max_steps")))
+	return snappedf(base * combo_bonus * tomato_value,0.01)
 
 func complete_round(earnings: float, cuts: int, tomatoes_sliced: int = -1) -> void:
 	money += earnings

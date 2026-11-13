@@ -1,0 +1,70 @@
+[
+  {
+    "id": "standard_red",
+    "name": "Standard Red",
+    "catalog_number": "001",
+    "description": "The dependable beginning. Broad shoulders, a ribbed crown and a thoroughly respectable nature.",
+    "tier": 0,
+    "base_value": 1,
+    "durability": 1,
+    "base_weight": 1,
+    "mass": 1,
+    "model_scale": 1,
+    "radius": 0.55,
+    "gravity": 5.5,
+    "launch_min": 8.2,
+    "launch_max": 9.1,
+    "spin": 0.8,
+    "proxy_axes": [
+      0.6,
+      0.53,
+      0.53
+    ],
+    "proxy_lobe": 0.045,
+    "model": "res://assets/models/tomatoes/standard_red.glb",
+    "illustration": "res://assets/illustrations/catalog/standard_red.svg",
+    "fragments": {
+      "half": "res://assets/models/fragments/standard_half.glb",
+      "wedge": "res://assets/models/fragments/standard_wedge.glb",
+      "chunk": "res://assets/models/fragments/standard_chunk.glb"
+    },
+    "unlock_upgrade": "",
+    "frequency_upgrade": "",
+    "quality_upgrade": "",
+    "dominance_upgrade": ""
+  },
+  {
+    "id": "cherry",
+    "name": "Cherry",
+    "catalog_number": "002",
+    "description": "Little fruit, considerable enthusiasm. A rounder specimen with a slender four-leaf crown and a quicker flight.",
+    "tier": 1,
+    "base_value": 3,
+    "durability": 1,
+    "base_weight": 0.8,
+    "mass": 0.45,
+    "model_scale": 0.62,
+    "radius": 0.35,
+    "gravity": 6.6,
+    "launch_min": 9.1,
+    "launch_max": 10.0,
+    "spin": 1.8,
+    "proxy_axes": [
+      0.54,
+      0.6,
+      0.54
+    ],
+    "proxy_lobe": 0.008,
+    "model": "res://assets/models/tomatoes/cherry.glb",
+    "illustration": "res://assets/illustrations/catalog/cherry.svg",
+    "fragments": {
+      "half": "res://assets/models/fragments/cherry_half.glb",
+      "wedge": "res://assets/models/fragments/cherry_wedge.glb",
+      "chunk": "res://assets/models/fragments/cherry_chunk.glb"
+    },
+    "unlock_upgrade": "unlock_cherry",
+    "frequency_upgrade": "cherry_frequency",
+    "quality_upgrade": "cherry_quality",
+    "dominance_upgrade": "cherry_dominance"
+  }
+]

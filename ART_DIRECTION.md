@@ -32,3 +32,10 @@ Standard Red now has prepared halves, quarter wedges and eighth chunks exported 
 Interactive fragment proxies project sampled shell hulls through the actual 3D fragment transform. Never substitute the original full-tomato circle for a tumbling wedge. The smallest eighths are visual debris, and edge-on/minuscule projections are not reward targets. Preserve this agreement when changing meshes, pivots or scales.
 
 Use `tests/fragment_gallery.gd` to review the three actual fragment models together; it is a development tool, not additional game content. All three are also integrated into real cuts.
+
+## First illustrated variety branch (v0.3)
+Cherry has its own rounder/taller shell, four-point calyx, thinner stem, three-chamber interior and full half/wedge/eighth set. Authored normalized axes are (0.54, 0.60, 0.54), then gameplay scales the model to 0.62. Standard Red retains its original wider lobed silhouette. Cherry flesh uses a restrained coral red; the close-up review corrected an initially over-yellow material. Do not imply that this normal red-skinned variety is a prestige Golden Tomato event.
+
+`tools/build_assets.py -- --cherry` and `art/cherry.blend` preserve the source without overwriting the Standard Red/knife assets. `tools/build_catalog_art.py` generates the original two botanical specimen illustrations, printed branch rule and six matching category line icons. These are integrated in the live Varieties catalog. Standard Red and Cherry remain visible after discovery, including a 0% phased-out share; never turn specimen navigation into a spawn selector.
+
+Fragment model caches now retain at most three variants per pooled piece, evicting inactive scene instances rather than accumulating every variety indefinitely. Match each variety's authored axes/lobes, model scale and fragment map when adding more content. Normalized asset-study screenshots are distinct from actual in-game-size screenshots.

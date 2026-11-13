@@ -1,11 +1,8 @@
 class_name FragmentPiece
 extends Node3D
 
-const MODELS := {
-	"half": preload("res://assets/models/fragments/standard_half.glb"),
-	"wedge": preload("res://assets/models/fragments/standard_wedge.glb"),
-	"chunk": preload("res://assets/models/fragments/standard_chunk.glb")
-}
+static var catalog := HarvestProgression.new()
+const MAX_MODEL_CACHE := 3
 const MIN_CUT_SIZE := 0.19
 var revision := 0
 var family: CutFamily
@@ -36,12 +33,18 @@ func configure(shape: String, ledger: CutFamily, at: Vector3, frame: Basis, moti
 	consumed = false
 	for model: Node3D in models.values():
 		model.hide()
-	if not models.has(kind):
-		models[kind] = MODELS[kind].instantiate()
-		add_child(models[kind])
-	models[kind].basis = geometry_basis
-	models[kind].show()
-	proxy = shape_proxy(kind)
+	var model_key := family.variety_id + "/" + kind
+	if not models.has(model_key):
+		if models.size() >= MAX_MODEL_CACHE:
+			var oldest: String = models.keys()[0]
+			models[oldest].queue_free()
+			models.erase(oldest)
+		var path: String = catalog.definition(family.variety_id).fragments[kind]
+		models[model_key] = load(path).instantiate()
+		add_child(models[model_key])
+	models[model_key].basis = geometry_basis
+	models[model_key].show()
+	proxy = shape_proxy(kind, family.variety_id)
 	cached_hull.clear()
 	show()
 
@@ -73,11 +76,14 @@ func retire() -> void:
 	family = null
 	hide()
 
-static func shape_proxy(shape: String) -> PackedVector3Array:
+static func shape_proxy(shape: String, variety_id: String = "standard_red") -> PackedVector3Array:
 	# A convex sampled proxy of the authored shell. Rotated in
 	# 3D before projection, so the selectable region follows the tumbling model.
-	if proxy_cache.has(shape):
-		return proxy_cache[shape]
+	var key := variety_id + "/" + shape
+	if proxy_cache.has(key):
+		return proxy_cache[key]
+	var profile := catalog.definition(variety_id)
+	var axes: Array = profile.proxy_axes
 	var points := PackedVector3Array()
 	for ring in range(9):
 		var a := PI * 0.5 * ring / 8.0
@@ -86,8 +92,8 @@ static func shape_proxy(shape: String) -> PackedVector3Array:
 			var x := cos(a)
 			var y := sin(a) * cos(t)
 			var z := sin(a) * sin(t)
-			var lobe := 1 + 0.045 * cos(5 * atan2(z, x)) * (1-y*y)
-			var vertex := Vector3(x*0.6*lobe, y*0.53, z*0.53*lobe)
+			var lobe := 1 + float(profile.proxy_lobe) * cos(5 * atan2(z, x)) * (1-y*y)
+			var vertex := Vector3(x*float(axes[0])*lobe, y*float(axes[1]), z*float(axes[2])*lobe)
 			if shape != "half" and vertex.y < -0.0001:
 				continue
 			if shape == "chunk" and vertex.y > vertex.x + 0.0001:
@@ -95,5 +101,5 @@ static func shape_proxy(shape: String) -> PackedVector3Array:
 			points.append(vertex)
 	# Include the center of the cut faces.
 	points.append(Vector3.ZERO)
-	proxy_cache[shape] = points
+	proxy_cache[key] = points
 	return points

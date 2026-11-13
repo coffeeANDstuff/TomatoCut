@@ -43,7 +43,7 @@ func advance(delta: float) -> bool:
 		return true
 	return false
 
-func record_cut(progress: Progression, first_slice: bool = true) -> float:
+func record_cut(progress: Progression, first_slice: bool = true, tomato_value: float = 1.0) -> float:
 	if not running or remaining <= 0:
 		return 0.0
 	combo += 1
@@ -52,8 +52,8 @@ func record_cut(progress: Progression, first_slice: bool = true) -> float:
 	cuts += 1
 	if first_slice:
 		tomatoes_sliced += 1
-	var value := progress.reward(combo)
-	bonus += value - progress.reward(1)
+	var value := progress.reward(combo, tomato_value)
+	bonus += value - progress.reward(1, tomato_value)
 	earnings += value
 	if progress.overtime_seconds() > 0 and cuts % int(progress.effect_value("overtime","milestone_cuts")) == 0 and overtime_triggers < int(progress.effect_value("overtime","max_triggers")):
 		var extension := maxf(0, minf(progress.overtime_seconds(), progress.round_ceiling()-duration-overtime_added))

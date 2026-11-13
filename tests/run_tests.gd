@@ -2,6 +2,7 @@ extends SceneTree
 
 const ECONOMY_MODEL := preload("res://tools/economy_model.gd")
 const TIME_TESTS := preload("res://tests/time_upgrade_tests.gd")
+const HARVEST_TESTS := preload("res://tests/harvest_tests.gd")
 const RECUT_TESTS := preload("res://tests/recut_tests.gd")
 
 var checks := 0
@@ -33,6 +34,7 @@ func run() -> void:
 	test_economy_model()
 	await test_game()
 	await RECUT_TESTS.run(self, Callable(self,"check"))
+	await HARVEST_TESTS.run(self, Callable(self,"check"))
 	await test_natural_round()
 	# Let the audio mixer release stopped playback references after scene teardown.
 	await create_timer(0.2).timeout

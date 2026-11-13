@@ -1,5 +1,42 @@
 # Progress
 
+## Current session — v0.3 (2026-11-12, America/Los_Angeles)
+
+Restored commit cd9a0d5 with a clean worktree and verified its 117-check baseline. The highest-priority incomplete milestone was the first full Cherry branch in Phase 3. Existing Standard Red slicing, recuts, timing, results, upgrades and saves were retained.
+
+### Completed
+- **TESTED** — Original Cherry exterior/crown and three seeded fragment models, editable Blender source and generator mode. It is smaller and faster, has its own mass/gravity/spin profile and collision radius, and uses its own fragment assets throughout recuts. Standard Red assets were preserved.
+- **TESTED** — Original botanical Standard Red/Cherry specimen artwork, printed branch connections and six category icons integrated into the live catalog. Hidden Cherry details do not render until reveal; a reveal does not enable spawning.
+- **TESTED** — Cherry Variety Unlock, Harvest Frequency, Premium Quality and Harvest Dominance. Reveal/purchase prerequisites are real and costs/max levels apply. Starting reveal needs Better Prices 1 + Faster Throwing 1; unlock costs $40. Dominance reveals at frequency 3 + quality 2, costs $90 initially and suppresses lower, less profitable tiers by 10% per level.
+- **TESTED** — Normalized weighted automatic harvest, unlocked-only candidates, read-only displayed shares, complete lower-tier phase-out, and safe Standard Red fallback. Durability/strength and expected value per strike gate dominance and prevent an unsliceable higher tier from forcing the mix.
+- **TESTED** — Premium value travels with the original CutFamily, including recuts. Round results still distinguish unique tomatoes from rewarded cuts. Combined money multipliers now credit whole cents so popup sums and result totals agree. Existing balances and save versions are preserved; variety state is reconstructed from the existing version 2 levels/discovery fields.
+- **TESTED** — Per-piece model cache bounded at three scenes with actual node eviction; mixed varieties do not accumulate every model on each pooled piece.
+- **TESTED** — 152 automated checks pass, including the 117 baseline checks plus harvest, content references, unlock/reveal separation, frequency/quality/dominance, impossible-mix fallback, save restoration, own-model spawning, Cherry recuts and cache release.
+- **TESTED** — Real GUI tests cover the earlier loop plus Cherry cultivation, calculated percentages at 16:9/16:10, simultaneous production-spawned varieties, premium Cherry slicing/recuts, unrelated-target preservation and save restoration. Source/Windows packaging and native-platform limits are recorded in TESTING.md.
+- **TESTED** — v0.3 exports, fresh source extraction/import with 152 checks, and six embedded-pack behavior checks for each exported platform using the Linux editor engine. This does not establish native Windows execution.
+- **TESTED** — Early economy simulation now includes the automatic variety mix and quality, with an explicit small-target accuracy assumption. See BALANCE_REPORT.md; no human balance or 60 FPS claim.
+
+### Remaining and limitations
+- **IN PROGRESS** — Phase 3. Two of 25 varieties and one complete new variety branch are integrated. Roma and the other 22 varieties, full seven-category progression, discovery animations/badges and broader catalog navigation remain. Standard Red has an illustrated starter specimen, not a complete paid harvest/mastery branch.
+- **IN PROGRESS** — Human feel, early novice pacing and initial economy balance. Modeled results are assumptions, not measured player performance. Physical recuts still use prepared quarter/eighth planes, not arbitrary mesh cutting.
+- **NOT STARTED** — Other 24 knives, equipment modifications/shop, prestige and its five separately gated events, achievements/mastery, five further environments, cosmetics, music and final production art/accessibility pass.
+- **BLOCKED** — Native Windows execution, Forward+ GPU validation, audible effects review and target-PC 60 FPS need a suitable machine. Current rendered tests use software OpenGL; the shipping default remains Forward+.
+
+### Continuity notes
+- `data/tomatoes.json` is the source of variety models, fragments, botanical illustrations, physical profiles and links to upgrade IDs. `HarvestProgression` handles distribution and value; upgrade coefficients remain in `data/upgrades.json`.
+- Only investment levels/discovery are saved. No manual spawn selections, sliders or favorites exist. A fresh game returns to Standard Red only. Prestige reset integration is still future work; no claim that prestige exists.
+- Fragment hulls use each variety's authored profile and actual model transform. Shared family metadata snapshots variety identity, scale, mass and reward value.
+- Tests found a precision-sensitive scale assertion and a missing test variable type; these test failures were fixed and the full suite rerun. The baseline render runner now waits for audio teardown to avoid its existing intermittent mixer-reference exit warning.
+- The user explicitly authorized pushing versions to GitHub this session. Remote main had only an initial one-line README; preserve that commit when combining histories. No environment draft changes or environment publication are part of this work.
+
+## Exact next task
+Implement **Roma's complete branch** using distinct elongated exterior and prepared interiors, an original specimen illustration, durable slicing behavior and meaningful Sharp Edge interactions. Integrate it as a third automatically weighted variety with its own frequency/quality/dominance upgrades and progressive prerequisites. Validate expected payout per strike, three-way normalization/phase-out, the shared family cut budget, model caches and save restoration. Preserve all 25 varieties, 25 knives and prestige-exclusive event requirements.
+
+---
+
+# Prior session records
+The records below describe previous milestones; the current v0.3 section supersedes their incomplete-feature statements.
+
 ## Current session — v0.2 continuation (2026-11-11, America/Los_Angeles)
 
 Continued from commit 62b7967 with a clean working tree and a fresh passing 59-check baseline. Phase 2 multi-cuts were the highest-priority incomplete dependency; existing gameplay and the full master specification were preserved.

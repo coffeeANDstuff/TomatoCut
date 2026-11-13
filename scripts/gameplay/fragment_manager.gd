@@ -45,13 +45,14 @@ func split(at: Vector3, velocity: Vector2, direction: Vector2, reduced: bool = f
 	var normal := Vector2(-direction.y, direction.x).normalized()
 	var angle := normal.angle()
 	for side: int in [-1, 1]:
-		var frame := Basis(Vector3.FORWARD, -angle) * Basis.from_scale(Vector3(side, 1, 1))
-		var motion := Vector3(velocity.x + normal.x * side * 2.0, velocity.y + normal.y * side * 2.0, 0.8)
+		var frame := Basis(Vector3.FORWARD, -angle) * Basis.from_scale(Vector3(side, 1, 1) * ledger.model_scale)
+		var impulse := 2.0 / sqrt(ledger.mass)
+		var motion := Vector3(velocity.x + normal.x * side * impulse, velocity.y + normal.y * side * impulse, 0.8)
 		acquire_piece().configure("half", ledger, at, frame, motion, Vector3(-side * 4.0, -side * 2.2, side * 0.8))
 	emit_juice(at, reduced)
 
-func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: float, reduced: bool) -> Array[Vector3]:
-	var hits: Array[Vector3] = []
+func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: float, reduced: bool) -> Array[Dictionary]:
+	var hits: Array[Dictionary] = []
 	var direction := (current.origin - previous.origin).normalized()
 	# Snapshot eligibility before creating descendants. Neither pool reuse nor
 	# newly created wedges can turn one input sample into multiple cuts.
@@ -82,7 +83,7 @@ func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: f
 				child_frame *= Basis(Vector3(0,1,0), Vector3(1,0,0), Vector3(0,0,1))
 			acquire_piece().configure("wedge" if shape == "half" else "chunk", ledger, at, child_frame, motion + normal * side * 1.15, Vector3(-side * 3.0, side * 2.5, side * 1.0))
 		emit_juice(at, reduced)
-		hits.append(at)
+		hits.append({"position": at, "value": ledger.cut_value})
 	return hits
 
 func emit_juice(at: Vector3, reduced: bool) -> void:

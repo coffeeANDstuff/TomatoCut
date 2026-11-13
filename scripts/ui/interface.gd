@@ -258,13 +258,21 @@ func catalog(category: String = selected_category) -> void:
 	var categories := VBoxContainer.new()
 	place(categories,Vector2(48,207),Vector2(230,430))
 	categories.add_theme_constant_override("separation",14)
-	for name: String in ["Time","Harvest","Cutting","Money","Combos"]:
+	for name: String in ["Time","Harvest","Cutting","Money","Combos","Varieties"]:
 		var b := button(name,func(): catalog(name))
 		b.custom_minimum_size.x = 220
+		b.icon = load("res://assets/icons/catalog_%s.svg" % name.to_lower())
+		b.add_theme_constant_override("icon_max_width",24)
 		if name == category:
 			b.add_theme_stylebox_override("normal",style(Color("d9ddc4"),Color("56705a")))
 		categories.add_child(b)
-	place(label("SPECIMEN 001\nStandard Red\n\nBalanced. Dependable.\n100% of your harvest.\n$1 base cut · 1 durability\n\nHarvest is selected\nautomatically.",16,true,MUTED),Vector2(48,560),Vector2(240,200))
+	var mix := progress.harvest.distribution(progress.levels,progress.strength())
+	var summary := "CURRENT HARVEST\n"
+	for data: Dictionary in progress.harvest.varieties:
+		if progress.harvest.unlocked(data.id,progress.levels):
+			summary += "%s  %.1f%%\n" % [data.name,float(mix.get(data.id,0))*100]
+	summary += "\nCalculated automatically.\nCultivation shapes the mix."
+	place(label(summary,16,true,MUTED),Vector2(48,605),Vector2(240,175))
 	var scroll := ScrollContainer.new()
 	scroll.name = "CatalogScroll"
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -279,40 +287,92 @@ func catalog(category: String = selected_category) -> void:
 	list.add_theme_constant_override("separation",22)
 	scroll.add_child(list)
 	var count := 0
-	for d: Dictionary in progress.definitions:
-		if d.category != category or not d.id in progress.discovered:
-			continue
-		count += 1
-		var entry := VBoxContainer.new()
-		entry.add_theme_constant_override("separation",9)
-		list.add_child(entry)
-		entry.add_child(label("%02d  /  %s" % [count,category.to_upper()],13,false,MUTED))
-		entry.add_child(label(d.name,36,true))
-		var description := label(d.description,17,false,MUTED)
-		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		entry.add_child(description)
-		var effect := label(d.effect,18)
-		effect.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		entry.add_child(effect)
-		if d.id == "extra_cuts":
-			entry.add_child(label("Currently %d rewarded cuts per tomato" % progress.max_cuts(),16,false,MUTED))
-		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation",24)
-		entry.add_child(row)
-		var maxed: bool = progress.level(d.id) >= int(d.max_level)
-		var id: String = d.id
-		var purchase := button("Fully cultivated" if maxed else "Cultivate  ·  " + Progression.cash(progress.price(id)),func(): purchase_requested.emit(id),not maxed)
-		purchase.name = "Purchase_" + id
-		purchase.disabled = maxed or progress.money < progress.price(id)
-		purchase.custom_minimum_size.x = 265
-		row.add_child(purchase)
-		row.add_child(label("LEVEL %d / %d" % [progress.level(id),int(d.max_level)],14,false,MUTED))
-		var rule := HSeparator.new()
-		entry.add_child(rule)
-	if count == 0:
-		list.add_child(label("A new branch will reveal itself\nas your cultivation progresses.",27,true,MUTED))
+	if category == "Varieties":
+		render_varieties(list)
+	else:
+		for d: Dictionary in progress.definitions:
+			if d.category != category or not d.id in progress.discovered:
+				continue
+			count += 1
+			upgrade_entry(d,count,list,category)
+		if count == 0:
+			list.add_child(label("A new branch will reveal itself\nas your cultivation progresses.",27,true,MUTED))
 	scroll.set_deferred("scroll_vertical", previous_scroll)
 	place(button("Back to the cutting board",func(): play_requested.emit(),true),Vector2(330,716),Vector2(370,48))
+
+func upgrade_entry(d: Dictionary, count: int, list: VBoxContainer, category: String) -> void:
+	var entry := VBoxContainer.new()
+	entry.add_theme_constant_override("separation",9)
+	list.add_child(entry)
+	entry.add_child(label("%02d  /  %s" % [count,category.to_upper()],13,false,MUTED))
+	entry.add_child(label(d.name,36,true))
+	var description := label(d.description,17,false,MUTED)
+	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	entry.add_child(description)
+	var effect := label(d.effect,18)
+	effect.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	entry.add_child(effect)
+	if d.id == "extra_cuts":
+		entry.add_child(label("Currently %d rewarded cuts per tomato" % progress.max_cuts(),16,false,MUTED))
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation",24)
+	entry.add_child(row)
+	var maxed: bool = progress.level(d.id) >= int(d.max_level)
+	var id: String = d.id
+	var purchase := button("Fully cultivated" if maxed else "Cultivate  ·  " + Progression.cash(progress.price(id)),func(): purchase_requested.emit(id),not maxed)
+	purchase.name = "Purchase_" + id
+	purchase.disabled = maxed or progress.money < progress.price(id)
+	purchase.custom_minimum_size.x = 265
+	row.add_child(purchase)
+	row.add_child(label("LEVEL %d / %d" % [progress.level(id),int(d.max_level)],14,false,MUTED))
+	var rule := HSeparator.new()
+	entry.add_child(rule)
+
+func render_varieties(list: VBoxContainer) -> void:
+	var mix := progress.harvest.distribution(progress.levels,progress.strength())
+	for data: Dictionary in progress.harvest.varieties:
+		var available := progress.harvest.unlocked(data.id,progress.levels)
+		if not available and not data.unlock_upgrade in progress.discovered:
+			continue
+		var specimen := HBoxContainer.new()
+		specimen.name = "Specimen_" + data.id
+		specimen.add_theme_constant_override("separation",26)
+		list.add_child(specimen)
+		var artwork := TextureRect.new()
+		artwork.texture = load(data.illustration)
+		artwork.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		artwork.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		artwork.custom_minimum_size = Vector2(205,270)
+		specimen.add_child(artwork)
+		var notes := VBoxContainer.new()
+		notes.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		notes.add_theme_constant_override("separation",10)
+		specimen.add_child(notes)
+		notes.add_child(label("SPECIMEN %s / SOLANUM LYCOPERSICUM" % data.catalog_number,12,false,MUTED))
+		notes.add_child(label(data.name,38,true))
+		var description := label(data.description,17,true,MUTED)
+		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		notes.add_child(description)
+		var status := label("Cultivated · automatically available" if available else "Awaiting Variety Unlock",16)
+		notes.add_child(status)
+		notes.add_child(label("%s base value · %.0f resistance" % [Progression.cash(data.base_value),data.durability],16))
+		notes.add_child(label("Flight: small & fast" if data.id == "cherry" else "Flight: balanced & steady",16,false,MUTED))
+		var share := label("Current harvest: %.1f%%" % (float(mix.get(data.id,0))*100),20,true)
+		share.name = "SpawnShare_" + data.id
+		notes.add_child(share)
+		if available:
+			notes.add_child(label("Current cut: " + Progression.cash(progress.reward(1,progress.harvest.cut_value(data.id,progress.levels))),18))
+		var branch := TextureRect.new()
+		branch.texture = load("res://assets/illustrations/catalog/branch.svg")
+		branch.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		branch.stretch_mode = TextureRect.STRETCH_SCALE
+		branch.custom_minimum_size.y = 26
+		list.add_child(branch)
+		var number := 0
+		for d: Dictionary in progress.definitions:
+			if d.get("tomato_id","") == data.id and d.id in progress.discovered:
+				number += 1
+				upgrade_entry(d,number,list,"Cultivation")
 
 func settings() -> void:
 	clear("settings")

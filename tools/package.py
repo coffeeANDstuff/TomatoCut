@@ -1,7 +1,7 @@
 """Package built Windows milestone and portable source without caches or saves."""
 from pathlib import Path
 import zipfile,hashlib
-VERSION="0.2"
+VERSION="0.3"
 root=Path(__file__).resolve().parents[1]
 out=root/'exports'; out.mkdir(exist_ok=True)
 exe=out/'windows/TomatoCut.exe'
@@ -9,7 +9,7 @@ if not exe.is_file(): raise SystemExit('Export Windows Desktop first.')
 compat=out/'windows/Play-Compatibility.bat'
 compat.write_bytes(b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n')
 readme=out/'windows/READ-ME.txt'
-readme.write_text('Tomato Cut v0.2 - multi-cut progression milestone\n\nRun TomatoCut.exe. If Vulkan is unavailable, use Play-Compatibility.bat.\nMove the mouse to slice; no click is needed. Ten-second rounds; upgrades and\nprogress save automatically. This is an incomplete development build.\nExported on Linux; native Windows playtest and 60 FPS are not yet verified.\n\nSee the source archive README.md and PROGRESS.md for the full status.\n')
+readme.write_text('Tomato Cut v0.3 - Cherry and automatic harvest milestone\n\nRun TomatoCut.exe. If Vulkan is unavailable, use Play-Compatibility.bat.\nMove the mouse to slice; no click is needed. Ten-second rounds; upgrades and\nprogress save automatically. This is an incomplete development build.\nExported on Linux; native Windows playtest and 60 FPS are not yet verified.\n\nSee the source archive README.md and PROGRESS.md for the full status.\n')
 with zipfile.ZipFile(out/f'TomatoCut-Windows-v{VERSION}.zip','w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
  for p in [exe,compat,readme,root/'assets/fonts/LICENSE.txt']:
   z.write(p,'TomatoCut/'+p.name)

@@ -161,4 +161,5 @@ func run() -> void:
 	print("RENDER RESULT: ",failures," failures")
 	game.queue_free()
 	await frames()
+	await create_timer(.2).timeout
 	quit(1 if failures else 0)
