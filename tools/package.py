@@ -8,6 +8,7 @@ import hashlib
 import json
 import re
 import subprocess
+import time
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,12 +28,13 @@ def git_info():
     try:
         top = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], cwd=ROOT, stderr=subprocess.DEVNULL, text=True).strip()
         if Path(top).resolve() != ROOT:
-            return {'commit': None, 'dirty': None}
+            return {'commit': None, 'dirty': None, 'commit_time': None}
         commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
         dirty = bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip())
-        return {'commit': commit, 'dirty': dirty}
+        commit_time = int(subprocess.check_output(['git', 'show', '-s', '--format=%ct', 'HEAD'], cwd=ROOT, text=True).strip())
+        return {'commit': commit, 'dirty': dirty, 'commit_time': commit_time}
     except (OSError, subprocess.CalledProcessError):
-        return {'commit': None, 'dirty': None}
+        return {'commit': None, 'dirty': None, 'commit_time': None}
 
 
 source = []
@@ -49,8 +51,11 @@ info = {
     'validation_limits': 'Exported on Linux. Native Windows, Forward+ GPU, audible quality and target-PC 60 FPS remain unverified.'
 }
 metadata = json.dumps(info, indent=2) + '\n'
+# Stable timestamps and portable modes avoid host-specific ZIP metadata and
+# preserve executable source scripts after ordinary extraction.
+archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Roma / durable harvest milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Botanical catalog discovery milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -58,6 +63,8 @@ Move the mouse through airborne tomatoes; no click is needed.
 Ten-second starting rounds; cultivation and progress save automatically.
 Roma reveals after Cherry Unlock + Sharp Edge 1 and costs $180 to unlock.
 Reverse the swipe or pause briefly to strike a resistant fruit again.
+Red seed dots mark unseen catalog discoveries. View their titles to acknowledge
+them; botanical vines and labels reveal quietly. Reduced motion skips the fades.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,
@@ -96,15 +103,22 @@ windows_text = {'Play-Compatibility.bat': compat, 'READ-ME.txt': windows_readme.
 def archive(path, payload, extra):
     # Hashes are for uncompressed payloads; ZIP CRCs are also checked on review.
     hashes = {}
+    def write(z, name, data):
+        entry = zipfile.ZipInfo(name, archive_time)
+        entry.create_system = 3
+        mode = 0o100755 if name.endswith('.sh') else 0o100644
+        entry.external_attr = mode << 16
+        entry.compress_type = zipfile.ZIP_DEFLATED
+        z.writestr(entry, data)
     with zipfile.ZipFile(path, 'w', zipfile.ZIP_DEFLATED, compresslevel=6) as z:
         for name, original in payload:
             data = original.read_bytes()
-            z.writestr(name, data)
+            write(z, name, data)
             hashes[name] = sha256(data)
         for name, data in extra.items():
-            z.writestr(name, data)
+            write(z, name, data)
             hashes[name] = sha256(data)
-        z.writestr('SHA256SUMS.json', json.dumps(hashes, indent=2, sort_keys=True) + '\n')
+        write(z, 'SHA256SUMS.json', (json.dumps(hashes, indent=2, sort_keys=True) + '\n').encode())
     return path
 
 
@@ -112,5 +126,9 @@ archives = []
 archives.append(archive(OUT / f'TomatoCut-Windows-v{VERSION}.zip', [('TomatoCut/' + n, p) for n, p in windows], {'TomatoCut/' + n: v for n, v in windows_text.items()}))
 archives.append(archive(OUT / f'TomatoCut-Source-v{VERSION}.zip', [('TomatoCut/' + n, p) for n, p in source], {'BUILD_INFO.json': metadata.encode()}))
 archives.append(archive(OUT / f'TomatoCut-Full-v{VERSION}.zip', [('Windows/' + n, p) for n, p in windows] + [('Source/' + n, p) for n, p in source], {'Windows/' + n: v for n, v in windows_text.items()} | {'READ-ME.txt': full_readme.encode(), 'BUILD_INFO.json': metadata.encode()}))
+checksums = []
 for path in archives:
-    print(path.name, path.stat().st_size, sha256(path.read_bytes()))
+    checksum = sha256(path.read_bytes())
+    print(path.name, path.stat().st_size, checksum)
+    checksums.append(checksum + '  ' + path.name)
+(OUT / 'SHA256SUMS.txt').write_text('\n'.join(checksums) + '\n')

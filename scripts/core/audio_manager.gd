@@ -7,7 +7,7 @@ var progress: Progression
 var cursor := 0
 
 func _ready() -> void:
-	for id: String in ["slice", "resist", "launch", "paper", "bell", "purchase"]:
+	for id: String in ["slice", "resist", "launch", "paper", "bell", "purchase", "discovery"]:
 		sounds[id] = load("res://assets/audio/%s.wav" % id)
 	for i in range(8):
 		var player := AudioStreamPlayer.new()

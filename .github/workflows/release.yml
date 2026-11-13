@@ -60,8 +60,8 @@ jobs:
         run: |
           source_dir="$PWD"
           cd "$RUNNER_TEMP"
-          godot --headless --main-pack "$source_dir/exports/windows/TomatoCut.exe" --script "$source_dir/tests/package_smoke.gd"
-          godot --headless --main-pack "$source_dir/exports/linux/TomatoCut.x86_64" --script "$source_dir/tests/package_smoke.gd"
+          godot --headless --audio-driver Dummy --main-pack "$source_dir/exports/windows/TomatoCut.exe" --script "$source_dir/tests/package_smoke.gd"
+          godot --headless --audio-driver Dummy --main-pack "$source_dir/exports/linux/TomatoCut.x86_64" --script "$source_dir/tests/package_smoke.gd"
           "$source_dir/exports/linux/TomatoCut.x86_64" --headless --quit-after 10 -- --save-path=user://tests/release-linux-boot.json
 
       - name: Build and verify complete downloadable ZIPs
@@ -80,6 +80,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: |
           if ! gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
-            gh release create "$RELEASE_TAG" --verify-tag --title "Tomato Cut $RELEASE_TAG — Development milestone" --notes-file RELEASE_NOTES.md --latest
+            gh release create "$RELEASE_TAG" --verify-tag --title "Tomato Cut $RELEASE_TAG — Development milestone" --notes-file RELEASE_NOTES.md --draft
           fi
           gh release upload "$RELEASE_TAG" "exports/TomatoCut-Full-${RELEASE_TAG}.zip#FULL PACKAGE — Windows game + complete editable project" "exports/TomatoCut-Windows-${RELEASE_TAG}.zip#Windows game only" "exports/TomatoCut-Source-${RELEASE_TAG}.zip#Editable Godot source and art" exports/SHA256SUMS.txt --clobber
+          gh release edit "$RELEASE_TAG" --draft=false --latest

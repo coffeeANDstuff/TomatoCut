@@ -8,6 +8,8 @@ signal settings_requested
 signal purchase_requested(id: String)
 signal new_game_requested
 signal settings_changed
+signal catalog_viewed
+signal discovery_presented
 
 const INK := Color("213d35")
 const CREAM := Color("f4ead5")
@@ -26,6 +28,9 @@ var selected_category := "Time"
 var save_exists := false
 var confirmation: ConfirmationDialog
 var moving: Array[Dictionary] = []
+var catalog_entries: Dictionary = {}
+var category_badges: Dictionary = {}
+const VIEW_DWELL := 0.25
 
 func _ready() -> void:
 	root = Control.new()
@@ -68,6 +73,8 @@ func style(fill: Color, border: Color = Color.TRANSPARENT) -> StyleBoxFlat:
 
 func clear(next: String) -> void:
 	screen = next
+	catalog_entries.clear()
+	category_badges.clear()
 	tips.dismiss()
 	for item: Dictionary in moving:
 		if is_instance_valid(item.node):
@@ -121,6 +128,7 @@ func button(text: String, action: Callable, primary: bool = false) -> Button:
 func icon(symbol: String, title: String, action: Callable) -> InkButton:
 	var b := InkButton.new()
 	b.symbol = symbol
+	b.has_discovery = symbol == "sprout" and not progress.unseen().is_empty()
 	b.pressed.connect(action)
 	tips.bind(b,title)
 	return b
@@ -263,12 +271,19 @@ func catalog(category: String = selected_category) -> void:
 	categories.add_theme_constant_override("separation",14)
 	for name: String in ["Time","Harvest","Cutting","Money","Combos","Varieties"]:
 		var b := button(name,func(): catalog(name))
+		b.name = "Category_" + name
 		b.custom_minimum_size.x = 220
 		b.icon = load("res://assets/icons/catalog_%s.svg" % name.to_lower())
 		b.add_theme_constant_override("icon_max_width",24)
 		if name == category:
 			b.add_theme_stylebox_override("normal",style(Color("d9ddc4"),Color("56705a")))
 		categories.add_child(b)
+		tips.bind(b,name)
+		var badge := DiscoveryBadge.new()
+		badge.name = "DiscoveryBadge_"+name
+		b.add_child(badge)
+		category_badges[name] = badge
+		badge.visible = not progress.unseen(name).is_empty()
 	var mix := progress.harvest.distribution(progress.levels,progress.strength())
 	var summary := "CURRENT HARVEST\n"
 	for data: Dictionary in progress.harvest.varieties:
@@ -308,7 +323,21 @@ func upgrade_entry(d: Dictionary, count: int, list: VBoxContainer, category: Str
 	entry.add_theme_constant_override("separation",9)
 	list.add_child(entry)
 	entry.add_child(label("%02d  /  %s" % [count,category.to_upper()],13,false,MUTED))
-	entry.add_child(label(d.name,36,true))
+	var vine := CatalogVine.new()
+	entry.add_child(vine)
+	var heading := HBoxContainer.new()
+	heading.add_theme_constant_override("separation",14)
+	entry.add_child(heading)
+	var artwork := TextureRect.new()
+	artwork.texture = load("res://assets/icons/catalog_%s.svg" % d.category.to_lower())
+	artwork.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	artwork.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	artwork.custom_minimum_size = Vector2(34,34)
+	heading.add_child(artwork)
+	var title := label(d.name,36,true)
+	title.name = "EntryTitle_"+d.id
+	heading.add_child(title)
+	watch_discovery(d.id,title,vine,artwork)
 	var description := label(d.description,17,false,MUTED)
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	entry.add_child(description)
@@ -352,7 +381,9 @@ func render_varieties(list: VBoxContainer) -> void:
 		notes.add_theme_constant_override("separation",10)
 		specimen.add_child(notes)
 		notes.add_child(label("SPECIMEN %s / SOLANUM LYCOPERSICUM" % data.catalog_number,12,false,MUTED))
-		notes.add_child(label(data.name,38,true))
+		var title := label(data.name,38,true)
+		title.name = "SpecimenTitle_"+data.id
+		notes.add_child(title)
 		var description := label(data.description,17,true,MUTED)
 		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		notes.add_child(description)
@@ -372,17 +403,63 @@ func render_varieties(list: VBoxContainer) -> void:
 			handling.name = "Handling_" + data.id
 			notes.add_child(handling)
 			notes.add_child(label("Value per strike: " + Progression.cash(payout/strikes),16,false,MUTED))
-		var branch := TextureRect.new()
-		branch.texture = load("res://assets/illustrations/catalog/branch.svg")
-		branch.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		branch.stretch_mode = TextureRect.STRETCH_SCALE
-		branch.custom_minimum_size.y = 26
+		var branch := CatalogVine.new()
 		list.add_child(branch)
+		if not data.unlock_upgrade.is_empty():
+			watch_discovery(data.unlock_upgrade,title,branch,artwork)
 		var number := 0
 		for d: Dictionary in progress.definitions:
 			if d.get("tomato_id","") == data.id and d.id in progress.discovered:
 				number += 1
 				upgrade_entry(d,number,list,"Cultivation")
+
+func watch_discovery(id: String, title: Control, vine: CatalogVine, artwork: Control) -> void:
+	if id in catalog_entries or id in progress.viewed:
+		return
+	catalog_entries[id] = {"title":title,"vine":vine,"artwork":artwork,"dwell":0.0,"presented":false}
+	vine.growth = 0
+	if not progress.settings.reduced_motion:
+		title.modulate.a = 0
+		artwork.modulate.a = 0
+
+func update_discoveries(delta: float) -> void:
+	if screen != "catalog" or catalog_entries.is_empty(): return
+	var scroll := content.get_node("CatalogScroll") as ScrollContainer
+	var bounds := scroll.get_global_rect().intersection(root.get_global_rect())
+	var exposed: Array[String] = []
+	var presented := false
+	for id: String in catalog_entries:
+		var item: Dictionary = catalog_entries[id]
+		var rect: Rect2 = item.title.get_global_rect()
+		var area := rect.get_area()
+		if area <= 0 or bounds.intersection(rect).get_area() < area*.8:
+			item.dwell = 0.0
+			continue
+		if not item.presented:
+			item.presented = true
+			presented = true
+			if progress.settings.reduced_motion:
+				item.vine.growth = 1
+				item.title.modulate.a = 1
+				item.artwork.modulate.a = 1
+			else:
+				var tween := create_tween().bind_node(content).set_parallel(true)
+				tween.tween_property(item.vine,"growth",1.0,.5)
+				tween.tween_property(item.artwork,"modulate:a",1.0,.35)
+				tween.tween_property(item.title,"modulate:a",1.0,.3).set_delay(.12)
+		item.dwell += delta
+		if item.dwell >= VIEW_DWELL: exposed.append(id)
+	if presented: discovery_presented.emit() # One quiet cue per visible batch.
+	if exposed.is_empty(): return
+	for id: String in exposed: catalog_entries.erase(id)
+	if progress.mark_viewed(exposed):
+		for category: String in category_badges:
+			category_badges[category].visible = not progress.unseen(category).is_empty()
+		for child: Node in content.find_children("*","Button",true,false):
+			if child is InkButton and child.symbol == "sprout":
+				child.has_discovery = not progress.unseen().is_empty()
+				child.queue_redraw()
+		catalog_viewed.emit()
 
 func settings() -> void:
 	clear("settings")
@@ -450,6 +527,7 @@ func popup_damage(text: String, screen_position: Vector2) -> void:
 	moving.append({"node":node,"life":0.75})
 
 func _process(delta: float) -> void:
+	update_discoveries(delta)
 	for i in range(moving.size()-1,-1,-1):
 		var item: Dictionary = moving[i]
 		item.life -= delta

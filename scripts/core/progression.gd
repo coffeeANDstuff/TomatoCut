@@ -7,6 +7,7 @@ var harvest: HarvestProgression
 var money: float = 0.0
 var levels: Dictionary = {}
 var discovered: Array = []
+var viewed: Array = []
 var lifetime: Dictionary = {"rounds": 0, "cuts": 0, "earnings": 0.0, "tomatoes": 0}
 var settings: Dictionary = {"master": 0.8, "effects": 0.8, "reduced_motion": false, "reduced_effects": false, "popups": true, "damage_indicators": true, "fullscreen": false, "vsync": true}
 
@@ -21,6 +22,8 @@ func _init() -> void:
 	if not harvest_errors.is_empty():
 		push_error("Invalid tomato content: " + "; ".join(harvest_errors))
 	refresh_discovery()
+	# Introductory entries are already known; later reveals are unread.
+	viewed = discovered.duplicate()
 
 func level(id: String) -> int:
 	return int(levels.get(id, 0))
@@ -45,6 +48,21 @@ func prerequisites_met(item: Dictionary) -> bool:
 		if level(key) < int(item.requires[key]):
 			return false
 	return true
+
+func unseen(category: String = "") -> Array[String]:
+	var ids: Array[String] = []
+	for item: Dictionary in definitions:
+		if item.id in discovered and not item.id in viewed and (category.is_empty() or item.category == category):
+			ids.append(item.id)
+	return ids
+
+func mark_viewed(ids: Array[String]) -> bool:
+	var changed := false
+	for id: String in ids:
+		if id in discovered and not id in viewed:
+			viewed.append(id)
+			changed = true
+	return changed
 
 func purchase(id: String) -> bool:
 	var d := definition(id)
@@ -95,7 +113,7 @@ func complete_round(earnings: float, cuts: int, tomatoes_sliced: int = -1) -> vo
 	lifetime.earnings += earnings
 
 func snapshot() -> Dictionary:
-	return {"version": 2, "money": money, "levels": levels.duplicate(), "discovered": discovered.duplicate(), "lifetime": lifetime.duplicate(), "settings": settings.duplicate()}
+	return {"version": 2, "money": money, "levels": levels.duplicate(), "discovered": discovered.duplicate(), "viewed": viewed.duplicate(), "lifetime": lifetime.duplicate(), "settings": settings.duplicate()}
 
 func restore(data: Dictionary) -> bool:
 	# Reject unsupported/ill-typed data before mutating any progress.
@@ -120,6 +138,16 @@ func restore(data: Dictionary) -> bool:
 	for id: Variant in data.discovered:
 		if not id is String or definition(id).is_empty():
 			return false
+	# Older saves consider existing discoveries read. Newly reconstructed
+	# successors stay unread. Validate before touching the current ledger.
+	var read_ids: Variant = data.get("viewed",data.discovered)
+	if not read_ids is Array:
+		return false
+	var unique: Dictionary = {}
+	for id: Variant in read_ids:
+		if not id is String or not id in data.discovered or unique.has(id):
+			return false
+		unique[id] = true
 	for key: String in settings:
 		if not data.settings.has(key):
 			continue
@@ -131,6 +159,7 @@ func restore(data: Dictionary) -> bool:
 	money = float(data.money)
 	levels = clean
 	discovered = data.discovered.duplicate()
+	viewed = read_ids.duplicate()
 	lifetime = data.lifetime.duplicate()
 	lifetime.tomatoes = int(tomato_count)
 	for key: String in settings:

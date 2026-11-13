@@ -29,6 +29,7 @@ with zipfile.ZipFile(args.archive) as z:
     hashes = json.loads(z.read('SHA256SUMS.json'))
     assert set(hashes) == set(names)-{'SHA256SUMS.json'}, 'Manifest coverage mismatch'
     assert all(digest(z.read(name)) == value for name, value in hashes.items()), 'Payload SHA-256 mismatch'
+    assert all((z.getinfo(n).external_attr >> 16) & 0o111 for n in names if n.startswith('Source/') and n.endswith('.sh')), 'Source scripts lost executable permissions'
     for required in ['Windows/TomatoCut.exe', 'Windows/Play-Compatibility.bat', 'Source/project.godot', 'Source/AGENTS.md', 'Source/GAME_DESIGN.md', 'Source/ART_DIRECTION.md', 'Source/ROADMAP.md', 'Source/PROGRESS.md', 'Source/TESTING.md', 'Source/art/roma.blend', 'Source/assets/models/tomatoes/roma.glb', 'Source/tests/roma_tests.gd']:
         assert required in hashes, 'Missing required payload: ' + required
     info = json.loads(z.read('BUILD_INFO.json'))

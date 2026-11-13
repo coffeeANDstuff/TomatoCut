@@ -3,6 +3,7 @@ extends Button
 
 var symbol := "play"
 var ink := Color("213d35")
+var has_discovery := false
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(48, 48)
@@ -10,6 +11,8 @@ func _ready() -> void:
 	mouse_exited.connect(queue_redraw)
 
 func _draw() -> void:
+	if has_discovery:
+		draw_circle(Vector2(size.x-9,9),3.5,Color("bf4931"))
 	var c := size / 2
 	var color := Color("c84630") if is_hovered() else ink
 	var w := 1.8

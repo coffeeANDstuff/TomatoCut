@@ -46,6 +46,8 @@ func _ready() -> void:
 	ui.purchase_requested.connect(purchase)
 	ui.new_game_requested.connect(new_game)
 	ui.settings_changed.connect(settings_changed)
+	ui.catalog_viewed.connect(save_progress)
+	ui.discovery_presented.connect(func(): audio.play("discovery"))
 	apply_settings()
 	ui.home(store.has_save,store.warning)
 

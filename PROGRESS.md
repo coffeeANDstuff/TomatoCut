@@ -1,6 +1,39 @@
 # Progress
 
-## Current session — v0.4 (2026-11-12, America/Los_Angeles)
+## Current session — v0.5 (2026-11-12, America/Los_Angeles)
+
+Continued the clean v0.4 main at ee05f39 after reading the handoff and verifying its **192/192** baseline. Highest-priority incomplete task was Phase 3 catalog discovery feedback. All 3D varieties, cutting, purchases, timers, harvest and save behavior were retained.
+
+### Completed
+- **TESTED** — Persisted read/unread discovery state. Starting entries are known, genuinely revealed successors become unseen, and acknowledgement only accepts revealed stable IDs. The additive `viewed` array uses save version 2; legacy v1/v2 saves treat existing discoveries as read and keep newly reconstructed successors unseen. Malformed state is rejected before any mutation.
+- **TESTED** — Small red seed indicators on relevant category and seed-catalog navigation icons. Hidden entries do not render. A clipped title must be at least 80% exposed for a 0.25s dwell to acknowledge it. Off-screen entries retain their indicators; a single viewed entry never marks the whole category read. Batched acknowledgements save immediately.
+- **TESTED** — Original botanical connector drawing, growing vines, category/specimen artwork and printed-label fades, with one original quiet discovery sound per visible batch. Layout space is stable, seen entries do not replay, Reduced Motion presents full content immediately, and transitions free their bound tweens safely. No camera shake or modal notifications were added.
+- **TESTED** — Catalog category hover labels use the shared delayed tooltip manager. Existing artwork, page order, purchase behavior and scroll preservation are retained.
+- **TESTED** — 224 regression checks, including 32 discovery checks; the new real-input rendered discovery flow passes 14 checks at 16:10/16:9. Tests cover acknowledgement timing, clipped entries, old/current save restoration, invalid-state atomicity, batch feedback, reduced motion, replay suppression, immediate saves and safe page transitions. All existing GUI flows also pass: original loop 13, Cherry 13 and Roma 12, for 52 rendered checks total. Windows/Linux exports and 16 embedded-pack checks per target pass. Fresh source extraction and archive evidence are recorded in TESTING.md.
+- **TESTED** — GitHub release workflow YAML passed actionlint 1.7.7 and installer shell syntax checks. Official Godot editor/template archives are verified against upstream SHA-512 before CI use. Workflow is pushed; a milestone tag triggers regression/export/pack/source verification, then publishes Full/Windows/Source archives and external checksums. No personal token is stored in the repository.
+- **TESTED** — Full, Windows and Source ZIP integrity, portable executable script modes and stable archive timestamps. Prominent full-package README and release-note links target v0.5.0. This source snapshot precedes the release run. Verify publication using its GitHub Actions run and release page; later delivery evidence is recorded in the repository handoff without rewriting the milestone tag. Direct API access to api.github.com is blocked by cloud network policy; publishing uses repository-scoped GitHub Actions authentication rather than changing environment policy.
+
+### Remaining and limitations
+- **IN PROGRESS** — Phase 3's seventh Special Cutting Abilities category and functioning specified ability branch. Other 22 varieties, fuller branch navigation and Standard Red's paid harvest/mastery branch remain. No empty category or cosmetic ability placeholder was shipped.
+- **NOT STARTED** — Other 24 knives/equipment shop/modifications, prestige with all five separately gated special events, achievements/mastery, remaining five environments, cosmetics, original music and final art/accessibility pass.
+- **IN PROGRESS** — Human novice pacing, durable-fragment feel and supported-PC performance. Existing BALANCE_REPORT.md still applies to the unchanged economy/gameplay; this session did not rebalance prices from assumptions.
+- **BLOCKED** — Native Windows execution, Forward+ GPU validation, audible effects review and target-PC 60 FPS need a suitable machine. Software OpenGL/Dummy audio exercise functional paths here.
+
+### Continuity
+- New native UI classes: `CatalogVine` (drawing only) and `DiscoveryBadge` (non-interactive icon marker). `GameInterface.catalog_entries` watches unseen titles, and `Progression.viewed` is authoritative. `catalog_viewed` saves acknowledgements; `discovery_presented` plays the bounded cue. Different categories, hidden IDs, brief scroll passes and off-screen titles cannot acknowledge discoveries.
+- Keep all test ledgers under user://tests/. GUI fixtures stage funds but use production purchase and input paths. Wait for layout after navigation before injecting clicks; an early render-test failure was caused by clicking a control before its new container was laid out.
+- A title on a partly visible specimen can legitimately be read even if the rest of the artwork is clipped. Tests explicitly place the title off-screen when testing that condition; do not weaken the viewport check to satisfy a misleading fixture.
+- GitHub source tracking and downloadable release publication are authorized by the user. Builds remain ignored exports; release assets are separate. No environment draft change or environment publication is authorized/performed.
+
+## Exact next task
+Implement **Critical Slice** as the first functioning Special Cutting Abilities branch and seventh category, following GAME_DESIGN.md §9F. Use data-driven automatic proc chance and increased cutting damage, prerequisite reveals, an original icon, restrained feedback and deterministic tests. Roll once only for each accepted strike; preserve one-strike-per-stroke protection, shared family reward limits, no payout for damage alone, variety identity, ordinary rewards and saves. Revisit harvest/economy assumptions explicitly when random damage becomes available. Normal abilities must never unlock prestige-exclusive tomato events.
+
+---
+
+# Historical milestones
+The current v0.5 section supersedes incomplete-feature statements below.
+
+## Milestone — v0.4 (2026-11-12, America/Los_Angeles)
 
 Continued from clean main at 5326b14; the existing 152-check baseline passed. Highest-priority handoff task was Roma's complete durable variety branch in Phase 3. Existing starter/Cherry gameplay, assets, purchases and save compatibility were retained.
 
@@ -11,7 +44,7 @@ Continued from clean main at 5326b14; the existing 152-check baseline passed. Hi
 - **TESTED** — Three-way normalized unlocked-only harvest. Dominance respects payout per required strike: a high-quality Cherry survives suppression while durable Roma earns less per strike, and stronger Sharp Edge can make Roma dominant. Revealed unpurchased Roma never spawns.
 - **TESTED** — Roma starts with 2.5 whole resistance and 1.25 fragment resistance. Starter strength takes three distinct root strikes; Sharp Edge 1 takes two and Sharp Edge 3 takes one. Damage neither awards money/combo/cut credit nor spends the shared family reward budget. Descendants retain variety, physical resistance and premium family value.
 - **TESTED** — Remaining-strikes indicators, a short resisted-strike squash on whole fruit and an original resistance sound. Indicators have an independent persisted preference, respect reduced motion and use ink-shadowed labels. Older v1/v2 saves remain valid; default indicators are enabled when absent. Paper button/setting hover/pressed/focus text contrast corrected during visual review.
-- **TESTED** — 192 headless regression checks, 39 rendered GUI behavior checks across the original loop/Cherry/Roma flows, and close-up Roma fragment inspection. Real input exercises unlock/cultivation, 16:10/16:9 catalog readability, three simultaneous varieties, damage without payout, successful split, unrelated-target preservation, results, saving and preferences.
+- **TESTED** — 192 headless regression checks, 38 rendered GUI behavior checks across the original loop/Cherry/Roma flows, and close-up Roma fragment inspection. Real input exercises unlock/cultivation, 16:10/16:9 catalog readability, three simultaneous varieties, damage without payout, successful split, unrelated-target preservation, results, saving and preferences.
 - **TESTED** — Durable-strike probabilities/delays added to the deterministic economy model. Updated BALANCE_REPORT.md includes Roma unlock times and retained novice-pacing limitations; no prices were changed from this model alone.
 - **TESTED** — v0.4 Windows and Linux exports; 13 embedded-pack checks per export, including packaged Roma artwork/model/resistance/recuts/version. The Linux executable also boots headlessly. This uses the Linux host for pack inspection and does not establish native Windows execution.
 - **TESTED** — Combined `TomatoCut-Full-v0.4.0.zip` packaging, plus separate Source and Windows ZIPs. Full package contains the build/compatibility launcher, complete editable source/art/specification/handoff, license notices, build/source commit identity and payload SHA-256 manifests. Full payload SHA-256/CRC verification passed, and a clean source extraction/import passed all 192 checks. Exact archive/source verification is recorded in TESTING.md.

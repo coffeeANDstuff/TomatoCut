@@ -17,6 +17,7 @@ func check(value: bool, description: String) -> void:
 		push_error(description)
 
 func run() -> void:
+	create_timer(60).timeout.connect(func(): push_error("Packaged checks timed out"); quit(1))
 	var game: Node = load("res://scenes/main.tscn").instantiate()
 	game.save_path = "user://tests/packaged-cherry.json"
 	root.add_child(game)
@@ -43,7 +44,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.4.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.5.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -59,8 +60,16 @@ func run() -> void:
 	check(game.process_blade() == 1 and game.session.earnings == 30 and game.session.tomatoes_sliced == 1,"packaged Roma recut preserves family value and statistics")
 	game.finish_round(); game.show_catalog(); game.ui.catalog("Varieties")
 	check(game.ui.content.find_child("Specimen_roma",true,false) != null,"packaged Roma illustration and catalog branch load")
+	check(game.progress.unseen("Varieties").size() > 0 and game.ui.content.find_child("DiscoveryBadge_Varieties",true,false).visible,"packaged catalog advertises unseen cultivation")
+	var seen: Array[String] = ["unlock_roma"]
+	game.progress.mark_viewed(seen)
+	game.save_progress()
+	check(game.store.load_into(restored) and "unlock_roma" in restored.viewed and restored.unseen() == game.progress.unseen(),"packaged save preserves seen and unseen discovery state")
+	check(game.audio.sounds.has("discovery"),"packaged original discovery cue loads")
 	game.queue_free()
 	await process_frame
-	await create_timer(.2).timeout
+	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow
+	# its longest cue to drain after stopping/freeing the scene, even headlessly.
+	await create_timer(.75).timeout
 	print("PACKAGED RESULT: %d checks, %d failures" % [checks,failures])
 	quit(1 if failures else 0)

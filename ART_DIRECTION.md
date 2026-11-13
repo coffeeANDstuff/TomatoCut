@@ -46,3 +46,10 @@ Roma uses its own tapered oval shell, three-leaf crown, compact stem, two elonga
 The live catalog includes an original matching botanical Roma plate. Whole Roma and its descendants use sampled convex hulls from the same axes/lobes/taper, transformed with their actual 3D pose. The calyx remains decorative. Half/wedge/eighth cut faces and seeds were inspected in the rendered study; no runtime arbitrary mesh cutting is implied.
 
 A resisted strike uses a short squash on whole fruit, a restrained original resistance sound and an optional remaining-strikes label with ink shadow. Labels obey reduced motion; their preference is independent of money popups. No screen shake is introduced. Settings and ordinary catalog buttons retain ink-colored text on hover/press/focus for paper contrast. These are integrated original assets, with final material/texture refinement still in Phase 7.
+
+## Botanical discovery presentation (v0.5)
+Newly revealed entries keep the existing compact catalog order. A small tomato-red seed dot on the category and catalog navigation icons advertises unread entries. It is a quiet indicator, not a notification panel or modal. Category controls use the established one-second tooltip delay.
+
+`CatalogVine` draws an original thin ink stem with three engraved leaves. For an unseen entry, the vine grows over 0.5s as its existing category/specimen illustration and printed title fade in. The geometry reserves its final space from the start; no moving panels, layout reshuffles or camera shake. Animations bind to their catalog page and stop when it is freed. Reduced Motion shows the complete vine, illustration and label immediately.
+
+Exposure tracking uses the clipped title rectangle and a short dwell; merely opening a category does not consume all its discoveries. One quiet original discovery cue plays per visible batch. Seen entries appear fully printed on later visits. Existing botanical plates and all 3D assets are preserved. Final hand refinement remains a separate production-art pass.
