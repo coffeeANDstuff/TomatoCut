@@ -75,9 +75,12 @@ func validate() -> PackedStringArray:
 		if not (tier is float or tier is int) or not is_finite(float(tier)) or float(tier) < 0 or float(tier) != floor(float(tier)): errors.append(id+": invalid tier")
 		var lobe: Variant = entry.get("proxy_lobe")
 		if not (lobe is float or lobe is int) or not is_finite(float(lobe)) or float(lobe) < 0 or float(lobe) > .15: errors.append(id+": invalid collision lobes")
-		for key: String in ["name","catalog_number","description"]:
+		var taper: Variant = entry.get("proxy_taper")
+		if not (taper is float or taper is int) or not is_finite(float(taper)) or absf(float(taper)) > .3: errors.append(id+": invalid collision taper")
+		if not entry.get("collision") in ["circle","hull"]: errors.append(id+": invalid collision mode")
+		for key: String in ["name","catalog_number","description","flight_description"]:
 			if not entry.get(key) is String or entry[key].is_empty(): errors.append(id+": missing "+key)
-		for key: String in ["base_value","durability","base_weight","mass","model_scale","radius","gravity","launch_min","launch_max","spin"]:
+		for key: String in ["base_value","durability","fragment_durability","base_weight","mass","model_scale","radius","gravity","launch_min","launch_max","spin"]:
 			var value: Variant = entry.get(key)
 			if not (value is float or value is int) or not is_finite(float(value)) or float(value) <= 0: errors.append(id+": invalid "+key)
 		if float(entry.get("launch_max",0)) < float(entry.get("launch_min",0)): errors.append(id+": reversed launch bounds")

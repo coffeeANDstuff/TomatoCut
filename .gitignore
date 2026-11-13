@@ -3,3 +3,4 @@ exports/
 *.blend1
 *.tmp
 artifacts/
+__pycache__/

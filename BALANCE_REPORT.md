@@ -1,12 +1,12 @@
 # Early economy simulation
 
-Deterministic model using production Progression and RoundSession. This is not human playtesting or a physics simulation. Assumes 6 seconds between rounds, a 0.65s first-cut delay, 0.22s per recut, and recut success probability = adjusted first-cut accuracy × 0.85. Failed recut chains stop. Purchases use an approximate two-level payback policy with prerequisite lookahead. The automatic variety mix and quality values are modeled; first-hit accuracy scales with sqrt(model_scale) for smaller fruit. No prestige/events or equipment earnings are modeled.
+Deterministic model using production Progression and RoundSession. This is not human playtesting or a physics simulation. Assumes 6 seconds between rounds, a 0.65s first-cut delay, 0.22s per recut, and each required strike must hit. A root requires ceil(durability/strength) strikes; each extra strike adds 0.22s. Fragment strikes use adjusted accuracy × 0.85; their resistance and strike delays are also included. Failed chains stop. Purchases use an approximate two-level payback policy with prerequisite lookahead. The automatic variety mix and quality values are modeled; first-hit accuracy scales with sqrt(model_scale) for smaller fruit. No prestige/events or equipment earnings are modeled.
 
-| First-cut accuracy | 2m purchases | 10m rounds | 10m earned | No-upgrade earned | Cherry unlock | Cut / tomato counts |
-|---|---:|---:|---:|---:|---|---|
-| 55% | 2 | 29 | $140 | $62 | Not reached | 74 / 74 |
-| 80% | 3 | 28 | $5,058.11 | $97 | 7.5 min | 486 / 254 |
-| 100% | 5 | 28 | $69.8K | $111 | 5.5 min | 2137 / 666 |
+| First-cut accuracy | 2m purchases | 10m rounds | 10m earned | No-upgrade earned | Cherry unlock | Roma unlock | Cut / tomato counts |
+|---|---:|---:|---:|---:|---|---|---|
+| 55% | 2 | 29 | $140 | $62 | Not reached | Not reached | 74 / 74 |
+| 80% | 3 | 28 | $6,505.22 | $97 | 7.5 min | 8.8 min | 498 / 255 |
+| 100% | 5 | 28 | $163.0K | $111 | 5.5 min | 6.2 min | 2815 / 791 |
 
 The modeled policy made fewer than three purchases in the first two minutes at 55% accuracy. This falls short of the early pacing target under those assumptions; investigate purchase guidance and human slicing data before changing base prices.
 

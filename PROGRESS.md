@@ -1,6 +1,43 @@
 # Progress
 
-## Current session — v0.3 (2026-11-12, America/Los_Angeles)
+## Current session — v0.4 (2026-11-12, America/Los_Angeles)
+
+Continued from clean main at 5326b14; the existing 152-check baseline passed. Highest-priority handoff task was Roma's complete durable variety branch in Phase 3. Existing starter/Cherry gameplay, assets, purchases and save compatibility were retained.
+
+### Completed
+- **TESTED** — Original tapered Roma exterior/crown, two-chamber seeded half/wedge/eighth GLBs, editable `art/roma.blend`, deterministic generator mode and botanical catalog plate. Authored oval axes/taper, 0.95 scale, 1.3 mass, own launch/gravity and end-over-end tumble distinguish it from the earlier varieties.
+- **TESTED** — Pose-aware convex collision on whole Roma and its descendants, matching the authored shell profile. Empty space beside a rotated narrow axis is rejected while long-tip swipes register. Standard Red and Cherry retain their established circle collision.
+- **TESTED** — Roma Variety Unlock ($180; reveal requires Cherry Unlock + Sharp Edge 1), Harvest Frequency ($100), Premium Quality ($120) and Harvest Dominance ($300). Frequency/quality/dominance investments have real costs, growth, limits and prerequisite gates. Seventeen upgrades and three of 25 normal varieties are integrated.
+- **TESTED** — Three-way normalized unlocked-only harvest. Dominance respects payout per required strike: a high-quality Cherry survives suppression while durable Roma earns less per strike, and stronger Sharp Edge can make Roma dominant. Revealed unpurchased Roma never spawns.
+- **TESTED** — Roma starts with 2.5 whole resistance and 1.25 fragment resistance. Starter strength takes three distinct root strikes; Sharp Edge 1 takes two and Sharp Edge 3 takes one. Damage neither awards money/combo/cut credit nor spends the shared family reward budget. Descendants retain variety, physical resistance and premium family value.
+- **TESTED** — Remaining-strikes indicators, a short resisted-strike squash on whole fruit and an original resistance sound. Indicators have an independent persisted preference, respect reduced motion and use ink-shadowed labels. Older v1/v2 saves remain valid; default indicators are enabled when absent. Paper button/setting hover/pressed/focus text contrast corrected during visual review.
+- **TESTED** — 192 headless regression checks, 39 rendered GUI behavior checks across the original loop/Cherry/Roma flows, and close-up Roma fragment inspection. Real input exercises unlock/cultivation, 16:10/16:9 catalog readability, three simultaneous varieties, damage without payout, successful split, unrelated-target preservation, results, saving and preferences.
+- **TESTED** — Durable-strike probabilities/delays added to the deterministic economy model. Updated BALANCE_REPORT.md includes Roma unlock times and retained novice-pacing limitations; no prices were changed from this model alone.
+- **TESTED** — v0.4 Windows and Linux exports; 13 embedded-pack checks per export, including packaged Roma artwork/model/resistance/recuts/version. The Linux executable also boots headlessly. This uses the Linux host for pack inspection and does not establish native Windows execution.
+- **TESTED** — Combined `TomatoCut-Full-v0.4.0.zip` packaging, plus separate Source and Windows ZIPs. Full package contains the build/compatibility launcher, complete editable source/art/specification/handoff, license notices, build/source commit identity and payload SHA-256 manifests. Full payload SHA-256/CRC verification passed, and a clean source extraction/import passed all 192 checks. Exact archive/source verification is recorded in TESTING.md.
+
+### Remaining and limitations
+- **IN PROGRESS** — Phase 3: catalog category discovery indicators, botanical reveal animations/sound, seventh Special Cutting Abilities section with a real ability branch, broader navigation and the other 22 varieties. No placeholder category or bulk content replacement was added. Standard Red's full paid harvest/mastery branch remains future work.
+- **IN PROGRESS** — Early human pacing/feel, production material refinement and full accessibility/performance options. Prepared cut planes remain a hybrid approximation; no arbitrary runtime mesh cutting is claimed.
+- **NOT STARTED** — Other 24 knives and equipment shop/modifications, prestige with all five dedicated event unlock gates, achievements/mastery, five further environments, cosmetics and original music.
+- **BLOCKED** — Native Windows input/saves/audio/Forward+ and target-PC 60 FPS require a suitable test machine. Software OpenGL and Dummy audio validate functional paths here; audible review is unperformed.
+
+### Continuity
+- All old binary model assets are retained. Regenerate only the selected variety via `--cherry` / `--roma`; native GLBs remain the portable runtime assets and `.blend` import remains disabled.
+- `data/tomatoes.json` now includes `fragment_durability`, `collision`, `proxy_taper` and `flight_description`. Validate these when adding content. Whole Roma uses the same sampled profile as FragmentPiece's whole-shape proxy. Family metadata snapshots fragment resistance and cut value at launch.
+- Save schema stays at version 2; new investment IDs fit existing levels/discovery, and damage indicators are an additive defaulted setting. No prestige-reset implementation is claimed.
+- Test ledgers stay in `user://tests/`; package tests must run sequentially or use separate save paths because both default to the same isolated package ledger. All GUI/pack tests allow audio-mixer teardown.
+- The user authorized GitHub version tracking in this conversation. Keep main and annotated milestone tags, including v0.4.0; builds stay in ignored exports. No environment draft update or environment publication is authorized/performed.
+
+## Exact next task
+Complete **catalog discovery feedback** before moving to equipment: persist unseen revealed upgrade IDs, show restrained category-icon discovery indicators, mark entries viewed when actually exposed, and add the specified botanical vine/illustration/label reveal with a subtle discovery sound. Respect reduced motion, preserve stable compact layouts/scroll position, reconstruct state from old/current saves, and test that hidden content never leaks. Then add a functioning specified Special Cutting Abilities branch with the seventh category; no empty mockup. Continue preserving all 25 normal varieties, 25 knives and prestige-exclusive events.
+
+---
+
+# Historical milestones
+The current v0.4 section supersedes incomplete-feature statements in these records.
+
+## Milestone — v0.3 (2026-11-12, America/Los_Angeles)
 
 Restored commit cd9a0d5 with a clean worktree and verified its 117-check baseline. The highest-priority incomplete milestone was the first full Cherry branch in Phase 3. Existing Standard Red slicing, recuts, timing, results, upgrades and saves were retained.
 
@@ -35,7 +72,7 @@ Implement **Roma's complete branch** using distinct elongated exterior and prepa
 ---
 
 # Prior session records
-The records below describe previous milestones; the current v0.3 section supersedes their incomplete-feature statements.
+The records below describe previous milestones; the current v0.4 section supersedes their incomplete-feature statements.
 
 ## Current session — v0.2 continuation (2026-11-11, America/Los_Angeles)
 

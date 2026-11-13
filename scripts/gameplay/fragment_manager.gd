@@ -1,6 +1,8 @@
 class_name FragmentManager
 extends Node3D
 
+signal resisted(at: Vector3, remaining: float)
+
 const MAX_PIECES := 64
 const MAX_DROPS := 96
 var pieces: Array[FragmentPiece] = []
@@ -66,6 +68,7 @@ func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: f
 			continue
 		piece.durability -= strength
 		if piece.durability > 0:
+			resisted.emit(piece.position,piece.durability)
 			continue
 		var at := piece.position
 		var motion := piece.velocity

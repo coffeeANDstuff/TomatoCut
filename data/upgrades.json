@@ -210,5 +210,75 @@
       "suppression": 0.1
     },
     "tomato_id": "cherry"
+  },
+  {
+    "id": "unlock_roma",
+    "name": "Roma · Variety Unlock",
+    "category": "Varieties",
+    "description": "Firm, oval produce for a more capable blade.",
+    "effect": "Adds durable Roma to the calculated harvest: $8 base value, 2.5 resistance.",
+    "base_cost": 180,
+    "growth": 1,
+    "max_level": 1,
+    "requires": {
+      "unlock_cherry": 1,
+      "sharp_edge": 1
+    },
+    "effect_values": {
+      "unlock": 1
+    },
+    "tomato_id": "roma"
+  },
+  {
+    "id": "roma_frequency",
+    "name": "Roma · Harvest Frequency",
+    "category": "Varieties",
+    "description": "Cultivate a greater share of this firm specimen.",
+    "effect": "+50% relative Roma spawn weight per level.",
+    "base_cost": 100,
+    "growth": 1.25,
+    "max_level": 10,
+    "requires": {
+      "unlock_roma": 1
+    },
+    "effect_values": {
+      "weight_bonus": 0.5
+    },
+    "tomato_id": "roma"
+  },
+  {
+    "id": "roma_quality",
+    "name": "Roma · Premium Quality",
+    "category": "Varieties",
+    "description": "Careful cultivation rewards the patient slicer.",
+    "effect": "+25% Roma cut value per level, including separated pieces.",
+    "base_cost": 120,
+    "growth": 1.26,
+    "max_level": 10,
+    "requires": {
+      "unlock_roma": 1
+    },
+    "effect_values": {
+      "value_bonus": 0.25
+    },
+    "tomato_id": "roma"
+  },
+  {
+    "id": "roma_dominance",
+    "name": "Roma · Harvest Dominance",
+    "category": "Varieties",
+    "description": "Replace lower tiers when Roma earns more per required strike.",
+    "effect": "Suppresses less profitable lower-tier weight by 10% per level. Quality and sharpness affect eligibility.",
+    "base_cost": 300,
+    "growth": 1.32,
+    "max_level": 10,
+    "requires": {
+      "roma_frequency": 3,
+      "roma_quality": 2
+    },
+    "effect_values": {
+      "suppression": 0.1
+    },
+    "tomato_id": "roma"
   }
 ]

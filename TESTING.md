@@ -97,3 +97,29 @@ Inspected rendered home, sliced halves, results, catalog and 16:9 layout. Correc
 godot --headless --main-pack /path/to/exports/windows/TomatoCut.exe --script /path/to/tests/package_smoke.gd
 ```
 - GitHub history integration retains the remote initial README commit alongside both earlier development milestones and the v0.3 feature commit. The README add/add conflict was resolved using the complete project documentation; the remote text was only the project title. Source tracking uses main and annotated milestone tags; final push confirmation is checked against remote refs.
+
+## v0.4 durable harvest evidence — 2026-11-12 (America/Los_Angeles)
+
+- Clean restored v0.3 baseline: **152/152 passed** before changes. Final `./tools/cloud.sh ./tools/check.sh`: **192 checks passed, zero failures/skips/expected failures**, with no final script/import/resource errors or exit leaks.
+- New `tests/roma_tests.gd` exercises hidden/revealed/unlocked states, exact one-time costs, three-way normalization and selection, frequency/quality/dominance, protection of higher per-strike Cherry earnings, Sharp Edge enabling complete phase-out, v1/v2 compatibility/defaulted damage preference, content taper validation, actual model/flight/family metadata, rotated elongated hit/miss, 3/2/1-strike root resistance, resistant fragments, no damage payout or budget consumption, same-stroke denial, premium recuts, shared budget, unique tomato statistics, GUI details/settings and disk-save restoration.
+- Final rendered runners: `tests/render_smoke.gd` **13/13**, `tests/harvest_render.gd` **13/13**, `tests/roma_render.gd` **13/13**, all zero failures. Real mouse events buy/unlock/cultivate Roma, verify hidden/revealed states and read-only three-way mix, inspect its handling at 16:10/16:9, slice a production-spawned Roma in two strokes, preserve both other fruit, save/reload results and toggle damage indicators. Isolated funds are staged for GUI purchase coverage; no production ledger is touched.
+- Rendered Roma specimens, actual-size three-variety comparison, resistance indicator, split/results, preferences and `tests/fragment_gallery.gd -- --roma` were visually inspected. Confirmed elongated shell, two seed chambers, closed cut faces and integrated terminal chunks. Corrected low-contrast hover/pressed/focus text and added an ink shadow to resistance labels, then reran all three GUI suites.
+- Blender 4.3.2 `tools/build_assets.py -- --roma` exported four GLBs and editable `art/roma.blend`; outward cut-cap assertions passed. Missing optional Draco library is logged; assets are intentionally uncompressed. Existing Standard Red/Cherry/knife binary assets did not change. Botanical SVG and audio generation executed; new assets load in the runtime.
+- `tools/simulate_economy.gd` regenerated BALANCE_REPORT.md for fixed-seed 55%/80%/100% accuracy and no-upgrade baselines. The model now requires successful strikes for whole/fragment resistance and adds 0.22s per extra strike; late in-window cuts only. Reproducibility/currency conservation checks pass. This remains a simplified model, not a physics/human/prestige pacing test.
+- Windows and Linux export commands succeeded. `file` confirms PE32+ x86-64 Windows and ELF64 x86-64 Linux. Matching Linux native release booted via `--headless --quit-after 10` without script/resource errors. Official retained Godot 4.6.3 templates were used.
+- From `/tmp`, Godot's Linux editor loaded each exported binary using `--main-pack` and the absolute `tests/package_smoke.gd`: **13 checks passed per pack**, zero failures/errors. Coverage includes Cherry, Roma, version identity, three-tier dominance, model/collision, damage without payout, seeded own fragments, premium recuts, unique counts, catalog illustration and saves. Run sequentially: both use the same isolated test ledger. Release templates do not support external `--script`; this host-engine test does not run Windows native code.
+
+```sh
+./tools/cloud.sh ./tools/check.sh
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/roma_render.gd
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/fragment_gallery.gd -- --roma
+./tools/cloud.sh godot --headless --path . --export-release "Windows Desktop"
+./tools/cloud.sh godot --headless --path . --export-release "Linux Test"
+python3 tools/package.py
+python3 tools/verify_package.py exports/TomatoCut-Full-v0.4.0.zip --extract-source /tmp/tomatocut-v04-review
+# Then import/check the extracted source with Godot; no preexisting .godot cache.
+```
+
+The X11 dummy display `:98` and software llvmpipe are this session's rendered harness; `:98` must be running for those commands. Only the unsupported software VSync-mode warning appeared in final GUI runs. Native Windows input/audio/save/fullscreen, Forward+ GPU, human feel/economy, audible effects and supported-PC 60 FPS remain unperformed.
+
+- Full, Windows and Source ZIPs generated successfully. `tools/verify_package.py` verified the full archive's safe/unique paths, ZIP CRCs, complete per-file SHA-256 manifest, required build/source/art/docs, matching v0.4.0 identity and source/executable hashes. The source was extracted to a new `/tmp/tomatocut-v04-review` directory, imported with no preexisting `.godot` cache and passed **192/192** again without script/resource errors. Separate archive CRCs are checked with the final packaging pass. Source packaging excludes repository metadata, saves, caches, screenshots and generated exports; executable/art/docs/license payloads are present. Final build metadata records the committed source identity; source is tracked as the v0.4.0 milestone on GitHub.

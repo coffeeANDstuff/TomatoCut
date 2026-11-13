@@ -29,7 +29,7 @@ func configure(shape: String, ledger: CutFamily, at: Vector3, frame: Basis, moti
 	velocity = motion
 	spin = angular
 	life = 3.0
-	durability = 1.0
+	durability = ledger.fragment_durability
 	consumed = false
 	for model: Node3D in models.values():
 		model.hide()
@@ -85,16 +85,18 @@ static func shape_proxy(shape: String, variety_id: String = "standard_red") -> P
 	var profile := catalog.definition(variety_id)
 	var axes: Array = profile.proxy_axes
 	var points := PackedVector3Array()
-	for ring in range(9):
-		var a := PI * 0.5 * ring / 8.0
+	var rings := 16 if shape == "whole" else 8
+	for ring in range(rings+1):
+		var a := PI * (1.0 if shape == "whole" else 0.5) * ring / rings
 		for segment in range(24):
 			var t := TAU * segment / 24.0
 			var x := cos(a)
 			var y := sin(a) * cos(t)
 			var z := sin(a) * sin(t)
 			var lobe := 1 + float(profile.proxy_lobe) * cos(5 * atan2(z, x)) * (1-y*y)
-			var vertex := Vector3(x*float(axes[0])*lobe, y*float(axes[1]), z*float(axes[2])*lobe)
-			if shape != "half" and vertex.y < -0.0001:
+			var taper := 1.0 - float(profile.get("proxy_taper",0))*y
+			var vertex := Vector3(x*float(axes[0])*lobe*taper, y*float(axes[1]), z*float(axes[2])*lobe*taper)
+			if shape in ["wedge","chunk"] and vertex.y < -0.0001:
 				continue
 			if shape == "chunk" and vertex.y > vertex.x + 0.0001:
 				continue

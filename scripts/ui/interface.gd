@@ -37,6 +37,9 @@ func _ready() -> void:
 	theme.default_font_size = 18
 	for type: String in ["Label","Button","CheckButton"]:
 		theme.set_color("font_color",type,INK)
+	for type: String in ["Button","CheckButton"]:
+		for color_name: String in ["font_hover_color","font_pressed_color","font_hover_pressed_color","font_focus_color"]:
+			theme.set_color(color_name,type,INK)
 	for state: String in ["normal","hover","pressed","disabled","focus"]:
 		var s := style(CREAM if state == "normal" else Color("e4dcc4"), Color("b3b69c"))
 		s.content_margin_left = 18
@@ -355,13 +358,20 @@ func render_varieties(list: VBoxContainer) -> void:
 		notes.add_child(description)
 		var status := label("Cultivated · automatically available" if available else "Awaiting Variety Unlock",16)
 		notes.add_child(status)
-		notes.add_child(label("%s base value · %.0f resistance" % [Progression.cash(data.base_value),data.durability],16))
-		notes.add_child(label("Flight: small & fast" if data.id == "cherry" else "Flight: balanced & steady",16,false,MUTED))
+		notes.add_child(label("%s base value · %s resistance" % [Progression.cash(data.base_value),str(data.durability)],16))
+		var flight := label("Flight: " + data.flight_description,16,false,MUTED)
+		flight.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		notes.add_child(flight)
 		var share := label("Current harvest: %.1f%%" % (float(mix.get(data.id,0))*100),20,true)
 		share.name = "SpawnShare_" + data.id
 		notes.add_child(share)
 		if available:
-			notes.add_child(label("Current cut: " + Progression.cash(progress.reward(1,progress.harvest.cut_value(data.id,progress.levels))),18))
+			var strikes := int(ceilf(float(data.durability)/progress.strength()))
+			var payout := progress.reward(1,progress.harvest.cut_value(data.id,progress.levels))
+			var handling := label("%d %s to split · %s per cut" % [strikes,"strike" if strikes == 1 else "strikes",Progression.cash(payout)],18)
+			handling.name = "Handling_" + data.id
+			notes.add_child(handling)
+			notes.add_child(label("Value per strike: " + Progression.cash(payout/strikes),16,false,MUTED))
 		var branch := TextureRect.new()
 		branch.texture = load("res://assets/illustrations/catalog/branch.svg")
 		branch.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -380,7 +390,7 @@ func settings() -> void:
 	header("A well-kept kitchen", "PREFERENCES  /  SAVED AUTOMATICALLY")
 	var list := VBoxContainer.new()
 	place(list,Vector2(120,220),Vector2(900,480))
-	list.add_theme_constant_override("separation",20)
+	list.add_theme_constant_override("separation",14)
 	for item: Array in [["master","Master volume"],["effects","Sound effects"]]:
 		var row := HBoxContainer.new()
 		list.add_child(row)
@@ -397,8 +407,9 @@ func settings() -> void:
 			progress.settings[key] = value
 			settings_changed.emit())
 		row.add_child(slider)
-	for item: Array in [["reduced_motion","Reduced motion"],["reduced_effects","Reduced juice effects"],["popups","Show earnings popups"],["fullscreen","Fullscreen"],["vsync","VSync"]]:
+	for item: Array in [["reduced_motion","Reduced motion"],["reduced_effects","Reduced juice effects"],["popups","Show earnings popups"],["damage_indicators","Show damage indicators"],["fullscreen","Fullscreen"],["vsync","VSync"]]:
 		var toggle := CheckButton.new()
+		toggle.name = "Setting_" + item[0]
 		toggle.text = item[1]
 		toggle.button_pressed = progress.settings[item[0]]
 		var key: String = item[0]
@@ -424,6 +435,18 @@ func popup_cash(text: String, screen_position: Vector2) -> void:
 	var node := label(text,26,true,CREAM)
 	root.add_child(node)
 	node.position = screen_position-Vector2(20,25)
+	moving.append({"node":node,"life":0.75})
+
+func popup_damage(text: String, screen_position: Vector2) -> void:
+	if not progress.settings.damage_indicators:
+		return
+	var node := label(text,22,true,CREAM)
+	node.add_theme_color_override("font_shadow_color",INK)
+	node.add_theme_constant_override("shadow_offset_x",1)
+	node.add_theme_constant_override("shadow_offset_y",1)
+	node.name = "DamageIndicator"
+	root.add_child(node)
+	node.position = screen_position-Vector2(30,50)
 	moving.append({"node":node,"life":0.75})
 
 func _process(delta: float) -> void:

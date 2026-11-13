@@ -8,7 +8,7 @@ var money: float = 0.0
 var levels: Dictionary = {}
 var discovered: Array = []
 var lifetime: Dictionary = {"rounds": 0, "cuts": 0, "earnings": 0.0, "tomatoes": 0}
-var settings: Dictionary = {"master": 0.8, "effects": 0.8, "reduced_motion": false, "reduced_effects": false, "popups": true, "fullscreen": false, "vsync": true}
+var settings: Dictionary = {"master": 0.8, "effects": 0.8, "reduced_motion": false, "reduced_effects": false, "popups": true, "damage_indicators": true, "fullscreen": false, "vsync": true}
 
 func _init() -> void:
 	definitions = JSON.parse_string(FileAccess.get_file_as_string(DEFINITIONS_PATH))

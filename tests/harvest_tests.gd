@@ -2,7 +2,7 @@ extends RefCounted
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
-	check.call(p.harvest.validate().is_empty(), "two variety definitions, assets and progression references are valid")
+	check.call(p.harvest.validate().is_empty(), "variety definitions, assets and progression references are valid")
 	check.call(p.harvest.distribution(p.levels,p.strength()) == {"standard_red":1.0}, "fresh harvest contains Standard Red only")
 	check.call(not "unlock_cherry" in p.discovered and p.harvest.choose(p.levels,p.strength(),.999) == "standard_red", "undiscovered Cherry cannot spawn")
 	p.money = 10000

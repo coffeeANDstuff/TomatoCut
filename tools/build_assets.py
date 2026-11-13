@@ -5,8 +5,10 @@ from mathutils import Vector, Matrix
 from mathutils.geometry import convex_hull_2d
 ROOT = Path(__file__).resolve().parents[1]
 CHERRY = "--cherry" in sys.argv
-AXES = (.54,.60,.54) if CHERRY else (.6,.53,.53)
-LOBE = .008 if CHERRY else .045
+ROMA = "--roma" in sys.argv
+AXES = (.40,.78,.40) if ROMA else ((.54,.60,.54) if CHERRY else (.6,.53,.53))
+LOBE = .012 if ROMA else (.008 if CHERRY else .045)
+TAPER = .15 if ROMA else 0.0
 random.seed(431)
 bpy.ops.object.select_all(action='SELECT'); bpy.ops.object.delete(use_global=False)
 
@@ -20,6 +22,10 @@ skin=mat('Tomato skin',(.64,.028,.012),.3); flesh=mat('Moist cut flesh',(.93,.17
 if CHERRY:
  skin.diffuse_color=(.58,.016,.009,1); skin.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value=skin.diffuse_color
  flesh.diffuse_color=(.82,.11,.08,1); flesh.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value=flesh.diffuse_color
+
+if ROMA:
+ skin.diffuse_color=(.58,.025,.01,1); skin.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value=skin.diffuse_color
+ flesh.diffuse_color=(.84,.12,.075,1); flesh.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value=flesh.diffuse_color
 
 def mesh(name,verts,faces,material):
  me=bpy.data.meshes.new(name); me.from_pydata(verts,[],faces); me.update(); ob=bpy.data.objects.new(name,me); bpy.context.collection.objects.link(ob); ob.data.materials.append(material)
@@ -40,25 +46,28 @@ def fruit_surface(half=False):
    if half: x=math.cos(a); y=math.sin(a)*math.cos(t); z=math.sin(a)*math.sin(t)
    else: x=math.sin(a)*math.cos(t); y=math.cos(a); z=math.sin(a)*math.sin(t)
    lobe=1+LOBE*math.cos(5*math.atan2(z,x))*(1-y*y)
-   vs.append((x*AXES[0]*lobe,y*AXES[1],z*AXES[2]*lobe))
+   taper=1-TAPER*y
+   vs.append((x*AXES[0]*lobe*taper,y*AXES[1],z*AXES[2]*lobe*taper))
  for i in range(rings):
   for j in range(segs):
    a=i*segs+j; b=i*segs+(j+1)%segs
    fs.append((a,b,b+segs,a+segs))
- return mesh('Prepared right half' if half else ('Cherry' if CHERRY else 'Standard Red'),vs,[tuple(reversed(f)) for f in fs] if half else fs,skin)
+ return mesh('Prepared right half' if half else ('Roma' if ROMA else ('Cherry' if CHERRY else 'Standard Red')),vs,[tuple(reversed(f)) for f in fs] if half else fs,skin)
 
 def crown():
- count=4 if CHERRY else 5
+ count=4 if CHERRY else (3 if ROMA else 5)
  for j in range(count):
   t=math.tau*j/count
-  top=.60 if CHERRY else .53
-  length=.30 if CHERRY else .39
+  top=AXES[1]
+  length=.26 if ROMA else (.30 if CHERRY else .39)
   vs=[(0,top-.015,0),(.10*math.cos(t-.6),top+.01,.10*math.sin(t-.6)),(length*math.cos(t),top-.10,length*math.sin(t)),(.10*math.cos(t+.6),top+.01,.10*math.sin(t+.6))]
   ob=mesh('Calyx leaf',vs,[(0,1,2,3)],green); so=ob.modifiers.new('Leaf thickness','SOLIDIFY'); so.thickness=.018
- sphere('Stem',(0,.70 if CHERRY else .61,0),(.035,.17,.035) if CHERRY else (.046,.15,.046),green)
+ sphere('Stem',(0,.88 if ROMA else (.70 if CHERRY else .61),0),(.035,.12,.035) if ROMA else ((.035,.17,.035) if CHERRY else (.046,.15,.046)),green)
 
 def export(name):
- if CHERRY: name=name.replace('standard_red.glb','cherry.glb').replace('standard_','cherry_')
+ if CHERRY or ROMA:
+  prefix='roma' if ROMA else 'cherry'
+  name=name.replace('standard_red.glb',prefix+'.glb').replace('standard_',prefix+'_')
  bpy.context.view_layer.update()
  for ob in list(bpy.context.scene.objects):
   ob.matrix_world = Matrix.Rotation(math.pi / 2, 4, 'X') @ ob.matrix_world
@@ -70,16 +79,16 @@ fruit_surface(); crown(); export('assets/models/tomatoes/standard_red.glb')
 def prepared_half():
  fruit_surface(True)
  # The cap is a seed-filled flesh disk on the x=0 plane. The prepared half exposes it during tumble.
- vs=[(-.003,0,0)]+[(-.003,AXES[1]*math.cos(i*math.tau/48),AXES[2]*math.sin(i*math.tau/48)) for i in range(48)]
+ vs=[(-.003,0,0)]+[(-.003,AXES[1]*math.cos(i*math.tau/48),AXES[2]*math.sin(i*math.tau/48)*(1-TAPER*math.cos(i*math.tau/48))) for i in range(48)]
  mesh('Cut flesh',vs,[(0,(i+1)%48+1,i+1) for i in range(48)],flesh)
  sphere('Pale central core',(-.014,0,0),(.015,.19,.19),core)
- for j in range(3 if CHERRY else 5):
-  t=math.tau*j/(3 if CHERRY else 5)
-  y=.30*math.cos(t); z=.30*math.sin(t)
-  ob=sphere('Seed chamber',(-.012,y,z),(.013,.12,.085),chamber); ob.rotation_euler.x=t
+ for j in range(2 if ROMA else (3 if CHERRY else 5)):
+  t=math.tau*j/(2 if ROMA else (3 if CHERRY else 5))
+  y=(.40 if ROMA else .30)*math.cos(t); z=(.22 if ROMA else .30)*math.sin(t)
+  ob=sphere('Seed chamber',(-.012,y,z),(.013,.18,.09) if ROMA else (.013,.12,.085),chamber); ob.rotation_euler.x=t
   for k in range(4):
    a=t+(k-1.5)*.25
-   ob=sphere('Seed',(-.029,.30*math.cos(a),.30*math.sin(a)),(.012,.033,.018),seed); ob.rotation_euler.x=a
+   ob=sphere('Seed',(-.029,(.40 if ROMA else .30)*math.cos(a),(.22 if ROMA else .30)*math.sin(a)),(.012,.033,.018),seed); ob.rotation_euler.x=a
 
 def clip_fragment(normal):
  # Apply object transforms before clipping, keeping the pre-export Godot axes.
@@ -123,7 +132,7 @@ ob=sphere('Eighth seed chamber',(.174,.186,0),(.009,.09,.17),chamber); ob.rotati
 for z in [-.095,.095]:
  ob=sphere('Eighth seed',(.164,.196,z),(.012,.032,.018),seed); ob.rotation_euler.z=-math.pi/4
 export('assets/models/fragments/standard_chunk.glb')
-if not CHERRY:
+if not CHERRY and not ROMA:
  # Blunt butter blade: actual prism, matching local edge endpoints used by KnifeController.
  outline=[(-.08,-.10),(.70,-.10),(.85,-.035),(.87,.035),(.79,.115),(.59,.15),(-.08,.12)]
  vs=[(x,y,z) for z in [-.025,.025] for x,y in outline]; n=len(outline)
@@ -136,7 +145,9 @@ if not CHERRY:
  export('assets/models/knives/rusty_butter.glb')
 # Save all five integrated models together for source inspection.
 paths=['assets/models/tomatoes/standard_red.glb','assets/models/fragments/standard_half.glb','assets/models/fragments/standard_wedge.glb','assets/models/fragments/standard_chunk.glb','assets/models/knives/rusty_butter.glb']
-if CHERRY: paths=[path.replace('standard_red.glb','cherry.glb').replace('standard_','cherry_') for path in paths if '/knives/' not in path]
+if CHERRY or ROMA:
+ prefix='roma' if ROMA else 'cherry'
+ paths=[path.replace('standard_red.glb',prefix+'.glb').replace('standard_',prefix+'_') for path in paths if '/knives/' not in path]
 for path in paths:
  bpy.ops.import_scene.gltf(filepath=str(ROOT/path))
-bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/('art/cherry.blend' if CHERRY else 'art/vertical_slice.blend')))
+bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/('art/roma.blend' if ROMA else ('art/cherry.blend' if CHERRY else 'art/vertical_slice.blend'))))

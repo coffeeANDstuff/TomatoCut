@@ -3,6 +3,7 @@ extends RefCounted
 # A reproducible balance model, not a playtest or a physics substitute.
 # Uses production purchases, prices, reveals, scheduling and round rewards.
 # Assumptions: 6s between rounds; 0.65s launch-to-first-cut; 0.22s per recut;
+# Each required root/fragment strike must hit; extra strikes add 0.22s.
 # Hit accuracy is scaled by sqrt(model_scale) for smaller varieties.
 # P(next successful recut)=adjusted accuracy*0.85.
 const MENU_SECONDS := 6.0
@@ -31,12 +32,15 @@ static func simulate(accuracy: float, minutes: float, seed_value: int, investing
 					var variety := progress.harvest.choose(progress.levels,progress.strength(),rng.randf())
 					var data := progress.harvest.definition(variety)
 					var hit_chance := accuracy*minf(1,sqrt(float(data.model_scale)))
-					if hit_chance <= 0 or rng.randf() > hit_chance: continue
+					var root_strikes := int(ceilf(float(data.durability)/progress.strength()))
+					var piece_strikes := int(ceilf(float(data.fragment_durability)/progress.strength()))
+					if hit_chance <= 0 or rng.randf() > pow(hit_chance,root_strikes): continue
 					var cut_value := progress.harvest.cut_value(variety,progress.levels)
-					pending.append({"at":round_elapsed+FIRST_CUT_DELAY,"first":true,"value":cut_value})
+					var delay := FIRST_CUT_DELAY+(root_strikes-1)*RECUT_DELAY
+					pending.append({"at":round_elapsed+delay,"first":true,"value":cut_value})
 					for recut in range(1,progress.max_cuts()):
-						if rng.randf() > hit_chance*0.85: break
-						pending.append({"at":round_elapsed+FIRST_CUT_DELAY+recut*RECUT_DELAY,"first":false,"value":cut_value})
+						if rng.randf() > pow(hit_chance*0.85,piece_strikes): break
+						pending.append({"at":round_elapsed+delay+recut*piece_strikes*RECUT_DELAY,"first":false,"value":cut_value})
 			for i in range(pending.size()-1,-1,-1):
 				if pending[i].at <= round_elapsed:
 					session.record_cut(progress,pending[i].first,pending[i].value)
@@ -62,10 +66,13 @@ static func rate(progress: Progression, accuracy: float) -> float:
 	var expected_cuts_per_launch := 0.0
 	var expected_value_per_launch := 0.0
 	for variety: String in mix:
-		var hit_chance := accuracy*minf(1,sqrt(float(progress.harvest.definition(variety).model_scale)))
+		var data := progress.harvest.definition(variety)
+		var hit_chance := accuracy*minf(1,sqrt(float(data.model_scale)))
+		var root_strikes := int(ceilf(float(data.durability)/progress.strength()))
+		var piece_strikes := int(ceilf(float(data.fragment_durability)/progress.strength()))
 		var yield_per_tomato := 0.0
-		for cut in range(progress.max_cuts()): yield_per_tomato += pow(hit_chance*.85,cut)
-		var cuts := float(mix[variety])*hit_chance*yield_per_tomato
+		for cut in range(progress.max_cuts()): yield_per_tomato += pow(hit_chance*.85,cut*piece_strikes)
+		var cuts := float(mix[variety])*pow(hit_chance,root_strikes)*yield_per_tomato
 		expected_cuts_per_launch += cuts
 		expected_value_per_launch += cuts*progress.harvest.cut_value(variety,progress.levels)
 	var duration := progress.round_duration()
@@ -96,7 +103,7 @@ static func choose_purchase(progress: Progression, accuracy: float) -> Array[Str
 			if cost <= progress.money and score > best_score:
 				best = plan.duplicate(); best_score = score
 	# Look ahead across the Sharp Edge -> Extra Cuts reveal; strength alone
-	# primarily opens Extra Cuts before durable varieties arrive.
+	# also opens the durable Roma branch after Cherry is unlocked.
 	if progress.level("sharp_edge") == 0:
 		var preview := Progression.new()
 		preview.restore(progress.snapshot()); preview.money = 1e12

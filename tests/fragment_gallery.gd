@@ -12,6 +12,7 @@ func run() -> void:
 	root.add_child(manager)
 	manager.set_physics_process(false)
 	var variety := "cherry" if "--cherry" in OS.get_cmdline_user_args() else "standard_red"
+	if "--roma" in OS.get_cmdline_user_args(): variety = "roma"
 	var index := 0
 	for shape: String in ["half","wedge","chunk"]:
 		var frame := Basis.from_euler(Vector3(-.55,.85,-.15))
@@ -25,7 +26,8 @@ func run() -> void:
 	for i in range(5): await process_frame
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute("res://artifacts")
-	var error := root.get_texture().get_image().save_png("res://artifacts/20-cherry-fragments.png" if variety == "cherry" else "res://artifacts/12-fragment-study.png")
+	var target := "12-fragment-study" if variety == "standard_red" else "20-cherry-fragments" if variety == "cherry" else "30-roma-fragments"
+	var error := root.get_texture().get_image().save_png("res://artifacts/"+target+".png")
 	manager.queue_free(); kitchen.queue_free()
 	await process_frame
 	quit(0 if error == OK else 1)

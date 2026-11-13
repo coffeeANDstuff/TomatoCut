@@ -31,7 +31,11 @@
     "unlock_upgrade": "",
     "frequency_upgrade": "",
     "quality_upgrade": "",
-    "dominance_upgrade": ""
+    "dominance_upgrade": "",
+    "collision": "circle",
+    "proxy_taper": 0,
+    "fragment_durability": 1,
+    "flight_description": "balanced & steady"
   },
   {
     "id": "cherry",
@@ -65,6 +69,49 @@
     "unlock_upgrade": "unlock_cherry",
     "frequency_upgrade": "cherry_frequency",
     "quality_upgrade": "cherry_quality",
-    "dominance_upgrade": "cherry_dominance"
+    "dominance_upgrade": "cherry_dominance",
+    "collision": "circle",
+    "proxy_taper": 0,
+    "fragment_durability": 1,
+    "flight_description": "small & fast"
+  },
+  {
+    "id": "roma",
+    "name": "Roma",
+    "catalog_number": "003",
+    "description": "An elongated, firm-fleshed specimen. A little resistance is the mark of a serious culinary ambition.",
+    "tier": 2,
+    "base_value": 8,
+    "durability": 2.5,
+    "fragment_durability": 1.25,
+    "base_weight": 0.55,
+    "mass": 1.3,
+    "model_scale": 0.95,
+    "radius": 0.74,
+    "gravity": 5.6,
+    "launch_min": 8,
+    "launch_max": 8.6,
+    "spin": 0.6,
+    "spin_z": 1.8,
+    "proxy_axes": [
+      0.4,
+      0.78,
+      0.4
+    ],
+    "proxy_lobe": 0.012,
+    "proxy_taper": 0.15,
+    "collision": "hull",
+    "flight_description": "firm oval · end-over-end tumble",
+    "model": "res://assets/models/tomatoes/roma.glb",
+    "illustration": "res://assets/illustrations/catalog/roma.svg",
+    "fragments": {
+      "half": "res://assets/models/fragments/roma_half.glb",
+      "wedge": "res://assets/models/fragments/roma_wedge.glb",
+      "chunk": "res://assets/models/fragments/roma_chunk.glb"
+    },
+    "unlock_upgrade": "unlock_roma",
+    "frequency_upgrade": "roma_frequency",
+    "quality_upgrade": "roma_quality",
+    "dominance_upgrade": "roma_dominance"
   }
 ]

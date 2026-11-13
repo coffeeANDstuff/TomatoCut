@@ -9,7 +9,8 @@ standard='''<path d="M180 216q-21-90 16-171m-14 92q-51-18-74-57 52-10 75 32m1-17
 cherry='''<path d="M178 357q-23-173 19-298m-18 135q-60-55-84-57m83 39q63-27 91-7"/>'''+leaf+'''<path d="M152 217q-21-39-53-40m86 39q-4 28-9 53m27-73q46-13 63 18"/>'''
 for x,y,r in [(98,238,49),(180,316,48),(266,254,42)]:
  cherry+=f'<circle cx="{x}" cy="{y}" r="{r}" fill="#c64b33"/><circle cx="{x}" cy="{y}" r="{r}" fill="url(#hatch)"/><path d="m{x} {y-r+7} -20 -12 15 1 6 -17 6 17 17 -5 -13 13 7 9 -17 -5 -16 8Z" fill="#6d865b"/><path d="M{x-r*.55} {y-r*.47}q{-r*.35} {r*.55} {-r*.03} {r*.97}" stroke="#f0bb8e" stroke-width="3"/>'
-for name,body in [('standard_red',standard),('cherry',cherry)]:
+roma='<path d="M180 230q-20-98 12-167m-9 85q-57-49-91-27 18 49 87 44m5-47q39-52 77-37-13 49-75 52"/><path d="M176 204c-45-13-75 21-78 60-6 69 26 112 77 116 58-2 90-49 80-116-5-42-35-71-79-60Z" fill="#c64b33"/><path d="M176 204c-45-13-75 21-78 60-6 69 26 112 77 116 58-2 90-49 80-116-5-42-35-71-79-60Z" fill="url(#hatch)"/><path d="m176 211-31-20 24 3 10-26 7 28 27-10-16 20 9 13-24-7-23 12Z" fill="#6d865b"/><path d="M128 238q-30 79 6 114m15-123q-24 74-2 124m82-108q23 73-12 105" stroke="#f0bb8e" stroke-width="2.5"/>'
+for name,body in [('standard_red',standard),('cherry',cherry),('roma',roma)]:
  svg=head+body+'<path d="M50 389h260m-120-4v9m-34-7v5m68-5v5" stroke-width="1"/><circle cx="42" cy="38" r="13" stroke-width=".8"/><path d="m34 38 5 4 12-11" stroke-width="1"/></g></svg>'
  (root/(name+'.svg')).write_text(svg)
 
