@@ -1,18 +1,18 @@
 # Tomato Cut
 
-**[DOWNLOAD THE FULL PACKAGE — v0.6.0 (Windows game + complete source and art)](https://github.com/coffeeANDstuff/TomatoCut/releases/download/v0.6.0/TomatoCut-Full-v0.6.0.zip)**
+**[DOWNLOAD THE FULL PACKAGE — v0.7.0 (Windows game + complete source and art)](https://github.com/coffeeANDstuff/TomatoCut/releases/download/v0.7.0/TomatoCut-Full-v0.7.0.zip)**
 
-[Latest release and all downloads](https://github.com/coffeeANDstuff/TomatoCut/releases/latest) · [Windows game only](https://github.com/coffeeANDstuff/TomatoCut/releases/download/v0.6.0/TomatoCut-Windows-v0.6.0.zip) · [Version history](https://github.com/coffeeANDstuff/TomatoCut/releases)
+[Latest release and all downloads](https://github.com/coffeeANDstuff/TomatoCut/releases/latest) · [Windows game only](https://github.com/coffeeANDstuff/TomatoCut/releases/download/v0.7.0/TomatoCut-Windows-v0.7.0.zip) · [Version history](https://github.com/coffeeANDstuff/TomatoCut/releases)
 
 Unzip the full package and run **`Windows/TomatoCut.exe`**. The complete editable Godot project, Blender sources and handoff documents are in **`Source/`**. This is an ongoing development milestone; native Windows playtesting is still pending.
 
 ---
 
-A rather serious institution for slicing tomatoes. An ongoing **Godot 4.6 / GDScript** Windows game project. The v0.6 milestone implements Standard Red, Cherry and Roma tomatoes, one knife, seeded halves/wedges/eighths, swept slicing and recutting, ten-second starting rounds, results/replay, eighteen upgrades, automatic harvest progression, saving and an illustrated culinary catalog. It is not the complete game described in the master design.
+A rather serious institution for slicing tomatoes. An ongoing **Godot 4.6 / GDScript** Windows game project. The v0.7 milestone implements Standard Red, Cherry and Roma tomatoes, two knives with a buy/equip catalog and rotating 3D previews, seeded halves/wedges/eighths, swept slicing and recutting, ten-second starting rounds, results/replay, eighteen upgrades, automatic harvest progression, saving and an illustrated culinary catalog. It is not the complete game described in the master design.
 
 ## Play the Windows milestone
 
-The complete `TomatoCut-Full-v0.6.0.zip` includes `Windows/` (ready-to-play build) and `Source/` (complete editable project, art, tests and documentation). Unzip it and run `Windows/TomatoCut.exe`. A separate `TomatoCut-Windows-v0.6.0.zip` is also produced. No Godot editor is required. Use a Vulkan-capable Windows PC for the default Forward+ renderer. If your hardware cannot run it, `Play-Compatibility.bat` starts the same build with Godot's OpenGL compatibility renderer.
+The complete `TomatoCut-Full-v0.7.0.zip` includes `Windows/` (ready-to-play build) and `Source/` (complete editable project, art, tests and documentation). Unzip it and run `Windows/TomatoCut.exe`. A separate `TomatoCut-Windows-v0.7.0.zip` is also produced. No Godot editor is required. Use a Vulkan-capable Windows PC for the default Forward+ renderer. If your hardware cannot run it, `Play-Compatibility.bat` starts the same build with Godot's OpenGL compatibility renderer.
 
 - Click **Begin slicing** (or **Continue**).
 - Move the mouse through airborne tomatoes. No mouse button is needed to slice.
@@ -26,9 +26,10 @@ The complete `TomatoCut-Full-v0.6.0.zip` includes `Windows/` (ready-to-play buil
 - **Critical Slice** reveals in **Abilities** after Roma Unlock and Extra Cuts 1. Its first level costs $25 and grants an 8% chance of double cutting damage on each accepted strike, up to 40% at level 5. Successful cuts keep their usual payouts. A critical at Sharp Edge 1 can split a fresh Roma in one stroke; its catalog also shows average strikes and expected value. The ability works automatically on recuts and respects the shared family limit.
 - **Discoveries** appear as small red seed dots on the seed-catalog and category icons. Only a revealed entry whose title is actually in view is acknowledged, after a short dwell. Its vine grows and its illustration/label fades in once; Reduced Motion shows it immediately. Unseen entries below the scroll area keep their dots, and read state saves automatically.
 - Hover navigation icons for one second to see their labels. Settings include volume, reduced motion/effects, separate earnings popups/damage indicators, fullscreen and VSync.
+- Open the **knife icon** from Home, Results or the menu navigation for the equipment catalog. The starter Rusty Butter Knife is already owned. Buy the **Plastic Picnic Knife** for **$20**, then **Equip** it separately. Its molded blade has about 22% more cutting-edge length; it grants reach rather than extra damage or money. Re-equipping either owned knife is free. Reduced Motion freezes the rotating 3D preview.
 - **New game** asks for confirmation. Normal progress saves automatically after rounds, purchases and settings changes.
 
-Earned cut rewards are rounded to whole cents; existing saved balances are preserved. Variety investments and discovery acknowledgements use the version 2 level/discovery schema with an additive `viewed` list. Existing v1/v2 saves without it treat their known entries as read; newly reconstructed successors stay unseen. Version 1 saves migrate automatically to version 2, preserving money, upgrades, discoveries and settings while adding a separate lifetime tomato count.
+Earned cut rewards are rounded to whole cents; existing saved balances are preserved. Save version **3** adds owned/equipped equipment. Existing **v1/v2** saves migrate automatically, retaining money, upgrades, discovery/read state and settings, and receive only the free starter knife. Version 1 also gains the separate lifetime tomato count. Invalid v3 inventory is rejected before any progress changes; the existing backup/recovery system applies. Older game builds cannot read the new schema. Purchased knives are normal progress and reset on New Game; prestige reset integration is still future work.
 
 Windows progress is stored in `%APPDATA%\Godot\app_userdata\Tomato Cut\progress.json`; a `.bak` backup is retained. Invalid saves are recovered or preserved in `.corrupt.*` files, with a visible notice. Closing an unfinished round forfeits that round's unsaved earnings.
 
@@ -54,11 +55,12 @@ No game plugins, package manager, credentials or network service are needed. The
 blender --background --python tools/build_assets.py
 blender --background --python tools/build_assets.py -- --cherry
 blender --background --python tools/build_assets.py -- --roma
+blender --background --python tools/build_equipment_assets.py
 python3 tools/build_catalog_art.py
 python3 tools/build_audio.py
 ```
 
-`art/vertical_slice.blend`, `art/cherry.blend`, `art/roma.blend` and their generator are the editable source. `art/.gdignore` prevents redundant direct Blender imports; the game uses committed GLBs. Fonts are Liberation, with license in `assets/fonts/LICENSE.txt`. All game models, effects, icons and UI decoration were authored for this project. The code-generated assets are an initial integrated art pass; hand refinement and illustrated content remain in the production roadmap.
+`art/vertical_slice.blend`, `art/cherry.blend`, `art/roma.blend`, `art/picnic_knife.blend` and their generators are the editable source. `art/.gdignore` prevents redundant direct Blender imports; the game uses committed GLBs. Fonts are Liberation, with license in `assets/fonts/LICENSE.txt`. All game models, effects, icons and UI decoration were authored for this project. The code-generated assets are an initial integrated art pass; hand refinement and illustrated content remain in the production roadmap.
 
 ## Validate and export
 
@@ -70,6 +72,7 @@ godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/roma_render.gd
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/discovery_render.gd
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/critical_render.gd
+godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/equipment_render.gd
 ```
 
 To reproduce the early balance model and inspect prepared fragment assets:
@@ -91,7 +94,7 @@ Install official **Godot 4.6.3 export templates** using the editor's Export Temp
 mkdir -p exports/windows
 godot --headless --path . --export-release "Windows Desktop"
 python3 tools/package.py
-python3 tools/verify_package.py exports/TomatoCut-Full-v0.6.0.zip
+python3 tools/verify_package.py exports/TomatoCut-Full-v0.7.0.zip
 ```
 
 For embedded resource-pack smoke testing, run the Godot editor executable from outside the checkout with `--main-pack /absolute/path/to/exported-binary --script /absolute/path/to/tests/package_smoke.gd`. This tests packed game resources with the host engine; it is separate from native Windows validation.
@@ -111,7 +114,7 @@ This wrapper is optional outside the managed workspace. Live display processes d
 
 ## Version history
 
-Source milestones are tracked with Git commits and annotated tags: `v0.1.0` (vertical slice), `v0.2.0` (recuts/core upgrades), `v0.3.0` (Cherry/automatic harvest), `v0.4.0` (Roma/durable harvest and complete packaging), `v0.5.0` (botanical discovery and downloadable GitHub releases), and `v0.6.0` (Critical Slice and seven-category catalog foundation). Generated builds stay in ignored `exports/`. The tagged release workflow verifies official Godot checksums, runs regressions, exports and checks both embedded packs, verifies a full ZIP and a fresh source extraction, then publishes Full/Windows/Source ZIP assets and checksums to GitHub Releases. The full package is linked prominently above. Reproduce builds using the documented export commands. A failed release workflow can be retried from the repository Actions tab with its existing milestone tag; no personal token is required.
+Source milestones are tracked with Git commits and annotated tags: `v0.1.0` (vertical slice), `v0.2.0` (recuts/core upgrades), `v0.3.0` (Cherry/automatic harvest), `v0.4.0` (Roma/durable harvest and complete packaging), `v0.5.0` (botanical discovery and downloadable GitHub releases), `v0.6.0` (Critical Slice and seven-category catalog foundation), and `v0.7.0` (equipment ownership, preview and blade-specific reach). Generated builds stay in ignored `exports/`. The tagged release workflow verifies official Godot checksums, runs regressions, exports and checks both embedded packs, verifies a full ZIP and a fresh source extraction, then publishes Full/Windows/Source ZIP assets and checksums to GitHub Releases. The full package is linked prominently above. Reproduce builds using the documented export commands. A failed release workflow can be retried from the repository Actions tab with its existing milestone tag; no personal token is required.
 
 ## Continue development
 

@@ -4,6 +4,9 @@ extends RefCounted
 const DEFINITIONS_PATH := "res://data/upgrades.json"
 var definitions: Array = []
 var harvest: HarvestProgression
+var equipment := EquipmentCatalog.new()
+var owned_knives: Array = [EquipmentCatalog.STARTER]
+var equipped_knife := EquipmentCatalog.STARTER
 var money: float = 0.0
 var levels: Dictionary = {}
 var discovered: Array = []
@@ -21,6 +24,8 @@ func _init() -> void:
 	var harvest_errors := harvest.validate()
 	if not harvest_errors.is_empty():
 		push_error("Invalid tomato content: " + "; ".join(harvest_errors))
+	var equipment_errors := equipment.validate()
+	if not equipment_errors.is_empty(): push_error("Invalid equipment content: "+"; ".join(equipment_errors))
 	refresh_discovery()
 	# Introductory entries are already known; later reveals are unread.
 	viewed = discovered.duplicate()
@@ -89,7 +94,22 @@ func max_cuts() -> int:
 	return 1 + int(effect_value("extra_cuts","cuts") * level("extra_cuts"))
 
 func strength() -> float:
-	return 1.0 + effect_value("sharp_edge","strength_bonus") * level("sharp_edge")
+	return knife_strength(equipped_knife)
+
+func knife_strength(id: String) -> float:
+	return float(equipment.definition(id).get("base_strength",1)) + effect_value("sharp_edge","strength_bonus") * level("sharp_edge")
+
+func buy_knife(id: String) -> bool:
+	var d := equipment.definition(id)
+	if d.is_empty() or id in owned_knives or money < float(d.price): return false
+	money -= float(d.price)
+	owned_knives.append(id)
+	return true
+
+func equip_knife(id: String) -> bool:
+	if not id in owned_knives or equipment.definition(id).is_empty() or id == equipped_knife: return false
+	equipped_knife = id
+	return true
 
 func cutting_profile() -> CuttingProfile:
 	return harvest.cutting_profile(levels,strength())
@@ -116,11 +136,11 @@ func complete_round(earnings: float, cuts: int, tomatoes_sliced: int = -1) -> vo
 	lifetime.earnings += earnings
 
 func snapshot() -> Dictionary:
-	return {"version": 2, "money": money, "levels": levels.duplicate(), "discovered": discovered.duplicate(), "viewed": viewed.duplicate(), "lifetime": lifetime.duplicate(), "settings": settings.duplicate()}
+	return {"version": 3, "money": money, "levels": levels.duplicate(), "discovered": discovered.duplicate(), "viewed": viewed.duplicate(), "equipment":{"owned":owned_knives.duplicate(),"equipped":equipped_knife}, "lifetime": lifetime.duplicate(), "settings": settings.duplicate()}
 
 func restore(data: Dictionary) -> bool:
 	# Reject unsupported/ill-typed data before mutating any progress.
-	if not _number(data.get("version")) or (data.get("version") != 1 and data.get("version") != 2) or not _number(data.get("money")) or float(data.money) < 0 or float(data.money) > 1e15:
+	if not _number(data.get("version")) or (data.version != 1 and data.version != 2 and data.version != 3) or not _number(data.get("money")) or float(data.money) < 0 or float(data.money) > 1e15:
 		return false
 	if not data.get("levels") is Dictionary or not data.get("discovered") is Array or not data.get("lifetime") is Dictionary or not data.get("settings") is Dictionary:
 		return false
@@ -151,6 +171,7 @@ func restore(data: Dictionary) -> bool:
 		if not id is String or not id in data.discovered or unique.has(id):
 			return false
 		unique[id] = true
+	if data.version == 3 and not equipment.valid_inventory(data.get("equipment")): return false
 	for key: String in settings:
 		if not data.settings.has(key):
 			continue
@@ -163,6 +184,8 @@ func restore(data: Dictionary) -> bool:
 	levels = clean
 	discovered = data.discovered.duplicate()
 	viewed = read_ids.duplicate()
+	owned_knives = data.equipment.owned.duplicate() if data.version == 3 else [EquipmentCatalog.STARTER]
+	equipped_knife = data.equipment.equipped if data.version == 3 else EquipmentCatalog.STARTER
 	lifetime = data.lifetime.duplicate()
 	lifetime.tomatoes = int(tomato_count)
 	for key: String in settings:

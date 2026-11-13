@@ -1,0 +1,28 @@
+[
+  {
+    "id": "rusty_butter",
+    "name": "Rusty Butter Knife",
+    "catalog_number": "001",
+    "description": "Once considered suitable for spreading butter. Now entrusted with the future of tomato civilization.",
+    "price": 0,
+    "model": "res://assets/models/knives/rusty_butter.glb",
+    "base_strength": 1,
+    "precision": "Freehand",
+    "special": "None",
+    "reach_label": "Short",
+    "edge": [[-0.08, -0.10], [0.85, -0.04]]
+  },
+  {
+    "id": "plastic_picnic",
+    "name": "Plastic Picnic Knife",
+    "catalog_number": "002",
+    "description": "An instrument of remarkable ambition, previously supplied beside a paper plate. A little farther to reach; the same need for a determined hand.",
+    "price": 20,
+    "model": "res://assets/models/knives/plastic_picnic.glb",
+    "base_strength": 1,
+    "precision": "Freehand",
+    "special": "None",
+    "reach_label": "Modestly longer",
+    "edge": [[-0.08, -0.10], [0.88, -0.10], [1.05, -0.04]]
+  }
+]

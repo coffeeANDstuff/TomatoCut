@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.4.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.7.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -30,7 +30,7 @@ with zipfile.ZipFile(args.archive) as z:
     assert set(hashes) == set(names)-{'SHA256SUMS.json'}, 'Manifest coverage mismatch'
     assert all(digest(z.read(name)) == value for name, value in hashes.items()), 'Payload SHA-256 mismatch'
     assert all((z.getinfo(n).external_attr >> 16) & 0o111 for n in names if n.startswith('Source/') and n.endswith('.sh')), 'Source scripts lost executable permissions'
-    for required in ['Windows/TomatoCut.exe', 'Windows/Play-Compatibility.bat', 'Source/project.godot', 'Source/AGENTS.md', 'Source/GAME_DESIGN.md', 'Source/ART_DIRECTION.md', 'Source/ROADMAP.md', 'Source/PROGRESS.md', 'Source/TESTING.md', 'Source/art/roma.blend', 'Source/assets/models/tomatoes/roma.glb', 'Source/tests/roma_tests.gd']:
+    for required in ['Windows/TomatoCut.exe', 'Windows/Play-Compatibility.bat', 'Source/project.godot', 'Source/AGENTS.md', 'Source/GAME_DESIGN.md', 'Source/ART_DIRECTION.md', 'Source/ROADMAP.md', 'Source/PROGRESS.md', 'Source/TESTING.md', 'Source/art/roma.blend', 'Source/assets/models/tomatoes/roma.glb', 'Source/tests/roma_tests.gd', 'Source/art/picnic_knife.blend', 'Source/assets/models/knives/plastic_picnic.glb', 'Source/data/knives.json', 'Source/scripts/ui/equipment_preview.gd', 'Source/tests/equipment_tests.gd']:
         assert required in hashes, 'Missing required payload: ' + required
     info = json.loads(z.read('BUILD_INFO.json'))
     version = re.search(r'config/version="([^"]+)"', z.read('Source/project.godot').decode()).group(1)

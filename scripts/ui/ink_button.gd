@@ -33,6 +33,9 @@ func _draw() -> void:
 			for i in range(8):
 				var v := Vector2.from_angle(i*TAU/8)
 				draw_line(c+v*9,c+v*13,color,3,true)
+		"knife":
+			draw_polyline(PackedVector2Array([c+Vector2(-11,11),c+Vector2(1,-1),c+Vector2(11,-13),c+Vector2(13,-7),c+Vector2(5,3),c+Vector2(1,-1)]),color,w,true)
+			draw_line(c+Vector2(-8,12),c+Vector2(3,1),color,3,true)
 		"back":
 			draw_line(c+Vector2(-10,0),c+Vector2(11,0),color,w,true)
 			draw_polyline(PackedVector2Array([c+Vector2(-2,-8),c+Vector2(-10,0),c+Vector2(-2,8)]),color,w,true)

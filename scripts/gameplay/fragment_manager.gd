@@ -54,14 +54,14 @@ func split(at: Vector3, velocity: Vector2, direction: Vector2, reduced: bool = f
 		acquire_piece().configure("half", ledger, at, frame, motion, Vector3(-side * 4.0, -side * 2.2, side * 0.8))
 	emit_juice(at, reduced)
 
-func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: float, reduced: bool, damage_roll: Callable = Callable()) -> Array[Dictionary]:
+func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: float, reduced: bool, damage_roll: Callable = Callable(), edge: Array[Vector2] = SliceSystem.DEFAULT_EDGE) -> Array[Dictionary]:
 	var hits: Array[Dictionary] = []
 	var direction := (current.origin - previous.origin).normalized()
 	# Snapshot eligibility before creating descendants. Neither pool reuse nor
 	# newly created wedges can turn one input sample into multiple cuts.
 	var candidates: Array[Dictionary] = []
 	for piece: FragmentPiece in pieces:
-		if piece.cuttable() and piece.family.last_stroke != stroke and SliceSystem.swept_polygon_hit(piece.world_hull(), previous, current):
+		if piece.cuttable() and piece.family.last_stroke != stroke and SliceSystem.swept_polygon_hit(piece.world_hull(), previous, current,edge):
 			candidates.append({"piece": piece, "revision": piece.revision})
 	for candidate: Dictionary in candidates:
 		var piece: FragmentPiece = candidate.piece

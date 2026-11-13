@@ -9,12 +9,27 @@ var angle := 0.0
 var stroke_id := 0
 var motion_age := 0.0
 var motion_direction := Vector2.ZERO
+var knife_id := EquipmentCatalog.STARTER
+var edge := SliceSystem.DEFAULT_EDGE
+var visual: Node3D
 
 func _process(delta: float) -> void:
 	motion_age += delta
 
 func _ready() -> void:
-	add_child(MODEL.instantiate())
+	visual = MODEL.instantiate()
+	add_child(visual)
+
+func configure(data: Dictionary) -> void:
+	edge = EquipmentCatalog.edge_points(data)
+	if knife_id == data.id and is_instance_valid(visual): return
+	knife_id = data.id
+	if is_instance_valid(visual):
+		remove_child(visual)
+		visual.queue_free()
+	visual = load(data.model).instantiate()
+	add_child(visual)
+	reset()
 
 func track(point: Vector2) -> bool:
 	if not anchored:

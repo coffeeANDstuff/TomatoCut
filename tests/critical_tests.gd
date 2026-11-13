@@ -57,7 +57,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	check.call(not ContentValidator.upgrades(content).is_empty(), "content validator rejects critical damage below ordinary damage")
 	var restored := Progression.new()
 	check.call(restored.restore(p.snapshot()) and is_equal_approx(restored.cutting_profile().critical_chance,.4), "ability purchases and discovery survive save restoration")
-	var legacy := p.snapshot(); legacy.levels.erase("critical_slice"); legacy.discovered.erase("critical_slice"); legacy.viewed.erase("critical_slice")
+	var legacy := p.snapshot(); legacy.version = 2; legacy.erase("equipment"); legacy.levels.erase("critical_slice"); legacy.discovered.erase("critical_slice"); legacy.viewed.erase("critical_slice")
 	check.call(restored.restore(legacy) and restored.cutting_profile().critical_chance == 0 and "critical_slice" in restored.unseen("Abilities"), "old v2 progress reconstructs an unseen ability without granting a free level")
 	legacy.version = 1; legacy.lifetime.erase("tomatoes")
 	check.call(Progression.new().restore(legacy), "v1 saves still migrate with the additional ability definition")

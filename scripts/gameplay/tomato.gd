@@ -35,14 +35,14 @@ func configure(data: Dictionary) -> void:
 		visual = load(data.model).instantiate()
 		add_child(visual)
 
-func intersects(previous: Transform2D, current: Transform2D) -> bool:
+func intersects(previous: Transform2D, current: Transform2D, edge: Array[Vector2] = SliceSystem.DEFAULT_EDGE) -> bool:
 	if collision == "circle":
-		return SliceSystem.swept_hit(Vector2(position.x,position.y),radius,previous,current)
+		return SliceSystem.swept_hit(Vector2(position.x,position.y),radius,previous,current,edge)
 	var points := PackedVector2Array()
 	for vertex: Vector3 in proxy:
 		var world := global_transform * vertex
 		points.append(Vector2(world.x,world.y))
-	return SliceSystem.swept_polygon_hit(Geometry2D.convex_hull(points),previous,current)
+	return SliceSystem.swept_polygon_hit(Geometry2D.convex_hull(points),previous,current,edge)
 
 func _physics_process(delta: float) -> void:
 	damage_time = maxf(0, damage_time - delta)

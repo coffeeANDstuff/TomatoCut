@@ -44,7 +44,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.6.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.7.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -85,6 +85,25 @@ func run() -> void:
 	check(game.ui.root.find_child("CriticalIndicator",false,false) != null and game.audio.sounds.has("critical"),"packaged critical label and original sound are integrated")
 	game.finish_round()
 	check(game.store.load_into(restored) and restored.level("critical_slice") == 5 and is_equal_approx(restored.cutting_profile().expected_strikes(2.5),1.6),"packaged ability and probability forecasts restore from disk")
+	game.progress = Progression.new(); game.ui.progress = game.progress; game.audio.progress = game.progress
+	game.progress.money = 20
+	game.show_equipment(); game.ui.equipment_shop("plastic_picnic")
+	await process_frame
+	var preview: EquipmentPreview = game.ui.content.get_node("EquipmentPreview")
+	check(game.progress.equipment.validate().is_empty() and preview.model.get_child_count() > 0,"packaged equipment JSON and actual 3D picnic preview load")
+	game.buy_knife("plastic_picnic")
+	check(game.progress.money == 0 and game.progress.equipped_knife == "rusty_butter" and "plastic_picnic" in game.progress.owned_knives,"packaged purchase charges once without auto-equipping")
+	game.equip_knife("plastic_picnic")
+	check(game.knife.knife_id == "plastic_picnic" and game.kitchen.display_knife_id == "plastic_picnic" and game.knife.edge.size() == 3,"packaged equip swaps the real models and cutting edge")
+	check(game.store.load_into(restored) and restored.snapshot().version == 3 and restored.equipped_knife == "plastic_picnic","packaged v3 inventory persists to disk")
+	game.start_round()
+	fruit = game.spawn_tomato(); fruit.set_physics_process(false); fruit.position = Vector3(1.5,0,0); fruit.velocity = Vector2.ZERO
+	game.knife.track(Vector2(-.03,0)); game.knife.track(Vector2(.03,0))
+	check(game.process_blade() == 1 and game.session.earnings == 1 and game.session.tomatoes_sliced == 1,"packaged extended edge cuts beyond starter reach at the normal reward")
+	game.finish_round(); game.show_equipment(); game.equip_knife("rusty_butter"); game.start_round()
+	fruit = game.spawn_tomato(); fruit.set_physics_process(false); fruit.position = Vector3(1.5,0,0); fruit.velocity = Vector2.ZERO
+	game.knife.track(Vector2(-.03,0)); game.knife.track(Vector2(.03,0))
+	check(game.process_blade() == 0 and game.knife.edge == SliceSystem.DEFAULT_EDGE,"packaged re-equip restores the starter's shorter collision edge")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

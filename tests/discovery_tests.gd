@@ -12,7 +12,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	check.call(p.unseen("Varieties") == ["unlock_cherry"], "multi-prerequisite reveal produces one unseen variety")
 	var restored := Progression.new()
 	check.call(restored.restore(p.snapshot()) and restored.unseen() == p.unseen() and restored.viewed == p.viewed, "read and unread discovery state round-trips")
-	var legacy := p.snapshot(); legacy.erase("viewed")
+	var legacy := p.snapshot(); legacy.version = 2; legacy.erase("equipment"); legacy.erase("viewed")
 	check.call(restored.restore(legacy) and restored.unseen().is_empty(), "old v2 saves keep known discoveries read without a badge flood")
 	legacy.version = 1; legacy.lifetime.erase("tomatoes")
 	check.call(Progression.new().restore(legacy), "v1 discovery migration retains compatibility")

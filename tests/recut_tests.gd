@@ -16,7 +16,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	legacy.discovered.erase("extra_cuts")
 	legacy.lifetime.erase("tomatoes")
 	legacy.lifetime.cuts = 42
-	check.call(loaded.restore(legacy) and loaded.lifetime.tomatoes == 42 and loaded.snapshot().version == 2, "v1 saves migrate tomato statistics without losing progress")
+	check.call(loaded.restore(legacy) and loaded.lifetime.tomatoes == 42 and loaded.snapshot().version == 3, "v1 saves migrate tomato statistics and equipment defaults without losing progress")
 	var invalid := p.snapshot()
 	invalid.lifetime.tomatoes = 5
 	check.call(not loaded.restore(invalid), "inconsistent v2 sliced-tomato count rejected")

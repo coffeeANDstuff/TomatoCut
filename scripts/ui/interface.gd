@@ -5,6 +5,9 @@ signal play_requested
 signal home_requested
 signal catalog_requested
 signal settings_requested
+signal equipment_requested
+signal knife_purchase_requested(id: String)
+signal knife_equip_requested(id: String)
 signal purchase_requested(id: String)
 signal new_game_requested
 signal settings_changed
@@ -25,6 +28,7 @@ var earnings_label: Label
 var combo_label: Label
 var notice_label: Label
 var selected_category := "Time"
+var selected_knife := ""
 var save_exists := false
 var confirmation: ConfirmationDialog
 var moving: Array[Dictionary] = []
@@ -58,7 +62,7 @@ func _ready() -> void:
 	root.add_child(tips)
 	confirmation = ConfirmationDialog.new()
 	confirmation.title = "Open a fresh ledger?"
-	confirmation.dialog_text = "This replaces your current money and upgrades.\nYour previous ledger will be kept as a backup."
+	confirmation.dialog_text = "This replaces your money, upgrades and equipment.\nYour previous ledger will be kept as a backup."
 	confirmation.ok_button_text = "Start new game"
 	confirmation.confirmed.connect(func(): new_game_requested.emit())
 	root.add_child(confirmation)
@@ -148,13 +152,14 @@ func header(title: String, subtitle: String) -> void:
 	var row := HBoxContainer.new()
 	row.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
 	content.add_child(row)
-	row.offset_left = -228
+	row.offset_left = -286
 	row.offset_top = -74
 	row.offset_right = -48
 	row.offset_bottom = -26
 	row.add_theme_constant_override("separation",10)
 	row.add_child(icon("home","Home",func(): home_requested.emit()))
 	row.add_child(icon("sprout","Seed catalog",func(): catalog_requested.emit()))
+	row.add_child(icon("knife","Equipment catalog",func(): equipment_requested.emit()))
 	row.add_child(icon("gear","Settings",func(): settings_requested.emit()))
 
 func home(valid_save: bool, warning: String = "") -> void:
@@ -174,18 +179,70 @@ func home(valid_save: bool, warning: String = "") -> void:
 	paper(panel)
 	place(label("FIELD NOTES  /  No. 001",14,false,MUTED),Vector2(34,27),Vector2(340,30),panel)
 	place(label("The humble\nbeginning.",44,true),Vector2(32,73),Vector2(360,116),panel)
-	place(label("One tomato. One terrible knife.\nTen seconds to make an impression.",18),Vector2(34,210),Vector2(355,65),panel)
+	var introduction := "One tomato. One terrible knife.\nTen seconds to make an impression." if progress.equipped_knife == EquipmentCatalog.STARTER else "A different instrument.\nThe same unreasonable ambition."
+	place(label(introduction,18),Vector2(34,210),Vector2(355,65),panel)
 	place(button("Continue" if valid_save else "Begin slicing",func(): play_requested.emit(),true),Vector2(34,298),Vector2(354,54),panel)
 	place(button("Seed catalog",func(): catalog_requested.emit()),Vector2(34,366),Vector2(354,48),panel)
 	var row := HBoxContainer.new()
 	place(row,Vector2(34,434),Vector2(354,50),panel)
 	row.add_theme_constant_override("separation",12)
 	row.add_child(icon("gear","Settings",func(): settings_requested.emit()))
+	row.add_child(icon("knife","Equipment catalog",func(): equipment_requested.emit()))
 	if valid_save:
 		row.add_child(button("New game",func(): confirmation.popup_centered()))
-	place(label("BALANCE   " + Progression.cash(progress.money),14,false,MUTED),Vector2(34,508),Vector2(355,30),panel)
+	place(label("BALANCE   " + Progression.cash(progress.money)+"\nEQUIPPED   "+progress.equipment.definition(progress.equipped_knife).name,14,false,MUTED),Vector2(34,493),Vector2(355,52),panel)
 	if not warning.is_empty():
 		show_notice(warning)
+
+func equipment_shop(id: String = "") -> void:
+	if id.is_empty(): id = selected_knife if not progress.equipment.definition(selected_knife).is_empty() else progress.equipped_knife
+	var data := progress.equipment.definition(id)
+	if data.is_empty(): return
+	selected_knife = id
+	clear("equipment")
+	paper(content)
+	header("The equipment catalog","CULINARY INSTRUMENTS  /  SELECTED WITH UNREASONABLE CARE")
+	place(label("THE KNIFE COLLECTION",13,false,MUTED),Vector2(48,208),Vector2(245,24))
+	var products := VBoxContainer.new()
+	products.add_theme_constant_override("separation",12)
+	place(products,Vector2(48,247),Vector2(245,360))
+	for item: Dictionary in progress.equipment.knives:
+		var product_id: String = item.id
+		var select := button(item.name,func(): equipment_shop(product_id))
+		select.name = "Product_"+item.id
+		select.custom_minimum_size.x = 245
+		if item.id == id: select.add_theme_stylebox_override("normal",style(Color("e4dcc4"),Color("ba8e4e")))
+		products.add_child(select)
+		var status := "Equipped" if item.id == progress.equipped_knife else ("Owned" if item.id in progress.owned_knives else Progression.cash(item.price))
+		products.add_child(label("No. %s  ·  %s" % [item.catalog_number,status],15,false,MUTED))
+	place(label("CATALOG No. "+data.catalog_number,13,false,Color("9b7740")),Vector2(330,208),Vector2(820,24))
+	place(label(data.name,38,true),Vector2(330,238),Vector2(880,52))
+	var description := label(data.description,18,true,MUTED)
+	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	place(description,Vector2(330,295),Vector2(865,60))
+	var preview := EquipmentPreview.new(data,progress.settings.reduced_motion)
+	preview.name = "EquipmentPreview"
+	place(preview,Vector2(330,373),Vector2(505,255))
+	place(label("PLATE %s  /  A STUDY IN CULINARY AMBITION" % data.catalog_number,11,false,MUTED),Vector2(340,635),Vector2(505,25))
+	var stats := VBoxContainer.new()
+	stats.add_theme_constant_override("separation",16)
+	place(stats,Vector2(870,375),Vector2(340,250))
+	stats.add_child(label("THE PARTICULARS",13,false,Color("9b7740")))
+	stats.add_child(label("Sharpness  ·  %.2f" % progress.knife_strength(id),22,true))
+	var reach := progress.equipment.edge_length(id)/progress.equipment.edge_length(EquipmentCatalog.STARTER)
+	stats.add_child(label("Reach  ·  %.0f%% of starter" % (reach*100),20,true))
+	stats.add_child(label("Precision  ·  "+data.precision,20,true))
+	stats.add_child(label("Special  ·  "+data.special,20,true))
+	stats.add_child(label("Sharp Edge cultivation applies.\nThe displayed blade is the one you use.",15,false,MUTED))
+	var owned := id in progress.owned_knives
+	var equipped := id == progress.equipped_knife
+	var callback: Callable = func(): knife_equip_requested.emit(id)
+	if not owned: callback = func(): knife_purchase_requested.emit(id)
+	var action := button("Equipped" if equipped else ("Equip this instrument" if owned else "Purchase  ·  "+Progression.cash(data.price)),callback,true)
+	action.name = "Equip_"+id if owned else "Buy_"+id
+	action.disabled = equipped or (not owned and progress.money < float(data.price))
+	place(action,Vector2(330,665),Vector2(505,44))
+	place(button("Back to the cutting board",func(): play_requested.emit(),true),Vector2(330,724),Vector2(370,44))
 
 func gameplay() -> void:
 	clear("playing")
@@ -254,7 +311,8 @@ func results(session: RoundSession) -> void:
 		stats.add_child(label(item[1],20,true))
 	place(button("Play again",func(): play_requested.emit(),true),Vector2(40,478),Vector2(540,52),panel)
 	place(button("Visit the seed catalog",func(): catalog_requested.emit()),Vector2(40,546),Vector2(410,48),panel)
-	place(icon("home","Home",func(): home_requested.emit()),Vector2(472,546),Vector2(108,48),panel)
+	place(icon("knife","Equipment catalog",func(): equipment_requested.emit()),Vector2(472,546),Vector2(48,48),panel)
+	place(icon("home","Home",func(): home_requested.emit()),Vector2(532,546),Vector2(48,48),panel)
 
 func catalog(category: String = selected_category) -> void:
 	var previous_scroll := 0

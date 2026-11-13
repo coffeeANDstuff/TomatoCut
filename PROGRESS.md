@@ -1,6 +1,40 @@
 # Progress
 
-## Current session — v0.6 (2026-11-12, America/Los_Angeles)
+## Current session — v0.7 (2026-11-12, America/Los_Angeles)
+
+Continued clean main at **04b319e** and verified the **270/270** baseline. Highest-priority incomplete milestone was Phase 4's first equipment path. Previous fruit/knife assets, Critical Slice, seed-catalog investments, automatic harvest and discovery were retained.
+
+### Completed
+- **TESTED** — Data-driven equipment definitions and strict content validation; fresh progress owns/equips only Rusty Butter Knife. Plastic Picnic Knife costs a provisional $20, is purchased once, and equips separately for free. Unknown, unaffordable, unowned, duplicate and mid-round actions cannot mutate money or inventory.
+- **TESTED** — Original distinct molded ivory/sage picnic GLB, editable Blender source and generator. The visible lower edge and its authored polyline agree. Its roughly 22% longer edge affects whole-fruit and projected-fragment sweeps, including rotation; the non-cutting handle and stationary overlap cannot earn rewards. Base strength remains 1 with existing Sharp Edge applied, without hidden money/critical bonuses.
+- **TESTED** — Actual rotating 3D product preview in an isolated world, catalog numbers, restrained humor, clear stats and contextual Buy/Equip controls. Icon-first equipment access works from Home, Results and menu navigation. Current gameplay and Home models synchronize on equip/reload/reset. Old previews are freed. Reduced Motion holds a useful fixed pose, and the kitchen camera stays fixed. Reviewed actual pages at 16:10 and 16:9.
+- **TESTED** — Save schema **3** stores owned/equipped inventory. JSON v1/v2 migration preserves money, upgrades, discovery/read state, settings and lifetime statistics while granting only the starter. Version 3 requires known, unique owned IDs including the starter and an owned equipped ID. Invalid state is rejected before mutation; existing atomic save/backup/corruption recovery applies. New Game confirmation explicitly covers equipment and resets it.
+- **TESTED** — **324/324** headless checks, including 54 additional equipment checks: commerce/state, content, real scene/model/edge synchronization, preview cleanup, current/legacy/malformed saves, real extended root/fragment hits and corresponding starter misses, anchor reset, family limits, actual Roma/Critical Slice composition and fresh-game reset. JSON numeric-version comparisons are explicit because parsed JSON numbers do not match integer Array membership in Godot. Legacy fixtures now explicitly exercise version 2.
+- **TESTED** — New equipment rendered flow passes **16** checks using actual GUI clicks and mouse movement. The native New Game dialog's confirmation callback is invoked directly after the real button opens it; this is separate from native OS dialog click coverage.
+- **TESTED** — All six rendered flows pass **83 checks** (67 existing + 16 equipment). Windows/Linux exports each pass **27 embedded-pack checks**, and the Linux executable boots headlessly. The complete preflight ZIP passes CRC/payload/source/build/version/portable-mode verification; its fresh extracted source imports and passes **324/324**. Native Windows execution is a separate gate.
+- **IN PROGRESS** — Final committed-source ZIP and GitHub v0.7.0 delivery. The release tag will identify the tested implementation; later delivery evidence will not move that immutable tag.
+- **TESTED** — README/release notes and package launch instructions describe equipment and save migration. The package verifier requires the new knife JSON/GLB/Blender/preview/tests. BALANCE_REPORT.md explicitly keeps the unchanged starter/seed-only simulation policy separate from unmeasured human reach benefits.
+
+### Remaining and limitations
+- **IN PROGRESS** — Phase 4 equipment foundation is integrated; real modifications and later cosmetics remain. Other **23 knives**, **22 normal varieties**, seven other cutting abilities, fuller cultivation/mastery, prestige and all five dedicated event gates, achievements, remaining environments, original music and production polish remain on the full roadmap.
+- **IN PROGRESS** — Human novice pacing and equipment price/benefit assessment. The old 55%-accuracy model misses the early-purchase target and does not model spatial reach or buy equipment; no existing prices were changed from that model.
+- **BLOCKED** — Native Windows execution, Forward+ GPU rendering, audible listening and target-PC 60 FPS need suitable hardware unavailable here. Software OpenGL/Dummy audio validate functional paths only.
+
+### Continuity
+- EquipmentCatalog loads `data/knives.json`; Progression owns validated commerce/inventory and effective knife strength. KnifeController, Kitchen and the isolated EquipmentPreview instantiate the same authored model. SliceSystem sweeps each edge segment; default geometry retains the original starter exactly. Future profiles must reach roots, fragments and forecast/distribution math together.
+- Only the gameplay knife's cutting edge counts; blade changes reset its input anchor. Separate buy/equip handlers run only in equipment state. No manual tomato loadout, special-event access, strength bonus or immediate equip is attached to buying a picnic knife.
+- Tests isolate saves under `user://tests/`. Equipment-render funds are explicitly staged before real production purchase clicks. The Roma critical fixture uses real prerequisite purchases and the production critical resolver, not a substitute hit path.
+- GitHub pushes, milestone releases and prominent full-package delivery remain authorized. Builds stay ignored in exports. No environment draft update or environment publication is part of this work.
+
+## Exact next task
+Complete **Phase 4's first real knife modification** under GAME_DESIGN.md §§14–15. Define a paid data-driven stat modification and clear ownership/application limits; integrate purchase/apply/current-next UI, actual effective cutting strength, compatible saves and normal-progress reset. Verify whole fruit, recuts, critical forecasts and harvest safety agree, including switching knives and no mid-round changes. Ship the functioning branch before adding cosmetic tabs. Then continue with Steak Knife's improved-strength identity and original matching geometry/materials, preserving all 25 knives/varieties and five prestige-exclusive event gates.
+
+---
+
+# Historical milestones
+The current v0.7 section supersedes incomplete-feature statements below.
+
+## Milestone — v0.6 (2026-11-12, America/Los_Angeles)
 
 Continued clean main at 87cc53e and verified the **224/224** baseline. The highest-priority incomplete milestone was Critical Slice and the seventh seed-catalog category. Existing fruit/knife assets, ordinary gameplay, upgrades, discovery and saves were retained.
 
@@ -32,11 +66,6 @@ Continued clean main at 87cc53e and verified the **224/224** baseline. The highe
 
 ## Exact next task
 Build the **first equipment purchase/equip path** for the owned starter Rusty Butter Knife and purchasable Plastic Picnic Knife, following GAME_DESIGN.md §§14–15. Use original distinct 3D/Blender assets, a real rotating product preview, data-driven prices/stats/ownership/equipped state and compatible versioned saves. Match each knife's visible cutting edge and reach to its sweep geometry. Test buy/equip/re-equip/reload/reset, real extended-reach hits and misses, affordability/duplicate denials, and interaction with Critical Slice/family budgets before adding more knives. Keep tomato cultivation in the seed catalog and preserve all 25 knives/varieties and prestige-exclusive events.
-
----
-
-# Historical milestones
-The current v0.6 section supersedes incomplete-feature statements below.
 
 ## Milestone — v0.5 (2026-11-12, America/Los_Angeles)
 

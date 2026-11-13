@@ -4,6 +4,7 @@ extends Node3D
 var camera: Camera3D
 var hero: Node3D
 var display_knife: Node3D
+var display_knife_id := EquipmentCatalog.STARTER
 
 func material(color: Color, roughness: float = 0.65) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
@@ -76,6 +77,18 @@ func _ready() -> void:
 func show_hero(enabled: bool) -> void:
 	hero.visible = enabled
 	display_knife.visible = enabled
+
+func equip_display(data: Dictionary) -> void:
+	if display_knife_id == data.id: return
+	display_knife_id = data.id
+	remove_child(display_knife)
+	display_knife.queue_free()
+	display_knife = load(data.model).instantiate()
+	add_child(display_knife)
+	display_knife.position = Vector3(-1.9,-2.25,1)
+	display_knife.scale = Vector3.ONE*1.8
+	display_knife.rotation_degrees.z = -32
+	display_knife.visible = hero.visible
 
 func point(screen: Vector2) -> Vector2:
 	var ray := camera.project_ray_origin(screen)

@@ -46,12 +46,16 @@ func _ready() -> void:
 	ui.home_requested.connect(show_home)
 	ui.catalog_requested.connect(show_catalog)
 	ui.settings_requested.connect(show_settings)
+	ui.equipment_requested.connect(show_equipment)
+	ui.knife_purchase_requested.connect(buy_knife)
+	ui.knife_equip_requested.connect(equip_knife)
 	ui.purchase_requested.connect(purchase)
 	ui.new_game_requested.connect(new_game)
 	ui.settings_changed.connect(settings_changed)
 	ui.catalog_viewed.connect(save_progress)
 	ui.discovery_presented.connect(func(): audio.play("discovery"))
 	apply_settings()
+	sync_equipment()
 	ui.home(store.has_save,store.warning)
 
 func clear_field() -> void:
@@ -65,6 +69,7 @@ func clear_field() -> void:
 
 func start_round() -> void:
 	clear_field()
+	sync_equipment()
 	state = "playing"
 	kitchen.show_hero(false)
 	session.begin(progress)
@@ -124,7 +129,7 @@ func _input(event: InputEvent) -> void:
 		knife.visible = true
 		if knife.track(kitchen.point(screen)):
 			trail.reduced = progress.settings.reduced_effects
-			var tip := knife.current * Vector2(0.85,-0.04)
+			var tip := knife.current * knife.edge[-1]
 			trail.push(kitchen.camera.unproject_position(Vector3(tip.x,tip.y,0)))
 			process_blade()
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE and state != "playing":
@@ -134,14 +139,14 @@ func process_blade() -> int:
 	if state != "playing" or not session.running or session.remaining <= 0:
 		return 0
 	var count := 0
-	for hit: Dictionary in fragments.slice(knife.previous, knife.current, knife.stroke_id, progress.strength(), progress.settings.reduced_effects,roll_strike):
+	for hit: Dictionary in fragments.slice(knife.previous, knife.current, knife.stroke_id, progress.strength(), progress.settings.reduced_effects,roll_strike,knife.edge):
 		cut_feedback(hit.position, false, hit.value)
 		count += 1
 	var direction := (knife.current.origin-knife.previous.origin).normalized()
 	for tomato: Tomato in tomatoes.get_children():
 		if tomato.sliced or tomato.is_queued_for_deletion():
 			continue
-		if tomato.intersects(knife.previous,knife.current) and tomato.family.try_strike(knife.stroke_id):
+		if tomato.intersects(knife.previous,knife.current,knife.edge) and tomato.family.try_strike(knife.stroke_id):
 			var strike := roll_strike()
 			if strike.critical: critical_feedback(tomato.position)
 			tomato.durability -= float(strike.damage)
@@ -194,6 +199,7 @@ func show_home() -> void:
 		return
 	state = "home"
 	clear_field()
+	sync_equipment()
 	kitchen.show_hero(true)
 	ui.home(store.has_save,store.warning)
 
@@ -214,6 +220,32 @@ func show_settings() -> void:
 	kitchen.show_hero(false)
 	ui.settings()
 
+func show_equipment() -> void:
+	if state == "playing": return
+	state = "equipment"
+	clear_field()
+	kitchen.show_hero(false)
+	ui.equipment_shop()
+	audio.play("paper")
+
+func buy_knife(id: String) -> void:
+	if state != "equipment" or not progress.buy_knife(id): return
+	save_progress()
+	audio.play("purchase")
+	ui.equipment_shop(id)
+
+func equip_knife(id: String) -> void:
+	if state != "equipment" or not progress.equip_knife(id): return
+	sync_equipment()
+	save_progress()
+	audio.play("paper")
+	ui.equipment_shop(id)
+
+func sync_equipment() -> void:
+	var data := progress.equipment.definition(progress.equipped_knife)
+	knife.configure(data)
+	kitchen.equip_display(data)
+
 func purchase(id: String) -> void:
 	if state != "catalog":
 		return
@@ -225,6 +257,7 @@ func purchase(id: String) -> void:
 func new_game() -> void:
 	progress = Progression.new()
 	ui.progress = progress
+	ui.selected_knife = ""
 	audio.progress = progress
 	save_progress()
 	apply_settings()

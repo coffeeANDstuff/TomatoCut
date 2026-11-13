@@ -2,6 +2,32 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Equipment milestone — v0.7.0 (2026-11-12, America/Los_Angeles)
+
+Continued clean main at `04b319e`. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64. Baseline **270/270** passed before implementation. All ledgers are isolated under `user://tests/`; no production save is touched.
+
+```sh
+./tools/cloud.sh ./tools/check.sh
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/equipment_render.gd
+# Also rerun render_smoke, harvest_render, roma_render, discovery_render and critical_render.
+```
+
+**324 headless checks pass; zero failures.** The 54 added equipment checks cover authored content/model validation; separate purchase/equip with exact charge and zero-balance owned swaps; unknown/unowned/duplicate/insufficient-money denial; effective Sharp Edge strength; JSON v3 round-trip and actual disk persistence; real v1/v2 JSON migrations; atomic malformed/missing inventory rejection; geometry-specific circle, rotated and fragment-hull sweeps; handle/out-of-reach/stationary misses; actual scene/home mesh and edge synchronization; anchor reset; isolated rotating preview/world cleanup; static Reduced Motion; live-round denial; New Game reset; real extended Standard Red reward, recut family budget and critical Roma premium reward. Legacy discovery/ability fixtures explicitly use schema 2, rather than inheriting the new snapshot version.
+
+**83 rendered checks pass; zero failures:** original loop **13**, Cherry harvest **13**, Roma **12**, discovery **14**, Critical Slice **15**, equipment **16**. The equipment script injects real GUI mouse clicks and blade motion for navigation, buying, equipping and comparison slices; funds are explicitly staged. It opens the native New Game confirmation by actual click, then invokes the native dialog's confirmation callback directly. This does not claim OS-dialog input automation. Six new captures `41`–`46` are in ignored `artifacts/`; inspected the actual starter/picnic product pages, 16:9 equipped page and Home display. Preview/action rectangles fit both aspect ratios. The picnic edge reaches a fruit missed by the same input with the starter. Rotation never changes the kitchen camera. GUI settings/equipment reload together from disk.
+
+Resolved during implementation: Godot constant-expression restrictions required typed `Array[Vector2]` edge constants instead of constructing a packed array in a constant; parsed JSON numeric versions required explicit numeric comparison instead of integer Array membership; rendered testing found Results lacked equipment access, which now has its matching icon. Final runs have no parse/resource/runtime errors. The known llvmpipe VSync warning remains; Dummy audio exercises loading/playback without audible review.
+
+Original Blender equipment generator completed, exported/imported the distinct picnic GLB, and saved its editable `.blend`; earlier assets were retained. Optional Draco compression is unused. `python3 -m py_compile` on packaging/verifier/asset tools, `bash -n` on setup/check scripts, `git diff --check`, and **actionlint 1.7.7** passed.
+
+### Equipment export and package evidence
+
+Both Windows Desktop and Linux Test exports succeeded with official previously SHA-512-verified 4.6.3 templates. `file` identifies PE32+ GUI x86-64 and ELF x86-64 respectively. From `/tmp`, the host Godot editor runs `tests/package_smoke.gd` against each binary's `--main-pack` with Dummy audio: **27/27 checks per target**, including packaged knife JSON, real preview/GLB, separate buy/equip, v3 disk persistence, extended-reach reward and shorter starter re-equip miss. The matching Linux executable boots headlessly without errors.
+
+The full preflight ZIP passes safe/unique paths, CRC, complete payload SHA-256 manifest, required new Blender/GLB/JSON/tests, portable script modes and version/executable/source identity checks (**200 payload files**). A fresh extracted source imports without the checkout cache and passes **324/324** regressions. The final committed-source package and public GitHub delivery evidence are recorded below when verified; preflight metadata honestly reports its uncommitted state.
+
+Native Windows execution, Forward+ GPU rendering, audio listening and target-PC 60 FPS remain **unverified**. Equipment price/coverage benefit needs human measurements; the existing economy model intentionally retains its starter/seed-only policy, as documented in BALANCE_REPORT.md.
+
 ## Required foundation checks
 - Godot headless editor import: no parse/import/resource errors.
 - Swept blade: fast crossing, grazing, miss, orientation changes, stationary overlap, no duplicate payout.
