@@ -96,3 +96,4 @@ Inspected rendered home, sliced halves, results, catalog and 16:9 layout. Correc
 # Run outside the source checkout, using absolute paths:
 godot --headless --main-pack /path/to/exports/windows/TomatoCut.exe --script /path/to/tests/package_smoke.gd
 ```
+- GitHub history integration retains the remote initial README commit alongside both earlier development milestones and the v0.3 feature commit. The README add/add conflict was resolved using the complete project documentation; the remote text was only the project title. Source tracking uses main and annotated milestone tags; final push confirmation is checked against remote refs.
