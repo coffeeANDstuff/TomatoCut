@@ -12,7 +12,7 @@ static func funded(reward: int = 1) -> Progression:
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
 	var threshold := float(p.prestige.config.threshold)
-	check.call(p.prestige.validate().is_empty() and p.prestige.definitions.size() == 25, "authored seed formula and all real permanent investments validate")
+	check.call(p.prestige.validate().is_empty() and p.prestige.definitions.size() == 27, "authored seed formula and all real permanent investments validate")
 	check.call(p.snapshot().version == 5 and p.prestige.seeds == 0 and p.prestige.cycle_earnings == 0 and p.prestige.discovered == ["permanent_slice_value"] and p.prestige.unseen().is_empty(), "fresh v5 ledger starts at cycle zero with only its known permanent root")
 	check.call(p.prestige.lineage != Progression.new().prestige.lineage, "fresh ledgers have distinct identities independent of gameplay RNG")
 	p.money = threshold*10
@@ -42,8 +42,8 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	before = p.snapshot()
 	check.call(not p.claim_prestige(quote.token) and not p.claim_prestige(p.prestige_preview().token) and p.snapshot() == before, "duplicate and empty-cycle claims cannot reuse consumed earnings")
 	check.call(not p.prestige.purchase("missing") and not p.prestige.purchase("starting_cash"), "unknown and hidden permanent purchases cannot bypass prerequisites")
-	check.call(p.prestige.purchase("permanent_slice_value") and p.prestige.seeds == 3 and p.reward(1) == 1.25 and p.prestige.unseen() == ["starting_cash","starting_round_time","faster_starting_throws"], "first seed purchase gives an immediate real reward bonus and reveals its successor unseen")
-	var marks: Array[String] = ["starting_cash","starting_round_time","faster_starting_throws","missing"]
+	check.call(p.prestige.purchase("permanent_slice_value") and p.prestige.seeds == 3 and p.reward(1) == 1.25 and p.prestige.unseen() == ["starting_cash","starting_round_time","faster_starting_throws","starting_sharpness"], "first seed purchase gives an immediate real reward bonus and reveals its successor unseen")
+	var marks: Array[String] = ["starting_cash","starting_round_time","faster_starting_throws","starting_sharpness","missing"]
 	check.call(p.prestige.mark_viewed(marks) and p.prestige.unseen().is_empty() and not p.prestige.mark_viewed(marks), "only revealed permanent entries acknowledge discovery, once")
 	check.call(p.prestige.purchase("starting_cash") and p.prestige.seeds == 1 and p.money == 0 and p.prestige.cycle_earnings == 0, "Starting Cash spends seeds without injecting current money or qualifying income")
 	var restored := Progression.new()

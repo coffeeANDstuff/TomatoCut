@@ -77,6 +77,27 @@ func validate() -> PackedStringArray:
 		else:
 			if float(coefficient) != floorf(float(coefficient)): errors.append(id+": tomato bonus must be integral")
 			if production is Dictionary and number(production.get("starting_tomatoes")) and number(d.get("max_level")) and float(coefficient)*float(d.max_level) > float(production.starting_tomatoes): errors.append(id+": exceeds the permanent tomato budget")
+	var cutting: Variant = config.get("cutting_limits")
+	if not cutting is Dictionary:
+		errors.append("Missing permanent cutting limits")
+	else:
+		var strength: Variant = cutting.get("starting_strength")
+		var cuts: Variant = cutting.get("starting_extra_cuts")
+		if not number(strength) or float(strength) <= 0 or float(strength) > 10: errors.append("Invalid permanent strength limit")
+		if not number(cuts) or float(cuts) != floorf(float(cuts)) or float(cuts) < 1 or float(cuts) >= CutFamily.MAX_CUTS: errors.append("Invalid permanent extra-cut limit")
+	for id: String in ["starting_sharpness","starting_extra_cuts"]:
+		var d := definition(id)
+		if d.is_empty(): errors.append("Missing permanent cutting investment: "+id); continue
+		if d.get("category") != "Permanent Cutting" or not d.get("illustration") is String or not ResourceLoader.exists(d.illustration): errors.append(id+": invalid permanent cutting presentation")
+		var predecessor := "permanent_slice_value" if id == "starting_sharpness" else "starting_sharpness"
+		if d.get("requires") is Dictionary and int(d.requires.get(predecessor,0)) < 1: errors.append(id+": requires its permanent predecessor")
+		var coefficients: Variant = d.get("effect_values")
+		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
+		if not number(coefficient) or float(coefficient) <= 0:
+			errors.append(id+": missing positive cutting coefficient"); continue
+		if id == "starting_extra_cuts" and float(coefficient) != floorf(float(coefficient)): errors.append(id+": extra cuts must be integral")
+		var key := "starting_strength" if id == "starting_sharpness" else "starting_extra_cuts"
+		if cutting is Dictionary and number(cutting.get(key)) and number(d.get("max_level")) and float(coefficient)*float(d.max_level) > float(cutting[key])+.000001: errors.append(id+": exceeds the permanent cutting budget")
 	return errors
 
 func definition(id: String) -> Dictionary:
@@ -113,6 +134,16 @@ func starting_tomato_bonus(at_level: int = -1) -> int:
 	var d := definition("additional_starting_tomatoes")
 	var owned := clampi(level("additional_starting_tomatoes") if at_level < 0 else at_level,0,int(d.get("max_level",0)))
 	return clampi(int(float(d.get("effect_values",{}).get("bonus_per_level",0))*owned),0,int(config.get("production_limits",{}).get("starting_tomatoes",0)))
+
+func starting_strength_bonus(at_level: int = -1) -> float:
+	var d := definition("starting_sharpness")
+	var owned := clampi(level("starting_sharpness") if at_level < 0 else at_level,0,int(d.get("max_level",0)))
+	return clampf(float(d.get("effect_values",{}).get("bonus_per_level",0))*owned,0,float(config.get("cutting_limits",{}).get("starting_strength",0)))
+
+func starting_cut_bonus(at_level: int = -1) -> int:
+	var d := definition("starting_extra_cuts")
+	var owned := clampi(level("starting_extra_cuts") if at_level < 0 else at_level,0,int(d.get("max_level",0)))
+	return clampi(int(float(d.get("effect_values",{}).get("bonus_per_level",0))*owned),0,int(config.get("cutting_limits",{}).get("starting_extra_cuts",0)))
 
 func price(id: String, at_level: int = -1) -> int:
 	var d := definition(id)

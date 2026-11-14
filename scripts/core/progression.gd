@@ -97,17 +97,19 @@ func launch_count(at_level: int = -1, permanent_level: int = -1) -> int:
 	var ordinary := level("double_toss") if at_level < 0 else clampi(at_level,0,int(definition("double_toss").max_level))
 	return mini(MAX_LAUNCH_COUNT,1+int(effect_value("double_toss","tomatoes")*ordinary)+prestige.starting_tomato_bonus(permanent_level))
 
-func max_cuts() -> int:
-	return 1 + int(effect_value("extra_cuts","cuts") * level("extra_cuts"))
+func max_cuts(at_level: int = -1, permanent_level: int = -1) -> int:
+	var ordinary := level("extra_cuts") if at_level < 0 else clampi(at_level,0,int(definition("extra_cuts").max_level))
+	return clampi(1+int(effect_value("extra_cuts","cuts")*ordinary)+prestige.starting_cut_bonus(permanent_level),1,CutFamily.MAX_CUTS)
 
-func strength() -> float:
-	return knife_strength(equipped_knife)
+func strength(at_level: int = -1, permanent_level: int = -1) -> float:
+	return knife_strength(equipped_knife,at_level,permanent_level)
 
-func knife_strength(id: String) -> float:
-	return unmodified_knife_strength(id) + float(equipment.modification(knife_modification(id)).get("strength_bonus",0))
+func knife_strength(id: String, at_level: int = -1, permanent_level: int = -1) -> float:
+	return unmodified_knife_strength(id,at_level,permanent_level)+float(equipment.modification(knife_modification(id)).get("strength_bonus",0))
 
-func unmodified_knife_strength(id: String) -> float:
-	return float(equipment.definition(id).get("base_strength",1)) + effect_value("sharp_edge","strength_bonus") * level("sharp_edge")
+func unmodified_knife_strength(id: String, at_level: int = -1, permanent_level: int = -1) -> float:
+	var ordinary := level("sharp_edge") if at_level < 0 else clampi(at_level,0,int(definition("sharp_edge").max_level))
+	return float(equipment.definition(id).get("base_strength",1))+effect_value("sharp_edge","strength_bonus")*ordinary+prestige.starting_strength_bonus(permanent_level)
 
 func knife_modification(knife: String) -> String:
 	for id: String in applied_modifications:

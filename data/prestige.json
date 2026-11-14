@@ -441,6 +441,40 @@
       "effect_values": {
         "bonus_per_level": 1
       }
+    },
+    {
+      "id": "starting_sharpness",
+      "name": "Starting Sharpness",
+      "category": "Permanent Cutting",
+      "description": "Every instrument remembers a good edge, including this cycle. Adds to the actual knife, ordinary Sharp Edge and its assigned preparation; grants no normal level.",
+      "effect": "+0.5 permanent cutting strength per level",
+      "base_cost": 2,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "permanent_slice_value": 1
+      },
+      "illustration": "res://assets/illustrations/prestige/starting_sharpness.svg",
+      "effect_values": {
+        "bonus_per_level": 0.5
+      }
+    },
+    {
+      "id": "starting_extra_cuts",
+      "name": "Starting Extra Cuts",
+      "category": "Permanent Cutting",
+      "description": "Make a little more of every original specimen. Descendants share one ledger; ordinary Extra Cuts and Giant Bonus Cuts remain separate investments.",
+      "effect": "+1 rewarded cut per original family per level; shared maximum 7",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "starting_sharpness": 2
+      },
+      "illustration": "res://assets/illustrations/prestige/starting_extra_cuts.svg",
+      "effect_values": {
+        "bonus_per_level": 1
+      }
     }
   ],
   "time_limits": {
@@ -450,5 +484,9 @@
   "production_limits": {
     "minimum_multiplier": 0.5,
     "starting_tomatoes": 3
+  },
+  "cutting_limits": {
+    "starting_strength": 1.5,
+    "starting_extra_cuts": 3
   }
 }

@@ -80,6 +80,8 @@ static func build(ui) -> void:
 		elif d.id == "overtime_bonus": comparison = "Overtime multiplier: ×%.2f → ×%.2f · normal Overtime required" % [permanent.overtime_multiplier(),permanent.overtime_multiplier(next_level)]
 		elif d.id == "faster_starting_throws": comparison = "Launch interval: %.2fs → %.2fs · floor %.2fs" % [p.launch_interval(),p.launch_interval(-1,next_level),p.effect_value("faster_throwing","minimum_interval")]
 		elif d.id == "additional_starting_tomatoes": comparison = "Tomatoes per launch: %d → %d · maximum %d" % [p.launch_count(),p.launch_count(-1,next_level),Progression.MAX_LAUNCH_COUNT]
+		elif d.id == "starting_sharpness": comparison = "Equipped sharpness: %.2f → %.2f" % [p.strength(),p.strength(-1,next_level)]
+		elif d.id == "starting_extra_cuts": comparison = "Rewarded cuts per family: %d → %d · maximum %d" % [p.max_cuts(),p.max_cuts(-1,next_level),CutFamily.MAX_CUTS]
 		else: comparison = EventCatalog.new().summary(d.id,permanent)
 		var effects: Label = ui.label(comparison,18,true); effects.name = "PermanentEffect_"+d.id; effects.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; entry.add_child(effects)
 		var id: String = d.id

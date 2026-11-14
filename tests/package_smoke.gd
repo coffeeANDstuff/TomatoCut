@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.17.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.18.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -467,6 +467,60 @@ func run() -> void:
 	check(game.progress.launch_interval() == .55 and game.progress.launch_count() == 6 and "0.55s → 0.55s" in game.ui.content.find_child("PermanentEffect_faster_starting_throws",true,false).text and "6 → 6" in game.ui.content.find_child("PermanentEffect_additional_starting_tomatoes",true,false).text,"packaged maximum paid layers clamp to shared production limits with honest saturated previews")
 	game.progress.settings.reduced_motion = true; game.new_game()
 	check(game.progress.launch_interval() == 4 and game.progress.launch_count() == 1 and game.progress.prestige.levels.is_empty() and game.progress.settings.reduced_motion,"packaged New Game clears permanent production while preserving preferences")
+	check(game.progress.strength() == 1 and game.progress.max_cuts() == 1 and not "starting_sharpness" in game.progress.prestige.discovered,"packaged fresh cutting retains starter strength/one cut without revealing permanent nodes")
+	game.finish_round() # New Game starts a live round before the archive can open.
+	game.progress.complete_round(ceilf(threshold*pow(200,1.0/float(game.progress.prestige.config.exponent)))+1,1,1)
+	game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	game.purchase_permanent("permanent_slice_value"); game.purchase_permanent("starting_cash"); game.ui.archive("Permanent Cutting")
+	check(game.progress.prestige.validate().is_empty() and game.ui.content.find_child("ArchiveCategory_Permanent Cutting",true,false) != null and ResourceLoader.exists("res://assets/illustrations/prestige/starting_sharpness.svg") and ResourceLoader.exists("res://assets/illustrations/prestige/starting_extra_cuts.svg"),"packaged fifth archive branch loads both original cutting-study plates and valid budgets")
+	game.purchase_permanent("starting_sharpness")
+	check(game.progress.strength() == 1.5 and game.progress.prestige.seeds == 195 and not "starting_extra_cuts" in game.progress.prestige.discovered,"packaged first paid sharpness cannot bypass the two-level extra-cut successor")
+	game.purchase_permanent("starting_sharpness"); game.purchase_permanent("starting_extra_cuts")
+	check(game.progress.strength() == 2 and game.progress.max_cuts() == 2 and game.progress.prestige.seeds == 188 and game.progress.levels.is_empty(),"packaged real paid strength and family cuts apply without granting normal levels")
+	var cutting_locked := true
+	for d: Dictionary in game.events.catalog.definitions: cutting_locked = cutting_locked and game.events.catalog.probability(d.id,game.progress.prestige) == 0
+	check(cutting_locked and game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"standard_red":1.0} and game.progress.cutting_profile().critical_chance == 0,"packaged permanent cutting grants no normal variety, critical ability or event bypass")
+	game.progress.money = 1000
+	check(not game.progress.purchase("extra_cuts") and not game.progress.purchase("critical_slice") and not game.progress.purchase("overtime"),"packaged permanent power cannot substitute for ordinary cutting/ability/time prerequisites")
+	game.start_round(); game.session.launch_clock = 1000
+	fruit = game.spawn_tomato(); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	var cutting_family: CutFamily = fruit.family
+	game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(game.session.cuts == 1 and cutting_family.limit == 2 and game.process_blade() == 0,"packaged permanent-only root splits once and cannot recut descendants within the same stroke")
+	game.knife.track(Vector2(-3,0)); game.process_blade()
+	check(game.session.cuts == 2 and game.session.tomatoes_sliced == 1 and game.session.earnings == 2.5 and not cutting_family.has_budget(),"packaged actual reverse swipe earns the separate permanent recut without duplicate unique credit")
+	var cutting_before: Dictionary = game.progress.snapshot(); game.purchase_permanent("starting_extra_cuts"); game.show_archive()
+	check(game.state == "playing" and game.progress.snapshot() == cutting_before,"packaged live cutting denies archive entry and permanent spending")
+	game.finish_round()
+	check(game.store.load_into(restored) and restored.prestige.cycle_earnings == 2.5 and restored.prestige.paid.starting_sharpness == [2,4] and restored.prestige.paid.starting_extra_cuts == [3],"packaged completed root/recut round saves earned money and actual seed receipts")
+	game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts"); game.show_catalog(); game.ui.catalog("Cutting")
+	check(game.progress.strength() == 2.5 and game.progress.max_cuts() == 3 and "2.50 → 3.00" in game.ui.content.find_child("CurrentCutting_sharp_edge",true,false).text and "3 → 4" in game.ui.content.find_child("CurrentCutting_extra_cuts",true,false).text,"packaged ordinary cutting purchases show effective combined current/next strength and cuts")
+	game.progress.buy_knife("steak"); game.progress.equip_knife("steak"); game.progress.buy_modification("honing_kit"); game.progress.apply_modification("honing_kit","steak"); game.show_equipment(); game.ui.equipment_shop("steak")
+	check(game.progress.strength() == 3.5 and game.ui.content.find_child("EquipmentSharpness",true,false).text == "Sharpness  ·  3.50" and game.progress.knife_strength("rusty_butter") == 2.5,"packaged equipment displays actual base/normal/permanent strength plus only its assigned preparation")
+	game.ui.modification_shop("honing_kit","steak")
+	check(game.ui.content.find_child("ModificationComparison",true,false).text == "3.50 → 3.50","packaged assigned preparation preview never adds its strength twice")
+	game.show_archive(); game.purchase_permanent("giant_harvest"); game.start_round(); game.session.launch_clock = 1000
+	var cutting_rng := RandomNumberGenerator.new(); var cutting_seed := -1
+	for candidate in range(1,10000):
+		cutting_rng.seed = candidate
+		if cutting_rng.randf() < .06: cutting_seed = candidate; break
+	game.event_rng.seed = cutting_seed; game._physics_process(6)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO; cutting_family = fruit.family
+	game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(fruit.durability == 2.5 and game.process_blade() == 0 and game.session.cuts == 0 and game.session.earnings == 0,"packaged composed prepared strength damages actual durable giant once per stroke without early money")
+	for x: float in [-3,3,-3]: game.knife.track(Vector2(x,0)); game.process_blade()
+	check(game.session.cuts == 3 and game.session.giant_tomatoes == 1 and game.session.earnings == 150 and not cutting_family.has_budget(),"packaged actual giant root/descendants share composed cutting budget, captured value and one unique event count")
+	game.finish_round(); game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(game.progress.strength() == 2 and game.progress.max_cuts() == 2 and game.progress.levels.is_empty() and game.progress.owned_knives == ["rusty_butter"] and game.progress.owned_modifications.is_empty() and game.progress.prestige.level("giant_harvest") == 1,"packaged prestige retains permanent cutting/event gate and clears all normal cutting/equipment/preparation")
+	game.purchase_permanent("starting_sharpness")
+	for i in range(2): game.purchase_permanent("starting_extra_cuts"); game.purchase_permanent("giant_bonus_cuts")
+	game.progress.money = 1e9
+	for i in range(20): game.progress.purchase("sharp_edge")
+	for i in range(6): game.progress.purchase("extra_cuts")
+	game.ui.archive("Permanent Cutting")
+	check(game.progress.strength() == 12.5 and game.progress.max_cuts() == 7 and game.events.catalog.cut_limit("giant_harvest",game.progress) == 7 and "7 → 7" in game.ui.content.find_child("PermanentEffect_starting_extra_cuts",true,false).text,"packaged maximum ordinary/permanent/giant layers saturate at the same honest seven-cut family ceiling")
+	game.progress.settings.reduced_motion = true; game.new_game()
+	check(game.progress.strength() == 1 and game.progress.max_cuts() == 1 and game.progress.prestige.levels.is_empty() and game.progress.settings.reduced_motion,"packaged New Game clears permanent cutting while retaining preferences")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

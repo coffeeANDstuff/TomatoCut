@@ -245,13 +245,13 @@ func equipment_shop(id: String = "") -> void:
 	stats.add_theme_constant_override("separation",16)
 	place(stats,Vector2(870,375),Vector2(340,250))
 	stats.add_child(label("THE PARTICULARS",13,false,Color("9b7740")))
-	stats.add_child(label("Sharpness  ·  %.2f" % progress.knife_strength(id),22,true))
+	var sharpness := label("Sharpness  ·  %.2f" % progress.knife_strength(id),22,true); sharpness.name = "EquipmentSharpness"; stats.add_child(sharpness)
 	var reach := progress.equipment.edge_length(id)/progress.equipment.edge_length(EquipmentCatalog.STARTER)
 	stats.add_child(label("Reach  ·  %.0f%% of starter" % (reach*100),20,true))
 	stats.add_child(label("Precision  ·  "+data.precision,20,true))
 	stats.add_child(label("Special  ·  "+data.special,20,true))
 	var preparation := progress.equipment.modification(progress.knife_modification(id))
-	stats.add_child(label((preparation.name+" applied." if not preparation.is_empty() else "No preparation applied.")+"\nSharp Edge cultivation applies.",15,false,MUTED))
+	stats.add_child(label((preparation.name+" applied." if not preparation.is_empty() else "No preparation applied.")+"\nCultivated and permanent sharpness apply.",15,false,MUTED))
 	var owned := id in progress.owned_knives
 	var equipped := id == progress.equipped_knife
 	var callback: Callable = func(): knife_equip_requested.emit(id)
@@ -463,8 +463,11 @@ func upgrade_entry(d: Dictionary, count: int, list: VBoxContainer, category: Str
 	var effect := label(d.effect,18)
 	effect.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	entry.add_child(effect)
-	if d.id == "extra_cuts":
-		entry.add_child(label("Currently %d rewarded cuts per tomato" % progress.max_cuts(),16,false,MUTED))
+	if d.id in ["sharp_edge","extra_cuts"]:
+		var next_level := mini(int(d.max_level),progress.level(d.id)+1)
+		var comparison := "Equipped sharpness: %.2f → %.2f" % [progress.strength(),progress.strength(next_level)] if d.id == "sharp_edge" else "Rewarded cuts per family: %d → %d · maximum %d" % [progress.max_cuts(),progress.max_cuts(next_level),CutFamily.MAX_CUTS]
+		var current: Label = label(comparison,16,true); current.name = "CurrentCutting_"+d.id
+		current.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; entry.add_child(current)
 	if d.id in ["faster_throwing","double_toss"]:
 		var next_level := mini(int(d.max_level),progress.level(d.id)+1)
 		var comparison := "Launch interval: %.2fs → %.2fs · floor %.2fs" % [progress.launch_interval(),progress.launch_interval(next_level),progress.effect_value("faster_throwing","minimum_interval")] if d.id == "faster_throwing" else "Tomatoes per launch: %d → %d · maximum %d" % [progress.launch_count(),progress.launch_count(next_level),Progression.MAX_LAUNCH_COUNT]

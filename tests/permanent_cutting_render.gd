@@ -1,0 +1,96 @@
+extends "res://tests/permanent_time_render.gd"
+
+const CUTTING := preload("res://tests/permanent_cutting_tests.gd")
+
+func run() -> void:
+	create_timer(180).timeout.connect(func(): push_error("Permanent cutting rendered checks timed out"); quit(1))
+	DirAccess.make_dir_recursive_absolute(output)
+	game = load("res://scenes/main.tscn").instantiate(); game.save_path = "user://tests/permanent-cutting-render.json"
+	for suffix: String in ["", ".bak"]:
+		if FileAccess.file_exists(game.save_path+suffix): DirAccess.remove_absolute(game.save_path+suffix)
+	root.add_child(game); await frames(); await click(archive_icon())
+	check(game.ui.content.find_child("ArchiveCategory_Permanent Cutting",true,false) == null,"fresh archive hides permanent cutting until a real prerequisite reveals it")
+	game.progress = PRESTIGE.funded(200); game.ui.progress = game.progress; game.audio.progress = game.progress
+	game.ui.archive(); await frames(); await click(game.ui.content.find_child("PreviewPrestige",true,false)); game.ui.prestige_confirmation.get_ok_button().pressed.emit(); await frames()
+	await permanent("permanent_slice_value")
+	check("starting_sharpness" in game.progress.prestige.unseen("Permanent Cutting") and game.ui.content.find_child("ArchiveCategory_Permanent Cutting",true,false) != null,"actual value purchase reveals the independent unread cutting branch")
+	await click(game.ui.content.find_child("ArchiveCategory_Permanent Cutting",true,false)); await create_timer(.65).timeout
+	var title: Control = game.ui.content.find_child("PrestigeTitle_starting_sharpness",true,false)
+	check("starting_sharpness" in game.progress.prestige.viewed and title.get_parent().get_child(0).texture.resource_path.ends_with("starting_sharpness.svg") and game.ui.content.find_child("PurchasePermanent_starting_extra_cuts",true,false) == null,"original blade-and-stone plate accompanies persistent real read dwell while the extra-cut successor stays hidden")
+	await capture("125-cutting-invitation")
+	await permanent("starting_sharpness")
+	check(game.progress.prestige.seeds == 197 and game.progress.strength() == 1.5 and game.progress.max_cuts() == 1 and game.progress.levels.is_empty(),"printed first sharpness purchase spends seeds for actual strength without ordinary levels or free recuts")
+	await permanent("starting_sharpness"); await permanent("starting_extra_cuts")
+	check(game.progress.prestige.seeds == 190 and game.progress.strength() == 2 and game.progress.max_cuts() == 2 and "Rewarded cuts per family: 2 → 3" in game.ui.content.find_child("PermanentEffect_starting_extra_cuts",true,false).text,"actual revealed cut purchase adds a shared family reward and shows its honest next effect")
+	await capture("126-cutting-orders")
+	await click(game.ui.content.find_child("ArchiveCategory_Permanent Wealth",true,false)); await permanent("starting_cash")
+	await click(game.ui.content.find_child("ArchiveCategory_Permanent Cutting",true,false))
+	for viewport: Vector2i in [Vector2i(1280,800),Vector2i(1280,720)]:
+		root.size = viewport; await frames()
+		var tab_rects: Array[Rect2] = []; var fit := true
+		for name: String in ["Permanent Wealth","Special Events","Permanent Time","Permanent Production","Permanent Cutting"]:
+			var tab: Control = game.ui.content.find_child("ArchiveCategory_"+name,true,false)
+			var rect := tab.get_global_rect(); fit = fit and root.get_visible_rect().encloses(rect)
+			for previous: Rect2 in tab_rects: fit = fit and not rect.intersects(previous)
+			tab_rects.append(rect)
+		var action: Control = game.ui.content.find_child("PurchasePermanent_starting_extra_cuts",true,false)
+		game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+		check(fit and root.get_visible_rect().encloses(action.get_global_rect()) and game.ui.content.get_node("ArchiveScroll").get_global_rect().position.y >= tab_rects[-1].end.y,"five native archive tabs and actual cutting orders fit without overlap at "+str(viewport))
+	await capture("127-five-branch-archive-16x9")
+	var retained: int = game.ui.content.get_node("ArchiveScroll").scroll_vertical
+	game.ui.archive("Permanent Cutting"); await frames()
+	check(game.ui.content.get_node("ArchiveScroll").scroll_vertical == retained and "faster_starting_throws" in game.progress.prestige.unseen("Permanent Production"),"cutting rebuild preserves purchase scroll and independent unread production")
+	game.set_physics_process(false); await click(find_button(game.ui.content,"Back to the cutting board")); game.clear_field(); game.fragments.set_physics_process(false); game._physics_process(0)
+	var fruit: Tomato = game.tomatoes.get_child(0); CUTTING.pose(fruit); var family := fruit.family
+	var camera_pose: Transform3D = game.kitchen.camera.global_transform
+	await move_blade(Vector2(-3,0)); await move_blade(Vector2(3,0))
+	check(game.session.cuts == 1 and family.limit == 2 and game.process_blade() == 0 and game.session.earnings == 1.25,"actual automatic ordinary root uses the permanent-only family budget and rejects same-stroke recutting")
+	await move_blade(Vector2(-3,0))
+	check(game.session.cuts == 2 and game.session.tomatoes_sliced == 1 and game.session.earnings == 2.5 and game.kitchen.camera.global_transform == camera_pose,"actual reverse mouse swipe earns the permanent recut once without another unique tomato or camera motion")
+	await capture("128-permanent-only-recut")
+	for i in range(4): await move_blade(Vector2(3 if i%2 == 0 else -3,0))
+	check(game.session.cuts == 2 and not family.has_budget(),"further actual mouse sweeps cannot exceed the purchased shared family budget")
+	var before: Dictionary = game.progress.snapshot(); game.purchase_permanent("starting_extra_cuts"); game.show_archive()
+	check(game.state == "playing" and game.progress.snapshot() == before,"live permanent cutting denies purchases and archive entry")
+	game.session.advance(100); game.finish_round(); await frames()
+	var restored := Progression.new()
+	check(game.store.load_into(restored) and restored.prestige.cycle_earnings == 2.5 and restored.prestige.paid.starting_sharpness == [2,4] and restored.prestige.paid.starting_extra_cuts == [3],"actual root/recut results save only earned income and historical permanent receipts")
+	await capture("129-permanent-cutting-results")
+	game.progress.money = 1000
+	await click(find_button(game.ui.content,"Visit the seed catalog")); await click(find_button(game.ui.content,"Cutting"))
+	check(game.state == "catalog" and game.ui.content.find_child("Purchase_extra_cuts",true,false) == null,"permanent sharpness never bypasses the ordinary Extra Cuts reveal prerequisite")
+	await cultivate("sharp_edge"); await cultivate("extra_cuts")
+	check(game.progress.strength() == 2.5 and game.progress.max_cuts() == 3 and "2.50 → 3.00" in game.ui.content.find_child("CurrentCutting_sharp_edge",true,false).text and "3 → 4" in game.ui.content.find_child("CurrentCutting_extra_cuts",true,false).text,"real ordinary cutting orders show combined permanent current/next strength and shared cuts")
+	await capture("130-layered-cutting-catalog")
+	await click(instrument_icon()); await click(game.ui.content.find_child("Product_steak",true,false)); await click(game.ui.content.find_child("Buy_steak",true,false)); await click(game.ui.content.find_child("Equip_steak",true,false))
+	check(game.progress.strength() == 3 and game.knife.knife_id == "steak" and game.ui.content.find_child("EquipmentSharpness",true,false).text == "Sharpness  ·  3.00","actual Steak purchase/equip and model show base plus normal plus permanent sharpness")
+	await click(game.ui.content.find_child("Prepare_steak",true,false)); await click(game.ui.content.find_child("BuyModification_honing_kit",true,false)); await click(game.ui.content.find_child("Apply_honing_kit",true,false))
+	check(game.progress.strength() == 3.5 and game.progress.applied_modifications == {"honing_kit":"steak"} and game.ui.content.find_child("ModificationComparison",true,false).text == "3.50 → 3.50","actual preparation adds once to the composed equipped blade and reports an honest already-applied comparison")
+	await capture("131-permanent-prepared-steak")
+	await click(archive_icon()); await click(game.ui.content.find_child("ArchiveCategory_Special Events",true,false)); await permanent("giant_harvest")
+	await click(find_button(game.ui.content,"Back to the cutting board")); game.clear_field(); game.fragments.set_physics_process(false); game.session.launch_clock = 1000
+	game.event_rng.seed = CUTTING.CRITICAL.seed_for(.06,true); game._physics_process(6)
+	fruit = game.tomatoes.get_child(0); CUTTING.pose(fruit); family = fruit.family
+	await move_blade(Vector2(-3,0)); await move_blade(Vector2(3,0))
+	check(fruit.durability == 2.5 and game.session.cuts == 0 and game.session.earnings == 0 and family.limit == 3,"actual prepared permanent-enhanced mouse strike damages six-resistance giant without early reward")
+	await capture("132-composed-giant-resistance")
+	await move_blade(Vector2(-3,0))
+	check(game.session.cuts == 1 and game.session.giant_tomatoes == 1 and game.session.earnings == 50,"second actual mouse strike splits giant and pays captured value once")
+	await move_blade(Vector2(3,0)); await move_blade(Vector2(-3,0))
+	check(game.session.cuts == 3 and game.session.giant_tomatoes == 1 and game.session.earnings == 150 and not family.has_budget(),"actual giant descendants use composed strength and three shared cuts without duplicating unique event credit")
+	await capture("133-composed-giant-recuts")
+	game.session.advance(100); game.finish_round(); await frames()
+	check(game.store.load_into(restored) and restored.prestige.cycle_earnings == 152.5 and restored.equipped_knife == "steak" and restored.strength() == 3.5 and restored.max_cuts() == 3,"real giant result banks correctly and reloads equipment/preparation plus both cutting layers")
+	game.progress.complete_round(float(game.progress.prestige.config.threshold),1,1)
+	await click(archive_icon()); await click(game.ui.content.find_child("PreviewPrestige",true,false)); game.ui.prestige_confirmation.get_ok_button().pressed.emit(); await frames()
+	check(game.progress.strength() == 2 and game.progress.max_cuts() == 2 and game.progress.levels.is_empty() and game.progress.owned_knives == ["rusty_butter"] and game.progress.owned_modifications.is_empty() and game.progress.prestige.level("giant_harvest") == 1,"actual confirmed prestige preserves permanent cutting/event ownership and clears all normal cultivation/equipment/preparation")
+	game.show_settings(); await frames()
+	for key: String in ["reduced_motion","reduced_effects"]: await click(game.ui.content.find_child("Setting_"+key,true,false))
+	await click(archive_icon()); await click(game.ui.content.find_child("ArchiveCategory_Permanent Cutting",true,false))
+	check(game.progress.settings.reduced_motion and "2.00 → 2.50" in game.ui.content.find_child("PermanentEffect_starting_sharpness",true,false).text,"Reduced Motion and Effects retain readable permanent-only current/next strength after reset")
+	await capture("134-cutting-after-prestige")
+	game.show_home(); await frames(); await click(find_button(game.ui.content,"New game")); game.ui.confirmation.get_ok_button().pressed.emit(); await frames()
+	check(game.progress.strength() == 1 and game.progress.max_cuts() == 1 and game.progress.prestige.levels.is_empty() and game.progress.settings.reduced_motion,"confirmed New Game clears permanent cutting and restores starter values while retaining preferences")
+	print("PERMANENT CUTTING RENDER RESULT: ",failures," failures")
+	game.queue_free(); await frames(); await create_timer(.75).timeout
+	quit(1 if failures else 0)

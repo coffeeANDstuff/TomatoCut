@@ -43,7 +43,7 @@ func spawn_count(id: String, permanent: PrestigeProgression) -> int:
 
 func cut_limit(id: String, progress) -> int:
 	var d := definition(id)
-	return clampi(progress.max_cuts()+int(progress.prestige.effect(str(d.get("bonus_cut_upgrade","")))),1,7)
+	return clampi(progress.max_cuts()+int(progress.prestige.effect(str(d.get("bonus_cut_upgrade","")))),1,CutFamily.MAX_CUTS)
 
 func flight_multiplier(id: String, permanent: PrestigeProgression) -> float:
 	return 1.0+permanent.effect(str(definition(id).get("duration_upgrade","")))

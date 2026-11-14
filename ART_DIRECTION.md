@@ -2,6 +2,13 @@
 
 Authority: GAME_DESIGN.md §§3, 6–7, 10, 14–15, 18–19, 22–23, 28.
 
+## Permanent Cutting archive (v0.18)
+Two original engraved studies identify real permanent orders: a **blade across a honing stone** for Starting Sharpness and a **tomato divided into a half, wedge and smaller section** for Starting Extra Cuts. `tools/build_prestige_art.py` retains their editable SVG source. Cream, ink, sage, muted gold and tomato-red specimen accents preserve the archive family. No new fruit/knife/fragment model or preparation is counted; existing Blender, GLB and audio payloads stay intact.
+
+Five actually revealed branches fit the existing three-column/two-row native printed navigation at 16:10/16:9. Hidden categories/successors stay absent. Original plates, independent unread/read state, clipped-title dwell, vines, purchase scroll retention and Reduced Motion remain functional. Archive/ordinary catalog show equipped current-next strength and shared family cuts, including seven-cut saturation. Equipment and preparation use the same composed strength; moving a kit never duplicates its benefit.
+
+Reviewed actual captures `125`–`134`: invitation, paid orders, five-category 16:9 archive, permanent-only recut/result, ordinary composition, prepared Steak comparison, Giant resistance/recuts and post-prestige page. Input fixtures freeze/pose fruit and fragments to isolate collisions; these captures do not establish natural fragment feel or performance. Existing rendered Giant/fragment flows separately exercise moving/rotating original geometry. Real new input earns two cuts from one ordinary family and three from one Giant with fixed camera and normal rewards. No new camera motion, intrusive audio or effect is introduced. Human feel/readability, hand refinement, listening and hardware review remain production work.
+
 ## Permanent Production archive (v0.17)
 Original engraved **wind-up throwing spoon** and **three-tomato launch basket** plates identify Faster Starting Throws and Additional Starting Tomatoes. Their editable SVG source is retained in `tools/build_prestige_art.py`; both accompany actual paid orders. Cream, green ink, muted sage, tomato red and antique gold preserve the archive palette. No new fruit or knife is counted.
 

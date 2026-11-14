@@ -1,6 +1,7 @@
 class_name CutFamily
 extends RefCounted
 
+const MAX_CUTS := 7
 # All descendants share this ledger. A stroke may strike this fruit only once,
 # including strikes that deal damage without yet separating a piece.
 var variety_id := "standard_red"
@@ -16,7 +17,7 @@ var rewarded_cuts := 0
 var last_stroke := -1
 
 func _init(cut_limit: int = 1) -> void:
-	limit = clampi(cut_limit, 1, 7)
+	limit = clampi(cut_limit,1,MAX_CUTS)
 
 func has_budget() -> bool:
 	return rewarded_cuts < limit

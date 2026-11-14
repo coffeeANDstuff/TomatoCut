@@ -2,6 +2,26 @@
 from pathlib import Path
 out = Path(__file__).resolve().parents[1]/'assets/illustrations/prestige'
 out.mkdir(parents=True, exist_ok=True)
+
+# Two original cutting-study plates, used by actual permanent investments.
+(out/'starting_sharpness.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" width="220" height="180" viewBox="0 0 220 180"><g stroke="#213d35" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M36 127L127 91L174 109L81 149Z" fill="#8a9b7a"/><path d="M36 127V140L81 163L174 122V109M81 149V163" fill="#e9ddbf" stroke="#ba8e4e"/>
+<path d="M78 98L149 27Q166 38 169 61L105 122Z" fill="#e9ddbf"/><path d="M89 104L160 37M98 111L166 49" fill="none" stroke="#ba8e4e"/>
+<path d="M76 92L104 120L82 143Q77 148 70 143L51 124Q46 119 51 114Z" fill="#8a9b7a"/><path d="M57 117L76 136" fill="none"/><circle cx="68" cy="123" r="3" fill="#ba8e4e"/>
+<path d="M108 54V35M99 44H118M184 79V64M177 72H191M37 84L49 88M45 65L57 74" fill="none" stroke="#ba8e4e"/>
+<path d="M116 141L123 138M128 136L136 132M57 156L68 161M99 173H151" fill="none"/>
+</g></svg>''')
+(out/'starting_extra_cuts.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" width="220" height="180" viewBox="0 0 220 180"><g stroke="#213d35" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+<path d="M97 27V43M90 35H104M33 96L52 92M188 96L171 92" fill="none" stroke="#ba8e4e"/>
+<path d="M104 66C76 38 40 53 45 90C49 117 74 127 96 111Z" fill="#c84630"/>
+<path d="M104 66C91 84 91 99 96 111C119 98 124 82 104 66Z" fill="#e9ddbf"/><path d="M101 72Q88 90 98 105M104 81L100 84M103 92L99 95" fill="none" stroke="#ba8e4e"/>
+<path d="M68 55L60 43L73 49L80 39L81 55L92 60L77 62Z" fill="#8a9b7a"/>
+<path d="M136 76L184 111Q163 131 140 116Z" fill="#c84630"/><path d="M136 76L184 111Q153 108 136 76Z" fill="#e9ddbf"/>
+<path d="M73 134L114 117L108 157Q86 163 73 134Z" fill="#c84630"/><path d="M73 134L114 117L97 144Z" fill="#e9ddbf"/>
+<path d="M149 143L180 152L154 164Z" fill="#c84630"/><path d="M151 145L177 152L156 158Z" fill="#e9ddbf"/>
+<path d="M149 91L154 95M163 102L168 105M88 133L91 131M100 132L104 129M65 173H166" fill="none" stroke="#ba8e4e"/>
+<path d="M117 63L124 55M126 112L133 121M55 136L49 145" fill="none" stroke-dasharray="3 4"/>
+</g></svg>''')
 (out/'seed_envelope.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300" viewBox="0 0 480 300">
 <g stroke-linecap="round" stroke-linejoin="round">
 <path d="M37 63L413 42L441 252L61 273Z" fill="#e9ddbf" stroke="#ba8e4e" stroke-width="3"/>
