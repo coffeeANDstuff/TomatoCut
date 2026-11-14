@@ -34,6 +34,23 @@ func validate() -> PackedStringArray:
 		if not number(value) or float(value) <= 0 or (key == "exponent" and float(value) >= 1) or (key == "threshold" and (float(value) < 1 or float(value) > 1e15)): errors.append("Invalid prestige "+key)
 	for raw: Variant in definitions:
 		if raw is Dictionary and number(raw.get("max_level")) and float(raw.max_level) > 100: errors.append("Permanent level limit too large")
+	var limits: Variant = config.get("time_limits")
+	if not limits is Dictionary:
+		errors.append("Missing permanent time limits")
+	else:
+		for key: String in ["starting_bonus","overtime_multiplier"]:
+			var value: Variant = limits.get(key)
+			if not number(value) or float(value) < (1 if key == "overtime_multiplier" else .01) or float(value) > (10 if key == "overtime_multiplier" else 60): errors.append("Invalid permanent time limit: "+key)
+	for id: String in ["starting_round_time","overtime_bonus"]:
+		var d := definition(id)
+		if d.is_empty(): errors.append("Missing permanent time investment: "+id); continue
+		if d.get("category") != "Permanent Time" or not d.get("illustration") is String or not ResourceLoader.exists(d.illustration): errors.append(id+": invalid permanent time presentation")
+		if id == "overtime_bonus" and d.get("requires") is Dictionary and int(d.requires.get("starting_round_time",0)) < 1: errors.append(id+": requires its permanent time predecessor")
+		var coefficients: Variant = d.get("effect_values")
+		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
+		var key := "starting_bonus" if id == "starting_round_time" else "overtime_multiplier"
+		if limits is Dictionary and number(limits.get(key)) and number(coefficient) and number(d.get("max_level")):
+			if float(coefficient)*float(d.max_level)+(0 if id == "starting_round_time" else 1) > float(limits[key])+.000001: errors.append(id+": exceeds the permanent time budget")
 	return errors
 
 func definition(id: String) -> Dictionary:
@@ -46,6 +63,20 @@ func level(id: String) -> int:
 
 func effect(id: String) -> float:
 	return float(definition(id).get("effect_values",{}).get("bonus_per_level",0))*level(id)
+
+func _time_limit(key: String, fallback: float) -> float:
+	var limits: Variant = config.get("time_limits")
+	return maxf(fallback,float(limits[key])) if limits is Dictionary and number(limits.get(key)) else fallback
+
+func starting_time_bonus(at_level: int = -1) -> float:
+	var d := definition("starting_round_time")
+	var owned := level("starting_round_time") if at_level < 0 else clampi(at_level,0,int(d.get("max_level",0)))
+	return clampf(float(d.get("effect_values",{}).get("bonus_per_level",0))*owned,0,_time_limit("starting_bonus",0))
+
+func overtime_multiplier(at_level: int = -1) -> float:
+	var d := definition("overtime_bonus")
+	var owned := level("overtime_bonus") if at_level < 0 else clampi(at_level,0,int(d.get("max_level",0)))
+	return clampf(1+float(d.get("effect_values",{}).get("bonus_per_level",0))*owned,1,_time_limit("overtime_multiplier",1))
 
 func price(id: String, at_level: int = -1) -> int:
 	var d := definition(id)

@@ -46,7 +46,7 @@ func run() -> void:
 	await capture("61-permanent-wealth-branch")
 	var title: Control = game.ui.content.find_child("PrestigeTitle_starting_cash",true,false)
 	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(title); await frames(); await create_timer(.35).timeout
-	check("starting_cash" in game.progress.prestige.viewed and game.progress.prestige.unseen().is_empty(),"visible permanent branch receives the existing vine/fade/dwell acknowledgement and saves its read state")
+	check("starting_cash" in game.progress.prestige.viewed and game.progress.prestige.unseen("Permanent Wealth").is_empty() and "starting_round_time" in game.progress.prestige.unseen("Permanent Time"),"visible permanent branch receives the existing vine/fade/dwell acknowledgement and saves its read state")
 	await permanent("starting_cash")
 	check(game.progress.prestige.seeds == 1 and game.progress.money == 0 and game.progress.prestige.effect("starting_cash") == 5,"actual Starting Cash purchase waits for the next reset and never injects qualifying earnings")
 	root.size = Vector2i(1280,720); await frames()

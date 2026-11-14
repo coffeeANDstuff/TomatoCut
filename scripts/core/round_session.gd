@@ -72,7 +72,9 @@ func record_cut(progress: Progression, first_slice: bool = true, tomato_value: f
 	earnings += value
 	if progress.overtime_seconds() > 0 and cuts % int(progress.effect_value("overtime","milestone_cuts")) == 0 and overtime_triggers < int(progress.effect_value("overtime","max_triggers")):
 		var extension := maxf(0, minf(progress.overtime_seconds(), progress.round_ceiling()-duration-overtime_added))
-		remaining += extension
+		# Fractional bonuses must not leave a microscopic positive timer after
+		# the authored ceiling has elapsed (for example 58s + four 0.6s grants).
+		remaining = minf(progress.round_ceiling(),remaining+extension)
 		overtime_added += extension
 		overtime_triggers += 1
 	return value

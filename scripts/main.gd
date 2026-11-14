@@ -91,6 +91,7 @@ func start_round() -> void:
 	events.begin()
 	countdown_cue = 4
 	ui.gameplay()
+	ui.update_round(session)
 	audio.play("paper")
 
 func _physics_process(delta: float) -> void:

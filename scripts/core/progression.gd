@@ -86,7 +86,7 @@ func effect_value(id: String, key: String) -> float:
 	return float(definition(id).get("effect_values", {}).get(key,0))
 
 func round_duration() -> float:
-	return 10.0 + effect_value("extra_seconds","seconds") * level("extra_seconds")
+	return minf(round_ceiling(),10.0+effect_value("extra_seconds","seconds")*level("extra_seconds")+prestige.starting_time_bonus())
 
 func launch_interval() -> float:
 	return maxf(effect_value("faster_throwing","minimum_interval"), 4.0 * pow(effect_value("faster_throwing","interval_multiplier"), level("faster_throwing")))
@@ -147,7 +147,7 @@ func combo_window() -> float:
 	return 1.35 + effect_value("combo_window","seconds") * level("combo_window")
 
 func overtime_seconds() -> float:
-	return effect_value("overtime","seconds") * level("overtime")
+	return effect_value("overtime","seconds")*level("overtime")*prestige.overtime_multiplier()
 
 func round_ceiling() -> float:
 	return effect_value("overtime","ceiling")

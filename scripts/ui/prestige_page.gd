@@ -69,8 +69,10 @@ static func build(ui) -> void:
 		var comparison: String
 		if d.id == "permanent_slice_value": comparison = "Cut value: %.0f%% → %.0f%%" % [(1+permanent.effect(d.id))*100,(1+float(d.effect_values.bonus_per_level)*next_level)*100]
 		elif d.id == "starting_cash": comparison = "Next starting balance: %s → %s" % [Progression.cash(permanent.effect(d.id)),Progression.cash(float(d.effect_values.bonus_per_level)*next_level)]
+		elif d.id == "starting_round_time": comparison = "Round start: %.0fs → %.0fs · ceiling %.0fs" % [p.round_duration(),minf(p.round_ceiling(),p.round_duration()-permanent.starting_time_bonus()+permanent.starting_time_bonus(next_level)),p.round_ceiling()]
+		elif d.id == "overtime_bonus": comparison = "Overtime multiplier: ×%.2f → ×%.2f · normal Overtime required" % [permanent.overtime_multiplier(),permanent.overtime_multiplier(next_level)]
 		else: comparison = EventCatalog.new().summary(d.id,permanent)
-		entry.add_child(ui.label(comparison,18,true))
+		var effects: Label = ui.label(comparison,18,true); effects.name = "PermanentEffect_"+d.id; entry.add_child(effects)
 		var id: String = d.id
 		var action: Button = ui.button("Maximum cultivated" if level >= int(d.max_level) else "Cultivate  ·  %d %s   /   Level %d of %d" % [permanent.price(id),"seed" if permanent.price(id) == 1 else "seeds",level,int(d.max_level)],func(): ui.permanent_purchase_requested.emit(id),false,"PrintCultivate")
 		action.name = "PurchasePermanent_"+id

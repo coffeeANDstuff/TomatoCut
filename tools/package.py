@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Tomato Jackpot milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Permanent Time milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -131,6 +131,15 @@ airtime at the same arc height. Duration changes no round timer, fragment life
 or family cut budget. One jackpot per round, 32s cooldown and shared budgets
 still apply. Captured value, ordinary price/combo/permanent factors, durable
 unique counts, prestige preservation and New Game use the same real paths.
+Permanent Time reveals after Permanent Slice Value 1. Starting Round Time
+costs 2/4/8 seeds for +4/+8/+12 seconds at every round start. Overtime Bonus
+reveals after Starting Round Time 2, costing 3/6/12/24/48 seeds for +20% to
++100% of cultivated Overtime. No normal level or event unlock is granted.
+Ordinary Overtime still needs normal Extra Seconds and Extra Cuts. All time
+shares the existing 60-second ceiling and four overtime triggers. Effective
+current/next values include both investment layers; the HUD starts at the
+actual duration. Permanent time survives reload/prestige; normal levels reset
+and New Game clears permanent progress while retaining preferences.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

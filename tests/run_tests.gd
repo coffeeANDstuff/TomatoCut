@@ -1,6 +1,7 @@
 extends SceneTree
 
 const ECONOMY_MODEL := preload("res://tools/economy_model.gd")
+const PERMANENT_TIME_TESTS := preload("res://tests/permanent_time_tests.gd")
 const TIME_TESTS := preload("res://tests/time_upgrade_tests.gd")
 const HARVEST_TESTS := preload("res://tests/harvest_tests.gd")
 const DISCOVERY_TESTS := preload("res://tests/discovery_tests.gd")
@@ -54,6 +55,7 @@ func run() -> void:
 	await MODIFICATION_TESTS.run(self, Callable(self,"check"))
 	await STEAK_TESTS.run(self, Callable(self,"check"))
 	await PRESTIGE_TESTS.run(self, Callable(self,"check"))
+	await PERMANENT_TIME_TESTS.run(self, Callable(self,"check"))
 	await GOLDEN_TESTS.run(self, Callable(self,"check"))
 	await STAMPEDE_TESTS.run(self, Callable(self,"check"))
 	await GIANT_TESTS.run(self, Callable(self,"check"))

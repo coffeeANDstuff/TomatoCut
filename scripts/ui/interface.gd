@@ -465,6 +465,17 @@ func upgrade_entry(d: Dictionary, count: int, list: VBoxContainer, category: Str
 	entry.add_child(effect)
 	if d.id == "extra_cuts":
 		entry.add_child(label("Currently %d rewarded cuts per tomato" % progress.max_cuts(),16,false,MUTED))
+	if d.id in ["extra_seconds","overtime"]:
+		var next_level := mini(int(d.max_level),progress.level(d.id)+1)
+		var comparison: String
+		if d.id == "extra_seconds":
+			var next := minf(progress.round_ceiling(),progress.round_duration()+progress.effect_value(d.id,"seconds")*(next_level-progress.level(d.id)))
+			comparison = "Round start: %.0fs → %.0fs · ceiling %.0fs" % [progress.round_duration(),next,progress.round_ceiling()]
+		else:
+			var next := progress.effect_value(d.id,"seconds")*next_level*progress.prestige.overtime_multiplier()
+			comparison = "Overtime per 10 cuts: +%.2fs → +%.2fs · ceiling %.0fs" % [progress.overtime_seconds(),next,progress.round_ceiling()]
+		var current: Label = label(comparison,16,true); current.name = "CurrentTime_"+d.id
+		current.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; entry.add_child(current)
 	if d.id == "critical_slice":
 		var profile := progress.cutting_profile()
 		var current := label("Current: %.0f%% chance · ×%.1f cutting damage" % [profile.critical_chance*100,profile.critical_multiplier],18,true)

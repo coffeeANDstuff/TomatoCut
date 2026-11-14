@@ -1,20 +1,20 @@
 # Tomato Cut
 
-**[DOWNLOAD THE FULL PACKAGE — v0.15.0 (Windows game + complete source and art)](https://github.com/coffeeANDstuff/TomatoCut/releases/download/v0.15.0/TomatoCut-Full-v0.15.0.zip)**
+**[DOWNLOAD THE FULL PACKAGE — v0.16.0 (Windows game + complete source and art)](https://github.com/coffeeANDstuff/TomatoCut/releases/download/v0.16.0/TomatoCut-Full-v0.16.0.zip)**
 
-[Latest release and all downloads](https://github.com/coffeeANDstuff/TomatoCut/releases/latest) · [Windows game only](https://github.com/coffeeANDstuff/TomatoCut/releases/download/v0.15.0/TomatoCut-Windows-v0.15.0.zip) · [Version history](https://github.com/coffeeANDstuff/TomatoCut/releases)
+[Latest release and all downloads](https://github.com/coffeeANDstuff/TomatoCut/releases/latest) · [Windows game only](https://github.com/coffeeANDstuff/TomatoCut/releases/download/v0.16.0/TomatoCut-Windows-v0.16.0.zip) · [Version history](https://github.com/coffeeANDstuff/TomatoCut/releases)
 
 Unzip the full package and run **`Windows/TomatoCut.exe`**. The complete editable Godot project, Blender sources and handoff documents are in **`Source/`**. This is an ongoing development milestone; native Windows playtesting is still pending.
 
 ---
 
-A rather serious institution for slicing tomatoes. An ongoing **Godot 4.6 / GDScript** Windows game project. The v0.15 milestone implements Standard Red, Cherry and Roma tomatoes, three distinct knives with a buy/equip catalog, real preparation and rotating 3D previews, seeded halves/wedges/eighths, swept slicing and recutting, ten-second starting rounds, results/replay, eighteen normal upgrades, twenty-one permanent investments, confirmed prestige, separately gated Golden Harvest, Tomato Stampede, The Big One, Rainbow Harvest and Tomato Jackpot, automatic harvest progression, saving and an illustrated culinary catalog. It is not the complete game described in the master design.
+A rather serious institution for slicing tomatoes. An ongoing **Godot 4.6 / GDScript** Windows game project. The v0.16 milestone implements Standard Red, Cherry and Roma tomatoes, three distinct knives with a buy/equip catalog, real preparation and rotating 3D previews, seeded halves/wedges/eighths, swept slicing and recutting, ten-second starting rounds, results/replay, eighteen normal upgrades, twenty-three permanent investments, confirmed prestige, separately gated Golden Harvest, Tomato Stampede, The Big One, Rainbow Harvest and Tomato Jackpot, automatic harvest progression, saving and an illustrated culinary catalog. It is not the complete game described in the master design.
 
 The **v0.12 button pass** gives the whole game original printed culinary controls: tomato-seal play tickets, green cultivation order slips, clipped-paper category/product labels, stamped navigation tiles and checkmark preference slips. Insets, double ink rules, muted gold, a little paper grain and serif primary labels match the seed catalog. Hover/press, dotted keyboard focus, selected and disabled states stay distinct. Actions, prices and reset warnings keep their clear wording.
 
 ## Play the Windows milestone
 
-The complete `TomatoCut-Full-v0.15.0.zip` includes `Windows/` (ready-to-play build) and `Source/` (complete editable project, art, tests and documentation). Unzip it and run `Windows/TomatoCut.exe`. A separate `TomatoCut-Windows-v0.15.0.zip` is also produced. No Godot editor is required. Use a Vulkan-capable Windows PC for the default Forward+ renderer. If your hardware cannot run it, `Play-Compatibility.bat` starts the same build with Godot's OpenGL compatibility renderer.
+The complete `TomatoCut-Full-v0.16.0.zip` includes `Windows/` (ready-to-play build) and `Source/` (complete editable project, art, tests and documentation). Unzip it and run `Windows/TomatoCut.exe`. A separate `TomatoCut-Windows-v0.16.0.zip` is also produced. No Godot editor is required. Use a Vulkan-capable Windows PC for the default Forward+ renderer. If your hardware cannot run it, `Play-Compatibility.bat` starts the same build with Godot's OpenGL compatibility renderer.
 
 - Click **Begin slicing** (or **Continue**).
 - Move the mouse through airborne tomatoes. No mouse button is needed to slice.
@@ -44,6 +44,8 @@ The complete `TomatoCut-Full-v0.15.0.zip` includes `Windows/` (ready-to-play bui
 - **Rainbow Frequency**, **Rainbow Rewards** and **Extended Harvest** start at 3 seeds, double per level and have three levels. They raise chance from **8% to 20%**, captured cut value from **8× to 20× best eligible normal quality**, and wave size from **six to nine**. Checks begin at seven seconds, with twenty-one-second cooldown, one active wave and two waves per round. The complete wave must fit shared capacity. Each specimen owns its normal family cut budget. Investments and unique rainbow counts survive prestige; New Game clears them.
 - **Jackpot Harvest** is a separate **5-seed** invitation after Starting Cash 1. Its exceptionally rare **Tomato Jackpot** is an original garnet heart with ten gilded ribs, a bronzed crown and seeded interior. Two resistance points reward stronger knives or repeated distinct strikes; damage alone pays nothing. It never grants normal Golden Beauty or other event unlocks.
 - **Jackpot Frequency**, **Jackpot Multiplier** and **Jackpot Duration** start at 4 seeds, double per level and have three levels. Chance grows **2.5% → 7%**, captured value **250× → 625× best eligible normal quality**, and whole-specimen airtime **1× → 1.45× at the same arc height**. Duration slows launch velocity/spin and gravity consistently; it adds no round time, fragment life or family cuts. Checks begin/repeat at eight seconds, with 32-second cooldown and **one jackpot per round**. Investments and unique lifetime counts survive prestige; New Game clears them.
+- **Permanent Time** reveals after Permanent Slice Value 1. **Starting Round Time** costs **2/4/8 seeds** for **+4/+8/+12 seconds** at every round start, including this cycle. The steps align with ordinary launches. **Overtime Bonus** reveals after Starting Round Time 2 and costs **3/6/12/24/48 seeds** for **+20% through +100% of cultivated Overtime**. It grants no normal levels or event unlocks; ordinary Overtime still needs its normal prerequisites.
+- Permanent and ordinary time share the existing **60-second round ceiling** and **four overtime grants per round**. The archive and seed catalog show effective current/next times, including permanent bonuses. The HUD initializes to the actual round duration. Both permanent investments, seed receipts and read state survive prestige/reload; normal time resets and New Game clears permanent time while retaining preferences.
 - **New game** asks for confirmation. Normal progress saves automatically after rounds, purchases and settings changes.
 
 Earned cut rewards are rounded to whole cents; existing saved balances are preserved. Save version **5** adds the cycle identity, qualifying earnings, seed accounting, permanent levels and discovery/read state. Existing **v1–v4** saves migrate their lifetime completed-round earnings into their first prestige cycle, retaining their supported normal equipment/progress and granting no seeds or permanent levels. Older equipment migrations remain supported. Invalid currency, counters, assignments or permanent state are rejected before mutation and use existing backup recovery. New Game also clears permanent progress while retaining preferences. The optional lifetime Golden Tomato, stampede, giant, rainbow and jackpot specimen counters default to zero in earlier v5 saves. Their combined counts cannot exceed total unique tomatoes. Existing paid permanent investments remain valid; newly eligible event discoveries grant no free unlocks. Earlier milestones may not recognize newer permanent content.
@@ -110,6 +112,7 @@ godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/giant_render.gd
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/rainbow_render.gd
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/jackpot_render.gd
+godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/permanent_time_render.gd
 ```
 
 To reproduce the early balance model and inspect prepared fragment assets:
@@ -117,6 +120,7 @@ To reproduce the early balance model and inspect prepared fragment assets:
 ```sh
 godot --headless --path . --script tools/simulate_economy.gd
 godot --headless --path . --script tools/simulate_prestige.gd
+godot --headless --path . --script tools/simulate_permanent_time.gd
 godot --headless --path . --script tools/simulate_events.gd
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/fragment_gallery.gd
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/fragment_gallery.gd -- --cherry
@@ -137,7 +141,7 @@ Install official **Godot 4.6.3 export templates** using the editor's Export Temp
 mkdir -p exports/windows
 godot --headless --path . --export-release "Windows Desktop"
 python3 tools/package.py
-python3 tools/verify_package.py exports/TomatoCut-Full-v0.15.0.zip
+python3 tools/verify_package.py exports/TomatoCut-Full-v0.16.0.zip
 ```
 
 For embedded resource-pack smoke testing, run the Godot editor executable from outside the checkout with `--main-pack /absolute/path/to/exported-binary --script /absolute/path/to/tests/package_smoke.gd`. This tests packed game resources with the host engine; it is separate from native Windows validation.
@@ -157,7 +161,7 @@ This wrapper is optional outside the managed workspace. Live display processes d
 
 ## Version history
 
-Source milestones are tracked with Git commits and annotated tags: `v0.1.0` (vertical slice), `v0.2.0` (recuts/core upgrades), `v0.3.0` (Cherry/automatic harvest), `v0.4.0` (Roma/durable harvest and complete packaging), `v0.5.0` (botanical discovery and downloadable GitHub releases), `v0.6.0` (Critical Slice and seven-category catalog foundation), `v0.7.0` (equipment ownership, preview and blade-specific reach), `v0.8.0` (reusable Honing Kit and forged Steak Knife), `v0.9.0` (confirmed prestige, rare-seed archive and permanent wealth), `v0.10.0` (Golden Harvest, permanent event investments and unique event statistics), `v0.11.0` (Stampede Season, independent event scheduling, larger waves and persistent specimen statistics), `v0.12.0` (original printed culinary controls throughout the game), `v0.13.0` (Giant Harvest, durable enormous specimens and premium family cuts), `v0.14.0` (Rainbow Harvest, three original archive specimens and premium waves), and `v0.15.0` (Tomato Jackpot, the fifth gated event and paid whole-specimen airtime). Generated builds stay in ignored `exports/`. The tagged release workflow verifies official Godot checksums, runs regressions, exports and checks both embedded packs, verifies a full ZIP and a fresh source extraction, then publishes Full/Windows/Source ZIP assets and checksums to GitHub Releases. The full package is linked prominently above. Reproduce builds using the documented export commands. A failed release workflow can be retried from the repository Actions tab with its existing milestone tag; no personal token is required.
+Source milestones are tracked with Git commits and annotated tags: `v0.1.0` (vertical slice), `v0.2.0` (recuts/core upgrades), `v0.3.0` (Cherry/automatic harvest), `v0.4.0` (Roma/durable harvest and complete packaging), `v0.5.0` (botanical discovery and downloadable GitHub releases), `v0.6.0` (Critical Slice and seven-category catalog foundation), `v0.7.0` (equipment ownership, preview and blade-specific reach), `v0.8.0` (reusable Honing Kit and forged Steak Knife), `v0.9.0` (confirmed prestige, rare-seed archive and permanent wealth), `v0.10.0` (Golden Harvest, permanent event investments and unique event statistics), `v0.11.0` (Stampede Season, independent event scheduling, larger waves and persistent specimen statistics), `v0.12.0` (original printed culinary controls throughout the game), `v0.13.0` (Giant Harvest, durable enormous specimens and premium family cuts), `v0.14.0` (Rainbow Harvest, three original archive specimens and premium waves), `v0.15.0` (Tomato Jackpot, the fifth gated event and paid whole-specimen airtime), and `v0.16.0` (Permanent Time, effective timer forecasts and durable time investments). Generated builds stay in ignored `exports/`. The tagged release workflow verifies official Godot checksums, runs regressions, exports and checks both embedded packs, verifies a full ZIP and a fresh source extraction, then publishes Full/Windows/Source ZIP assets and checksums to GitHub Releases. The full package is linked prominently above. Reproduce builds using the documented export commands. A failed release workflow can be retried from the repository Actions tab with its existing milestone tag; no personal token is required.
 
 ## Continue development
 

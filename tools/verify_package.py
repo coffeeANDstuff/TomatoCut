@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.15.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.16.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -47,6 +47,8 @@ with zipfile.ZipFile(args.archive) as z:
     jackpot_assets = {'Source/art/jackpot_harvest.blend', 'Source/assets/models/events/jackpot.glb', 'Source/assets/audio/jackpot.wav', 'Source/assets/illustrations/prestige/jackpot_harvest.svg', 'Source/tests/jackpot_tests.gd', 'Source/tests/jackpot_render.gd'}
     jackpot_assets |= {'Source/assets/models/fragments/event_jackpot_'+shape+'.glb' for shape in ['half','wedge','chunk']}
     assert jackpot_assets <= set(hashes), 'Missing original jackpot content/source'
+    time_assets = {'Source/assets/illustrations/prestige/starting_round_time.svg', 'Source/assets/illustrations/prestige/overtime_bonus.svg', 'Source/tests/permanent_time_tests.gd', 'Source/tests/permanent_time_render.gd', 'Source/tools/simulate_permanent_time.gd', 'Source/TIME_BALANCE_REPORT.md'}
+    assert time_assets <= set(hashes), 'Missing original permanent time content/source'
     info = json.loads(z.read('BUILD_INFO.json'))
     version = re.search(r'config/version="([^"]+)"', z.read('Source/project.godot').decode()).group(1)
     assert info['version'] == version, 'Source/build version mismatch'

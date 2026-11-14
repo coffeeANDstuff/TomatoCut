@@ -373,6 +373,44 @@
       "effect_values": {
         "bonus_per_level": 0.15
       }
+    },
+    {
+      "id": "starting_round_time",
+      "name": "Starting Round Time",
+      "description": "A little more time in every future round, including this cycle. Ordinary Extra Seconds remain a separate cultivation branch.",
+      "effect": "+4 seconds to round starts per level; shared 60-second ceiling",
+      "base_cost": 2,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "permanent_slice_value": 1
+      },
+      "category": "Permanent Time",
+      "illustration": "res://assets/illustrations/prestige/starting_round_time.svg",
+      "effect_values": {
+        "bonus_per_level": 4
+      }
+    },
+    {
+      "id": "overtime_bonus",
+      "name": "Overtime Bonus",
+      "description": "A productive kitchen earns a longer extension. Requires ordinary Overtime to be cultivated; its normal prerequisites and four-trigger limit still apply.",
+      "effect": "+20% of cultivated Overtime per level; shared 60-second ceiling",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 5,
+      "requires": {
+        "starting_round_time": 2
+      },
+      "category": "Permanent Time",
+      "illustration": "res://assets/illustrations/prestige/overtime_bonus.svg",
+      "effect_values": {
+        "bonus_per_level": 0.2
+      }
     }
-  ]
+  ],
+  "time_limits": {
+    "starting_bonus": 12,
+    "overtime_multiplier": 2
+  }
 }
