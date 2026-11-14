@@ -224,7 +224,7 @@ func finish_round() -> void:
 		return
 	state = "results"
 	session.running = false
-	progress.complete_round(session.earnings,session.cuts,session.tomatoes_sliced,session.golden_tomatoes,session.stampede_tomatoes,session.giant_tomatoes)
+	progress.complete_round(session.earnings,session.cuts,session.tomatoes_sliced,session.golden_tomatoes,session.stampede_tomatoes,session.giant_tomatoes,session.rainbow_tomatoes)
 	save_progress()
 	clear_field()
 	ui.results(session)

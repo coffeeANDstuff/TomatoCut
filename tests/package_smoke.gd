@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.13.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.14.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -282,6 +282,55 @@ func run() -> void:
 	check(game.progress.prestige.level("giant_harvest") == 1 and game.progress.prestige.level("giant_bonus_cuts") == 1 and game.progress.lifetime.giant_tomatoes == 1,"packaged prestige preserves giant purchases and lifetime progress")
 	game.new_game()
 	check(game.progress.prestige.level("giant_harvest") == 0 and game.progress.lifetime.giant_tomatoes == 0 and game.events.catalog.probability("giant_harvest",game.progress.prestige) == 0,"packaged New Game relocks giants and clears their history")
+	game.finish_round()
+	check(game.events.catalog.probability("heirloom_celebration",game.progress.prestige) == 0 and game.spawn_event("heirloom_celebration") == null,"packaged fresh progress cannot activate locked Rainbow Harvest")
+	game.progress = Progression.new(); game.ui.progress = game.progress; game.audio.progress = game.progress
+	game.progress.complete_round(ceilf(threshold*pow(100,1.0/float(game.progress.prestige.config.exponent)))+1,1,1)
+	game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	for id: String in ["permanent_slice_value","starting_cash","heirloom_celebration","rainbow_frequency","rainbow_rewards","extended_harvest"]: game.purchase_permanent(id)
+	game.ui.archive("Special Events")
+	check(game.events.catalog.validate(game.progress.prestige).is_empty() and game.ui.content.find_child("PrestigeTitle_heirloom_celebration",true,false) != null and ResourceLoader.exists("res://assets/illustrations/prestige/rainbow_harvest.svg"),"packaged rainbow definitions, original illustration, cue and dedicated printed archive validate")
+	var model_count := 0; var batched := true
+	for data: Dictionary in game.events.catalog.definition("heirloom_celebration").specimens:
+		for path: String in [data.model]+data.fragments.values():
+			var model: Node = load(path).instantiate()
+			batched = batched and model.find_children("*","MeshInstance3D",true,false).size() <= 8
+			model_count += 1; model.free()
+	check(model_count == 12 and batched,"all twelve actual colored whole/interior/prepared models load from the pack within scene-node budgets")
+	check(game.progress.prestige.level("golden_harvest") == 0 and game.progress.prestige.level("stampede_season") == 0 and game.progress.prestige.level("giant_harvest") == 0 and is_equal_approx(game.events.catalog.probability("heirloom_celebration",game.progress.prestige),.12) and game.events.catalog.cut_value("heirloom_celebration",game.progress) == 12 and game.events.catalog.spawn_count("heirloom_celebration",game.progress.prestige) == 7,"packaged paid rainbow effects work independently of all sibling gates")
+	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"standard_red":1.0} and game.progress.max_cuts() == 1,"packaged archive collection grants no normal variety or cutting upgrades")
+	game.progress.money = 10000
+	game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts")
+	for i in range(20): game.progress.purchase("extra_seconds")
+	game.start_round(); game.session.launch_clock = 1000
+	for candidate in range(1,10000):
+		var probe := RandomNumberGenerator.new(); probe.seed = candidate
+		if probe.randf() < .12: game.event_rng.seed = candidate; break
+	game._physics_process(7)
+	var colors: Dictionary = {}; var families: Dictionary = {}; var matching := true; var index := 0
+	for target: Tomato in game.tomatoes.get_children():
+		target.set_physics_process(false); colors[target.variety_id] = true; families[target.family] = true
+		var data: Dictionary = game.events.catalog.specimen(target.variety_id)
+		var initial_position := target.position; target._physics_process(.2)
+		matching = matching and target.position.y > initial_position.y and target.collision == "hull" and is_equal_approx(target.scale.x,float(data.model_scale)*.85) and target.family.limit == 2
+		target.position = Vector3(-4.5+index*1.5,0,0); target.velocity = Vector2.ZERO; index += 1
+	check(game.tomatoes.get_child_count() == 7 and colors.size() == 3 and families.size() == 7 and matching,"packaged automatic rainbow fan uses three actual moving hulls and seven independent paid cut families")
+	check(game.audio.sounds.get("rainbow") is AudioStreamWAV and game.audio.players[(game.audio.cursor-1)%8].stream == game.audio.sounds.rainbow and game.ui.root.find_child("RainbowIndicator",false,false) != null,"packaged rainbow dispatches its original cue and local textual caption")
+	check(game.spawn_event("heirloom_celebration") == null and game.events.count("heirloom_celebration") == 1,"packaged consumed rainbow permit cannot duplicate a wave")
+	game.knife.track(Vector2(-6,0)); game.knife.track(Vector2(6,0))
+	check(game.process_blade() == 7 and game.session.earnings == 105 and game.session.rainbow_tomatoes == 7,"packaged real sweep splits seven premium colored specimens for the paid value exactly once")
+	check(game.process_blade() == 0 and game.session.earnings == 105,"packaged same-stroke rainbow descendants deny duplicate rewards")
+	game.knife.track(Vector2(-6,0))
+	check(game.process_blade() == 7 and game.session.earnings == 210 and game.session.rainbow_tomatoes == 7 and game.session.tomatoes_sliced == 7,"packaged actual colored recuts spend independent budgets without duplicate unique counts")
+	check(game.fragments.pieces.size() <= 64 and game.fragments.drops.size() == 96 and EventSpawner.active_groups(game) == {"heirloom_celebration":1},"packaged colored descendants respect shared pools and one active-wave reservation")
+	event_rng_before = game.event_rng.state; game._physics_process(7)
+	check(game.events.count("heirloom_celebration") == 1 and game.event_rng.state == event_rng_before,"packaged active rainbow descendants and cooldown draw no extra event randomness")
+	game.finish_round()
+	check(game.progress.lifetime.rainbow_tomatoes == 7 and game.store.load_into(restored) and restored.lifetime.rainbow_tomatoes == 7 and game.ui.content.find_child("RainbowSummary",true,false) != null,"packaged rainbow lifetime counts, real results and disk ledger bank together")
+	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(game.progress.prestige.level("heirloom_celebration") == 1 and game.progress.prestige.level("extended_harvest") == 1 and game.progress.lifetime.rainbow_tomatoes == 7,"packaged prestige preserves actual rainbow purchases and unique history")
+	game.new_game()
+	check(game.progress.prestige.level("heirloom_celebration") == 0 and game.progress.lifetime.rainbow_tomatoes == 0 and game.events.catalog.probability("heirloom_celebration",game.progress.prestige) == 0,"packaged New Game clears rainbow ownership and history")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

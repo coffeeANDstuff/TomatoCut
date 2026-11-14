@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.13.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.14.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -39,6 +39,11 @@ with zipfile.ZipFile(args.archive) as z:
     giant_assets = {'Source/art/giant_harvest.blend', 'Source/assets/models/events/giant.glb', 'Source/assets/audio/giant.wav', 'Source/assets/illustrations/prestige/giant_harvest.svg', 'Source/tests/giant_tests.gd', 'Source/tests/giant_render.gd'}
     giant_assets |= {'Source/assets/models/fragments/event_giant_'+shape+'.glb' for shape in ['half','wedge','chunk']}
     assert giant_assets <= set(hashes), 'Missing original giant content/source'
+    rainbow_assets = {'Source/assets/audio/rainbow.wav', 'Source/assets/illustrations/prestige/rainbow_harvest.svg', 'Source/tests/rainbow_tests.gd', 'Source/tests/rainbow_render.gd'}
+    for color in ['amber','sage','violet']:
+        rainbow_assets |= {'Source/art/rainbow_'+color+'.blend', 'Source/assets/models/events/rainbow_'+color+'.glb'}
+        rainbow_assets |= {'Source/assets/models/fragments/event_rainbow_'+color+'_'+shape+'.glb' for shape in ['half','wedge','chunk']}
+    assert rainbow_assets <= set(hashes), 'Missing original rainbow content/source'
     info = json.loads(z.read('BUILD_INFO.json'))
     version = re.search(r'config/version="([^"]+)"', z.read('Source/project.godot').decode()).group(1)
     assert info['version'] == version, 'Source/build version mismatch'

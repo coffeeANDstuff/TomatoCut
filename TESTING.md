@@ -2,6 +2,34 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Rainbow Harvest — v0.14.0 (2026-11-14, America/Los_Angeles)
+
+Continued clean `49eb507`, fetched matching remote main and passed **678/678** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64. All saves isolate under `user://tests/`. Retained user-owned Xorg `:98` supports software compatibility rendering/Dummy audio; no environment configuration publication was needed.
+
+```sh
+./tools/cloud.sh ./tools/check.sh
+./tools/cloud.sh blender --background --python tools/build_assets.py -- --rainbow-amber
+./tools/cloud.sh blender --background --python tools/build_assets.py -- --rainbow-sage
+./tools/cloud.sh blender --background --python tools/build_assets.py -- --rainbow-violet
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/rainbow_render.gd
+# Exact fragment studies accept the same three --rainbow-COLOR flags.
+./tools/cloud.sh godot --headless --path . --script tools/simulate_events.gd
+```
+
+**743 logic checks pass; zero failures** (**65 new**). Covers dedicated gate/prerequisite/no normal bypass/all-sibling independence; paid frequency/reward/wave maxima, real receipts/discovery/read state, legacy-v5 missing-field compatibility without free unlock/history, malformed/combined counters and atomic rejection; all twelve batched models, three distinct matching forms, invalid collection size/type/duplicates across events, model/fragment/hull/delay and gate/budget validation; fractional seven-second due time, 21s cooldown/active/round caps/no RNG/expiring permits; actual colored hull/model arcs, six-family root/recut $60/$120, same-stroke denial, critical premium Roma/paid max/normal+permanent price $375/$750; real banking/results/disk/another prestige/New Game; all four events with maximum twelve/nine-fruit waves plus one normal at 24 roots, complete-wave rejection with two normals, eight-source three-model cache and two-line four-event results.
+
+**220 rendered checks across fourteen flows pass; zero failures** (**17 new**): original loop 13, Cherry 13, Roma 12, discovery 14, Critical Slice 15, equipment 16, modifications 18, Steak 10, prestige 19, Golden Harvest 17, Stampede 17, printed controls 18, Giant 21 and Rainbow **17**. Actual GUI buys the gate/improvements independently, the seven-fruit fan advances sixty real fixed physical steps per specimen, and actual mouse sweeps cut/recut all seven for $105/$210 with seven unique counts. Checks real cue/textual caption/fixed camera, 16:9 archive orders, live purchase denial, results/disk/prestige reset coverage, Reduced Motion/Effects/disabled labels, seven drops and New Game. Four independently bought scheduled event types are actually mouse-sliced in one round for $92.50, with a two-row lifetime summary above real statistics/replay. Native confirmations use production callbacks after actual GUI preview clicks, not OS-dialog input automation. All thirteen earlier rendered flows also pass.
+
+Inspected actual captures **95–101** (invitation, paid improvements, automatic moving wave, exposed seeded halves, results/post-prestige, combined four-event summary) and all three **103-event_rainbow_COLOR-fragments** galleries. Actual-size review reduced initially over-bright skin/flesh/stripe materials under kitchen lighting. All three original forms/interiors and twelve GLBs are integrated, with editable Blender sources and geometry-preserving batching within eight mesh nodes per scene. Old GLB/Blender/SVG/WAV payloads remain intact. Funded/eligible/time/pose fixtures and fixed steps isolate production scheduling/transactions/input without claiming human feel or FPS. Initial logic fixtures missed Sharp Edge before Extra Cuts and ended before the second wave; corrected actual prerequisite order/round length. An exported-pack version assertion still expected v0.13.0; updated it to v0.14.0. Production scheduling/rewards were unchanged. Final runtime checks have no script/resource/runtime errors; software VSync warnings remain.
+
+EVENT_BALANCE_REPORT.md runs production schedules and actual permanent purchases over nine profiles, 5,000 rounds per length. Locked counts remain zero; earlier isolated Golden/Stampede/Giant and prior three-event unlock-only results remain identical. Rainbow-only means **0.0716/0.3568** over 10s/40s, max one/two; all-event max investments gives **0.1968/0.7846**, nine specimens each. Assumes 3.5s rainbow/other and 6.5s giant active groups without normal background, geometry/spawn RNG, actual slicing/fragment survival or earnings. Costs/rates/value remain provisional; no older prices changed. No human return/pacing claim.
+
+### Rainbow export and delivery evidence
+
+Windows/Linux exports succeed with retained official SHA-512-verified Godot 4.6.3 templates. From `/tmp`, host-editor `--main-pack` checks **106/106 per target**, zero failures (**16 new**). New gates validate actual twelve-model collection and scene-node budget, original plate/cue/metadata, own paid effects without normal unlocks, automatic seven-family fan with real arcs/matching hulls, root/recut premium, no duplicates, pools/active group/cooldown/no RNG, banked lifetime count/results/disk and another prestige/New Game. All prior 90 gates remain. Matching Linux executable boots headlessly without errors. Windows PE is not executed natively by these checks.
+
+Python compilation, shell syntax, `git diff --check` and actionlint **1.7.7** pass. Full preflight passes safe/unique paths, CRC, complete SHA-256 manifest, required original collection art/source/tests, portable scripts and source/build/version identity (**377 payload files**). Fresh extraction `/tmp/tomatocut-v014-preflight` imports without the checkout cache and passes **743/743**, no script/resource/runtime errors. Preflight metadata honestly records uncommitted source; final clean archive/GitHub delivery follows milestone commit. Native Windows, Forward+, audible listening, supported-PC 60 FPS, human pacing and wider production polish remain **unverified**. One event, broader permanent branches and remaining full content are incomplete.
+
 ## Giant Harvest — v0.13.0 (2026-11-14, America/Los_Angeles)
 
 Continued clean `fab1485`, fetched matching remote main and passed **604/604** baseline after environment access recovered. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64. All ledgers isolate under `user://tests/`; production saves are untouched. Started a user-owned Xorg dummy `:98` for rendered checks; no environment configuration change/publication was needed.

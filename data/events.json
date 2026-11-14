@@ -118,5 +118,115 @@
       },
       "split_impulse": 2.8
     }
+  },
+  {
+    "id": "heirloom_celebration",
+    "name": "Rainbow Harvest",
+    "kind": "wave",
+    "unlock_upgrade": "heirloom_celebration",
+    "frequency_upgrade": "rainbow_frequency",
+    "value_upgrade": "rainbow_rewards",
+    "size_upgrade": "extended_harvest",
+    "interval": 7,
+    "initial_delay": 7,
+    "chance": 0.08,
+    "cooldown": 21,
+    "round_limit": 2,
+    "active_limit": 1,
+    "reward_multiplier": 8,
+    "wave_size": 6,
+    "size_scale": 0.85,
+    "cue": "rainbow",
+    "caption": "Rainbow Harvest",
+    "indicator": "RainbowIndicator",
+    "specimens": [
+      {
+        "id": "event_rainbow_amber",
+        "name": "Amber Lantern",
+        "model": "res://assets/models/events/rainbow_amber.glb",
+        "model_scale": 0.94,
+        "radius": 0.7,
+        "gravity": 4.5,
+        "launch_min": 8.0,
+        "launch_max": 8.5,
+        "spin": 0.7,
+        "spin_z": 0.45,
+        "durability": 1,
+        "fragment_durability": 1,
+        "mass": 1.0,
+        "collision": "hull",
+        "proxy_axes": [
+          0.62,
+          0.48,
+          0.57
+        ],
+        "proxy_lobe": 0.08,
+        "proxy_lobe_count": 6,
+        "proxy_taper": 0,
+        "fragments": {
+          "half": "res://assets/models/fragments/event_rainbow_amber_half.glb",
+          "wedge": "res://assets/models/fragments/event_rainbow_amber_wedge.glb",
+          "chunk": "res://assets/models/fragments/event_rainbow_amber_chunk.glb"
+        }
+      },
+      {
+        "id": "event_rainbow_sage",
+        "name": "Sage Pinstripe",
+        "model": "res://assets/models/events/rainbow_sage.glb",
+        "model_scale": 0.92,
+        "radius": 0.7,
+        "gravity": 4.5,
+        "launch_min": 8.0,
+        "launch_max": 8.5,
+        "spin": 0.9,
+        "spin_z": 0.45,
+        "durability": 1,
+        "fragment_durability": 1,
+        "mass": 1.1,
+        "collision": "hull",
+        "proxy_axes": [
+          0.63,
+          0.54,
+          0.53
+        ],
+        "proxy_lobe": 0.09,
+        "proxy_lobe_count": 8,
+        "proxy_taper": -0.06,
+        "fragments": {
+          "half": "res://assets/models/fragments/event_rainbow_sage_half.glb",
+          "wedge": "res://assets/models/fragments/event_rainbow_sage_wedge.glb",
+          "chunk": "res://assets/models/fragments/event_rainbow_sage_chunk.glb"
+        }
+      },
+      {
+        "id": "event_rainbow_violet",
+        "name": "Violet Pear",
+        "model": "res://assets/models/events/rainbow_violet.glb",
+        "model_scale": 0.94,
+        "radius": 0.8,
+        "gravity": 4.5,
+        "launch_min": 8.0,
+        "launch_max": 8.5,
+        "spin": 1.25,
+        "spin_z": 0.45,
+        "durability": 1,
+        "fragment_durability": 1,
+        "mass": 0.8,
+        "collision": "hull",
+        "proxy_axes": [
+          0.44,
+          0.72,
+          0.43
+        ],
+        "proxy_lobe": 0.025,
+        "proxy_lobe_count": 4,
+        "proxy_taper": 0.24,
+        "fragments": {
+          "half": "res://assets/models/fragments/event_rainbow_violet_half.glb",
+          "wedge": "res://assets/models/fragments/event_rainbow_violet_wedge.glb",
+          "chunk": "res://assets/models/fragments/event_rainbow_violet_chunk.glb"
+        }
+      }
+    ]
   }
 ]

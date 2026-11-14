@@ -23,7 +23,7 @@ static func all_event_seed() -> int:
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
 	var catalog := EventCatalog.new()
-	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 3 and p.harvest.varieties.size() == 3,"three implemented events validate separately from the unchanged normal variety collection")
+	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 4 and p.harvest.varieties.size() == 3,"four implemented events validate separately from the unchanged normal variety collection")
 	var meshes_bounded := true
 	var specimen := catalog.specimen("event_giant")
 	var paths: Array = [specimen.model]+specimen.fragments.values()
@@ -80,7 +80,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	for key: String in ["golden_tomatoes","stampede_tomatoes","giant_tomatoes"]: bad.lifetime[key] = 1
 	check.call(not restored.restore(bad),"all three event counters together cannot exceed total unique tomatoes")
 	for id: String in ["heirloom_celebration","jackpot_harvest"]:
-		check.call(catalog.probability(id,p.prestige) == 0 and not p.prestige.purchase(id),"unimplemented event remains independently unavailable: "+id)
+		check.call(catalog.probability(id,p.prestige) == 0 and not p.purchase(id),"unpurchased sibling stays locked and cannot be bought by normal cultivation: "+id)
 	p = prepared()
 	var rng := RandomNumberGenerator.new(); rng.seed = 431
 	var director := EventDirector.new(); director.begin(); var before: int = rng.state

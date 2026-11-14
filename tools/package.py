@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Giant Harvest milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Rainbow Harvest milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -111,6 +111,16 @@ at 18%, value at 100 times, and two bonus cuts stay within the shared seven-cut
 limit. Checks start at 6s, with 18s cooldown, one active giant and two/round.
 Giants are separate from ordinary Beefsteaks. Investments and unique giant
 counts survive prestige; New Game clears them. No sibling event unlock is needed.
+Heirloom Celebration is a separate 4-seed permanent invitation after Starting
+Cash 1. Rainbow Harvest sends an automatic colorful wave of six original
+archive specimens: Amber Lantern, Sage Pinstripe and Violet Pear. It grants
+no ordinary variety unlocks. Rainbow Frequency, Rainbow Rewards and Extended
+Harvest start at 3 seeds, double each level and have three levels. They raise
+chance from 8% to 20%, captured value from 8x to 20x best eligible normal
+quality, and wave size from six to nine. Checks begin at 7s, with 21s cooldown,
+one active wave and two/round. Every wave must fit in full. Each tomato owns
+its normal family cut budget; price/combo/permanent bonuses apply once.
+Investments and unique rainbow counts survive prestige; New Game clears them.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

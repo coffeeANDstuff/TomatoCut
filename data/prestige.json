@@ -229,6 +229,78 @@
       "effect_values": {
         "bonus_per_level": 1
       }
+    },
+    {
+      "id": "heirloom_celebration",
+      "name": "Heirloom Celebration",
+      "description": "A rare-seed invitation for Amber Lantern, Sage Pinstripe and Violet Pear. This collection never grants ordinary variety unlocks.",
+      "effect": "Unlocks automatic colorful premium Rainbow Harvest waves",
+      "base_cost": 4,
+      "growth": 2,
+      "max_level": 1,
+      "requires": {
+        "starting_cash": 1
+      },
+      "category": "Special Events",
+      "event_id": "heirloom_celebration",
+      "illustration": "res://assets/illustrations/prestige/rainbow_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 1
+      }
+    },
+    {
+      "id": "rainbow_frequency",
+      "name": "Rainbow Frequency",
+      "description": "More dates for the archive collection. Every fan still needs space for all its specimens.",
+      "effect": "+4 percentage points per rainbow check per level",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "heirloom_celebration": 1
+      },
+      "category": "Special Events",
+      "event_id": "heirloom_celebration",
+      "illustration": "res://assets/illustrations/prestige/rainbow_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 0.04
+      }
+    },
+    {
+      "id": "rainbow_rewards",
+      "name": "Rainbow Rewards",
+      "description": "Each colorful heirloom carries a more distinguished invoice, based on your best eligible normal quality.",
+      "effect": "+50% base rainbow cut value per level",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "heirloom_celebration": 1
+      },
+      "category": "Special Events",
+      "event_id": "heirloom_celebration",
+      "illustration": "res://assets/illustrations/prestige/rainbow_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 0.5
+      }
+    },
+    {
+      "id": "extended_harvest",
+      "name": "Extended Harvest",
+      "description": "One more place in every colorful fan. The complete wave must fit and each family keeps its own cut budget.",
+      "effect": "+1 tomato per Rainbow Harvest per level",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "heirloom_celebration": 1
+      },
+      "category": "Special Events",
+      "event_id": "heirloom_celebration",
+      "illustration": "res://assets/illustrations/prestige/rainbow_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 1
+      }
     }
   ]
 }

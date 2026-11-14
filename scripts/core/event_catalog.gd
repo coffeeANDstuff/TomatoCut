@@ -12,6 +12,9 @@ func _init() -> void:
 		if entry is Dictionary and entry.get("id") is String:
 			by_id[entry.id] = entry
 			if entry.get("specimen") is Dictionary and entry.specimen.get("id") is String: specimens[entry.specimen.id] = entry.specimen
+			if entry.get("specimens") is Array:
+				for fruit: Variant in entry.specimens:
+					if fruit is Dictionary and fruit.get("id") is String: specimens[fruit.id] = fruit
 
 func definition(id: String) -> Dictionary:
 	return by_id.get(id,{})
@@ -70,7 +73,7 @@ func summary(id: String, permanent: PrestigeProgression) -> String:
 		return "Additional giant cuts: +%d → +%d · shared cap 7" % [current,next]
 	var current := multiplier(d.id,permanent)
 	var next := current if permanent.level(id) >= int(permanent.definition(id).max_level) else current+float(d.reward_multiplier)*float(permanent.definition(id).effect_values.bonus_per_level)
-	return ("Best eligible cut value: ×%.0f → ×%.0f" if d.kind == "specimen" else "Selected variety cut value: ×%.0f → ×%.0f") % [current,next]
+	return ("Best eligible cut value: ×%.0f → ×%.0f" if d.kind == "specimen" or d.has("specimens") else "Selected variety cut value: ×%.0f → ×%.0f") % [current,next]
 
 func validate(permanent: PrestigeProgression) -> PackedStringArray:
 	var errors := PackedStringArray()
@@ -121,32 +124,42 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 				if not size_upgrade.is_empty():
 					var bonus := float(size_upgrade.effect_values.bonus_per_level)
 					if bonus <= 0 or bonus != floorf(bonus) or size+bonus*int(size_upgrade.max_level) > 24: errors.append(id+": wave exceeds shared root capacity")
-			if PrestigeProgression.number(raw.get("size_scale")) and float(raw.size_scale) >= 1: errors.append(id+": stampede specimens must be smaller")
+			if PrestigeProgression.number(raw.get("size_scale")) and float(raw.size_scale) >= 1: errors.append(id+": wave specimens must be smaller")
+			if raw.has("specimens"):
+				if not raw.specimens is Array or raw.specimens.size() < 2 or raw.specimens.size() > 12:
+					errors.append(id+": invalid dedicated wave specimens")
+				else:
+					if PrestigeProgression.number(raw.get("wave_size")) and float(raw.wave_size) < raw.specimens.size(): errors.append(id+": wave must include every dedicated specimen")
+					for fruit: Variant in raw.specimens:
+						if fruit is Dictionary: _validate_specimen(fruit,id,seen_specimens,errors)
+						else: errors.append(id+": invalid dedicated specimen")
 			continue
 		if not raw.get("specimen") is Dictionary:
 			errors.append(id+": missing specimen"); continue
-		var fruit: Dictionary = raw.specimen
-		if not fruit.get("id") is String or not fruit.id.begins_with("event_"): errors.append(id+": invalid event specimen ID")
-		elif seen_specimens.has(fruit.id): errors.append(id+": duplicate event specimen ID")
-		else: seen_specimens[fruit.id] = true
-		if fruit.has("launch_delay") and (not PrestigeProgression.number(fruit.launch_delay) or float(fruit.launch_delay) < 0 or float(fruit.launch_delay) > .5): errors.append(id+": invalid launch delay")
-		if fruit.has("split_impulse") and (not PrestigeProgression.number(fruit.split_impulse) or float(fruit.split_impulse) <= 0 or float(fruit.split_impulse) > 6): errors.append(id+": invalid split impulse")
-		for key: String in ["model_scale","radius","gravity","launch_min","launch_max","durability","fragment_durability","mass","spin","spin_z"]:
-			if not PrestigeProgression.number(fruit.get(key)) or float(fruit[key]) <= 0: errors.append(id+": invalid specimen "+key)
-		if not fruit.get("model") is String or not ResourceLoader.exists(fruit.model): errors.append(id+": missing whole model")
-		if not fruit.get("fragments") is Dictionary: errors.append(id+": missing fragments")
-		else:
-			for kind: String in ["half","wedge","chunk"]:
-				if not fruit.fragments.get(kind) is String or not ResourceLoader.exists(fruit.fragments[kind]): errors.append(id+": missing "+kind)
-		if fruit.get("collision") != "hull": errors.append(id+": event requires matching hull collision")
-		if not fruit.get("proxy_axes") is Array or fruit.proxy_axes.size() != 3: errors.append(id+": invalid proxy axes")
-		else:
-			for axis: Variant in fruit.proxy_axes:
-				if not PrestigeProgression.number(axis) or float(axis) <= 0: errors.append(id+": invalid proxy dimension")
-		for key: String in ["proxy_lobe","proxy_taper","proxy_lobe_count"]:
-			if not PrestigeProgression.number(fruit.get(key)): errors.append(id+": invalid "+key)
-		if PrestigeProgression.number(fruit.get("proxy_lobe")) and (float(fruit.proxy_lobe) < 0 or float(fruit.proxy_lobe) > .15): errors.append(id+": invalid proxy lobes")
-		if PrestigeProgression.number(fruit.get("proxy_taper")) and absf(float(fruit.proxy_taper)) > .3: errors.append(id+": invalid proxy taper")
-		if PrestigeProgression.number(fruit.get("launch_min")) and PrestigeProgression.number(fruit.get("launch_max")) and float(fruit.launch_max) < float(fruit.launch_min): errors.append(id+": reversed launch range")
-		if PrestigeProgression.number(fruit.get("proxy_lobe_count")) and (float(fruit.proxy_lobe_count) < 3 or float(fruit.proxy_lobe_count) > 12 or float(fruit.proxy_lobe_count) != floorf(float(fruit.proxy_lobe_count))): errors.append(id+": invalid lobe count")
+		_validate_specimen(raw.specimen,id,seen_specimens,errors)
 	return errors
+
+func _validate_specimen(fruit: Dictionary, id: String, seen_specimens: Dictionary, errors: PackedStringArray) -> void:
+	if not fruit.get("id") is String or not fruit.id.begins_with("event_"): errors.append(id+": invalid event specimen ID")
+	elif seen_specimens.has(fruit.id): errors.append(id+": duplicate event specimen ID")
+	else: seen_specimens[fruit.id] = true
+	if fruit.has("launch_delay") and (not PrestigeProgression.number(fruit.launch_delay) or float(fruit.launch_delay) < 0 or float(fruit.launch_delay) > .5): errors.append(id+": invalid launch delay")
+	if fruit.has("split_impulse") and (not PrestigeProgression.number(fruit.split_impulse) or float(fruit.split_impulse) <= 0 or float(fruit.split_impulse) > 6): errors.append(id+": invalid split impulse")
+	for key: String in ["model_scale","radius","gravity","launch_min","launch_max","durability","fragment_durability","mass","spin","spin_z"]:
+		if not PrestigeProgression.number(fruit.get(key)) or float(fruit[key]) <= 0: errors.append(id+": invalid specimen "+key)
+	if not fruit.get("model") is String or not ResourceLoader.exists(fruit.model): errors.append(id+": missing whole model")
+	if not fruit.get("fragments") is Dictionary: errors.append(id+": missing fragments")
+	else:
+		for kind: String in ["half","wedge","chunk"]:
+			if not fruit.fragments.get(kind) is String or not ResourceLoader.exists(fruit.fragments[kind]): errors.append(id+": missing "+kind)
+	if fruit.get("collision") != "hull": errors.append(id+": event requires matching hull collision")
+	if not fruit.get("proxy_axes") is Array or fruit.proxy_axes.size() != 3: errors.append(id+": invalid proxy axes")
+	else:
+		for axis: Variant in fruit.proxy_axes:
+			if not PrestigeProgression.number(axis) or float(axis) <= 0: errors.append(id+": invalid proxy dimension")
+	for key: String in ["proxy_lobe","proxy_taper","proxy_lobe_count"]:
+		if not PrestigeProgression.number(fruit.get(key)): errors.append(id+": invalid "+key)
+	if PrestigeProgression.number(fruit.get("proxy_lobe")) and (float(fruit.proxy_lobe) < 0 or float(fruit.proxy_lobe) > .15): errors.append(id+": invalid proxy lobes")
+	if PrestigeProgression.number(fruit.get("proxy_taper")) and absf(float(fruit.proxy_taper)) > .3: errors.append(id+": invalid proxy taper")
+	if PrestigeProgression.number(fruit.get("launch_min")) and PrestigeProgression.number(fruit.get("launch_max")) and float(fruit.launch_max) < float(fruit.launch_min): errors.append(id+": reversed launch range")
+	if PrestigeProgression.number(fruit.get("proxy_lobe_count")) and (float(fruit.proxy_lobe_count) < 3 or float(fruit.proxy_lobe_count) > 12 or float(fruit.proxy_lobe_count) != floorf(float(fruit.proxy_lobe_count))): errors.append(id+": invalid lobe count")
