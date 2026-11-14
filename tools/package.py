@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Golden Harvest milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Stampede Season milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -88,6 +88,15 @@ and value branches follow; each event respects cooldown, active-family and
 round caps. Golden value starts at 20 times the best eligible normal cut.
 The event and improvements survive prestige; New Game clears them.
 Golden fruit is separate from normal Sungold and the normal harvest mix.
+Stampede Season is a separate 2-seed unlock after Starting Cash 1. It works
+without Golden Harvest and launches six smaller eligible normal tomatoes in
+one automatic wave. Frequency, Larger Stampedes and Rewards each start at
+2 seeds and have three levels. Checks run every 5s at 10% base chance, with
+15s cooldown, one active wave and two waves per round. Larger Stampedes can
+raise the wave to twelve specimens; the entire wave must fit the shared cap.
+Each specimen has its own normal cut budget and starts at twice its variety's
+quality value. Ordinary price/combo/permanent bonuses apply once afterward.
+Round/lifetime stampede fruit counts and investments survive prestige.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

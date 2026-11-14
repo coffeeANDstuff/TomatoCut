@@ -5,6 +5,7 @@ extends RefCounted
 # including strikes that deal damage without yet separating a piece.
 var variety_id := "standard_red"
 var event_id := ""
+var event_group := 0
 var model_scale := 1.0
 var mass := 1.0
 var cut_value := 1.0

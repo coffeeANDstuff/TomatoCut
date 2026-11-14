@@ -12,13 +12,13 @@ static func prepared(credits: int = 40) -> Progression:
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
 	var catalog := EventCatalog.new()
-	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 1 and p.harvest.varieties.size() == 3, "one original event validates separately from the unchanged three normal varieties")
+	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 2 and p.harvest.varieties.size() == 3, "two independently defined events validate separately from the unchanged three normal varieties")
 	check.call(not "golden_harvest" in p.prestige.discovered and not p.prestige.purchase("golden_harvest") and not p.purchase("golden_harvest"), "fresh and normal-catalog purchases cannot activate a hidden prestige event")
 	var rng := RandomNumberGenerator.new(); rng.seed = 321
 	var director := EventDirector.new(); director.begin()
 	var rng_before: int = rng.state
-	for i in range(100): director.advance(4,p.prestige,true,0,rng.randf)
-	check.call(rng.state == rng_before and director.spawned == 0 and director.pending.is_empty(), "locked event has zero probability and consumes no RNG over repeated checks")
+	for i in range(100): director.advance(4,p.prestige,24,{},rng.randf)
+	check.call(rng.state == rng_before and director.count("golden_harvest") == 0 and director.pending.is_empty(), "locked event has zero probability and consumes no RNG over repeated checks")
 	p.prestige.levels.golden_frequency = 3
 	check.call(catalog.probability("golden_harvest",p.prestige) == 0, "frequency alone cannot bypass its dedicated permanent unlock")
 	p = PRESTIGE.funded(40); p.claim_prestige(p.prestige_preview().token); p.prestige.purchase("permanent_slice_value")
@@ -29,7 +29,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	check.call(p.prestige.purchase("golden_harvest") and p.prestige.seeds == seeds-1 and is_equal_approx(catalog.probability("golden_harvest",p.prestige),.08), "one real seed purchase opens automatic Golden Tomatoes at the authored chance")
 	check.call("golden_frequency" in p.prestige.unseen() and "golden_value" in p.prestige.unseen() and not p.prestige.purchase("golden_harvest"), "owned unlock reveals both real improvements and denies duplicate charges")
 	for id: String in ["stampede_season","giant_harvest","heirloom_celebration","jackpot_harvest"]:
-		check.call(catalog.probability(id,p.prestige) == 0 and not p.prestige.purchase(id), "other dedicated event stays independently unavailable: "+id)
+		check.call(catalog.probability(id,p.prestige) == 0 and p.prestige.level(id) == 0, "Golden Harvest alone leaves the other dedicated event locked: "+id)
 	var normal_mix := p.harvest.distribution(p.levels,p.strength())
 	check.call(normal_mix == {"standard_red":1.0} and catalog.cut_value("golden_harvest",p) == 20, "event unlock changes neither automatic normal mix nor normal unlocks; baseline event value is twenty times the best eligible cut")
 	check.call(p.prestige.purchase("golden_frequency") and is_equal_approx(catalog.probability("golden_harvest",p.prestige),.12) and p.prestige.purchase("golden_value") and catalog.cut_value("golden_harvest",p) == 30, "paid frequency and value levels apply actual authored coefficients")
@@ -53,21 +53,21 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	check.call(restored.restore(old) and restored.prestige.level("golden_harvest") == 0 and "golden_harvest" in restored.prestige.unseen(), "pre-event v5 saves reveal eligible Golden Harvest without granting a free unlock")
 	p = prepared()
 	director = EventDirector.new(); director.begin()
-	check.call(director.advance(3.9,p.prestige,true,0,func(): return 0.0).is_empty(), "no event opportunity before its initial delay")
-	check.call(director.advance(.1,p.prestige,true,0,func(): return 0.0) == "golden_harvest" and director.commit("golden_harvest") and not director.commit("golden_harvest"), "due successful opportunity issues one consumable spawn permit")
+	check.call(director.advance(3.9,p.prestige,24,{},func(): return 0.0).is_empty(), "no event opportunity before its initial delay")
+	check.call(director.advance(.1,p.prestige,24,{},func(): return 0.0) == ["golden_harvest"] and director.commit("golden_harvest") and not director.commit("golden_harvest"), "due successful opportunity issues one consumable spawn permit")
 	rng_before = rng.state
-	check.call(director.advance(4,p.prestige,true,0,rng.randf).is_empty() and rng.state == rng_before, "cooldown suppresses event draws and cannot queue a spawn")
-	check.call(director.advance(8,p.prestige,true,0,func(): return 0.0) == "golden_harvest" and director.commit("golden_harvest"), "cooldown expiry allows a second legitimate opportunity")
+	check.call(director.advance(4,p.prestige,24,{},rng.randf).is_empty() and rng.state == rng_before, "cooldown suppresses event draws and cannot queue a spawn")
+	check.call(director.advance(8,p.prestige,24,{},func(): return 0.0) == ["golden_harvest"] and director.commit("golden_harvest"), "cooldown expiry allows a second legitimate opportunity")
 	rng_before = rng.state
-	check.call(director.advance(100,p.prestige,true,0,rng.randf).is_empty() and rng.state == rng_before and director.spawned == 2, "per-round event cap blocks further draws and large-frame catch-up bursts")
+	check.call(director.advance(100,p.prestige,24,{},rng.randf).is_empty() and rng.state == rng_before and director.count("golden_harvest") == 2, "per-round event cap blocks further draws and large-frame catch-up bursts")
 	director.begin(); rng_before = rng.state
-	check.call(director.advance(4,p.prestige,false,0,rng.randf).is_empty() and director.advance(4,p.prestige,true,1,rng.randf).is_empty() and rng.state == rng_before, "shared capacity and active-family limits suppress events without RNG or backlog")
+	check.call(director.advance(4,p.prestige,0,{},rng.randf).is_empty() and director.advance(4,p.prestige,24,{"golden_harvest":1},rng.randf).is_empty() and rng.state == rng_before, "shared capacity and active-family limits suppress events without RNG or backlog")
 	for invalid: float in [NAN,INF,-.1,1.1,.08]:
 		director.begin()
-		check.call(director.advance(4,p.prestige,true,0,func(): return invalid).is_empty(), "invalid or non-winning event roll is denied: "+str(invalid))
+		check.call(director.advance(4,p.prestige,24,{},func(): return invalid).is_empty(), "invalid or non-winning event roll is denied: "+str(invalid))
 	var full := prepared(); full.prestige.levels.golden_frequency = 3
 	director.begin(); director.catalog.definition("golden_harvest").chance = .88
-	check.call(director.advance(4,full.prestige,true,0,func(): return 1.0) == "golden_harvest", "a full-probability fixture includes the inclusive RNG endpoint")
+	check.call(director.advance(4,full.prestige,24,{},func(): return 1.0) == ["golden_harvest"], "a full-probability fixture includes the inclusive RNG endpoint")
 	for defect: String in ["duplicate","unlock","gate","chance","interval","count","model","fragment","axes","lobes","taper","launch"]:
 		var bad := EventCatalog.new(); bad.definitions = bad.definitions.duplicate(true)
 		var permanent := PrestigeProgression.new(); permanent.definitions = permanent.definitions.duplicate(true)
@@ -103,7 +103,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	game.event_rng.seed = CRITICAL.seed_for(.08,true,2)
 	game._physics_process(4)
 	var fruit: Tomato = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO
-	check.call(fruit.variety_id == "event_golden" and fruit.family.event_id == "golden_harvest" and fruit.collision == "hull" and fruit.visual.get_child_count() > 0 and game.events.spawned == 1 and game.active_event_families() == 1, "actual round scheduler instantiates the distinct golden specimen with its matching hull and event family")
+	check.call(fruit.variety_id == "event_golden" and fruit.family.event_id == "golden_harvest" and fruit.collision == "hull" and fruit.visual.get_child_count() > 0 and game.events.count("golden_harvest") == 1 and game.active_event_families() == 1, "actual round scheduler instantiates the distinct golden specimen with its matching hull and event family")
 	check.call(game.audio.sounds["golden"] is AudioStreamWAV and game.audio.players[(game.audio.cursor-1)%game.audio.players.size()].stream == game.audio.sounds["golden"] and game.ui.root.find_child("GoldenIndicator",false,false) != null, "automatic event uses its original restrained cue and local textual identifier")
 	game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0))
 	check.call(game.process_blade() == 1 and game.session.earnings == 25 and game.session.tomatoes_sliced == 1 and game.fragments.pieces[0].models.has("event_golden/half"), "production golden cut earns its large value once and creates original seeded golden halves")
@@ -113,9 +113,9 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	game.knife.track(Vector2(-2,0))
 	check.call(game.process_blade() == 1 and game.session.earnings == 50 and game.session.tomatoes_sliced == 1 and game.session.golden_tomatoes == 1 and game.fragments.pieces[0].family.rewarded_cuts == 2, "golden recut preserves premium value, unique count and the original shared cut limit")
 	game.clear_field(); game.session.launch_clock = 1000; game._physics_process(12)
-	check.call(game.events.spawned == 2 and game.tomatoes.get_child_count() == 1, "real scheduler permits another golden event only after cooldown and family cleanup")
+	check.call(game.events.count("golden_harvest") == 2 and game.tomatoes.get_child_count() == 1, "real scheduler permits another golden event only after cooldown and family cleanup")
 	game.clear_field(); rng_before = game.event_rng.state; game._physics_process(4)
-	check.call(game.events.spawned == 2 and game.tomatoes.get_child_count() == 0 and game.event_rng.state == rng_before, "real round cap prevents a third event after earlier roots and fragments are removed")
+	check.call(game.events.count("golden_harvest") == 2 and game.tomatoes.get_child_count() == 0 and game.event_rng.state == rng_before, "real round cap prevents a third event after earlier roots and fragments are removed")
 	game._physics_process(100)
 	check.call(game.state == "results" and game.progress.prestige.cycle_earnings == 50 and game.progress.lifetime.tomatoes == 2 and game.spawn_event("golden_harvest") == null, "round completion banks actual event earnings and denies all late event spawns")
 	var restored_game := Progression.new()
@@ -137,7 +137,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	game.finish_round(); game.start_round(); game.session.launch_clock = 1000
 	for i in range(game.MAX_TOMATOES): game.spawn_tomato()
 	rng_before = game.event_rng.state; game._physics_process(4)
-	check.call(game.tomatoes.get_child_count() == game.MAX_TOMATOES and game.events.spawned == 0 and game.event_rng.state == rng_before, "real shared spawn capacity blocks Golden Harvest without exceeding the original tomato limit")
+	check.call(game.tomatoes.get_child_count() == game.MAX_TOMATOES and game.events.count("golden_harvest") == 0 and game.event_rng.state == rng_before, "real shared spawn capacity blocks Golden Harvest without exceeding the original tomato limit")
 	game.clear_field()
 	var pooled: FragmentPiece = game.fragments.acquire_piece()
 	for id: String in ["standard_red","cherry","roma","event_golden"]:
@@ -145,5 +145,5 @@ static func run(tree: SceneTree, check: Callable) -> void:
 		pooled.configure("half",ledger,Vector3.ZERO,Basis.IDENTITY,Vector3.ZERO,Vector3.ZERO)
 	check.call(pooled.models.size() == FragmentPiece.MAX_MODEL_CACHE and pooled.models.has("event_golden/half") and not pooled.world_hull().is_empty(), "adding an event specimen preserves bounded three-model fragment caches across four source specimens")
 	game.new_game()
-	check.call(game.progress.prestige.level("golden_harvest") == 0 and game.events.catalog.probability("golden_harvest",game.progress.prestige) == 0 and game.events.spawned == 0, "fresh game clears the permanent event unlock and transient scheduling state")
+	check.call(game.progress.prestige.level("golden_harvest") == 0 and game.events.catalog.probability("golden_harvest",game.progress.prestige) == 0 and game.events.count("golden_harvest") == 0, "fresh game clears the permanent event unlock and transient scheduling state")
 	game.queue_free(); await tree.process_frame

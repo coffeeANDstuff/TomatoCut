@@ -2,6 +2,33 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Stampede Season milestone — v0.11.0 (2026-11-13, America/Los_Angeles)
+
+Continued clean `668575d`, fetched matching remote main and passed **545/545** baseline. Godot **4.6.3.stable.official.7d41c59c4**, original Blender assets retained, Linux x86-64. Ledgers isolate under `user://tests/`; production saves are untouched.
+
+```sh
+./tools/cloud.sh ./tools/check.sh
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/stampede_render.gd
+./tools/cloud.sh godot --headless --path . --script tools/simulate_events.gd
+# All ten earlier rendered flows also run in the same display mode.
+```
+
+**604 headless checks pass; zero failures** (**59 additional**). New coverage: dedicated own unlock and sibling-event independence; normal/frequency bypass denial; actual permanent prerequisite/reveal/seed prices, three improvements and limits; v5 JSON/paid receipts and pre-event migration with unread reveal/no free purchases; malformed/combined unique counters; separate clocks/cooldowns/caps, no RNG on locked/full/active/capped opportunities, expiring single-use permits and no long-gap burst; malformed wave kind/count/scale/prerequisite; actual six-fruit scaled model/collision/ledger group and cue/caption; root/recut reward/count/same-stroke rules; remaining fragments/debris reserving active wave; round banking/disk/prestige/New Game; maximum twelve-family actual sweep/recut with shared pools; premium dominant Roma hull/quality/critical reward composition; simultaneous Golden + twelve-fruit wave + eleven ordinary roots exactly filling 24; insufficient room yielding no partial wave. All prior Golden, normal slicing/harvest/equipment/prestige regressions retain their behavior assertions using the new multi-event API.
+
+**164 rendered checks across all eleven flows pass; zero failures:** original loop 13, Cherry 13, Roma 12, discovery 14, Critical Slice 15, equipment 16, modifications 18, Steak 10, prestige 19, Golden Harvest 17 and Stampede **17**. Actual GUI clicks fund/confirm prestige, buy wealth prerequisites and the independent stampede unlock/three improvements, without purchasing Golden Harvest. The automatic production scheduler emits eight real smaller normal specimens; real mouse input cuts/recuts all eight for $30/$60, eight unique fruit, sixteen cuts and bounded 64-fragment/96-drop pools. Actual results/disk state, another prestige, Reduced Effects/Motion/disabled labels and confirmed New Game pass. Native confirmation uses production button callbacks after real GUI preview clicks, not OS-dialog mouse automation.
+
+Inspected captures `72`–`77`: separate event invitations, paid stampede effects, scrolled 16:9 archive, actual automatic eight-fruit fan, tumbling original seeded fragments and actual results. Normal ownership/mix remains automatic. The rendered wave follows 39 real fixed motion steps; explicit frozen/aligned target fixtures isolate input/rewards after that capture. No unassisted human play or final art/performance approval is claimed. Camera pose stays fixed; original basket SVG and restrained original WAV integrate with the paper/ink/culinary asset family. Earlier SVG/WAV/Blender/GLB payloads remain intact.
+
+Initial Windows-pack test script failed to parse because its new section referenced a source-only helper constant. Replaced that fixture with a self-contained deterministic seed search, retaining the production scheduler. Both final pack runs pass without script/resource/runtime errors. This was a test harness issue, not a shipped-game regression. The known software-driver VSync warning remains. Dummy audio proves loading/dispatch only, not listening.
+
+`EVENT_BALANCE_REPORT.md` runs production scheduling/permanent purchases across locked, Golden-only, Stampede-only, both-unlocked and both-max profiles, seed 431, 5,000 rounds per length. Locked counts remain zero; old Golden-only baseline remains exactly 0.1440/0.6240 over 10s/40s. Stampede-only gives 0.0924/0.6040 waves; both-max gives 0.2558/1.2234 (twelve specimens/wave). Assumes 3.5s active groups with no normal-background load; excludes geometry RNG, fragment survival, slicing, human accuracy and monetary return. No prior prices changed; older normal/prestige models retain their stated scopes.
+
+### Stampede export and delivery evidence
+
+Both exports succeed with retained official SHA-512-verified Godot 4.6.3 templates. From `/tmp`, host-editor `--main-pack` runs **73/73 checks per target** (thirteen new). Gates exercise actual packed independent event data, basket SVG, WAV, purchases/improvements, automatic eight-fruit wave with independent families, actual $3.75/$7.50 root/recut, duplicate denial, cooldown/no extra RNG, banked unique count/results/disk and another prestige/New Game. Matching Linux executable boots headlessly without errors. Windows PE is not executed natively by these checks.
+
+Python compilation, shell syntax, `git diff --check` and actionlint **1.7.7** pass. Full preflight ZIP passes safe/unique paths, CRC, complete SHA-256 manifest, required original assets/data/tests, portable scripts and source/build/version identity (**274 payload files**). Fresh extraction `/tmp/tomatocut-v011-preflight` imports without the checkout cache and passes **604/604**, with no script/resource/runtime errors. Preflight metadata honestly records uncommitted source. Final clean archive/GitHub delivery follows milestone commit. Native Windows, Forward+ GPU, audible quality, supported-PC 60 FPS, human prestige/event pacing and final art remain **unverified**. Three events and broader permanent branches remain incomplete with no placeholder unlocks.
+
 ## Golden Harvest milestone — v0.10.0 (2026-11-13, America/Los_Angeles)
 
 Continued clean `d622fec`, fetched matching remote main, passed **477/477** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64. All saves use `user://tests/`; production ledgers are untouched.

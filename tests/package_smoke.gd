@@ -44,7 +44,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.10.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.11.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -180,7 +180,7 @@ func run() -> void:
 		if probe.randf() < .12: game.event_rng.seed = candidate; break
 	game._physics_process(4)
 	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO
-	check(fruit.variety_id == "event_golden" and fruit.family.event_id == "golden_harvest" and fruit.collision == "hull" and game.events.spawned == 1,"packaged production scheduler automatically launches the matching golden event specimen")
+	check(fruit.variety_id == "event_golden" and fruit.family.event_id == "golden_harvest" and fruit.collision == "hull" and game.events.count("golden_harvest") == 1,"packaged production scheduler automatically launches the matching golden event specimen")
 	check(game.audio.sounds["golden"] is AudioStreamWAV and game.audio.players[(game.audio.cursor-1)%game.audio.players.size()].stream == game.audio.sounds["golden"],"packaged automatic event emits its original restrained cue")
 	game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0))
 	check(game.process_blade() == 1 and game.session.earnings == 37.5 and game.session.golden_tomatoes == 1 and game.fragments.pieces[0].models.has("event_golden/half"),"packaged golden slice awards the upgraded premium once with original seeded halves")
@@ -188,13 +188,50 @@ func run() -> void:
 	game.knife.track(Vector2(-2,0))
 	check(game.process_blade() == 1 and game.session.earnings == 75 and game.session.tomatoes_sliced == 1 and game.session.golden_tomatoes == 1,"packaged golden recut keeps its value and one unique golden count")
 	var event_rng_before: int = game.event_rng.state; game._physics_process(4)
-	check(game.events.spawned == 1 and game.event_rng.state == event_rng_before,"packaged golden cooldown and active-family gate suppress another draw")
+	check(game.events.count("golden_harvest") == 1 and game.event_rng.state == event_rng_before,"packaged golden cooldown and active-family gate suppress another draw")
 	game.finish_round()
 	check(game.progress.prestige.cycle_earnings == 75 and game.progress.lifetime.golden_tomatoes == 1 and game.store.load_into(restored) and restored.lifetime.golden_tomatoes == 1 and game.ui.content.find_child("GoldenSummary",true,false) != null,"packaged event payout and unique lifetime summary bank and reload together")
 	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
 	check(game.progress.prestige.level("golden_harvest") == 1 and game.progress.prestige.level("golden_frequency") == 1 and game.progress.prestige.level("golden_value") == 1 and game.progress.lifetime.golden_tomatoes == 1,"packaged prestige preserves dedicated event ownership, improvements and golden lifetime progress")
 	game.new_game()
 	check(game.progress.prestige.level("golden_harvest") == 0 and game.progress.lifetime.golden_tomatoes == 0 and game.events.catalog.probability("golden_harvest",game.progress.prestige) == 0,"packaged fresh game relocks the event and clears its lifetime progress")
+	game.finish_round()
+	check(game.events.catalog.probability("stampede_season",game.progress.prestige) == 0 and game.spawn_event("stampede_season") == null,"packaged fresh progress cannot activate locked stampedes")
+	game.progress = Progression.new(); game.ui.progress = game.progress; game.audio.progress = game.progress
+	game.progress.complete_round(ceilf(threshold*pow(100,1.0/float(game.progress.prestige.config.exponent)))+1,1,1)
+	game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	for id: String in ["permanent_slice_value","starting_cash","stampede_season","stampede_frequency","larger_stampedes","stampede_rewards"]: game.purchase_permanent(id)
+	game.ui.archive("Special Events")
+	check(game.events.catalog.validate(game.progress.prestige).is_empty() and game.ui.content.find_child("PrestigeTitle_stampede_season",true,false) != null and ResourceLoader.exists("res://assets/illustrations/prestige/stampede.svg"),"packaged independent stampede data and original botanical plate load in the real archive")
+	check(game.progress.prestige.level("golden_harvest") == 0 and game.events.catalog.spawn_count("stampede_season",game.progress.prestige) == 8 and is_equal_approx(game.events.catalog.probability("stampede_season",game.progress.prestige),.15) and game.events.catalog.multiplier("stampede_season",game.progress.prestige) == 3,"packaged paid stampede improvements work without a golden unlock")
+	game.progress.money = 1000; game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts")
+	game.start_round(); game.session.launch_clock = 1000
+	for candidate in range(1,10000):
+		var probe := RandomNumberGenerator.new(); probe.seed = candidate
+		if probe.randf() < .15: game.event_rng.seed = candidate; break
+	game._physics_process(5)
+	var all_smaller := true; var wave_families: Dictionary = {}
+	for target: Tomato in game.tomatoes.get_children():
+		all_smaller = all_smaller and target.variety_id == "standard_red" and is_equal_approx(target.scale.x,.68) and target.family.event_id == "stampede_season"
+		wave_families[target.family] = true
+		target.set_physics_process(false); target.position = Vector3(5,-4,0); target.velocity = Vector2.ZERO
+	check(game.tomatoes.get_child_count() == 8 and wave_families.size() == 8 and all_smaller and EventSpawner.active_groups(game) == {"stampede_season":1},"packaged production scheduler launches eight smaller real models as one group with independent cut families")
+	check(game.audio.sounds.get("stampede") is AudioStreamWAV and game.audio.players[(game.audio.cursor-1)%8].stream == game.audio.sounds.stampede,"packaged automatic stampede dispatches its original event cue")
+	check(game.spawn_event("stampede_season") == null,"packaged stampede opportunity cannot be replayed manually")
+	fruit = game.tomatoes.get_child(0); fruit.position = Vector3.ZERO
+	game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0))
+	check(game.process_blade() == 1 and game.session.earnings == 3.75 and game.session.stampede_tomatoes == 1 and game.fragments.pieces[0].models.has("standard_red/half"),"packaged real stampede slice uses paid value and original correctly scaled interiors")
+	check(game.process_blade() == 0 and game.session.earnings == 3.75,"packaged stationary stampede descendants cannot duplicate rewards")
+	game.knife.track(Vector2(-2,0))
+	check(game.process_blade() == 1 and game.session.earnings == 7.5 and game.session.tomatoes_sliced == 1 and game.session.stampede_tomatoes == 1,"packaged stampede recut retains one unique count and captured family payout")
+	event_rng_before = game.event_rng.state; game._physics_process(4)
+	check(game.events.count("stampede_season") == 1 and game.event_rng.state == event_rng_before,"packaged active wave and cooldown consume no extra event draws")
+	game.finish_round()
+	check(game.progress.lifetime.stampede_tomatoes == 1 and game.store.load_into(restored) and restored.lifetime.stampede_tomatoes == 1 and game.ui.content.find_child("StampedeSummary",true,false) != null,"packaged stampede lifetime count and real results bank and reload from disk")
+	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(game.progress.prestige.level("stampede_season") == 1 and game.progress.prestige.level("larger_stampedes") == 1 and game.progress.lifetime.stampede_tomatoes == 1,"packaged prestige preserves stampede investments and lifetime history")
+	game.new_game()
+	check(game.progress.prestige.level("stampede_season") == 0 and game.progress.lifetime.stampede_tomatoes == 0 and game.events.catalog.probability("stampede_season",game.progress.prestige) == 0,"packaged confirmed fresh game clears permanent stampede ownership and history")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

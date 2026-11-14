@@ -38,7 +38,7 @@ func run() -> void:
 	fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO
 	var caption: Control = game.ui.root.find_child("GoldenIndicator",false,false)
 	caption.position = game.kitchen.camera.unproject_position(Vector3(-.5,1.1,0))
-	check(fruit.variety_id == "event_golden" and fruit.family.event_id == "golden_harvest" and game.events.spawned == 1 and game.audio.players[(game.audio.cursor-1)%game.audio.players.size()].stream == game.audio.sounds["golden"],"production round scheduler automatically launches the original golden specimen and event cue")
+	check(fruit.variety_id == "event_golden" and fruit.family.event_id == "golden_harvest" and game.events.count("golden_harvest") == 1 and game.audio.players[(game.audio.cursor-1)%game.audio.players.size()].stream == game.audio.sounds["golden"],"production round scheduler automatically launches the original golden specimen and event cue")
 	await capture("68-automatic-golden-tomato")
 	await move_blade(Vector2(-2,0)); await move_blade(Vector2(2,0))
 	check(game.session.earnings == 37.5 and game.session.tomatoes_sliced == 1 and game.fragments.pieces.size() == 2 and game.fragments.pieces[0].models.has("event_golden/half"),"actual mouse cut awards the upgraded golden premium once and exposes its own seeded halves")
@@ -49,7 +49,7 @@ func run() -> void:
 	check(game.session.earnings == 75 and game.session.tomatoes_sliced == 1 and game.fragments.pieces[0].family.rewarded_cuts == 2,"real golden recut retains its premium and shared family limit")
 	var rng_before: int = game.event_rng.state
 	game._physics_process(4)
-	check(game.events.spawned == 1 and game.event_rng.state == rng_before and game.active_event_families() == 1,"golden descendants/cooldown prevent another event draw during the live round")
+	check(game.events.count("golden_harvest") == 1 and game.event_rng.state == rng_before and game.active_event_families() == 1,"golden descendants/cooldown prevent another event draw during the live round")
 	var seeds: int = game.progress.prestige.seeds
 	game.purchase_permanent("golden_frequency"); game.show_archive()
 	check(game.state == "playing" and game.progress.prestige.seeds == seeds and game.progress.prestige.level("golden_frequency") == 1,"live round denies event-upgrade purchases and archive entry")

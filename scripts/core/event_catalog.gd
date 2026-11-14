@@ -32,6 +32,12 @@ func multiplier(id: String, permanent: PrestigeProgression) -> float:
 	var d := definition(id)
 	return float(d.reward_multiplier)*(1+permanent.effect(d.value_upgrade)) if not d.is_empty() else 0
 
+func spawn_count(id: String, permanent: PrestigeProgression) -> int:
+	var d := definition(id)
+	if d.is_empty(): return 0
+	if d.kind == "specimen": return 1
+	return int(d.wave_size)+int(permanent.effect(d.size_upgrade))
+
 func cut_value(id: String, progress) -> float:
 	if not unlocked(id,progress.prestige): return 0
 	var best := 1.0
@@ -40,17 +46,23 @@ func cut_value(id: String, progress) -> float:
 	return best*multiplier(id,progress.prestige)
 
 func summary(id: String, permanent: PrestigeProgression) -> String:
-	var d := definition("golden_harvest")
+	var upgrade := permanent.definition(id)
+	var d := definition(str(upgrade.get("event_id","")))
+	if d.is_empty(): return ""
 	if id == d.unlock_upgrade:
-		return "Automatic Golden Tomatoes · unlocked" if unlocked(d.id,permanent) else "Locked → rare automatic Golden Tomatoes"
+		return "Automatic %s · unlocked" % d.name if unlocked(d.id,permanent) else "Locked → automatic "+str(d.name)
 	if id == d.frequency_upgrade:
 		var chance := probability(d.id,permanent)
 		var bonus: float = permanent.definition(id).effect_values.bonus_per_level
 		var next := chance if permanent.level(id) >= int(permanent.definition(id).max_level) else minf(1,chance+bonus)
 		return "Chance each %.0fs check: %.0f%% → %.0f%%" % [d.interval,chance*100,next*100]
+	if id == d.get("size_upgrade",""):
+		var current := spawn_count(d.id,permanent)
+		var next := current if permanent.level(id) >= int(upgrade.max_level) else current+int(upgrade.effect_values.bonus_per_level)
+		return "Tomatoes per wave: %d → %d" % [current,next]
 	var current := multiplier(d.id,permanent)
 	var next := current if permanent.level(id) >= int(permanent.definition(id).max_level) else current+float(d.reward_multiplier)*float(permanent.definition(id).effect_values.bonus_per_level)
-	return "Best eligible cut value: ×%.0f → ×%.0f" % [current,next]
+	return ("Best eligible cut value: ×%.0f → ×%.0f" if d.kind == "specimen" else "Selected variety cut value: ×%.0f → ×%.0f") % [current,next]
 
 func validate(permanent: PrestigeProgression) -> PackedStringArray:
 	var errors := PackedStringArray()
@@ -62,6 +74,7 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 		var id: String = raw.id
 		if seen.has(id): errors.append("Duplicate event ID: "+id)
 		seen[id] = true
+		if raw.get("kind") not in ["specimen","wave"]: errors.append(id+": invalid event kind")
 		for key: String in ["interval","initial_delay","cooldown","round_limit","active_limit","reward_multiplier","chance"]:
 			var value: Variant = raw.get(key)
 			if not PrestigeProgression.number(value) or float(value) <= 0 or (key == "chance" and float(value) > 1): errors.append(id+": invalid "+key)
@@ -75,6 +88,20 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 			if not upgrade.is_empty() and (not upgrade.get("illustration") is String or not ResourceLoader.exists(upgrade.illustration)): errors.append(id+": missing event plate")
 		var frequency := permanent.definition(str(raw.get("frequency_upgrade","")))
 		if not frequency.is_empty() and PrestigeProgression.number(raw.get("chance")) and float(raw.chance)+float(frequency.effect_values.bonus_per_level)*int(frequency.max_level) > 1: errors.append(id+": frequency exceeds probability one")
+		if raw.get("kind") == "wave":
+			var size_upgrade := permanent.definition(str(raw.get("size_upgrade","")))
+			if size_upgrade.is_empty() or unlock.is_empty() or int(size_upgrade.get("requires",{}).get(unlock.get("id",""),0)) < 1:
+				errors.append(id+": wave size requires its dedicated unlock")
+			for key: String in ["wave_size","size_scale"]:
+				if not PrestigeProgression.number(raw.get(key)) or float(raw[key]) <= 0: errors.append(id+": invalid "+key)
+			if PrestigeProgression.number(raw.get("wave_size")):
+				var size := float(raw.wave_size)
+				if size < 2 or size != floorf(size) or size > 24: errors.append(id+": invalid wave size")
+				if not size_upgrade.is_empty():
+					var bonus := float(size_upgrade.effect_values.bonus_per_level)
+					if bonus <= 0 or bonus != floorf(bonus) or size+bonus*int(size_upgrade.max_level) > 24: errors.append(id+": wave exceeds shared root capacity")
+			if PrestigeProgression.number(raw.get("size_scale")) and float(raw.size_scale) >= 1: errors.append(id+": stampede specimens must be smaller")
+			continue
 		if not raw.get("specimen") is Dictionary:
 			errors.append(id+": missing specimen"); continue
 		var fruit: Dictionary = raw.specimen

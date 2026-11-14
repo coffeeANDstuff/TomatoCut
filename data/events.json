@@ -40,6 +40,25 @@
         "wedge": "res://assets/models/fragments/event_golden_wedge.glb",
         "chunk": "res://assets/models/fragments/event_golden_chunk.glb"
       }
-    }
+    },
+    "kind": "specimen"
+  },
+  {
+    "id": "stampede_season",
+    "name": "Tomato Stampede",
+    "kind": "wave",
+    "unlock_upgrade": "stampede_season",
+    "frequency_upgrade": "stampede_frequency",
+    "value_upgrade": "stampede_rewards",
+    "size_upgrade": "larger_stampedes",
+    "interval": 5,
+    "initial_delay": 5,
+    "chance": 0.1,
+    "cooldown": 15,
+    "round_limit": 2,
+    "active_limit": 1,
+    "reward_multiplier": 2,
+    "wave_size": 6,
+    "size_scale": 0.68
   }
 ]

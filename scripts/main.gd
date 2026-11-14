@@ -73,7 +73,7 @@ func _ready() -> void:
 	ui.home(store.has_save,store.warning)
 
 func clear_field() -> void:
-	events.pending = ""
+	events.pending.clear()
 	for node in tomatoes.get_children():
 		tomatoes.remove_child(node)
 		node.queue_free()
@@ -109,8 +109,8 @@ func _physics_process(delta: float) -> void:
 		session.launch_clock += progress.launch_interval()
 		for i in range(progress.launch_count()):
 			spawn_tomato()
-	var due := events.advance(delta,progress.prestige,tomatoes.get_child_count() < MAX_TOMATOES,active_event_families(),event_rng.randf)
-	if not due.is_empty(): spawn_event(due)
+	var due := events.advance(delta,progress.prestige,MAX_TOMATOES-tomatoes.get_child_count(),EventSpawner.active_groups(self),event_rng.randf)
+	for id: String in due: spawn_event(id)
 	ui.update_round(session)
 
 func spawn_tomato() -> Tomato:
@@ -121,31 +121,24 @@ func spawn_tomato() -> Tomato:
 	return _spawn_specimen(data,progress.harvest.cut_value(variety,progress.levels))
 
 func spawn_event(id: String) -> Tomato:
-	if state != "playing" or not session.running or session.remaining <= 0 or not events.catalog.unlocked(id,progress.prestige) or events.pending != id: return null
+	if state != "playing" or not session.running or session.remaining <= 0 or not events.catalog.unlocked(id,progress.prestige) or not events.pending.has(id): return null
 	var d := events.catalog.definition(id)
-	if tomatoes.get_child_count() >= MAX_TOMATOES or active_event_families() >= int(d.active_limit):
-		events.pending = ""; return null
+	if MAX_TOMATOES-tomatoes.get_child_count() < events.catalog.spawn_count(id,progress.prestige) or int(EventSpawner.active_groups(self).get(id,0)) >= int(d.active_limit):
+		events.pending.erase(id); return null
 	if not events.commit(id): return null
-	var tomato := _spawn_specimen(d.specimen,events.catalog.cut_value(id,progress),id)
-	ui.popup_golden(kitchen.camera.unproject_position(Vector3(tomato.position.x,-2.6,0)))
-	audio.play("golden")
-	return tomato
+	return EventSpawner.spawn(self,id)
 
 func active_event_families() -> int:
-	var families: Dictionary = {}
-	for fruit: Tomato in tomatoes.get_children():
-		if not fruit.is_queued_for_deletion() and not fruit.family.event_id.is_empty(): families[fruit.family] = true
-	for piece: FragmentPiece in fragments.pieces:
-		if piece.family != null and not piece.family.event_id.is_empty(): families[piece.family] = true
-	return families.size()
+	return EventSpawner.live_families(self).size()
 
-func _spawn_specimen(data: Dictionary, value: float, event_id: String = "") -> Tomato:
+func _spawn_specimen(data: Dictionary, value: float, event_id: String = "", group: int = 0, play_launch: bool = true) -> Tomato:
 	var tomato := Tomato.new()
 	tomato.configure(data)
 	tomatoes.add_child(tomato)
 	tomato.family = CutFamily.new(progress.max_cuts())
 	tomato.family.variety_id = data.id
 	tomato.family.event_id = event_id
+	tomato.family.event_group = group
 	tomato.family.model_scale = float(data.model_scale)
 	tomato.family.mass = float(data.mass)
 	tomato.family.fragment_durability = float(data.fragment_durability)
@@ -154,7 +147,7 @@ func _spawn_specimen(data: Dictionary, value: float, event_id: String = "") -> T
 	tomato.velocity = Vector2(-tomato.position.x*randf_range(0.12,0.28),randf_range(float(data.launch_min),float(data.launch_max)))
 	var spin_z := float(data.get("spin_z",.65))
 	tomato.spin = Vector3(randf_range(-0.4,0.4),randf_range(-float(data.spin),float(data.spin)),randf_range(-spin_z,spin_z))
-	audio.play("launch")
+	if play_launch: audio.play("launch")
 	return tomato
 
 func _input(event: InputEvent) -> void:
@@ -229,7 +222,7 @@ func finish_round() -> void:
 		return
 	state = "results"
 	session.running = false
-	progress.complete_round(session.earnings,session.cuts,session.tomatoes_sliced,session.golden_tomatoes)
+	progress.complete_round(session.earnings,session.cuts,session.tomatoes_sliced,session.golden_tomatoes,session.stampede_tomatoes)
 	save_progress()
 	clear_field()
 	ui.results(session)

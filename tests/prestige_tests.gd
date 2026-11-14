@@ -12,7 +12,7 @@ static func funded(reward: int = 1) -> Progression:
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
 	var threshold := float(p.prestige.config.threshold)
-	check.call(p.prestige.validate().is_empty() and p.prestige.definitions.size() == 5, "authored seed formula and all real permanent investments validate")
+	check.call(p.prestige.validate().is_empty() and p.prestige.definitions.size() == 9, "authored seed formula and all real permanent investments validate")
 	check.call(p.snapshot().version == 5 and p.prestige.seeds == 0 and p.prestige.cycle_earnings == 0 and p.prestige.discovered == ["permanent_slice_value"] and p.prestige.unseen().is_empty(), "fresh v5 ledger starts at cycle zero with only its known permanent root")
 	check.call(p.prestige.lineage != Progression.new().prestige.lineage, "fresh ledgers have distinct identities independent of gameplay RNG")
 	p.money = threshold*10

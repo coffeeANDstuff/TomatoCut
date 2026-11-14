@@ -3,31 +3,42 @@ extends RefCounted
 
 var catalog := EventCatalog.new()
 var elapsed := 0.0
-var clock := 0.0
-var cooldown_until := 0.0
-var spawned := 0
-var pending := ""
+var states: Dictionary = {}
+var pending: Dictionary = {}
 
 func begin() -> void:
-	elapsed = 0; cooldown_until = 0; spawned = 0; pending = ""
-	clock = float(catalog.definition("golden_harvest").initial_delay)
+	elapsed = 0; states.clear(); pending.clear()
+	for d: Dictionary in catalog.definitions:
+		states[d.id] = {"clock":float(d.initial_delay),"cooldown_until":0.0,"spawned":0}
 
-func advance(delta: float, permanent: PrestigeProgression, has_room: bool, active: int, roll: Callable) -> String:
-	pending = ""
-	if not is_finite(delta) or delta <= 0: return ""
-	elapsed += delta; clock -= delta
-	if clock > .000001: return ""
-	var d := catalog.definition("golden_harvest")
-	# One opportunity per update; no backlog, catch-up burst or locked RNG draw.
-	clock = float(d.interval)
-	if not catalog.unlocked(d.id,permanent) or not has_room or active >= int(d.active_limit) or spawned >= int(d.round_limit) or elapsed+.000001 < cooldown_until: return ""
-	var sample: float = roll.call()
-	var chance := catalog.probability(d.id,permanent)
-	if is_finite(sample) and sample >= 0 and sample <= 1 and (chance >= 1 or sample < chance): pending = d.id
-	return pending
+func count(id: String) -> int:
+	return int(states.get(id,{}).get("spawned",0))
+
+func advance(delta: float, permanent: PrestigeProgression, capacity: int, active: Dictionary, roll: Callable) -> Array[String]:
+	pending.clear()
+	var due: Array[String] = []
+	if not is_finite(delta) or delta <= 0: return due
+	elapsed += delta
+	for d: Dictionary in catalog.definitions:
+		var state: Dictionary = states[d.id]
+		state.clock -= delta
+		if state.clock > .000001: continue
+		# At most one opportunity per event/update, including large frame gaps.
+		state.clock = float(d.interval)
+		var required := catalog.spawn_count(d.id,permanent)
+		if not catalog.unlocked(d.id,permanent) or capacity < required or int(active.get(d.id,0)) >= int(d.active_limit) or int(state.spawned) >= int(d.round_limit) or elapsed+.000001 < float(state.cooldown_until): continue
+		var sample: float = roll.call()
+		var chance := catalog.probability(d.id,permanent)
+		if is_finite(sample) and sample >= 0 and sample <= 1 and (chance >= 1 or sample < chance):
+			pending[d.id] = true; due.append(d.id)
+			# Reserve the whole wave so simultaneous events cannot overbook roots.
+			capacity -= required
+	return due
 
 func commit(id: String) -> bool:
-	if id.is_empty() or pending != id: return false
-	pending = ""; spawned += 1
-	cooldown_until = elapsed+float(catalog.definition(id).cooldown)
+	if not pending.has(id): return false
+	pending.erase(id)
+	var state: Dictionary = states[id]
+	state.spawned += 1
+	state.cooldown_until = elapsed+float(catalog.definition(id).cooldown)
 	return true

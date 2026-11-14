@@ -15,7 +15,7 @@ var money: float = 0.0
 var levels: Dictionary = {}
 var discovered: Array = []
 var viewed: Array = []
-var lifetime: Dictionary = {"rounds": 0, "cuts": 0, "earnings": 0.0, "tomatoes": 0, "golden_tomatoes":0}
+var lifetime: Dictionary = {"rounds": 0, "cuts": 0, "earnings": 0.0, "tomatoes": 0, "golden_tomatoes":0, "stampede_tomatoes":0}
 var settings: Dictionary = {"master": 0.8, "effects": 0.8, "reduced_motion": false, "reduced_effects": false, "popups": true, "damage_indicators": true, "fullscreen": false, "vsync": true}
 
 func _init() -> void:
@@ -157,13 +157,14 @@ func reward(combo: int, tomato_value: float = 1.0) -> float:
 	var combo_bonus := 1.0 + effect_value("combo_cash","bonus_per_step") * level("combo_cash") * mini(combo-1,int(effect_value("combo_cash","max_steps")))
 	return snappedf(base * combo_bonus * tomato_value * (1.0+prestige.effect("permanent_slice_value")),0.01)
 
-func complete_round(earnings: float, cuts: int, tomatoes_sliced: int = -1, golden_tomatoes: int = 0) -> void:
+func complete_round(earnings: float, cuts: int, tomatoes_sliced: int = -1, golden_tomatoes: int = 0, stampede_tomatoes: int = 0) -> void:
 	money += earnings
 	lifetime.rounds += 1
 	lifetime.cuts += cuts
 	lifetime.tomatoes += cuts if tomatoes_sliced < 0 else tomatoes_sliced
 	lifetime.earnings += earnings
 	lifetime.golden_tomatoes += golden_tomatoes
+	lifetime.stampede_tomatoes += stampede_tomatoes
 	prestige.cycle_earnings += earnings
 
 func prestige_preview() -> Dictionary:
@@ -208,6 +209,8 @@ func restore(data: Dictionary) -> bool:
 		return false
 	var golden_count: Variant = data.lifetime.get("golden_tomatoes",0)
 	if not _number(golden_count) or float(golden_count) < 0 or float(golden_count) != floorf(float(golden_count)) or float(golden_count) > float(tomato_count): return false
+	var stampede_count: Variant = data.lifetime.get("stampede_tomatoes",0)
+	if not _number(stampede_count) or float(stampede_count) < 0 or float(stampede_count) != floorf(float(stampede_count)) or float(stampede_count)+float(golden_count) > float(tomato_count): return false
 	for id: Variant in data.discovered:
 		if not id is String or definition(id).is_empty():
 			return false
@@ -251,6 +254,7 @@ func restore(data: Dictionary) -> bool:
 	lifetime.earnings = float(data.lifetime.earnings)
 	lifetime.tomatoes = int(tomato_count)
 	lifetime.golden_tomatoes = int(golden_count)
+	lifetime.stampede_tomatoes = int(stampede_count)
 	for key: String in settings:
 		if data.settings.has(key):
 			settings[key] = data.settings[key]

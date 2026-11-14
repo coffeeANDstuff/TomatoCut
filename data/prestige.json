@@ -85,6 +85,78 @@
       "effect_values": {
         "bonus_per_level": 0.5
       }
+    },
+    {
+      "id": "stampede_season",
+      "name": "Stampede Season",
+      "description": "A special permit for a rather unreasonable quantity of small tomatoes. Golden invitations are a separate matter.",
+      "effect": "Unlocks automatic waves of smaller eligible tomatoes",
+      "base_cost": 2,
+      "max_level": 1,
+      "requires": {
+        "starting_cash": 1
+      },
+      "category": "Special Events",
+      "growth": 2,
+      "event_id": "stampede_season",
+      "illustration": "res://assets/illustrations/prestige/stampede.svg",
+      "effect_values": {
+        "bonus_per_level": 1
+      }
+    },
+    {
+      "id": "stampede_frequency",
+      "name": "Stampede Frequency",
+      "description": "A fuller calendar of group arrivals. Each wave still needs room for the entire party.",
+      "effect": "+5 percentage points per stampede check per level",
+      "base_cost": 2,
+      "max_level": 3,
+      "requires": {
+        "stampede_season": 1
+      },
+      "category": "Special Events",
+      "growth": 2,
+      "event_id": "stampede_season",
+      "illustration": "res://assets/illustrations/prestige/stampede.svg",
+      "effect_values": {
+        "bonus_per_level": 0.05
+      }
+    },
+    {
+      "id": "larger_stampedes",
+      "name": "Larger Stampedes",
+      "description": "Two more places at the cutting board. Shared capacity and the original family cut budgets still apply.",
+      "effect": "+2 tomatoes per stampede per level",
+      "base_cost": 2,
+      "max_level": 3,
+      "requires": {
+        "stampede_season": 1
+      },
+      "category": "Special Events",
+      "growth": 2,
+      "event_id": "stampede_season",
+      "illustration": "res://assets/illustrations/prestige/stampede.svg",
+      "effect_values": {
+        "bonus_per_level": 2
+      }
+    },
+    {
+      "id": "stampede_rewards",
+      "name": "Stampede Rewards",
+      "description": "Small specimens, increasingly distinguished invoices. Ordinary price and combo bonuses still apply once.",
+      "effect": "+50% base stampede cut value per level",
+      "base_cost": 2,
+      "max_level": 3,
+      "requires": {
+        "stampede_season": 1
+      },
+      "category": "Special Events",
+      "growth": 2,
+      "event_id": "stampede_season",
+      "illustration": "res://assets/illustrations/prestige/stampede.svg",
+      "effect_values": {
+        "bonus_per_level": 0.5
+      }
     }
   ]
 }

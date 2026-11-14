@@ -353,10 +353,13 @@ func results(session: RoundSession) -> void:
 	place(label("Beautifully done.",46,true),Vector2(40,79),Vector2(540,65),panel)
 	place(label(Progression.cash(session.earnings),68,true,RED),Vector2(40,153),Vector2(540,95),panel)
 	place(label("EARNED AT THE CUTTING BOARD",12,false,MUTED),Vector2(43,248),Vector2(530,25),panel)
-	if session.golden_tomatoes > 0:
-		var golden := label("GOLDEN SPECIMENS  ·  %d this round   /   %d lifetime" % [session.golden_tomatoes,progress.lifetime.golden_tomatoes],14,false,Color("9b7740"))
-		golden.name = "GoldenSummary"
-		place(golden,Vector2(43,278),Vector2(530,22),panel)
+	var event_stats: Array[String] = []
+	if session.golden_tomatoes > 0: event_stats.append("GOLDEN %d (%d total)" % [session.golden_tomatoes,progress.lifetime.golden_tomatoes])
+	if session.stampede_tomatoes > 0: event_stats.append("STAMPEDE %d (%d total)" % [session.stampede_tomatoes,progress.lifetime.stampede_tomatoes])
+	if not event_stats.is_empty():
+		var summary := label("  ·  ".join(event_stats),14,false,Color("9b7740"))
+		summary.name = "GoldenSummary" if session.golden_tomatoes > 0 else "StampedeSummary"
+		place(summary,Vector2(43,278),Vector2(530,22),panel)
 	var stats := GridContainer.new()
 	stats.columns = 2
 	stats.add_theme_constant_override("h_separation",55)
@@ -671,10 +674,10 @@ func popup_damage(text: String, screen_position: Vector2) -> void:
 func popup_critical(screen_position: Vector2) -> void:
 	popup_impact("Critical slice",screen_position,true)
 
-func popup_golden(screen_position: Vector2) -> void:
+func popup_event(text: String, screen_position: Vector2, indicator_name: String) -> void:
 	if not progress.settings.damage_indicators: return
-	var node := label("Golden Harvest",22,true,Color("f1d58b"))
-	node.name = "GoldenIndicator"
+	var node := label(text,22,true,Color("f1d58b"))
+	node.name = indicator_name
 	node.add_theme_color_override("font_shadow_color",INK)
 	node.add_theme_constant_override("shadow_offset_x",1)
 	node.add_theme_constant_override("shadow_offset_y",1)
