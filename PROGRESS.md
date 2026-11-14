@@ -1,6 +1,44 @@
 # Progress
 
-## Current session — v0.9 (2026-11-13, America/Los_Angeles)
+## Current session — v0.10 (2026-11-13, America/Los_Angeles)
+
+Continued clean main at **d622fec**, fetched and confirmed matching remote source, and passed the **477/477** baseline. Highest-priority incomplete work was Phase 5's first dedicated prestige event, **Golden Harvest**. Retained existing varieties, knives, preparation, harvest, critical slicing, paid permanent receipts, reset transactions and original assets.
+
+### Completed
+- **TESTED** — Real permanent **Golden Harvest** unlock: 1 seed after Starting Cash 1, revealed in a functioning **Special Events** archive category. Its purchased level alone permits the event. Normal variety/ability/frequency investments cannot bypass it; unknown/unimplemented events have zero probability. The other four event nodes are not exposed.
+- **TESTED** — Real paid **Golden Frequency** and **Golden Value** successors, each initially 2 seeds, doubling per level, three levels. Frequency adds four percentage points per level (8% base → 20% maximum); value adds 50% of base per level (20× → 50×). Actual current/next effects, prices, discovery/read state, art and scroll retention use the existing archive/save-before-adopt transaction.
+- **TESTED** — Production automatic scheduler starts at 4s, checks every 4s, requires free shared capacity, limits one active golden family, enforces 12s cooldown and two events per round. Skipped/locked/full/active/capped opportunities consume no RNG and never accumulate a catch-up burst. A separate event RNG leaves normal harvest/critical randomness independent; single-use pending permits deny direct/unissued/duplicate spawns and reset each round.
+- **TESTED** — Original seven-lobed Golden Tomato with crown/curved stem, amber seven-chamber seeded flesh, prepared halves/wedges/eighths, matching descendant hulls, restrained local cue/caption and golden pooled juice. Editable **art/golden_harvest.blend**, original GLBs/SVG/WAV and generators are included. Normal Sungold remains separate future content. Earlier assets remain intact; initial over-bright flesh was corrected after inspection.
+- **TESTED** — Golden families capture 20× best eligible normal cut value at spawn (up to 50×). Existing normal prices, combo and permanent wealth apply once afterward; critical damage does not multiply money. Real whole-fruit/recut damage, shared cut budgets, one unique-fruit count, 24-root capacity, 64-fragment/96-drop pools and bounded three-specimen fragment model cache remain intact across all four modeled specimens. Normal juice restores red when reused.
+- **TESTED** — Results show round/lifetime unique Golden Tomatoes. The optional lifetime counter defaults to zero in earlier **schema 5** ledgers; malformed/over-total counts reject atomically. Actual event unlock/improvements, paid receipts, discovery and lifetime counts survive reload and another prestige. Confirmed New Game clears event progression/counts while retaining preferences. Existing eligible v0.9 saves reveal the new branch without granting a free unlock.
+- **TESTED** — **545/545 headless checks** (**68 new**), zero failures; **147 rendered checks** across all ten flows (**17 new**), zero failures. Coverage includes actual production purchases, scheduling, cuts/recuts, capacity, pools, premium/critical reward composition, legacy v5 saves, invalid data/counters, live-round denial, disk reload, second prestige and New Game. Reduced Motion/Effects and Damage Indicators preserve gameplay semantics. Initial fractional-clock rounding was fixed with a small due-time tolerance; final runs have no script/resource/runtime errors.
+- **TESTED** — Windows/Linux exports each pass **60/60 embedded-pack checks**; matching Linux executable boots headlessly. Real packed event data/models/art/cue, automatic spawn, premium cut/recut, banked unique count, disk save and subsequent reset are exercised. This is host-engine pack validation, not native Windows execution.
+- **TESTED** — `EVENT_BALANCE_REPORT.md` uses production scheduling/permanent purchases with 5,000 fixed-seed rounds per profile/length. Locked counts are zero. Ten-second average counts: 0.1440 unlock-only, 0.3598 max-investment; forty-second averages 0.6240/1.2834, maximum two. The model does not establish human earnings, event investment return or prestige timing. No prior prices changed.
+- **TESTED** — Full preflight ZIP passes safe paths, CRC, complete SHA-256 payload coverage, required original art/data/tests/event report, portable script modes and source/build/version identity (**264 payload files**). Fresh extracted source imports without the checkout cache and passes **545/545**. Python compilation, shell syntax, actionlint 1.7.7 and whitespace checks pass. Version is **0.10.0**; final clean archive and authorized GitHub publication follow milestone commit. Exports remain separate from source history.
+
+### Remaining and limitations
+- **IN PROGRESS** — Phase 5: Golden Harvest is the first complete dedicated event. **Tomato Stampede, The Big One, Rainbow Harvest and Tomato Jackpot** still require their own actual permanent unlocks, effects, bounded scheduling and integrated art. Broader permanent production/cutting/time/harvest/wealth branches remain.
+- **NOT STARTED** — Remaining **22 normal varieties**, **22 knives**, other abilities, full mastery/achievements, additional environments/cosmetics/music and production content/polish remain in the master scope.
+- **IN PROGRESS** — Human novice pacing, prestige timing/repeat-cycle value, equipment/event investment value, durable-fragment feel and final art. Deterministic models do not certify human progression or game feel.
+- **BLOCKED** — Native Windows execution, Forward+ GPU validation, audible listening and target-PC 60 FPS need suitable hardware unavailable here. Software OpenGL/Dummy audio verify functional paths only.
+
+### Continuity
+- `EventCatalog` loads only implemented events from `data/events.json`, holds a separate event-specimen map, validates referenced assets/permanent prerequisites and supplies actual chance/value summaries. Event specimens never enter `HarvestCatalog.distribution` or normal variety ownership. Family `event_id` remains stable through every descendant.
+- `EventDirector` currently schedules Golden Harvest; `begin`, `advance` and single-use `commit` separate an earned opportunity from instantiation. Main owns the independent RNG, checks live-round/time/shared capacity, counts active golden families across roots/fragments/debris and delegates the shared spawn/cut pipeline. Next events need per-event clocks/permits, preserving all Golden behavior.
+- `RoundSession` counts only first Golden slices; `Progression.complete_round` alone banks the optional lifetime count. Prestige keeps lifetime fields; New Game clears them. Save schema remains 5 because the added counter is optional and permanent content is data-driven. Historical price receipts and seed conservation are unchanged.
+- `PrestigePage` lists only actually revealed categories and preserves scroll within the same category. Permanent discovery still pauses behind modal confirmation. Live-round purchases remain denied by main. No manual spawn menu or event placeholder exists.
+- `tests/golden_tests.gd`, `tests/golden_render.gd` and expanded `package_smoke.gd` use isolated test saves. Funded/eligible fixtures are explicit; production claim/purchase/scheduler/input paths follow. Captures `65`–`71` and gallery `69` document actual pages/models, not final art/performance approval.
+- GitHub pushes, milestone releases and prominent Full-package delivery remain authorized. No environment draft/configuration publication is included.
+
+## Exact next task
+Implement **Stampede Season**, the second independently gated prestige event, following GAME_DESIGN.md §§16–17. Author a real seed-funded permanent unlock/prerequisite/reveal and persistent effects. Extend EventDirector to independent per-event clocks, single-use permits and caps while preserving Golden Harvest's no-RNG-when-blocked behavior. Create a real bounded automatic wave of smaller tomatoes using eligible normal varieties and existing collision/reward/family budgets, with distinct restrained feedback and working archive improvements. Test separate zero locked probabilities, no normal-upgrade bypass, mixed-event shared capacity/cooldowns, save/reset preservation and no duplicate rewards. Keep Giant Harvest, Heirloom Celebration and Jackpot Harvest unavailable until implemented. Preserve all 25 normal varieties/knives and remaining permanent/mastery/achievement/environment/cosmetic scope.
+
+---
+
+# Historical milestones
+The current v0.10 section supersedes incomplete-feature statements below.
+
+## Milestone — v0.9 (2026-11-13, America/Los_Angeles)
 
 Continued clean main at **93eae2d**, confirmed matching remote source and verified the **399/399** baseline. Highest-priority incomplete milestone was Phase 5's first complete prestige transaction. All working normal varieties, equipment, preparation, abilities, harvest, discovery and original art were retained.
 
@@ -37,10 +75,6 @@ Continued clean main at **93eae2d**, confirmed matching remote source and verifi
 ## Exact next task
 Implement **Golden Harvest**, the first separately gated prestige event, following GAME_DESIGN.md §§16–17. Add a real permanent seed-funded unlock with dedicated prerequisite/reveal and save/reset preservation. Only its purchased level permits a bounded automatic golden-tomato event during rounds. Author its original model/interior/materials, restrained cues, premium reward/family behavior and actual archive branch. Test zero locked probability, no normal-upgrade bypass, automatic scheduling, reset/persistence, spawn/fragment budgets and unique rewards. Keep the other four events independently locked until genuinely implemented; retain the full normal 25-variety/25-knife and permanent-branch scope.
 
----
-
-# Historical milestones
-The current v0.9 section supersedes incomplete-feature statements below.
 
 ## Milestone — v0.8 (2026-11-13, America/Los_Angeles)
 

@@ -7,7 +7,7 @@ var progress: Progression
 var cursor := 0
 
 func _ready() -> void:
-	for id: String in ["slice", "resist", "launch", "paper", "bell", "purchase", "discovery", "critical", "prestige"]:
+	for id: String in ["slice", "resist", "launch", "paper", "bell", "purchase", "discovery", "critical", "prestige", "golden"]:
 		sounds[id] = load("res://assets/audio/%s.wav" % id)
 	if progress != null:
 		for knife: Dictionary in progress.equipment.knives:

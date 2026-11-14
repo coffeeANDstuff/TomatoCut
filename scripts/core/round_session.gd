@@ -7,6 +7,7 @@ var launch_clock := 0.0
 var earnings := 0.0
 var cuts := 0
 var tomatoes_sliced := 0
+var golden_tomatoes := 0
 var combo := 0
 var best_combo := 0
 var combo_clock := 0.0
@@ -25,6 +26,7 @@ func begin(progress: Progression) -> void:
 	earnings = 0.0
 	cuts = 0
 	tomatoes_sliced = 0
+	golden_tomatoes = 0
 	combo = 0
 	best_combo = 0
 	combo_clock = 0.0
@@ -43,7 +45,7 @@ func advance(delta: float) -> bool:
 		return true
 	return false
 
-func record_cut(progress: Progression, first_slice: bool = true, tomato_value: float = 1.0) -> float:
+func record_cut(progress: Progression, first_slice: bool = true, tomato_value: float = 1.0, event_id: String = "") -> float:
 	if not running or remaining <= 0:
 		return 0.0
 	combo += 1
@@ -52,6 +54,7 @@ func record_cut(progress: Progression, first_slice: bool = true, tomato_value: f
 	cuts += 1
 	if first_slice:
 		tomatoes_sliced += 1
+		if event_id == "golden_harvest": golden_tomatoes += 1
 	var value := progress.reward(combo, tomato_value)
 	bonus += value - progress.reward(1, tomato_value)
 	earnings += value

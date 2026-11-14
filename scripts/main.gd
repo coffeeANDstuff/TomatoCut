@@ -16,9 +16,14 @@ var countdown_cue := 4
 var save_path := "user://progress.json"
 var ability_rng := RandomNumberGenerator.new()
 var prestige_token := ""
+var events := EventDirector.new()
+var event_rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
 	ability_rng.randomize()
+	event_rng.randomize()
+	var event_errors := events.catalog.validate(progress.prestige)
+	if not event_errors.is_empty(): push_error("Invalid event content: "+"; ".join(event_errors))
 	for argument: String in OS.get_cmdline_user_args():
 		if argument.begins_with("--save-path="):
 			save_path = argument.trim_prefix("--save-path=")
@@ -68,6 +73,7 @@ func _ready() -> void:
 	ui.home(store.has_save,store.warning)
 
 func clear_field() -> void:
+	events.pending = ""
 	for node in tomatoes.get_children():
 		tomatoes.remove_child(node)
 		node.queue_free()
@@ -82,6 +88,7 @@ func start_round() -> void:
 	state = "playing"
 	kitchen.show_hero(false)
 	session.begin(progress)
+	events.begin()
 	countdown_cue = 4
 	ui.gameplay()
 	audio.play("paper")
@@ -102,6 +109,8 @@ func _physics_process(delta: float) -> void:
 		session.launch_clock += progress.launch_interval()
 		for i in range(progress.launch_count()):
 			spawn_tomato()
+	var due := events.advance(delta,progress.prestige,tomatoes.get_child_count() < MAX_TOMATOES,active_event_families(),event_rng.randf)
+	if not due.is_empty(): spawn_event(due)
 	ui.update_round(session)
 
 func spawn_tomato() -> Tomato:
@@ -109,15 +118,38 @@ func spawn_tomato() -> Tomato:
 		return null
 	var variety := progress.harvest.choose(progress.levels, progress.strength())
 	var data := progress.harvest.definition(variety)
+	return _spawn_specimen(data,progress.harvest.cut_value(variety,progress.levels))
+
+func spawn_event(id: String) -> Tomato:
+	if state != "playing" or not session.running or session.remaining <= 0 or not events.catalog.unlocked(id,progress.prestige) or events.pending != id: return null
+	var d := events.catalog.definition(id)
+	if tomatoes.get_child_count() >= MAX_TOMATOES or active_event_families() >= int(d.active_limit):
+		events.pending = ""; return null
+	if not events.commit(id): return null
+	var tomato := _spawn_specimen(d.specimen,events.catalog.cut_value(id,progress),id)
+	ui.popup_golden(kitchen.camera.unproject_position(Vector3(tomato.position.x,-2.6,0)))
+	audio.play("golden")
+	return tomato
+
+func active_event_families() -> int:
+	var families: Dictionary = {}
+	for fruit: Tomato in tomatoes.get_children():
+		if not fruit.is_queued_for_deletion() and not fruit.family.event_id.is_empty(): families[fruit.family] = true
+	for piece: FragmentPiece in fragments.pieces:
+		if piece.family != null and not piece.family.event_id.is_empty(): families[piece.family] = true
+	return families.size()
+
+func _spawn_specimen(data: Dictionary, value: float, event_id: String = "") -> Tomato:
 	var tomato := Tomato.new()
 	tomato.configure(data)
 	tomatoes.add_child(tomato)
 	tomato.family = CutFamily.new(progress.max_cuts())
-	tomato.family.variety_id = variety
+	tomato.family.variety_id = data.id
+	tomato.family.event_id = event_id
 	tomato.family.model_scale = float(data.model_scale)
 	tomato.family.mass = float(data.mass)
 	tomato.family.fragment_durability = float(data.fragment_durability)
-	tomato.family.cut_value = progress.harvest.cut_value(variety, progress.levels)
+	tomato.family.cut_value = value
 	tomato.position = Vector3(randf_range(-4.6,4.6),-4.5,0)
 	tomato.velocity = Vector2(-tomato.position.x*randf_range(0.12,0.28),randf_range(float(data.launch_min),float(data.launch_max)))
 	var spin_z := float(data.get("spin_z",.65))
@@ -166,7 +198,7 @@ func process_blade() -> int:
 			tomato.sliced = true
 			tomato.family.record_split()
 			fragments.split(tomato.position,tomato.velocity,direction,progress.settings.reduced_effects,tomato.family)
-			cut_feedback(tomato.position, true, tomato.family.cut_value)
+			cut_feedback(tomato.position, true, tomato.family.cut_value,tomato.family.event_id)
 			tomato.hide()
 			tomato.queue_free()
 			count += 1
@@ -187,8 +219,8 @@ func damage_feedback(at: Vector3, remaining: float) -> void:
 	ui.popup_damage("%d more %s" % [strikes,"strike" if strikes == 1 else "strikes"], kitchen.camera.unproject_position(at))
 	audio.play("resist")
 
-func cut_feedback(at: Vector3, first_slice: bool, tomato_value: float = 1.0) -> void:
-	var reward := session.record_cut(progress, first_slice, tomato_value)
+func cut_feedback(at: Vector3, first_slice: bool, tomato_value: float = 1.0, event_id: String = "") -> void:
+	var reward := session.record_cut(progress, first_slice, tomato_value,event_id)
 	ui.popup_cash("+" + Progression.cash(reward), kitchen.camera.unproject_position(at))
 	audio.play(progress.equipment.definition(progress.equipped_knife).get("slice_sound","slice"))
 
@@ -197,7 +229,7 @@ func finish_round() -> void:
 		return
 	state = "results"
 	session.running = false
-	progress.complete_round(session.earnings,session.cuts,session.tomatoes_sliced)
+	progress.complete_round(session.earnings,session.cuts,session.tomatoes_sliced,session.golden_tomatoes)
 	save_progress()
 	clear_field()
 	ui.results(session)
@@ -289,6 +321,7 @@ func new_game() -> void:
 	ui.selected_knife = ""
 	ui.selected_modification = ""
 	ui.modification_target = ""
+	ui.selected_archive_category = "Permanent Wealth"
 	audio.progress = progress
 	save_progress()
 	apply_settings()

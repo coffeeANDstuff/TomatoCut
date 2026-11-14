@@ -2,6 +2,34 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Golden Harvest milestone — v0.10.0 (2026-11-13, America/Los_Angeles)
+
+Continued clean `d622fec`, fetched matching remote main, passed **477/477** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64. All saves use `user://tests/`; production ledgers are untouched.
+
+```sh
+./tools/cloud.sh ./tools/check.sh
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/golden_render.gd
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/fragment_gallery.gd -- --golden
+./tools/cloud.sh godot --headless --path . --script tools/simulate_events.gd
+# All nine prior rendered flows also ran in the same display mode.
+```
+
+**545 headless checks pass; zero failures** (**68 additional**). New coverage: dedicated unlock/prerequisite/reveal/purchase and seed limits; independent improvements; zero other/locked event probabilities; normal mix exclusion; current v5 and prior v0.9 saves/paid receipts; optional zero-default lifetime counter and four malformed counters; initial delay/fractional clocks/cooldown/round/active/shared-capacity gates; no RNG on skipped checks; no overdue burst; single-use commit and direct/unissued/duplicate denial; invalid samples/full-probability endpoint; twelve malformed content cases; production automatic golden model/hull/cue/caption; premium $25/$50 root/recut, one unique count and banked disk result; all-four-specimen bounded three-model cache; normal-juice material restoration; prestige persistence and New Game reset; enhanced Roma eligibility, paid event value, ordinary/permanent price and critical damage composing exactly once ($562.50 root / $1,125 family after recut).
+
+**147 rendered checks pass; zero failures:** original loop 13, Cherry 13, Roma 12, discovery 14, Critical Slice 15, equipment 16, modifications 18, Steak 10, prestige 19, Golden Harvest **17**. Actual GUI clicks purchase the wealth prerequisite, event unlock and both improvements. A seeded production scheduling opportunity spawns the actual Golden Tomato. Real mouse input splits/recuts it for $37.50/$75 and one unique specimen; actual banking, disk reload, second prestige, Reduced Effects/Motion and confirmed New Game pass. Native confirmation uses production button callbacks after actual preview clicks, not OS-dialog click automation. Explicit staged funds and frozen/suppressed normal launches isolate the event without replacing its scheduler or input pipeline.
+
+Inspected actual Special Events reveal and scrolled current/next investment comparisons at 16:10/16:9 (`65`, `67`), actual whole Golden Tomato (`68`), exact GLB fragment study (`69`) and separated tumbling seeded halves (`70`). Captures `65`–`71` are ignored developer evidence. The kitchen camera stays fixed. Damage Indicators/Reduced Motion affect local labels; Reduced Effects changes pooled drops without altering reward/count/budget. Normal juice is restored on reuse.
+
+Initial development failures: maximum-investment fixture was underfunded (corrected to a legitimately claimed 40 seeds); 3.9+0.1s left a tiny positive clock residual (production due-time and cooldown comparisons now allow 1e-6s tolerance, tested). Golden interior was initially over-bright in software lighting, so only its original materials were refined and regenerated. Final headless/rendered/packed runs have no script/resource/runtime errors; the known software-driver VSync warning remains. Golden WAV loads and dispatches through the bounded audio pool with Dummy audio; no listening is claimed.
+
+`EVENT_BALANCE_REPORT.md` uses the production scheduler/permanent purchases for 5,000 rounds per profile/length, seed 431. Locked profiles have zero occurrences; ten-second means 0.1440 unlock-only / 0.3598 maximum investments; forty-second means 0.6240 / 1.2834 with maximum two. It assumes 3.5s active lifetime, does not simulate slicing/earnings/equipment/investment return, and is not human balance validation. Existing economy and prestige model reports remain unchanged in scope; no prior prices changed.
+
+### Golden export and delivery evidence
+
+Both exports succeed with retained official SHA-512-verified Godot 4.6.3 templates. From `/tmp`, the host editor runs `tests/package_smoke.gd` via each export's `--main-pack`: **60/60 pass per target**, zero failures. Twelve additional checks cover actual version/event assets, locked/unissued gates, paid unlock/improvements, seeded production spawn, real premium cut/recut, cooldown, banked unique count/disk ledger, second prestige and New Game. Matching Linux executable boots headlessly without errors. Windows PE is not executed natively by these tests.
+
+Full preflight archive passes safe/unique paths, CRC, complete SHA-256 coverage, required original assets/data/tests/event report, portable script modes and source/build/version identity (**264 payload files**). Fresh extraction at `/tmp/tomatocut-v010-preflight` imports without the checkout cache and passes **545/545**. Preflight metadata honestly records uncommitted source. Python compilation, shell syntax, `git diff --check` and actionlint **1.7.7** pass. Final clean archive/GitHub delivery verification follows milestone commit. Native Windows, Forward+ GPU, audible quality, supported-PC 60 FPS, human prestige/event pacing and final art remain **unverified**. Four other events and broader permanent branches remain incomplete with no placeholder unlocks.
+
 ## Prestige milestone — v0.9.0 (2026-11-13, America/Los_Angeles)
 
 Continued clean `93eae2d`, confirmed matching remote main and verified **399/399** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Blender assets retained, Linux x86-64. All ledgers are isolated under `user://tests/`; production saves are untouched.

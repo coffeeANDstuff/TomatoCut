@@ -3,18 +3,88 @@
   "exponent": 0.45,
   "upgrades": [
     {
-      "id": "permanent_slice_value", "name": "Permanent Slice Value", "category": "Permanent Wealth",
+      "id": "permanent_slice_value",
+      "name": "Permanent Slice Value",
+      "category": "Permanent Wealth",
       "description": "Good seeds remember a productive kitchen. Every future cut benefits, including this cycle.",
       "effect": "+25% permanent cut value per level",
-      "base_cost": 1, "growth": 2, "max_level": 5, "requires": {},
-      "effect_values": {"bonus_per_level": 0.25}
+      "base_cost": 1,
+      "growth": 2,
+      "max_level": 5,
+      "requires": {},
+      "effect_values": {
+        "bonus_per_level": 0.25
+      }
     },
     {
-      "id": "starting_cash", "name": "Starting Cash", "category": "Permanent Wealth",
+      "id": "starting_cash",
+      "name": "Starting Cash",
+      "category": "Permanent Wealth",
       "description": "A small envelope for the next beginning. Granted after your next prestige, never counted as harvest earnings.",
       "effect": "+$5 starting cash per level on future prestige resets",
-      "base_cost": 2, "growth": 2, "max_level": 5, "requires": {"permanent_slice_value": 1},
-      "effect_values": {"bonus_per_level": 5}
+      "base_cost": 2,
+      "growth": 2,
+      "max_level": 5,
+      "requires": {
+        "permanent_slice_value": 1
+      },
+      "effect_values": {
+        "bonus_per_level": 5
+      }
+    },
+    {
+      "id": "golden_harvest",
+      "name": "Golden Harvest",
+      "description": "A dedicated invitation to the rare golden specimen. Ordinary cultivation cannot open this envelope.",
+      "effect": "Unlocks automatic Golden Tomato events",
+      "base_cost": 1,
+      "max_level": 1,
+      "requires": {
+        "starting_cash": 1
+      },
+      "category": "Special Events",
+      "growth": 2,
+      "event_id": "golden_harvest",
+      "illustration": "res://assets/illustrations/prestige/golden_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 1
+      }
+    },
+    {
+      "id": "golden_frequency",
+      "name": "Golden Frequency",
+      "description": "A little more room in the calendar for extraordinary produce. Cooldowns and capacity still apply.",
+      "effect": "+4 percentage points per event check per level",
+      "base_cost": 2,
+      "max_level": 3,
+      "requires": {
+        "golden_harvest": 1
+      },
+      "category": "Special Events",
+      "growth": 2,
+      "event_id": "golden_harvest",
+      "illustration": "res://assets/illustrations/prestige/golden_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 0.04
+      }
+    },
+    {
+      "id": "golden_value",
+      "name": "Golden Value",
+      "description": "The rare specimen now arrives with a more persuasive invoice. The original family still shares one cut budget.",
+      "effect": "+50% Golden Tomato value per level",
+      "base_cost": 2,
+      "max_level": 3,
+      "requires": {
+        "golden_harvest": 1
+      },
+      "category": "Special Events",
+      "growth": 2,
+      "event_id": "golden_harvest",
+      "illustration": "res://assets/illustrations/prestige/golden_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 0.5
+      }
     }
   ]
 }

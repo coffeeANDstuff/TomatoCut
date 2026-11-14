@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Prestige milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Golden Harvest milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -82,6 +82,12 @@ confirm before normal investments reset. Seeds, permanent upgrades, discovery,
 lifetime and settings survive. Cultivate Permanent Slice Value for an immediate
 25% cut-value bonus per level. Starting Cash reveals after its first level and
 grants $5 per level on future prestige resets. New Game clears permanence while retaining preferences.
+Golden Harvest reveals in Special Events after Starting Cash 1. Its dedicated
+1-seed unlock alone allows automatic rare golden specimens. Paid frequency
+and value branches follow; each event respects cooldown, active-family and
+round caps. Golden value starts at 20 times the best eligible normal cut.
+The event and improvements survive prestige; New Game clears them.
+Golden fruit is separate from normal Sungold and the normal harvest mix.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

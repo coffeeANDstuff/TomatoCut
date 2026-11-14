@@ -2,6 +2,7 @@ class_name FragmentPiece
 extends Node3D
 
 static var catalog := HarvestProgression.new()
+static var events := EventCatalog.new()
 const MAX_MODEL_CACHE := 3
 const MIN_CUT_SIZE := 0.19
 var revision := 0
@@ -39,7 +40,7 @@ func configure(shape: String, ledger: CutFamily, at: Vector3, frame: Basis, moti
 			var oldest: String = models.keys()[0]
 			models[oldest].queue_free()
 			models.erase(oldest)
-		var path: String = catalog.definition(family.variety_id).fragments[kind]
+		var path: String = specimen_data(family.variety_id).fragments[kind]
 		models[model_key] = load(path).instantiate()
 		add_child(models[model_key])
 	models[model_key].basis = geometry_basis
@@ -82,7 +83,7 @@ static func shape_proxy(shape: String, variety_id: String = "standard_red") -> P
 	var key := variety_id + "/" + shape
 	if proxy_cache.has(key):
 		return proxy_cache[key]
-	var profile := catalog.definition(variety_id)
+	var profile := specimen_data(variety_id)
 	var axes: Array = profile.proxy_axes
 	var points := PackedVector3Array()
 	var rings := 16 if shape == "whole" else 8
@@ -93,7 +94,7 @@ static func shape_proxy(shape: String, variety_id: String = "standard_red") -> P
 			var x := cos(a)
 			var y := sin(a) * cos(t)
 			var z := sin(a) * sin(t)
-			var lobe := 1 + float(profile.proxy_lobe) * cos(5 * atan2(z, x)) * (1-y*y)
+			var lobe := 1 + float(profile.proxy_lobe) * cos(int(profile.get("proxy_lobe_count",5)) * atan2(z, x)) * (1-y*y)
 			var taper := 1.0 - float(profile.get("proxy_taper",0))*y
 			var vertex := Vector3(x*float(axes[0])*lobe*taper, y*float(axes[1]), z*float(axes[2])*lobe*taper)
 			if shape in ["wedge","chunk"] and vertex.y < -0.0001:
@@ -105,3 +106,7 @@ static func shape_proxy(shape: String, variety_id: String = "standard_red") -> P
 	points.append(Vector3.ZERO)
 	proxy_cache[key] = points
 	return points
+
+static func specimen_data(id: String) -> Dictionary:
+	var normal := catalog.definition(id)
+	return normal if not normal.is_empty() else events.specimen(id)

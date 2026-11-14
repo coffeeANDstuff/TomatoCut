@@ -12,6 +12,7 @@ var piece_pool: Array[FragmentPiece] = []
 var drop_pool: Array[MeshInstance3D] = []
 var drop_mesh: SphereMesh
 var drop_material: StandardMaterial3D
+var golden_drop_material: StandardMaterial3D
 
 func _ready() -> void:
 	drop_mesh = SphereMesh.new()
@@ -22,6 +23,8 @@ func _ready() -> void:
 	drop_material = StandardMaterial3D.new()
 	drop_material.albedo_color = Color("d85531")
 	drop_material.roughness = 0.3
+	golden_drop_material = drop_material.duplicate()
+	golden_drop_material.albedo_color = Color("cba04f")
 
 func acquire_piece() -> FragmentPiece:
 	if pieces.size() >= MAX_PIECES:
@@ -52,7 +55,7 @@ func split(at: Vector3, velocity: Vector2, direction: Vector2, reduced: bool = f
 		var impulse := 2.0 / sqrt(ledger.mass)
 		var motion := Vector3(velocity.x + normal.x * side * impulse, velocity.y + normal.y * side * impulse, 0.8)
 		acquire_piece().configure("half", ledger, at, frame, motion, Vector3(-side * 4.0, -side * 2.2, side * 0.8))
-	emit_juice(at, reduced)
+	emit_juice(at, reduced,ledger.event_id)
 
 func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: float, reduced: bool, damage_roll: Callable = Callable(), edge: Array[Vector2] = SliceSystem.DEFAULT_EDGE) -> Array[Dictionary]:
 	var hits: Array[Dictionary] = []
@@ -88,11 +91,11 @@ func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: f
 			elif side == -1:
 				child_frame *= Basis(Vector3(0,1,0), Vector3(1,0,0), Vector3(0,0,1))
 			acquire_piece().configure("wedge" if shape == "half" else "chunk", ledger, at, child_frame, motion + normal * side * 1.15, Vector3(-side * 3.0, side * 2.5, side * 1.0))
-		emit_juice(at, reduced)
+		emit_juice(at, reduced,ledger.event_id)
 		hits.append({"position": at, "value": ledger.cut_value})
 	return hits
 
-func emit_juice(at: Vector3, reduced: bool) -> void:
+func emit_juice(at: Vector3, reduced: bool, event_id: String = "") -> void:
 	for i in range(7 if reduced else 18):
 		if drops.size() >= MAX_DROPS:
 			break
@@ -105,6 +108,7 @@ func emit_juice(at: Vector3, reduced: bool) -> void:
 		else:
 			drop = drop_pool.pop_back()
 		drop.show()
+		drop.material_override = golden_drop_material if event_id == "golden_harvest" else drop_material
 		drop.position = at
 		var motion := Vector3(randf_range(-2.8, 2.8), randf_range(-1.0, 3.4), randf_range(0.2, 1.6))
 		drops.append({"node": drop, "velocity": motion, "life": randf_range(0.3, 0.65)})

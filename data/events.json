@@ -1,0 +1,45 @@
+[
+  {
+    "id": "golden_harvest",
+    "name": "Golden Harvest",
+    "unlock_upgrade": "golden_harvest",
+    "frequency_upgrade": "golden_frequency",
+    "value_upgrade": "golden_value",
+    "interval": 4,
+    "initial_delay": 4,
+    "chance": 0.08,
+    "cooldown": 12,
+    "round_limit": 2,
+    "active_limit": 1,
+    "reward_multiplier": 20,
+    "specimen": {
+      "id": "event_golden",
+      "name": "Golden Tomato",
+      "model": "res://assets/models/events/golden.glb",
+      "model_scale": 0.95,
+      "radius": 0.64,
+      "gravity": 4.8,
+      "launch_min": 8.0,
+      "launch_max": 8.5,
+      "spin": 0.4,
+      "spin_z": 0.35,
+      "durability": 1,
+      "fragment_durability": 1,
+      "mass": 1.1,
+      "collision": "hull",
+      "proxy_axes": [
+        0.62,
+        0.6,
+        0.52
+      ],
+      "proxy_lobe": 0.085,
+      "proxy_lobe_count": 7,
+      "proxy_taper": 0.08,
+      "fragments": {
+        "half": "res://assets/models/fragments/event_golden_half.glb",
+        "wedge": "res://assets/models/fragments/event_golden_wedge.glb",
+        "chunk": "res://assets/models/fragments/event_golden_chunk.glb"
+      }
+    }
+  }
+]
