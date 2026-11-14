@@ -54,32 +54,21 @@ func _ready() -> void:
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
-	var theme := Theme.new()
-	theme.default_font = preload("res://assets/fonts/Notes.ttf")
-	theme.default_font_size = 18
-	for type: String in ["Label","Button","CheckButton"]:
-		theme.set_color("font_color",type,INK)
-	for type: String in ["Button","CheckButton"]:
-		for color_name: String in ["font_hover_color","font_pressed_color","font_hover_pressed_color","font_focus_color"]:
-			theme.set_color(color_name,type,INK)
-	for state: String in ["normal","hover","pressed","disabled","focus"]:
-		var s := style(CREAM if state == "normal" else Color("e4dcc4"), Color("b3b69c"))
-		s.content_margin_left = 18
-		s.content_margin_right = 18
-		s.content_margin_top = 10
-		s.content_margin_bottom = 10
-		theme.set_stylebox(state,"Button",s)
-	theme.set_color("font_disabled_color","Button",Color("8a8a79"))
+	var theme := PrintedButtons.make_theme()
 	root.theme = theme
 	tips = TooltipManager.new()
 	root.add_child(tips)
 	confirmation = ConfirmationDialog.new()
+	confirmation.theme = theme
+	confirmation.get_ok_button().theme_type_variation = "PrintPrimary"
 	confirmation.title = "Open a fresh ledger?"
 	confirmation.dialog_text = "This replaces your money, upgrades, knives and modifications.\nTomato Seeds and permanent upgrades are also cleared.\nPreferences stay; your previous ledger is kept as a backup."
 	confirmation.ok_button_text = "Start new game"
 	confirmation.confirmed.connect(func(): new_game_requested.emit())
 	root.add_child(confirmation)
 	prestige_confirmation = ConfirmationDialog.new()
+	prestige_confirmation.theme = theme
+	prestige_confirmation.get_ok_button().theme_type_variation = "PrintPrimary"
 	prestige_confirmation.title = "Begin another season?"
 	prestige_confirmation.ok_button_text = "Prestige and collect seeds"
 	prestige_confirmation.confirmed.connect(func():
@@ -142,23 +131,20 @@ func paper(parent: Control) -> void:
 	parent.add_child(node)
 	parent.move_child(node,0)
 
-func button(text: String, action: Callable, primary: bool = false) -> Button:
+func button(text: String, action: Callable, primary: bool = false, appearance: String = "") -> Button:
 	var b := Button.new()
 	b.text = text
 	b.custom_minimum_size.y = 48
+	b.theme_type_variation = appearance if not appearance.is_empty() else "PrintPrimary" if primary else ""
 	b.pressed.connect(action)
-	if primary:
-		b.add_theme_stylebox_override("normal", style(RED,RED))
-		b.add_theme_stylebox_override("hover",style(Color("d15b3c"),RED))
-		b.add_theme_stylebox_override("pressed",style(Color("a93825"),RED))
-		b.add_theme_color_override("font_color",CREAM)
-		b.add_theme_color_override("font_hover_color",CREAM)
-		b.add_theme_color_override("font_pressed_color",CREAM)
 	return b
 
 func icon(symbol: String, title: String, action: Callable) -> InkButton:
 	var b := InkButton.new()
 	b.symbol = symbol
+	b.theme_type_variation = "PrintIcon"
+	b.toggle_mode = true
+	b.button_pressed = symbol == {"home":"home","catalog":"sprout","equipment":"knife","archive":"archive","settings":"gear"}.get(screen,"")
 	b.has_discovery = symbol == "sprout" and not progress.unseen().is_empty()
 	if symbol == "archive": b.has_discovery = not progress.prestige.unseen().is_empty()
 	b.pressed.connect(action)
@@ -242,7 +228,7 @@ func equipment_shop(id: String = "") -> void:
 		var select := button(item.name,func(): equipment_shop(product_id))
 		select.name = "Product_"+item.id
 		select.custom_minimum_size.x = 245
-		if item.id == id: select.add_theme_stylebox_override("normal",style(Color("e4dcc4"),Color("ba8e4e")))
+		if item.id == id: select.theme_type_variation = "PrintSelected"
 		products.add_child(select)
 		var status := "Equipped" if item.id == progress.equipped_knife else ("Owned" if item.id in progress.owned_knives else Progression.cash(item.price))
 		products.add_child(label("No. %s  ·  %s" % [item.catalog_number,status],15,false,MUTED))
@@ -280,12 +266,14 @@ func equipment_shop(id: String = "") -> void:
 	place(prepare,Vector2(870,665),Vector2(340,44))
 	place(button("Back to the cutting board",func(): play_requested.emit(),true),Vector2(330,724),Vector2(370,44))
 
-func equipment_categories() -> void:
+func equipment_categories(active: String = "knife") -> void:
 	var knives := icon("knife","Knives",func(): equipment_shop())
 	knives.name = "EquipmentKnives"
+	knives.button_pressed = active == "knife"
 	place(knives,Vector2(48,243),Vector2(48,48))
 	var modifications := icon("stone","Knife modifications",func(): modification_shop())
 	modifications.name = "EquipmentModifications"
+	modifications.button_pressed = active == "stone"
 	place(modifications,Vector2(108,243),Vector2(48,48))
 
 func modification_shop(id: String = "", knife: String = "") -> void:
@@ -400,7 +388,7 @@ func catalog(category: String = selected_category) -> void:
 		b.icon = load("res://assets/icons/catalog_%s.svg" % name.to_lower())
 		b.add_theme_constant_override("icon_max_width",24)
 		if name == category:
-			b.add_theme_stylebox_override("normal",style(Color("d9ddc4"),Color("56705a")))
+			b.theme_type_variation = "PrintSelected"
 		categories.add_child(b)
 		tips.bind(b,"Special cutting abilities" if name == "Abilities" else name)
 		var badge := DiscoveryBadge.new()
@@ -485,7 +473,7 @@ func upgrade_entry(d: Dictionary, count: int, list: VBoxContainer, category: Str
 	entry.add_child(row)
 	var maxed: bool = progress.level(d.id) >= int(d.max_level)
 	var id: String = d.id
-	var purchase := button("Fully cultivated" if maxed else "Cultivate  ·  " + Progression.cash(progress.price(id)),func(): purchase_requested.emit(id),not maxed)
+	var purchase := button("Fully cultivated" if maxed else "Cultivate  ·  " + Progression.cash(progress.price(id)),func(): purchase_requested.emit(id),false,"PrintCultivate")
 	purchase.name = "Purchase_" + id
 	purchase.disabled = maxed or progress.money < progress.price(id)
 	purchase.custom_minimum_size.x = 265
@@ -640,6 +628,7 @@ func settings() -> void:
 		row.add_child(slider)
 	for item: Array in [["reduced_motion","Reduced motion"],["reduced_effects","Reduced juice effects"],["popups","Show earnings popups"],["damage_indicators","Show damage indicators"],["fullscreen","Fullscreen"],["vsync","VSync"]]:
 		var toggle := CheckButton.new()
+		toggle.custom_minimum_size.y = 44
 		toggle.name = "Setting_" + item[0]
 		toggle.text = item[1]
 		toggle.button_pressed = progress.settings[item[0]]

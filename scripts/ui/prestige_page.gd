@@ -36,7 +36,7 @@ static func build(ui) -> void:
 		var selected: String = name
 		var tab: Button = ui.button(name,func(): ui.archive(selected))
 		tab.name = "ArchiveCategory_"+name; tab.custom_minimum_size.x = 230
-		if name == category: tab.add_theme_stylebox_override("normal",ui.style(Color("e4dcc4"),Color("ba8e4e")))
+		if name == category: tab.theme_type_variation = "PrintSelected"
 		tabs.add_child(tab)
 		var badge := DiscoveryBadge.new(); badge.visible = not permanent.unseen(name).is_empty(); tab.add_child(badge); ui.category_badges[name] = badge
 	var scroll := ScrollContainer.new()
@@ -72,7 +72,7 @@ static func build(ui) -> void:
 		else: comparison = EventCatalog.new().summary(d.id,permanent)
 		entry.add_child(ui.label(comparison,18,true))
 		var id: String = d.id
-		var action: Button = ui.button("Maximum cultivated" if level >= int(d.max_level) else "Cultivate  ·  %d %s   /   Level %d of %d" % [permanent.price(id),"seed" if permanent.price(id) == 1 else "seeds",level,int(d.max_level)],func(): ui.permanent_purchase_requested.emit(id))
+		var action: Button = ui.button("Maximum cultivated" if level >= int(d.max_level) else "Cultivate  ·  %d %s   /   Level %d of %d" % [permanent.price(id),"seed" if permanent.price(id) == 1 else "seeds",level,int(d.max_level)],func(): ui.permanent_purchase_requested.emit(id),false,"PrintCultivate")
 		action.name = "PurchasePermanent_"+id
 		action.disabled = level >= int(d.max_level) or permanent.seeds < permanent.price(id)
 		entry.add_child(action)

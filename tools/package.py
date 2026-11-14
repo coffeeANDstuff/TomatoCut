@@ -55,10 +55,14 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Stampede Season milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Printed Culinary Buttons milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
+Printed tomato-seal tickets mark primary actions. Green seed-order labels
+buy upgrades; clipped paper tabs and stamped tiles handle navigation.
+Dotted ink focus supports keyboard controls; checkmark slips save preferences.
+Hover navigation icons for one second to see their labels.
 Move the mouse through airborne tomatoes; no click is needed.
 Ten-second starting rounds; cultivation and progress save automatically.
 Roma reveals after Cherry Unlock + Sharp Edge 1 and costs $180 to unlock.

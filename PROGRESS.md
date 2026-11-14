@@ -1,6 +1,42 @@
 # Progress
 
-## Current session — v0.11 (2026-11-13, America/Los_Angeles)
+## Current session — v0.12 (2026-11-13, America/Los_Angeles)
+
+Continued clean main at **956c10f**, fetched matching remote main and passed the **604/604** baseline. The user's requested **themed button redesign** took priority this session. The highest-priority incomplete gameplay milestone remains Phase 5's **The Big One / Giant Harvest**; no unfinished event nodes or assets were substituted for that future work.
+
+### Completed
+- **TESTED** — Original shared culinary control family across home/start, results/replay, ordinary/permanent upgrades, category/product/knife-target selectors, equipment/preparation, archive, preferences, navigation and reset confirmations. Primary controls are tomato-red tickets with an original cream tomato seal, serif label, double engraved rules, clipped corners, arrow and printed shadow. Cultivation uses green botanical order slips; secondary controls use cream paper labels. Existing action wording, prices, warnings and transaction boundaries remain clear.
+- **TESTED** — `PrintedButtons` installs native Godot nine-slice theme variants. `tools/build_button_art.py` retains the editable generator for **23 original integrated SVGs**: four surface states across five roles, a shared dotted focus frame and check/dash preference marks. No opaque image overlays intercept input; native Button/CheckButton/ConfirmationDialog callbacks and ownership semantics remain authoritative. Primary, hover, pressed, held-hover, disabled and keyboard-focus states are distinct.
+- **TESTED** — Printed selected tabs/products use a corner marker and underline. Existing line icons sit on stamped tiles, with a visible current-page underline; knife/preparation section tiles reflect their actual page. Unread indicators and one-second delayed tooltips persist. Settings use shape-distinct check/dash slips, added label padding, comfortable click targets and footer clearance. Reduced Motion needs no new exception: styling uses static printed states without a camera or UI tween.
+- **TESTED** — **604/604 logic checks**, zero failures. Existing slicing/harvest/equipment/prestige/event behavior is retained. No save schema, prices, effect values, reward calculations, normal variety mix, event gates or original gameplay assets changed.
+- **TESTED** — **182 rendered checks across all twelve flows** (**18 new**), zero failures: actual keyboard Space starts a round; disabled cultivation cannot spend; actual ordinary purchase pays the displayed cost; replay/prices/targets fit 16:10/16:9; stamped navigation retains its one-second label and dismisses on click; keyboard checkmark preference persists; actual separate equipment buy/equip transactions; full explicit confirmation labels, cancellation, durable permanent purchase and disk restore.
+- **TESTED** — Inspected home, hover/focus, disabled and affordable cultivation, preferences, equipment and archive captures **78–85** in the real game. The family follows the existing paper/ink/tomato/sage/muted-gold direction and adds a little institutional absurdity through its tomato seal. No new tomato/knife model or gameplay content count is claimed.
+- **TESTED** — Windows/Linux exports each pass **74/74 embedded-pack checks**; matching Linux binary boots headlessly. The new pack gate checks that all printed surface states, focus and preference artwork resolve from packed resources. All prior 73 gameplay/save/event gates remain. This is host-engine pack validation, not native Windows execution.
+- **TESTED** — Static Python compilation, shell syntax, actionlint 1.7.7 and whitespace checks pass. A focused UI test initially needed an explicit Dictionary type for a dynamic scene snapshot; it was corrected and the complete flow rerun. Final runtime checks have no script/resource/runtime errors; software-driver VSync warnings remain.
+- **TESTED** — Version **0.12.0**, launch instructions, art direction, roadmap, release notes and required package payloads are updated. Full preflight passes safe paths, CRC, complete SHA-256 payload coverage, required original control art/source/tests, portable scripts and source/build/version identity (**325 payload files**). Fresh extracted source imports without the checkout cache and passes **604/604**, no errors. Preflight metadata honestly records uncommitted source; final clean archive and authorized GitHub delivery follow milestone commit. Exports stay separate from source history.
+
+### Remaining and limitations
+- **IN PROGRESS** — Phase 5: **The Big One / Giant Harvest**, **Rainbow Harvest / Heirloom Celebration**, **Tomato Jackpot / Jackpot Harvest**, further event improvements and broader permanent branches remain. The button pass does not complete those systems.
+- **NOT STARTED** — Remaining **22 normal varieties**, **22 knives**, other abilities, full mastery/achievements, additional environments/cosmetics/music and full content remain in the accepted master scope.
+- **IN PROGRESS** — Production polish now includes the requested shared controls; broader art/audio/accessibility/balance/performance work remains. Human novice pacing, prestige/event investment value and final fragment feel remain unmeasured. No economy model rerun or price change was justified by a visual control pass.
+- **BLOCKED** — Native Windows execution, Forward+ GPU validation, audible listening and supported-PC 60 FPS need suitable hardware unavailable here. Software OpenGL/Dummy audio validate functional paths only.
+
+### Continuity
+- `PrintedButtons.make_theme()` is installed once on `GameInterface.root` and explicitly on both ConfirmationDialogs. `GameInterface.button` accepts an optional semantic appearance after its existing primary flag. Native type variations cover primary, cultivation, selected and icon surfaces; the shared Button default covers secondary/cancel actions. All ordinary/permanent purchase handlers remain unchanged.
+- `InkButton` retains its original drawn symbols and discovery dot; it now displays current-page toggle/underline and disabled ink correctly. `equipment_categories(active)` distinguishes knives from preparation. TooltipManager behavior is unchanged. Preference controls retain CheckButton and their existing settings signals.
+- Nine-slice margins reserve seals/corners outside text; the settings-specific inset clears the left ornament and reduces top/bottom padding so all six rows fit. Resource paths and source art are required by `verify_package.py`; the pack test checks actual imported textures rather than assuming source SVG presence is sufficient.
+- `tests/button_render.gd` reuses real GUI mouse helpers, injects actual keyboard events and isolates its ledger under `user://tests/`. Funded/eligible states are explicit fixtures. Native confirmation controls use their production callbacks after real preview clicks; OS-dialog mouse automation is not claimed.
+- All Golden Harvest/stampede timing, full-wave capacity, family accounting, original Blender/GLB/SVG/WAV assets and paid permanent receipts remain intact. No cloud environment draft/configuration publication is included. GitHub pushes/releases and prominent Full-package delivery remain authorized.
+
+## Exact next task
+Implement **The Big One**, independently unlocked by **Giant Harvest**, following GAME_DESIGN.md §§16–17. Author a real seed-funded permanent gate/prerequisite/reveal, original enormous durable model/interior/prepared fragments with editable Blender source and matching hulls, and a controlled dramatic launch. Integrate premium family rewards, actual frequency/reward or cut improvements and restrained event-specific presentation. Use the completed printed control family for real archive actions. Extend specimen data/presentation without changing Golden Harvest/stampedes, independent clocks/permits, whole-wave capacity, shared pools or durable save transactions. Test zero locked probability, no normal Beefsteak/ability bypass, mixed-event scheduling/capacity, real multi-strike/critical/recut rewards, lifetime/persistence and reset behavior. Heirloom Celebration/Jackpot Harvest stay unavailable until implemented; preserve all 25 normal varieties/knives and remaining permanent/mastery/achievement/environment/cosmetic scope.
+
+---
+
+# Historical milestones
+The current v0.12 section supersedes incomplete-feature statements below.
+
+## Milestone — v0.11 (2026-11-13, America/Los_Angeles)
 
 Continued clean main at **668575d**, fetched matching remote main and passed the **545/545** baseline. Highest-priority incomplete milestone was Phase 5's second event, **Stampede Season**. Existing Golden Harvest, normal variety/equipment/preparation/ability systems, slicing, original assets, paid permanent receipts and durable prestige transactions remain integrated.
 
@@ -38,10 +74,6 @@ Continued clean main at **668575d**, fetched matching remote main and passed the
 ## Exact next task
 Implement **The Big One**, independently unlocked by **Giant Harvest**, following GAME_DESIGN.md §§16–17. Author a real seed-funded permanent gate/prerequisite/reveal, original enormous durable model/interior/prepared fragments with editable Blender source and matching hulls, and a controlled dramatic launch. Integrate premium family rewards, actual frequency/reward or cut improvements and restrained event-specific presentation. Extend specimen data/presentation without changing Golden Harvest or stampedes, independent clocks/permits, full-wave capacity, shared pools or durable save transactions. Test zero locked probability, no normal Beefsteak/ability bypass, mixed-event scheduling/capacity, real multi-strike/critical/recut rewards, lifetime/persistence and reset behavior. Heirloom Celebration and Jackpot Harvest stay unavailable until implemented; retain all 25 normal varieties/knives and remaining permanent/mastery/achievement/environment/cosmetic scope.
 
----
-
-# Historical milestones
-The current v0.11 section supersedes incomplete-feature statements below.
 
 ## Milestone — v0.10 (2026-11-13, America/Los_Angeles)
 

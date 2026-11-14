@@ -22,6 +22,14 @@ func run() -> void:
 	game.save_path = "user://tests/packaged-cherry.json"
 	root.add_child(game)
 	await process_frame
+	var artwork_ready := true
+	for type: String in ["Button","PrintPrimary","PrintCultivate","PrintSelected","PrintIcon"]:
+		for state: String in ["normal","hover","pressed","hover_pressed","disabled","focus"]:
+			var skin: StyleBox = game.ui.root.theme.get_stylebox(state,type)
+			artwork_ready = artwork_ready and skin is StyleBoxTexture and skin.texture != null and skin.texture.get_width() > 0
+	for state: String in ["checked","unchecked"]:
+		artwork_ready = artwork_ready and game.ui.root.theme.get_icon(state,"CheckButton").get_width() > 0
+	check(artwork_ready,"packaged original printed play, order, selection, navigation, focus and preference artwork resolve from the embedded pack")
 	game.set_physics_process(false)
 	game.progress = Progression.new()
 	game.ui.progress = game.progress
@@ -44,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.11.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.12.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")

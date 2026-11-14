@@ -14,7 +14,9 @@ func _draw() -> void:
 	if has_discovery:
 		draw_circle(Vector2(size.x-9,9),3.5,Color("bf4931"))
 	var c := size / 2
-	var color := Color("c84630") if is_hovered() else ink
+	var color := Color("c84630") if is_hovered() or button_pressed else ink
+	if disabled: color = Color("757b69")
+	if button_pressed: draw_line(Vector2(size.x/2-8,size.y-8),Vector2(size.x/2+8,size.y-8),Color("ba8e4e"),1.3,true)
 	var w := 1.8
 	match symbol:
 		"play":

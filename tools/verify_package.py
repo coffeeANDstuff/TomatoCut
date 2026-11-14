@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.11.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.12.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -32,6 +32,10 @@ with zipfile.ZipFile(args.archive) as z:
     assert all((z.getinfo(n).external_attr >> 16) & 0o111 for n in names if n.startswith('Source/') and n.endswith('.sh')), 'Source scripts lost executable permissions'
     for required in ['Windows/TomatoCut.exe', 'Windows/Play-Compatibility.bat', 'Source/project.godot', 'Source/AGENTS.md', 'Source/GAME_DESIGN.md', 'Source/ART_DIRECTION.md', 'Source/ROADMAP.md', 'Source/PROGRESS.md', 'Source/TESTING.md', 'Source/art/roma.blend', 'Source/assets/models/tomatoes/roma.glb', 'Source/tests/roma_tests.gd', 'Source/art/picnic_knife.blend', 'Source/assets/models/knives/plastic_picnic.glb', 'Source/data/knives.json', 'Source/scripts/ui/equipment_preview.gd', 'Source/tests/equipment_tests.gd', 'Source/art/honing_kit.blend', 'Source/assets/models/equipment/honing_kit.glb', 'Source/art/steak_knife.blend', 'Source/assets/models/knives/steak.glb', 'Source/data/modifications.json', 'Source/scripts/ui/modification_page.gd', 'Source/tests/modification_tests.gd', 'Source/tests/steak_tests.gd', 'Source/assets/audio/steak_slice.wav', 'Source/data/prestige.json', 'Source/scripts/core/prestige_progression.gd', 'Source/scripts/ui/prestige_page.gd', 'Source/assets/illustrations/prestige/seed_envelope.svg', 'Source/assets/audio/prestige.wav', 'Source/tests/prestige_tests.gd', 'Source/PRESTIGE_BALANCE_REPORT.md', 'Source/data/events.json', 'Source/scripts/core/event_director.gd', 'Source/scripts/core/event_catalog.gd', 'Source/art/golden_harvest.blend', 'Source/assets/models/events/golden.glb', 'Source/assets/models/fragments/event_golden_half.glb', 'Source/assets/models/fragments/event_golden_wedge.glb', 'Source/assets/models/fragments/event_golden_chunk.glb', 'Source/assets/illustrations/prestige/golden_harvest.svg', 'Source/tests/golden_tests.gd', 'Source/assets/audio/golden.wav', 'Source/EVENT_BALANCE_REPORT.md', 'Source/tests/golden_render.gd', 'Source/tools/simulate_events.gd', 'Source/scripts/gameplay/event_spawner.gd', 'Source/assets/illustrations/prestige/stampede.svg', 'Source/assets/audio/stampede.wav', 'Source/tests/stampede_tests.gd', 'Source/tests/stampede_render.gd']:
         assert required in hashes, 'Missing required payload: ' + required
+    button_art = {f'Source/assets/illustrations/buttons/{role}_{state}.svg' for role in ['paper','primary','cultivate','selected','icon'] for state in ['normal','hover','pressed','disabled']}
+    button_art |= {'Source/assets/illustrations/buttons/'+name+'.svg' for name in ['focus','checked','unchecked']}
+    button_art |= {'Source/scripts/ui/printed_buttons.gd', 'Source/tools/build_button_art.py', 'Source/tests/button_render.gd'}
+    assert button_art <= set(hashes), 'Missing original printed control artwork or source'
     info = json.loads(z.read('BUILD_INFO.json'))
     version = re.search(r'config/version="([^"]+)"', z.read('Source/project.godot').decode()).group(1)
     assert info['version'] == version, 'Source/build version mismatch'

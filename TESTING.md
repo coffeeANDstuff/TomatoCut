@@ -2,6 +2,30 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Printed controls — v0.12.0 (2026-11-13, America/Los_Angeles)
+
+Continued clean `956c10f`, fetched matching remote main and passed **604/604** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Linux x86-64. All saves isolate under `user://tests/`; production saves are untouched.
+
+```sh
+./tools/cloud.sh ./tools/check.sh
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/button_render.gd
+# All eleven earlier rendered flows run in the same display mode.
+```
+
+**604 logic checks pass; zero failures.** No new headless unit tests mirror the visual implementation. Existing real slicing/recut/critical, harvest/discovery, equipment/preparation, durable prestige/paid receipts, both automatic event schedules/capacity, saving/migrations/reset checks remain intact. Game/economy/save definitions and original gameplay assets are unchanged.
+
+**182 rendered checks across all twelve flows pass; zero failures:** original loop 13, Cherry 13, Roma 12, discovery 14, Critical Slice 15, equipment 16, modifications 18, Steak 10, prestige 19, Golden Harvest 17, Stampede 17 and printed controls **18**. New flow injects real mouse and keyboard events: printed primary starts the actual round with focused Space; readable replay; disabled order denies spending; real ordinary purchase pays $3 once; 16:9 cultivation price/target fit; one-second navigation tooltip timing and immediate click dismissal; keyboard preference toggles actual persistent state; all settings rows fit above footer; disabled equipped label; separate real equipment purchase/equip; complete reset confirmation label, cancellation preserving the eligible ledger, durable seed purchase and disk reload. Native confirmations use production callbacks after actual preview clicks; OS-dialog input automation is not claimed.
+
+Inspected actual captures `78`–`85`: home, hover/focus, disabled/affordable cultivation, 16:9 catalog, preferences, equipment and archive. Primary tomato-seal tickets, botanical order slips, selected labels, stamped navigation, dotted focus, preference marks and disabled states use the same original print family. Decoration leaves label/price insets clear and introduces no separate input overlay. The SVG generator authors all 23 used textures. Earlier fruit/knife/fragment Blender/GLBs, specimen illustrations and WAVs remain unchanged; no content or performance count is inflated.
+
+Initial UI flow failed parsing because a snapshot from the dynamic game scene needed explicit Dictionary typing. Corrected that test declaration and reran the complete rendered flow. Final runs have no script/resource/runtime errors; known software-driver VSync warnings remain. No human pacing, listening or native-GPU review is claimed.
+
+### Printed-control export and delivery evidence
+
+Windows/Linux exports succeed with retained official SHA-512-verified Godot 4.6.3 templates. From `/tmp`, host-editor `--main-pack` runs **74/74 checks per target**, zero failures. The added resource-closure gate loads all surface/focus states and preference textures from the actual embedded pack; the prior 73 gameplay/transaction/save/event gates still pass. Matching Linux executable boots headlessly without errors. Windows PE is not executed natively by these checks.
+
+Python compilation, shell syntax, `git diff --check` and actionlint **1.7.7** pass. Full preflight archive passes safe/unique paths, CRC, complete SHA-256 manifest, all required original control art/source/tests, portable scripts and source/build/version identity (**325 payload files**). Fresh extraction `/tmp/tomatocut-v012-preflight` imports without the checkout cache and passes **604/604**, no script/resource/runtime errors. Metadata honestly records uncommitted preflight source; final clean archive/GitHub delivery follows milestone commit. Native Windows, Forward+, audible quality, supported-PC 60 FPS, human pacing and broader production polish remain **unverified**. Three events, broader permanent branches and remaining full content remain incomplete.
+
 ## Stampede Season milestone — v0.11.0 (2026-11-13, America/Los_Angeles)
 
 Continued clean `668575d`, fetched matching remote main and passed **545/545** baseline. Godot **4.6.3.stable.official.7d41c59c4**, original Blender assets retained, Linux x86-64. Ledgers isolate under `user://tests/`; production saves are untouched.
