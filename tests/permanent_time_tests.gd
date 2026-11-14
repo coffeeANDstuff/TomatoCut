@@ -61,7 +61,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	check.call(not restored.restore(bad) and restored.snapshot() == before,"saved Overtime Bonus cannot bypass its predecessor and rejects atomically")
 	p.prestige.mark_viewed(["starting_round_time","overtime_bonus"])
 	check.call(restored.restore(p.snapshot()) and restored.prestige.unseen("Permanent Time").is_empty(),"permanent time discovery/read state reloads independently of the ordinary catalog")
-	for defect: String in ["missing_limits","limit_type","negative","infinite","over_cap","over_multiplier","starting_budget","overtime_budget","effect_type","predecessor","plate"]:
+	for defect: String in ["missing_limits","limit_type","negative","infinite","over_cap","over_multiplier","starting_budget","overtime_budget","effect_type","renamed_start","renamed_overtime","predecessor","plate"]:
 		var broken := PrestigeProgression.new(); broken.config = broken.config.duplicate(true); broken.definitions = broken.definitions.duplicate(true)
 		match defect:
 			"missing_limits": broken.config.erase("time_limits")
@@ -73,6 +73,8 @@ static func run(tree: SceneTree, check: Callable) -> void:
 			"starting_budget": broken.definition("starting_round_time").effect_values.bonus_per_level = 100
 			"overtime_budget": broken.definition("overtime_bonus").effect_values.bonus_per_level = 1
 			"effect_type": broken.definition("starting_round_time").effect_values = "time"
+			"renamed_start": broken.definition("starting_round_time").effect_values = {"seconds":4}
+			"renamed_overtime": broken.definition("overtime_bonus").effect_values = {"multiplier":.2}
 			"predecessor": broken.definition("overtime_bonus").requires = {}
 			"plate": broken.definition("starting_round_time").illustration = "res://missing.svg"
 		check.call(not broken.validate().is_empty(),"time content validation rejects invalid "+defect)

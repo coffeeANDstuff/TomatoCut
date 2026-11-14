@@ -48,6 +48,7 @@ func validate() -> PackedStringArray:
 		if id == "overtime_bonus" and d.get("requires") is Dictionary and int(d.requires.get("starting_round_time",0)) < 1: errors.append(id+": requires its permanent time predecessor")
 		var coefficients: Variant = d.get("effect_values")
 		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
+		if not number(coefficient) or float(coefficient) <= 0: errors.append(id+": missing positive per-level time coefficient")
 		var key := "starting_bonus" if id == "starting_round_time" else "overtime_multiplier"
 		if limits is Dictionary and number(limits.get(key)) and number(coefficient) and number(d.get("max_level")):
 			if float(coefficient)*float(d.max_level)+(0 if id == "starting_round_time" else 1) > float(limits[key])+.000001: errors.append(id+": exceeds the permanent time budget")
