@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Equipment catalog milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Equipment modifications milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -71,7 +71,11 @@ Critical strikes keep the normal cut payout. No extra input is needed.
 Open the knife icon to browse equipment. Buy the Plastic Picnic Knife for $20,
 then equip it separately for modestly longer reach. Re-equipping owned knives
 is free. Its modeled cutting edge is the one used in gameplay.
-The rotating product preview becomes still with Reduced Motion.
+Buy the Steak Knife for $60 for higher base sharpness and a compact edge.
+The stone icon opens Knife Modifications. The $30 Honing Kit adds +0.50
+sharpness to one owned knife. Purchase first, then Apply separately. Move or
+remove preparation freely between rounds; the kit stays owned.
+All rotating product previews become still with Reduced Motion.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,
@@ -98,7 +102,7 @@ Source history: https://github.com/coffeeANDstuff/TomatoCut
 Milestone tag: v{VERSION}
 
 STATUS
-Three of 25 normal varieties and two of 25 knives are integrated.
+Three of 25 normal varieties and three of 25 knives are integrated.
 This is a development milestone, not the final game. Windows-native,
 Forward+ hardware, audio listening and target-PC 60 FPS remain unverified.
 '''

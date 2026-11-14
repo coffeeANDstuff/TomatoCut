@@ -49,6 +49,9 @@ func _ready() -> void:
 	ui.equipment_requested.connect(show_equipment)
 	ui.knife_purchase_requested.connect(buy_knife)
 	ui.knife_equip_requested.connect(equip_knife)
+	ui.modification_purchase_requested.connect(buy_modification)
+	ui.modification_apply_requested.connect(apply_modification)
+	ui.modification_remove_requested.connect(remove_modification)
 	ui.purchase_requested.connect(purchase)
 	ui.new_game_requested.connect(new_game)
 	ui.settings_changed.connect(settings_changed)
@@ -181,7 +184,7 @@ func damage_feedback(at: Vector3, remaining: float) -> void:
 func cut_feedback(at: Vector3, first_slice: bool, tomato_value: float = 1.0) -> void:
 	var reward := session.record_cut(progress, first_slice, tomato_value)
 	ui.popup_cash("+" + Progression.cash(reward), kitchen.camera.unproject_position(at))
-	audio.play("slice")
+	audio.play(progress.equipment.definition(progress.equipped_knife).get("slice_sound","slice"))
 
 func finish_round() -> void:
 	if state != "playing":
@@ -246,6 +249,24 @@ func sync_equipment() -> void:
 	knife.configure(data)
 	kitchen.equip_display(data)
 
+func buy_modification(id: String) -> void:
+	if state != "equipment" or not progress.buy_modification(id): return
+	save_progress()
+	audio.play("purchase")
+	ui.modification_shop(id)
+
+func apply_modification(id: String, knife_id: String) -> void:
+	if state != "equipment" or not progress.apply_modification(id,knife_id): return
+	save_progress()
+	audio.play("paper")
+	ui.modification_shop(id,knife_id)
+
+func remove_modification(id: String) -> void:
+	if state != "equipment" or not progress.remove_modification(id): return
+	save_progress()
+	audio.play("paper")
+	ui.modification_shop(id)
+
 func purchase(id: String) -> void:
 	if state != "catalog":
 		return
@@ -258,6 +279,8 @@ func new_game() -> void:
 	progress = Progression.new()
 	ui.progress = progress
 	ui.selected_knife = ""
+	ui.selected_modification = ""
+	ui.modification_target = ""
 	audio.progress = progress
 	save_progress()
 	apply_settings()

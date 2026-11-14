@@ -44,7 +44,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.7.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.8.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -95,7 +95,7 @@ func run() -> void:
 	check(game.progress.money == 0 and game.progress.equipped_knife == "rusty_butter" and "plastic_picnic" in game.progress.owned_knives,"packaged purchase charges once without auto-equipping")
 	game.equip_knife("plastic_picnic")
 	check(game.knife.knife_id == "plastic_picnic" and game.kitchen.display_knife_id == "plastic_picnic" and game.knife.edge.size() == 3,"packaged equip swaps the real models and cutting edge")
-	check(game.store.load_into(restored) and restored.snapshot().version == 3 and restored.equipped_knife == "plastic_picnic","packaged v3 inventory persists to disk")
+	check(game.store.load_into(restored) and restored.snapshot().version == 4 and restored.equipped_knife == "plastic_picnic","packaged current inventory persists to disk")
 	game.start_round()
 	fruit = game.spawn_tomato(); fruit.set_physics_process(false); fruit.position = Vector3(1.5,0,0); fruit.velocity = Vector2.ZERO
 	game.knife.track(Vector2(-.03,0)); game.knife.track(Vector2(.03,0))
@@ -104,6 +104,37 @@ func run() -> void:
 	fruit = game.spawn_tomato(); fruit.set_physics_process(false); fruit.position = Vector3(1.5,0,0); fruit.velocity = Vector2.ZERO
 	game.knife.track(Vector2(-.03,0)); game.knife.track(Vector2(.03,0))
 	check(game.process_blade() == 0 and game.knife.edge == SliceSystem.DEFAULT_EDGE,"packaged re-equip restores the starter's shorter collision edge")
+	game.finish_round(); game.progress.money = 90; game.show_equipment()
+	game.buy_knife("steak"); game.equip_knife("steak")
+	check(game.progress.money == 30 and game.knife.knife_id == "steak" and game.kitchen.display_knife_id == "steak" and game.progress.strength() == 1.5,"packaged forged steak model, actual equipment and authored strength load")
+	game.ui.modification_shop("honing_kit","steak"); await process_frame
+	check(game.ui.content.get_node("ModificationPreview").model.get_child_count() > 0,"packaged kit JSON and original honing stone 3D study load")
+	game.buy_modification("honing_kit")
+	check(game.progress.money == 0 and game.progress.owned_modifications == ["honing_kit"] and game.progress.applied_modifications.is_empty(),"packaged kit purchase charges exactly once without auto-application")
+	game.apply_modification("honing_kit","steak")
+	check(game.progress.strength() == 2 and game.store.load_into(restored) and restored.snapshot().version == 4 and restored.applied_modifications == {"honing_kit":"steak"},"packaged assigned preparation applies real strength and persists in v4")
+	# Explicit valid levels isolate preparation at the Roma threshold.
+	game.progress.levels = {"better_prices":1,"faster_throwing":1,"unlock_cherry":1,"sharp_edge":2,"unlock_roma":1,"extra_cuts":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"critical_slice":1}
+	game.progress.refresh_discovery()
+	game.apply_modification("honing_kit","plastic_picnic"); game.equip_knife("plastic_picnic")
+	check(game.progress.applied_modifications == {"honing_kit":"plastic_picnic"} and game.progress.strength() == 2.5 and game.progress.cutting_profile().expected_strikes(2.5) == 1,"packaged reassignment moves one effect into the actual damage and critical forecast pipeline")
+	var ordinary_seed := 1
+	for candidate in range(1,10000):
+		var probe := RandomNumberGenerator.new(); probe.seed = candidate
+		if probe.randf() >= .08: ordinary_seed = candidate; break
+	game.start_round()
+	fruit = game.spawn_tomato(); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	game.ability_rng.seed = ordinary_seed; game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0))
+	check(game.process_blade() == 1 and game.session.earnings == 15 and game.session.tomatoes_sliced == 1,"packaged prepared ordinary strike splits Roma with the unchanged premium reward")
+	game.finish_round(); game.show_equipment(); game.remove_modification("honing_kit"); game.start_round()
+	fruit = game.spawn_tomato(); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	game.ability_rng.seed = ordinary_seed; game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0))
+	check(game.process_blade() == 0 and fruit.durability == .5 and game.session.earnings == 0,"packaged preparation removal restores the real two-strike threshold")
+	game.finish_round(); game.show_equipment(); game.equip_knife("steak"); game.start_round()
+	fruit = game.spawn_tomato(); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	game.ability_rng.seed = ordinary_seed; game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0))
+	check(game.process_blade() == 1 and game.session.earnings == 15 and game.progress.strength() == 2.5 and game.progress.applied_modifications.is_empty(),"packaged steak base power achieves the threshold without borrowing an unapplied kit")
+	check(game.audio.sounds["steak_slice"] is AudioStreamWAV and game.audio.sounds["steak_slice"].get_length() > .1 and game.audio.players[(game.audio.cursor-1)%game.audio.players.size()].stream == game.audio.sounds["steak_slice"],"packaged actual steak cut uses its authored original sound")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

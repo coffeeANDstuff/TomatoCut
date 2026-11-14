@@ -1,0 +1,63 @@
+extends "res://tests/equipment_render.gd"
+
+const CRITICAL := preload("res://tests/critical_tests.gd")
+
+func run() -> void:
+	create_timer(180).timeout.connect(func(): push_error("Steak rendered checks timed out"); quit(1))
+	DirAccess.make_dir_recursive_absolute(output)
+	game = load("res://scenes/main.tscn").instantiate()
+	game.save_path = "user://tests/steak-render.json"
+	for suffix: String in ["", ".bak"]:
+		if FileAccess.file_exists(game.save_path+suffix): DirAccess.remove_absolute(game.save_path+suffix)
+	root.add_child(game); await frames(); await click(instrument_icon())
+	await click(game.ui.content.find_child("Product_steak",true,false))
+	check(game.ui.content.find_child("Buy_steak",true,false).disabled and game.progress.owned_knives == ["rusty_butter"],"real Steak Knife product page cannot grant unaffordable equipment")
+	await capture("53-steak-product")
+	game.progress.money = 60 # Staged isolated funding, actual GUI purchase/equip.
+	game.ui.equipment_shop("steak"); await frames()
+	await click(game.ui.content.find_child("Buy_steak",true,false))
+	check(game.progress.money == 0 and "steak" in game.progress.owned_knives and game.progress.equipped_knife == "rusty_butter","actual Steak Knife purchase charges $60 and does not auto-equip")
+	await click(game.ui.content.find_child("Equip_steak",true,false))
+	check(game.knife.knife_id == "steak" and game.kitchen.display_knife_id == "steak" and game.progress.strength() == 1.5,"real steak equip changes the actual blade/home models and base cutting strength")
+	await capture("54-equipped-steak")
+	await click(game.ui.content.find_child("Prepare_steak",true,false))
+	game.progress.money = 30; game.ui.modification_shop("honing_kit","steak"); await frames()
+	await click(game.ui.content.find_child("BuyModification_honing_kit",true,false))
+	await click(game.ui.content.find_child("Apply_honing_kit",true,false))
+	check(game.progress.strength() == 2 and game.progress.applied_modifications == {"honing_kit":"steak"},"actual kit application stacks on the stronger steak base rather than replacing it")
+	await click(game.ui.content.get_node("EquipmentKnives")); await click(game.ui.content.find_child("Product_plastic_picnic",true,false))
+	game.progress.money = 20; game.ui.equipment_shop("plastic_picnic"); await frames()
+	await click(game.ui.content.find_child("Buy_plastic_picnic",true,false))
+	game.ui.modification_shop("honing_kit","steak"); await frames()
+	root.size = Vector2i(1280,720); await frames()
+	var last_target: Control = game.ui.content.find_child("Target_plastic_picnic",true,false)
+	check(game.ui.content.find_children("Target_*","Button",true,false).size() == 3 and root.get_visible_rect().encloses(last_target.get_global_rect()),"all three owned preparation targets fit the actual 16:9 page")
+	await capture("55-three-knife-preparation-16x9")
+	await click(game.ui.content.find_child("Target_rusty_butter",true,false)); await click(game.ui.content.find_child("Apply_honing_kit",true,false))
+	check(game.progress.equipped_knife == "steak" and game.progress.strength() == 1.5 and game.progress.knife_strength("rusty_butter") == 1.5,"preparing another target transfers the kit while keeping the equipped knife selected")
+	await click(game.ui.content.find_child("Remove_honing_kit",true,false))
+	# Valid Roma/cultivation fixture; no kit or critical damage is needed here.
+	game.progress.levels = CRITICAL.prepared().levels.duplicate()
+	game.progress.levels.merge({"sharp_edge":2,"roma_frequency":3,"roma_quality":2,"roma_dominance":10},true); game.progress.refresh_discovery()
+	game.ui.modification_shop(); await frames(); await click(find_button(game.ui.content,"Back to cutting"))
+	game.set_physics_process(false); game.clear_field(); game.fragments.set_physics_process(false)
+	var fruit: Tomato = game.spawn_tomato(); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	await move_blade(Vector2(-2,0)); await move_blade(Vector2(2,0))
+	check(game.session.cuts == 1 and game.session.earnings == 15 and game.fragments.pieces.size() == 2 and game.progress.cutting_profile().critical_chance == 0,"real steak mouse input splits Roma once at Sharp Edge 2 without preparation or a critical proc")
+	check(game.audio.sounds["steak_slice"] is AudioStreamWAV and game.audio.sounds["steak_slice"].get_length() > .1 and game.audio.players[(game.audio.cursor-1)%game.audio.players.size()].stream == game.audio.sounds["steak_slice"],"real steak mouse input dispatches its distinct original cut cue")
+	await capture("56-steak-roma-split")
+	game.session.advance(60); game.finish_round(); await frames(); await click(instrument_icon())
+	await click(game.ui.content.find_child("Product_rusty_butter",true,false)); await click(game.ui.content.find_child("Equip_rusty_butter",true,false))
+	await click(find_button(game.ui.content,"Back to the cutting board"))
+	game.set_physics_process(false); game.clear_field()
+	fruit = game.spawn_tomato(); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	await move_blade(Vector2(-2,0)); await move_blade(Vector2(2,0))
+	check(not fruit.sliced and fruit.durability == .5 and game.session.earnings == 0,"same ordinary mouse strike with the starter loses the steak strength advantage")
+	await capture("57-starter-steak-comparison")
+	game.session.advance(60); game.finish_round(); await frames(); await click(instrument_icon())
+	await click(game.ui.content.find_child("Product_steak",true,false)); await click(game.ui.content.find_child("Equip_steak",true,false))
+	var restored := Progression.new()
+	check(game.store.load_into(restored) and restored.equipped_knife == "steak" and restored.owned_knives.size() == 3 and restored.owned_modifications == ["honing_kit"] and restored.applied_modifications.is_empty(),"actual three-knife inventory, chosen steak and owned unassigned kit reload together")
+	print("STEAK RENDER RESULT: ",failures," failures")
+	game.queue_free(); await frames(); await create_timer(.75).timeout
+	quit(1 if failures else 0)

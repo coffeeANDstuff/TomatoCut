@@ -5,6 +5,8 @@ const TIME_TESTS := preload("res://tests/time_upgrade_tests.gd")
 const HARVEST_TESTS := preload("res://tests/harvest_tests.gd")
 const DISCOVERY_TESTS := preload("res://tests/discovery_tests.gd")
 const EQUIPMENT_TESTS := preload("res://tests/equipment_tests.gd")
+const MODIFICATION_TESTS := preload("res://tests/modification_tests.gd")
+const STEAK_TESTS := preload("res://tests/steak_tests.gd")
 const CRITICAL_TESTS := preload("res://tests/critical_tests.gd")
 const ROMA_TESTS := preload("res://tests/roma_tests.gd")
 const RECUT_TESTS := preload("res://tests/recut_tests.gd")
@@ -43,6 +45,8 @@ func run() -> void:
 	await DISCOVERY_TESTS.run(self, Callable(self,"check"))
 	await CRITICAL_TESTS.run(self, Callable(self,"check"))
 	await EQUIPMENT_TESTS.run(self, Callable(self,"check"))
+	await MODIFICATION_TESTS.run(self, Callable(self,"check"))
+	await STEAK_TESTS.run(self, Callable(self,"check"))
 	await test_natural_round()
 	# Let the audio mixer release stopped playback references after scene teardown.
 	await create_timer(0.2).timeout

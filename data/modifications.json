@@ -1,0 +1,11 @@
+[
+  {
+    "id": "honing_kit",
+    "name": "The Honing Kit",
+    "catalog_number": "M01",
+    "description": "A small stone with a rather inflated sense of purpose. Prepares one instrument at a time; reassignment is complimentary.",
+    "price": 30,
+    "strength_bonus": 0.5,
+    "model": "res://assets/models/equipment/honing_kit.glb"
+  }
+]

@@ -10,7 +10,17 @@
     "precision": "Freehand",
     "special": "None",
     "reach_label": "Short",
-    "edge": [[-0.08, -0.10], [0.85, -0.04]]
+    "edge": [
+      [
+        -0.08,
+        -0.1
+      ],
+      [
+        0.85,
+        -0.04
+      ]
+    ],
+    "slice_sound": "slice"
   },
   {
     "id": "plastic_picnic",
@@ -23,6 +33,47 @@
     "precision": "Freehand",
     "special": "None",
     "reach_label": "Modestly longer",
-    "edge": [[-0.08, -0.10], [0.88, -0.10], [1.05, -0.04]]
+    "edge": [
+      [
+        -0.08,
+        -0.1
+      ],
+      [
+        0.88,
+        -0.1
+      ],
+      [
+        1.05,
+        -0.04
+      ]
+    ],
+    "slice_sound": "slice"
+  },
+  {
+    "id": "steak",
+    "name": "Steak Knife",
+    "catalog_number": "003",
+    "description": "Forged steel, olivewood, and the quiet confidence of an instrument accustomed to dinner. More conviction; less room for excuses.",
+    "price": 60,
+    "model": "res://assets/models/knives/steak.glb",
+    "base_strength": 1.5,
+    "precision": "Freehand",
+    "special": "None",
+    "reach_label": "Compact forged edge",
+    "edge": [
+      [
+        -0.08,
+        -0.09
+      ],
+      [
+        0.64,
+        -0.09
+      ],
+      [
+        0.88,
+        0.035
+      ]
+    ],
+    "slice_sound": "steak_slice"
   }
 ]

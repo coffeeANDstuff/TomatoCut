@@ -8,6 +8,9 @@ signal settings_requested
 signal equipment_requested
 signal knife_purchase_requested(id: String)
 signal knife_equip_requested(id: String)
+signal modification_purchase_requested(id: String)
+signal modification_apply_requested(id: String, knife: String)
+signal modification_remove_requested(id: String)
 signal purchase_requested(id: String)
 signal new_game_requested
 signal settings_changed
@@ -29,6 +32,8 @@ var combo_label: Label
 var notice_label: Label
 var selected_category := "Time"
 var selected_knife := ""
+var selected_modification := ""
+var modification_target := ""
 var save_exists := false
 var confirmation: ConfirmationDialog
 var moving: Array[Dictionary] = []
@@ -62,7 +67,7 @@ func _ready() -> void:
 	root.add_child(tips)
 	confirmation = ConfirmationDialog.new()
 	confirmation.title = "Open a fresh ledger?"
-	confirmation.dialog_text = "This replaces your money, upgrades and equipment.\nYour previous ledger will be kept as a backup."
+	confirmation.dialog_text = "This replaces your money, upgrades, knives and modifications.\nYour previous ledger will be kept as a backup."
 	confirmation.ok_button_text = "Start new game"
 	confirmation.confirmed.connect(func(): new_game_requested.emit())
 	root.add_child(confirmation)
@@ -203,9 +208,10 @@ func equipment_shop(id: String = "") -> void:
 	paper(content)
 	header("The equipment catalog","CULINARY INSTRUMENTS  /  SELECTED WITH UNREASONABLE CARE")
 	place(label("THE KNIFE COLLECTION",13,false,MUTED),Vector2(48,208),Vector2(245,24))
+	equipment_categories()
 	var products := VBoxContainer.new()
 	products.add_theme_constant_override("separation",12)
-	place(products,Vector2(48,247),Vector2(245,360))
+	place(products,Vector2(48,310),Vector2(245,320))
 	for item: Dictionary in progress.equipment.knives:
 		var product_id: String = item.id
 		var select := button(item.name,func(): equipment_shop(product_id))
@@ -233,7 +239,8 @@ func equipment_shop(id: String = "") -> void:
 	stats.add_child(label("Reach  ·  %.0f%% of starter" % (reach*100),20,true))
 	stats.add_child(label("Precision  ·  "+data.precision,20,true))
 	stats.add_child(label("Special  ·  "+data.special,20,true))
-	stats.add_child(label("Sharp Edge cultivation applies.\nThe displayed blade is the one you use.",15,false,MUTED))
+	var preparation := progress.equipment.modification(progress.knife_modification(id))
+	stats.add_child(label((preparation.name+" applied." if not preparation.is_empty() else "No preparation applied.")+"\nSharp Edge cultivation applies.",15,false,MUTED))
 	var owned := id in progress.owned_knives
 	var equipped := id == progress.equipped_knife
 	var callback: Callable = func(): knife_equip_requested.emit(id)
@@ -242,7 +249,27 @@ func equipment_shop(id: String = "") -> void:
 	action.name = "Equip_"+id if owned else "Buy_"+id
 	action.disabled = equipped or (not owned and progress.money < float(data.price))
 	place(action,Vector2(330,665),Vector2(505,44))
+	var prepare := button("Prepare this instrument",func(): modification_shop("",id))
+	prepare.name = "Prepare_"+id
+	prepare.disabled = not owned
+	place(prepare,Vector2(870,665),Vector2(340,44))
 	place(button("Back to the cutting board",func(): play_requested.emit(),true),Vector2(330,724),Vector2(370,44))
+
+func equipment_categories() -> void:
+	var knives := icon("knife","Knives",func(): equipment_shop())
+	knives.name = "EquipmentKnives"
+	place(knives,Vector2(48,243),Vector2(48,48))
+	var modifications := icon("stone","Knife modifications",func(): modification_shop())
+	modifications.name = "EquipmentModifications"
+	place(modifications,Vector2(108,243),Vector2(48,48))
+
+func modification_shop(id: String = "", knife: String = "") -> void:
+	if id.is_empty(): id = selected_modification if not progress.equipment.modification(selected_modification).is_empty() else str(progress.equipment.modifications[0].id)
+	if knife.is_empty(): knife = modification_target if modification_target in progress.owned_knives else progress.equipped_knife
+	if progress.equipment.modification(id).is_empty() or not knife in progress.owned_knives: return
+	selected_modification = id
+	modification_target = knife
+	ModificationPage.build(self,id,knife)
 
 func gameplay() -> void:
 	clear("playing")

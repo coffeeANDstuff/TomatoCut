@@ -2,11 +2,12 @@
 from pathlib import Path
 import math,random,struct,wave
 out=Path(__file__).resolve().parents[1]/'assets/audio'
-for name,duration in [('slice',.22),('resist',.11),('launch',.16),('paper',.055),('bell',.6),('purchase',.28),('discovery',.32),('critical',.14)]:
+for name,duration in [('slice',.22),('steak_slice',.14),('resist',.11),('launch',.16),('paper',.055),('bell',.6),('purchase',.28),('discovery',.32),('critical',.14)]:
  rng=random.Random(name); rate=24000; samples=[]; filtered=0.
  for i in range(int(rate*duration)):
   t=i/rate; phase=t/duration; filtered=.65*filtered+.35*rng.uniform(-1,1)
   if name=='slice': a=(.65*filtered+ .12*math.sin(2*math.pi*(160*t+400*t*t)))*math.sin(math.pi*phase)**1.2
+  elif name=='steak_slice': a=(.43*filtered+.14*math.sin(2*math.pi*(470*t-900*t*t)))*math.sin(math.pi*phase)**.65*math.exp(-3*phase)
   elif name=='launch': a=.3*math.sin(2*math.pi*(180*t+800*t*t))*(1-phase)**2
   elif name=='paper': a=.3*filtered*(1-phase)**3
   elif name=='resist': a=(.3*math.sin(2*math.pi*(115*t-170*t*t))+.12*filtered)*(1-phase)**3

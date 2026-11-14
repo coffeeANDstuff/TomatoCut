@@ -4,8 +4,8 @@ const CRITICAL := preload("res://tests/critical_tests.gd")
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
-	check.call(p.equipment.validate().is_empty() and p.equipment.knives.size() == 2, "both authored knife definitions and models validate")
-	check.call(p.owned_knives == ["rusty_butter"] and p.equipped_knife == "rusty_butter" and p.snapshot().version == 3, "fresh v3 ledger owns and equips only the free starter")
+	check.call(p.equipment.validate().is_empty() and p.equipment.knives.size() == 3, "all three authored knife definitions and models validate")
+	check.call(p.owned_knives == ["rusty_butter"] and p.equipped_knife == "rusty_butter" and p.snapshot().version == 4, "fresh v4 ledger owns and equips only the free starter")
 	check.call(EquipmentCatalog.edge_points(p.equipment.definition("rusty_butter")) == SliceSystem.DEFAULT_EDGE, "starter collision retains its established edge exactly")
 	check.call(p.equipment.edge_length("plastic_picnic") > p.equipment.edge_length("rusty_butter") and p.equipment.edge_length("missing") == 0, "picnic reach comes from the authored longer cutting edge")
 	check.call(not p.buy_knife("missing") and not p.buy_knife("plastic_picnic") and not p.equip_knife("plastic_picnic") and p.money == 0, "unknown, unaffordable and unowned equipment actions are atomic denials")
@@ -19,25 +19,26 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	check.call(p.strength() == 1.5 and p.equip_knife("rusty_butter") and p.strength() == 1.5 and p.equip_knife("plastic_picnic"), "existing Sharp Edge cultivation applies consistently across both knives")
 	var restored := Progression.new()
 	var wire: Dictionary = JSON.parse_string(JSON.stringify(p.snapshot()))
-	check.call(restored.restore(wire) and restored.owned_knives == p.owned_knives and restored.equipped_knife == p.equipped_knife and restored.money == p.money, "JSON v3 numeric version and owned/equipped state restore")
+	check.call(restored.restore(wire) and restored.owned_knives == p.owned_knives and restored.equipped_knife == p.equipped_knife and restored.money == p.money, "JSON v4 numeric version and owned/equipped state restore")
 	var legacy := p.snapshot(); legacy.version = 2; legacy.erase("equipment")
 	check.call(restored.restore(JSON.parse_string(JSON.stringify(legacy))) and restored.owned_knives == ["rusty_butter"] and restored.equipped_knife == "rusty_butter" and restored.levels == p.levels, "v2 JSON migrates equipment defaults while retaining money and upgrades")
 	legacy.version = 1; legacy.lifetime.erase("tomatoes"); legacy.lifetime.cuts = 42
-	check.call(restored.restore(JSON.parse_string(JSON.stringify(legacy))) and restored.lifetime.tomatoes == 42 and restored.snapshot().version == 3, "v1 JSON migrates statistics and equipment together")
+	check.call(restored.restore(JSON.parse_string(JSON.stringify(legacy))) and restored.lifetime.tomatoes == 42 and restored.snapshot().version == 4, "v1 JSON migrates statistics and equipment together")
 	legacy.version = 2; legacy.lifetime.tomatoes = 42; legacy.equipment = {"owned":["plastic_picnic"],"equipped":"plastic_picnic"}
 	check.call(restored.restore(legacy) and restored.owned_knives == ["rusty_butter"], "legacy extra fields cannot grant an unversioned equipment purchase")
 	restored.restore(p.snapshot())
 	var before := restored.snapshot()
 	for inventory: Variant in [null,{}, {"owned":[],"equipped":"rusty_butter"}, {"owned":["rusty_butter"],"equipped":"plastic_picnic"}, {"owned":["rusty_butter","missing"],"equipped":"rusty_butter"}, {"owned":["rusty_butter","rusty_butter"],"equipped":"rusty_butter"}, {"owned":["plastic_picnic"],"equipped":"plastic_picnic"}, {"owned":[1],"equipped":"rusty_butter"}, {"owned":"bad","equipped":null}]:
 		var invalid := p.snapshot(); invalid.equipment = inventory
-		check.call(not restored.restore(invalid) and restored.snapshot() == before, "invalid v3 inventory is rejected without partial mutation: "+str(inventory))
+		check.call(not restored.restore(invalid) and restored.snapshot() == before, "invalid v4 inventory is rejected without partial mutation: "+str(inventory))
 	var missing := p.snapshot(); missing.erase("equipment")
-	check.call(not restored.restore(missing), "v3 saves require their equipment payload")
-	for malformed: String in ["duplicate","model","edge","coordinate","zero","price","free","strength","id"]:
+	check.call(not restored.restore(missing), "v4 saves require their equipment payload")
+	for malformed: String in ["duplicate","model","sound","edge","coordinate","zero","price","free","strength","id"]:
 		var bad := EquipmentCatalog.new(); bad.knives = bad.knives.duplicate(true)
 		match malformed:
 			"duplicate": bad.knives.append(bad.knives[1].duplicate(true))
 			"model": bad.knives[1].model = "res://missing_knife.glb"
+			"sound": bad.knives[1].slice_sound = "missing_knife_sound"
 			"edge": bad.knives[1].edge = [[0,0]]
 			"coordinate": bad.knives[1].edge = [[0,0],[NAN,1]]
 			"zero": bad.knives[1].edge = [[0,0],[0,0]]

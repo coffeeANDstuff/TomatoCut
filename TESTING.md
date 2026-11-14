@@ -2,6 +2,35 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Preparation milestone — v0.8.0 (2026-11-13, America/Los_Angeles)
+
+Continued clean `92813db`, confirmed matching remote main, and passed **324/324** baseline checks. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64. Tests use `user://tests/`; production saves are untouched.
+
+```sh
+./tools/cloud.sh ./tools/check.sh
+# Xorg dummy :98, software OpenGL, Dummy audio:
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/modification_render.gd
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/steak_render.gd
+# Also rerun render_smoke, harvest_render, roma_render, discovery_render,
+# critical_render and equipment_render in the same display mode.
+```
+
+**399 headless checks pass; zero failures**, including **75 additional checks**. Coverage: actual paid kit ownership/application, reassignment/removal, affordability/duplicate/unowned/occupied-slot/live-round denial; additive knife/cultivation/preparation power; JSON v4 restoration and v1/v2/v3 migration without free kits; malformed/unknown/duplicate inventory and assignments rejected atomically; corrupt prepared primary recovering a valid backup and saving again; content IDs/models/audio/cost/effect validation; actual preview/world cleanup and page navigation; real root/fragment resistance, critical damage, unchanged family value/limits/unique count; removing or switching power; actual stronger steak geometry/model/home/cue; fresh reset. Harder-variety and higher-resistance fragment fixtures isolate three-normal-strike spawn safety and prepared critical damage; authored Roma data is unchanged.
+
+**111 rendered checks pass; zero failures:** original loop **13**, Cherry **13**, Roma **12**, discovery **14**, Critical Slice **15**, equipment **16**, modifications **18**, Steak Knife **10**. Actual GUI clicks and mouse movements exercise transactions, target selection, free movement/removal, selected-equipment independence, ordinary prepared/steak Roma splits and corresponding unprepared/starter resistance, model/cue synchronization, disk persistence and Reduced Motion. Three owned target buttons plus preview/apply/remove fit 16:9; actual pages also run at 16:10. Inspected captures `47`–`57`: kit, applied starter/picnic, stronger/resistant Roma, reduced motion, steak product/equipped blade and three-target page. Native New Game confirmation is opened by real click and confirmed through its callback, not an automated OS-dialog click.
+
+Development failures corrected: explicitly typed a dynamic-scene forecast value after Godot rejected inferred type; replaced a rendered assertion that read a sliced fruit after its normal queued deletion with checks on the resulting family/scene; corrected an over-broad test-count edit that confused total catalog count with purchased inventory count. A rendered process overlapped initial import of the new WAV and reported a missing cue; completed import, reran the affected flow and verified actual loaded WAV length/dispatch in headless, rendered and packed games. Final runs have no script/resource/runtime errors; the known software-driver VSync warning remains.
+
+Both original Blender generators ran, exported/imported actual GLBs and saved editable `.blend` sources without overwriting prior art. Audio generation added only the original Steak cue; older WAV payloads remained unchanged. Static checks include Python compilation, shell syntax, `git diff --check` and actionlint 1.7.7.
+
+### Preparation export and delivery evidence
+
+Windows Desktop and Linux Test exports succeed with retained official SHA-512-verified Godot 4.6.3 templates. From `/tmp`, the host editor runs `tests/package_smoke.gd` through each binary's `--main-pack`: **36/36 pass per target**. New gates load kit/steak definitions and original models, separately purchase/equip/apply, persist v4 assignments, verify actual prepared/removal damage and exact forecasts, standalone steak strength and real original WAV dispatch. Matching Linux executable boots headlessly without resource/script errors. These tests do not execute the Windows PE natively.
+
+The full preflight archive passes safe/unique paths, CRC, complete SHA-256 payload manifest, required new Blender/GLB/WAV/data/tests, executable script modes and source/build/version identity (**221 payload files**). Its fresh extracted source imports without the checkout cache and passes **399/399**. Preflight metadata honestly records its uncommitted state. Final clean committed-source package and public GitHub delivery evidence will be recorded below without changing the milestone tag.
+
+Native Windows, Forward+ GPU rendering, audible quality and target-PC 60 FPS remain **unverified**. Human novice equipment value and target prestige timing are unmeasured. BALANCE_REPORT.md preserves the starter/seed-only model's stated scope; no old prices changed.
+
 ## Equipment milestone — v0.7.0 (2026-11-12, America/Los_Angeles)
 
 Continued clean main at `04b319e`. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64. Baseline **270/270** passed before implementation. All ledgers are isolated under `user://tests/`; no production save is touched.

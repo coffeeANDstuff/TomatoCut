@@ -36,6 +36,10 @@ func _draw() -> void:
 		"knife":
 			draw_polyline(PackedVector2Array([c+Vector2(-11,11),c+Vector2(1,-1),c+Vector2(11,-13),c+Vector2(13,-7),c+Vector2(5,3),c+Vector2(1,-1)]),color,w,true)
 			draw_line(c+Vector2(-8,12),c+Vector2(3,1),color,3,true)
+		"stone":
+			draw_polyline(PackedVector2Array([c+Vector2(-12,0),c+Vector2(5,-8),c+Vector2(13,-2),c+Vector2(-4,7),c+Vector2(-12,0),c+Vector2(-12,5),c+Vector2(-4,12),c+Vector2(13,3),c+Vector2(13,-2)]),color,w,true)
+			draw_line(c+Vector2(-4,7),c+Vector2(-4,12),color,w,true)
+			draw_line(c+Vector2(-3,-2),c+Vector2(3,2),color,w,true)
 		"back":
 			draw_line(c+Vector2(-10,0),c+Vector2(11,0),color,w,true)
 			draw_polyline(PackedVector2Array([c+Vector2(-2,-8),c+Vector2(-10,0),c+Vector2(-2,8)]),color,w,true)

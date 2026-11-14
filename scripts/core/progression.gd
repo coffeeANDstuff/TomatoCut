@@ -7,6 +7,9 @@ var harvest: HarvestProgression
 var equipment := EquipmentCatalog.new()
 var owned_knives: Array = [EquipmentCatalog.STARTER]
 var equipped_knife := EquipmentCatalog.STARTER
+var owned_modifications: Array = []
+# Stable modification ID -> owned knife ID. Each kit prepares one instrument.
+var applied_modifications: Dictionary = {}
 var money: float = 0.0
 var levels: Dictionary = {}
 var discovered: Array = []
@@ -97,7 +100,32 @@ func strength() -> float:
 	return knife_strength(equipped_knife)
 
 func knife_strength(id: String) -> float:
+	return unmodified_knife_strength(id) + float(equipment.modification(knife_modification(id)).get("strength_bonus",0))
+
+func unmodified_knife_strength(id: String) -> float:
 	return float(equipment.definition(id).get("base_strength",1)) + effect_value("sharp_edge","strength_bonus") * level("sharp_edge")
+
+func knife_modification(knife: String) -> String:
+	for id: String in applied_modifications:
+		if applied_modifications[id] == knife: return id
+	return ""
+
+func buy_modification(id: String) -> bool:
+	var d := equipment.modification(id)
+	if d.is_empty() or id in owned_modifications or money < float(d.price): return false
+	money -= float(d.price)
+	owned_modifications.append(id)
+	return true
+
+func apply_modification(id: String, knife: String) -> bool:
+	if not id in owned_modifications or equipment.modification(id).is_empty() or not knife in owned_knives: return false
+	if applied_modifications.get(id,"") == knife or not knife_modification(knife).is_empty(): return false
+	# One reusable kit, one target. Reassignment removes its old benefit atomically.
+	applied_modifications[id] = knife
+	return true
+
+func remove_modification(id: String) -> bool:
+	return applied_modifications.erase(id)
 
 func buy_knife(id: String) -> bool:
 	var d := equipment.definition(id)
@@ -136,11 +164,11 @@ func complete_round(earnings: float, cuts: int, tomatoes_sliced: int = -1) -> vo
 	lifetime.earnings += earnings
 
 func snapshot() -> Dictionary:
-	return {"version": 3, "money": money, "levels": levels.duplicate(), "discovered": discovered.duplicate(), "viewed": viewed.duplicate(), "equipment":{"owned":owned_knives.duplicate(),"equipped":equipped_knife}, "lifetime": lifetime.duplicate(), "settings": settings.duplicate()}
+	return {"version": 4, "money": money, "levels": levels.duplicate(), "discovered": discovered.duplicate(), "viewed": viewed.duplicate(), "equipment":{"owned":owned_knives.duplicate(),"equipped":equipped_knife,"modifications":{"owned":owned_modifications.duplicate(),"applied":applied_modifications.duplicate()}}, "lifetime": lifetime.duplicate(), "settings": settings.duplicate()}
 
 func restore(data: Dictionary) -> bool:
 	# Reject unsupported/ill-typed data before mutating any progress.
-	if not _number(data.get("version")) or (data.version != 1 and data.version != 2 and data.version != 3) or not _number(data.get("money")) or float(data.money) < 0 or float(data.money) > 1e15:
+	if not _number(data.get("version")) or (data.version != 1 and data.version != 2 and data.version != 3 and data.version != 4) or not _number(data.get("money")) or float(data.money) < 0 or float(data.money) > 1e15:
 		return false
 	if not data.get("levels") is Dictionary or not data.get("discovered") is Array or not data.get("lifetime") is Dictionary or not data.get("settings") is Dictionary:
 		return false
@@ -171,7 +199,7 @@ func restore(data: Dictionary) -> bool:
 		if not id is String or not id in data.discovered or unique.has(id):
 			return false
 		unique[id] = true
-	if data.version == 3 and not equipment.valid_inventory(data.get("equipment")): return false
+	if data.version >= 3 and not equipment.valid_inventory(data.get("equipment"),data.version >= 4): return false
 	for key: String in settings:
 		if not data.settings.has(key):
 			continue
@@ -184,8 +212,10 @@ func restore(data: Dictionary) -> bool:
 	levels = clean
 	discovered = data.discovered.duplicate()
 	viewed = read_ids.duplicate()
-	owned_knives = data.equipment.owned.duplicate() if data.version == 3 else [EquipmentCatalog.STARTER]
-	equipped_knife = data.equipment.equipped if data.version == 3 else EquipmentCatalog.STARTER
+	owned_knives = data.equipment.owned.duplicate() if data.version >= 3 else [EquipmentCatalog.STARTER]
+	equipped_knife = data.equipment.equipped if data.version >= 3 else EquipmentCatalog.STARTER
+	owned_modifications = data.equipment.modifications.owned.duplicate() if data.version >= 4 else []
+	applied_modifications = data.equipment.modifications.applied.duplicate() if data.version >= 4 else {}
 	lifetime = data.lifetime.duplicate()
 	lifetime.tomatoes = int(tomato_count)
 	for key: String in settings:

@@ -1,6 +1,45 @@
 # Progress
 
-## Current session — v0.7 (2026-11-12, America/Los_Angeles)
+## Current session — v0.8 (2026-11-13, America/Los_Angeles)
+
+Continued clean main at **92813db**, verified **324/324** baseline checks and confirmed remote main had no newer source changes. Highest-priority incomplete work was Phase 4's first real modification. Completed that path, then integrated the next specified Steak Knife. Earlier models, cultivation prices, slicing, critical ability, harvest and discovery remain intact.
+
+### Completed
+- **TESTED** — Paid data-driven **Honing Kit ($30, +0.50 strength)** with separate buy/apply, free reassignment/removal and one preparation per owned instrument. One reusable kit prepares one knife at a time; changing the equipped knife never moves it silently. Unknown/unowned/duplicate/unaffordable/occupied-slot and live-round actions cannot charge money, stack benefits or partially mutate assignments.
+- **TESTED** — Real preparation catalog with original stone line icon, rotating original sage/charcoal honing stone in a walnut/brass cradle, owned targets, actual assignment status and current/prepared power. Old preview worlds are freed; Reduced Motion freezes a useful pose; the kitchen camera stays fixed. Knife pages link directly to preparation. No empty cosmetic tab or attachment silhouette is substituted for the actual kit.
+- **TESTED** — **Steak Knife ($60, base strength 1.50)** with original compact tapered forged blade, curved olivewood/full-tang handle, steel bolster and brass rivets. Actual model, home display and three-point cutting edge synchronize on equip. Its 106%-of-starter edge stays shorter than the picnic knife's 122%; its primary benefit is strength. Both new GLBs retain editable Blender sources and independent generators.
+- **TESTED** — Effective strength = knife base + existing Sharp Edge + one assigned preparation, shared by whole fruit, recuts, automatic-harvest safety, critical damage and exact forecasts. At Sharp Edge 2, prepared starter/picnic and unprepared Steak Knife reach 2.50 strength and split Roma in one ordinary strike; removing that benefit restores two strikes. Rewards, critical chance, shared family budgets and unique counts do not change.
+- **TESTED** — Original short Steak Knife cut WAV selected by equipment data, loaded and dispatched through the existing eight-player volume-controlled pool for roots and fragments. Source length and actual cue selection are tested; other WAVs remain unchanged. Dummy audio validates functional paths only.
+- **TESTED** — Save schema **4** requires validated owned/applied preparation state. JSON v3 migration retains owned/equipped knives without granting a kit; v1/v2 migration retains prior progress with starter equipment only. Invalid/duplicate/unknown inventory, unowned assignments and conflicting targets are rejected before mutation. Existing corrupt-primary recovery retains a valid prepared backup. New Game confirms and clears normal knives/kits/assignments; prestige reset is still future Phase 5 work.
+- **TESTED** — **399/399** headless checks, **75 more** than baseline: commerce and assignment limits, current/legacy saves, malformed state/content and backup recovery, real page/model/edge/cue synchronization, normal/critical root/fragment damage and budgets, stronger/resistant comparisons, exact forecasts, harder-variety safety fixtures and reset. Harder Roma/fragment resistance values are explicit test fixtures, never altered authored content.
+- **TESTED** — New modification flow **18** rendered checks and Steak flow **10**, alongside all **83** prior checks: **111** total. Actual mouse clicks/motion cover buy/apply/move/remove/equip, stronger-vs-unprepared Roma, three-target 16:9 layout, reduced motion and disk reload. The native New Game dialog is opened by real click and confirmed through its callback, not OS-dialog input automation. Actual product pages and three-target layouts were visually reviewed at 16:10/16:9.
+- **TESTED** — Windows/Linux exports each pass **36 embedded-pack checks**, including actual kit/Steak model, data, commerce/application, v4 disk persistence, prepared and removed Roma damage, standalone steak power and original cue dispatch. Matching Linux executable boots headlessly. This is distinct from native Windows execution.
+- **TESTED** — Complete preflight ZIP passes safe paths, CRC, complete SHA-256 payload coverage, new required Blender/GLB/WAV/data/tests, portable script modes and source/build/version identity (**221 payload files**). Freshly extracted source imports without the checkout cache and passes **399/399**.
+- **IN PROGRESS** — Final clean committed-source package and GitHub v0.8.0 release delivery. Delivery evidence will be recorded without moving the immutable release tag.
+- **TESTED** — Updated README, art direction, roadmap, balance scope, release/package instructions and required archive payload checks. No older prices or model-based human-pacing claims were introduced. Phase 4's technical equipment acceptance is complete; final art/balance/performance remain separate gates.
+
+### Remaining and limitations
+- **NOT STARTED** — Phase 5 prestige: qualifying cycle earnings, diminishing-return seeds, reset preview/confirmation, permanent progression and five separately gated automatic events. All events remain inaccessible before their dedicated permanent unlocks.
+- **NOT STARTED** — Remaining **22 knives**, **22 normal varieties**, seven other normal cutting abilities, broader modifications/cosmetics, mastery/achievements, other environments, original music and full production content/polish.
+- **IN PROGRESS** — Human novice pacing, optional equipment price/value, durable-fragment feel and final art. The existing seed-only/starter simulation does not buy kits or knives or model spatial reach. No data supports claiming target prestige timing or novice equipment value yet.
+- **BLOCKED** — Native Windows execution, Forward+ GPU review, audible listening and target-PC 60 FPS require suitable hardware unavailable here. Software OpenGL/Dummy audio validate functional paths only.
+
+### Continuity
+- EquipmentCatalog loads `knives.json` and `modifications.json`. Progression owns `owned_modifications` and `applied_modifications` (kit ID -> owned knife ID), validated as one slot per knife. `knife_strength` is authoritative for all cutting/harvest/profile paths; `unmodified_knife_strength` supplies the comparison without double-applying an assigned kit.
+- `ModificationPage` reuses the native paper/control/preview helpers and keeps related presentation out of the growing general interface. Only equipment-state main handlers buy/apply/remove, save immediately and refresh the selected target. Selecting a target never equips it. Reset clears stale UI selections.
+- `slice_sound` in each knife definition selects a validated original WAV; AudioManager loads referenced cues once and retains the bounded common pool. Source cue lengths/dispatch pass, but listening was not performed.
+- Every test save is isolated under `user://tests/`; rendered funds and prerequisite states are explicit fixtures, with actual production commerce and input afterward. Failed development assertions/import ordering were corrected and rerun, as recorded in TESTING.md.
+- GitHub pushes, milestone releases and prominent full-package delivery remain authorized. Exports stay ignored; no environment draft change/publication is part of this task.
+
+## Exact next task
+Implement **Phase 5's first complete prestige transaction** following GAME_DESIGN.md §16: qualifying completed-round cycle earnings, authored diminishing-return seeds, an actual rare-seed archive preview with reset/preserve consequences and confirmation, compatible saves and a transaction/cycle identity preventing repeat claims. Reset normal money/upgrades/harvest/discovery/knives/modifications exactly once while preserving lifetime statistics/settings/permanent state. Include the first real seed-funded permanent branch so reset has a benefit. Test cancellation, duplicate/stale confirmations, migration, normal equipment reset and permanent preservation. Keep every special event impossible until its own dedicated permanent unlock exists. Simulate provisional timing without claiming 60–90-minute human balance.
+
+---
+
+# Historical milestones
+The current v0.8 section supersedes incomplete-feature statements below.
+
+## Milestone — v0.7 (2026-11-12, America/Los_Angeles)
 
 Continued clean main at **04b319e** and verified the **270/270** baseline. Highest-priority incomplete milestone was Phase 4's first equipment path. Previous fruit/knife assets, Critical Slice, seed-catalog investments, automatic harvest and discovery were retained.
 
@@ -29,11 +68,6 @@ Continued clean main at **04b319e** and verified the **270/270** baseline. Highe
 
 ## Exact next task
 Complete **Phase 4's first real knife modification** under GAME_DESIGN.md §§14–15. Define a paid data-driven stat modification and clear ownership/application limits; integrate purchase/apply/current-next UI, actual effective cutting strength, compatible saves and normal-progress reset. Verify whole fruit, recuts, critical forecasts and harvest safety agree, including switching knives and no mid-round changes. Ship the functioning branch before adding cosmetic tabs. Then continue with Steak Knife's improved-strength identity and original matching geometry/materials, preserving all 25 knives/varieties and five prestige-exclusive event gates.
-
----
-
-# Historical milestones
-The current v0.7 section supersedes incomplete-feature statements below.
 
 ## Milestone — v0.6 (2026-11-12, America/Los_Angeles)
 
