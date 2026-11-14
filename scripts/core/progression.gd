@@ -2,6 +2,7 @@ class_name Progression
 extends RefCounted
 
 const DEFINITIONS_PATH := "res://data/upgrades.json"
+const MAX_LAUNCH_COUNT := 6
 var definitions: Array = []
 var harvest: HarvestProgression
 var equipment := EquipmentCatalog.new()
@@ -88,11 +89,13 @@ func effect_value(id: String, key: String) -> float:
 func round_duration() -> float:
 	return minf(round_ceiling(),10.0+effect_value("extra_seconds","seconds")*level("extra_seconds")+prestige.starting_time_bonus())
 
-func launch_interval() -> float:
-	return maxf(effect_value("faster_throwing","minimum_interval"), 4.0 * pow(effect_value("faster_throwing","interval_multiplier"), level("faster_throwing")))
+func launch_interval(at_level: int = -1, permanent_level: int = -1) -> float:
+	var ordinary := level("faster_throwing") if at_level < 0 else clampi(at_level,0,int(definition("faster_throwing").max_level))
+	return maxf(effect_value("faster_throwing","minimum_interval"),4.0*pow(effect_value("faster_throwing","interval_multiplier"),ordinary)*prestige.throw_interval_multiplier(permanent_level))
 
-func launch_count() -> int:
-	return 1 + int(effect_value("double_toss","tomatoes") * level("double_toss"))
+func launch_count(at_level: int = -1, permanent_level: int = -1) -> int:
+	var ordinary := level("double_toss") if at_level < 0 else clampi(at_level,0,int(definition("double_toss").max_level))
+	return mini(MAX_LAUNCH_COUNT,1+int(effect_value("double_toss","tomatoes")*ordinary)+prestige.starting_tomato_bonus(permanent_level))
 
 func max_cuts() -> int:
 	return 1 + int(effect_value("extra_cuts","cuts") * level("extra_cuts"))

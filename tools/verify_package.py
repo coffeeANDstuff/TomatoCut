@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.16.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.17.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -49,6 +49,8 @@ with zipfile.ZipFile(args.archive) as z:
     assert jackpot_assets <= set(hashes), 'Missing original jackpot content/source'
     time_assets = {'Source/assets/illustrations/prestige/starting_round_time.svg', 'Source/assets/illustrations/prestige/overtime_bonus.svg', 'Source/tests/permanent_time_tests.gd', 'Source/tests/permanent_time_render.gd', 'Source/tools/simulate_permanent_time.gd', 'Source/TIME_BALANCE_REPORT.md'}
     assert time_assets <= set(hashes), 'Missing original permanent time content/source'
+    production_assets = {'Source/assets/illustrations/prestige/faster_starting_throws.svg', 'Source/assets/illustrations/prestige/additional_starting_tomatoes.svg', 'Source/tests/permanent_production_tests.gd', 'Source/tests/permanent_production_render.gd', 'Source/tools/simulate_permanent_production.gd', 'Source/PRODUCTION_BALANCE_REPORT.md'}
+    assert production_assets <= set(hashes), 'Missing original permanent production content/source'
     info = json.loads(z.read('BUILD_INFO.json'))
     version = re.search(r'config/version="([^"]+)"', z.read('Source/project.godot').decode()).group(1)
     assert info['version'] == version, 'Source/build version mismatch'

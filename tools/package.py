@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Permanent Time milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Permanent Production milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -140,6 +140,15 @@ shares the existing 60-second ceiling and four overtime triggers. Effective
 current/next values include both investment layers; the HUD starts at the
 actual duration. Permanent time survives reload/prestige; normal levels reset
 and New Game clears permanent progress while retaining preferences.
+Permanent Production reveals after Permanent Slice Value 1. Faster Starting
+Throws costs 2/4/8/16/32 seeds for a compounded 10% shorter interval per level.
+Additional Starting Tomatoes requires its second level and costs 3/6/12 seeds
+for +1/+2/+3 tomatoes in every ordinary launch. Normal Faster Throwing/Double
+Toss stay separate, retaining prerequisites. Both layers share the 0.55s floor
+and six-tomato launch ceiling. Current/next forecasts show saturation. Four
+revealed archive categories fit two native printed tab rows. Missed batches
+after a long frame are skipped, not queued into a catch-up burst. Production
+survives reload/prestige; New Game clears it while preserving preferences.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

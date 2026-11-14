@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.16.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.17.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -424,6 +424,49 @@ func run() -> void:
 	check(not game.session.running and game.session.record_cut(game.progress) == 0 and game.session.remaining == 0,"packaged exhausted time cannot revive or accept a late rewarded cut")
 	game.finish_round(); game.new_game()
 	check(game.progress.round_duration() == 10 and game.progress.prestige.overtime_multiplier() == 1 and game.progress.prestige.levels.is_empty(),"packaged New Game clears permanent time and restores the fresh ten-second round")
+	check(game.progress.launch_interval() == 4 and game.progress.launch_count() == 1 and not "faster_starting_throws" in game.progress.prestige.discovered,"packaged fresh production stays at one tomato every four seconds without revealing permanent nodes")
+	game.finish_round() # New Game starts a real round; archive remains guarded.
+	game.progress.complete_round(ceilf(threshold*pow(200,1.0/float(game.progress.prestige.config.exponent)))+1,1,1)
+	game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	game.purchase_permanent("permanent_slice_value"); game.purchase_permanent("starting_cash"); game.ui.archive("Permanent Production")
+	check(game.progress.prestige.validate().is_empty() and game.ui.content.find_child("ArchiveCategory_Permanent Production",true,false) != null and ResourceLoader.exists("res://assets/illustrations/prestige/faster_starting_throws.svg") and ResourceLoader.exists("res://assets/illustrations/prestige/additional_starting_tomatoes.svg"),"packaged fourth archive category loads real production definitions, budgets and both original plates")
+	game.purchase_permanent("faster_starting_throws")
+	check(game.progress.prestige.seeds == 195 and is_equal_approx(game.progress.launch_interval(),3.6) and not "additional_starting_tomatoes" in game.progress.prestige.discovered,"packaged first paid speed level cannot bypass the two-level successor gate")
+	game.purchase_permanent("faster_starting_throws"); game.purchase_permanent("additional_starting_tomatoes")
+	check(game.progress.launch_count() == 2 and is_equal_approx(game.progress.launch_interval(),3.24) and game.progress.prestige.seeds == 188 and game.progress.levels.is_empty(),"packaged real paid production changes launch helpers without granting normal levels")
+	var production_locked := true
+	for d: Dictionary in game.events.catalog.definitions: production_locked = production_locked and game.events.catalog.probability(d.id,game.progress.prestige) == 0
+	check(production_locked and game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"standard_red":1.0},"packaged permanent production grants no normal variety or event-gate bypass")
+	game.progress.money = 1000
+	check(not game.progress.purchase("double_toss"),"packaged permanent speed does not substitute for normal Double Toss prerequisites")
+	game.progress.purchase("faster_throwing"); game.progress.purchase("faster_throwing"); game.progress.purchase("double_toss"); game.ui.catalog("Harvest")
+	check(game.progress.launch_count() == 3 and is_equal_approx(game.progress.launch_interval(),2.6244) and "Tomatoes per launch: 3 → 4" in game.ui.content.find_child("CurrentProduction_double_toss",true,false).text,"packaged actual normal production composes with permanent levels and shows accurate current/next effects")
+	game.start_round(); game._physics_process(0)
+	check(game.tomatoes.get_child_count() == 3 and game.session.remaining == 10,"packaged real first automatic batch creates the three paid tomatoes without changing time")
+	for i in range(3):
+		fruit = game.tomatoes.get_child(i); fruit.set_physics_process(false); fruit.position = Vector3((i-1)*2,0,0); fruit.velocity = Vector2.ZERO
+	game.knife.track(Vector2(-4,0)); game.knife.track(Vector2(4,0)); game.process_blade()
+	check(game.session.cuts == 3 and game.session.tomatoes_sliced == 3 and game.session.earnings == 3.75,"packaged actual automatic batch slices into independent normally rewarded families")
+	var production_before: Dictionary = game.progress.snapshot(); game.purchase_permanent("additional_starting_tomatoes"); game.show_archive()
+	check(game.state == "playing" and game.progress.snapshot() == production_before,"packaged live production denies permanent spending and archive access")
+	game.finish_round()
+	check(game.store.load_into(restored) and restored.prestige.cycle_earnings == 3.75 and restored.prestige.paid.faster_starting_throws == [2,4] and restored.prestige.paid.additional_starting_tomatoes == [3],"packaged completed batch saves only earned income and actual seed receipts")
+	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(game.progress.levels.is_empty() and game.progress.launch_count() == 2 and is_equal_approx(game.progress.launch_interval(),3.24),"packaged prestige retains permanent production and clears ordinary cadence/count levels")
+	game.start_round(); game._physics_process(8); var production_count: int = game.tomatoes.get_child_count(); game._physics_process(.01)
+	check(production_count == 2 and game.tomatoes.get_child_count() == 2 and game.session.launch_clock > 0,"packaged long frame skips missed batches without accumulating catch-up debt")
+	game._physics_process(2)
+	check(game.state == "results" and game.tomatoes.get_child_count() == 0,"packaged production deadline cleans roots before any late launch")
+	game.show_archive()
+	for i in range(3): game.purchase_permanent("faster_starting_throws")
+	for i in range(2): game.purchase_permanent("additional_starting_tomatoes")
+	game.progress.money = 1e9
+	for i in range(20): game.progress.purchase("faster_throwing")
+	for i in range(5): game.progress.purchase("double_toss")
+	game.ui.archive("Permanent Production")
+	check(game.progress.launch_interval() == .55 and game.progress.launch_count() == 6 and "0.55s → 0.55s" in game.ui.content.find_child("PermanentEffect_faster_starting_throws",true,false).text and "6 → 6" in game.ui.content.find_child("PermanentEffect_additional_starting_tomatoes",true,false).text,"packaged maximum paid layers clamp to shared production limits with honest saturated previews")
+	game.progress.settings.reduced_motion = true; game.new_game()
+	check(game.progress.launch_interval() == 4 and game.progress.launch_count() == 1 and game.progress.prestige.levels.is_empty() and game.progress.settings.reduced_motion,"packaged New Game clears permanent production while preserving preferences")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

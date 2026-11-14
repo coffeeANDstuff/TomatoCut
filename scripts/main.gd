@@ -107,7 +107,10 @@ func _physics_process(delta: float) -> void:
 		countdown_cue = seconds
 		audio.play("paper")
 	if session.launch_clock <= 0:
-		session.launch_clock += progress.launch_interval()
+		# Keep the cadence phase, discard missed batches after a long frame.
+		# Otherwise negative clock debt can refill the field on successive ticks.
+		var interval := progress.launch_interval()
+		session.launch_clock = fmod(session.launch_clock,interval)+interval
 		for i in range(progress.launch_count()):
 			spawn_tomato()
 	var due := events.advance(delta,progress.prestige,MAX_TOMATOES-tomatoes.get_child_count(),EventSpawner.active_groups(self),event_rng.randf)

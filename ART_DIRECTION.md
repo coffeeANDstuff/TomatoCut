@@ -2,6 +2,13 @@
 
 Authority: GAME_DESIGN.md §§3, 6–7, 10, 14–15, 18–19, 22–23, 28.
 
+## Permanent Production archive (v0.17)
+Original engraved **wind-up throwing spoon** and **three-tomato launch basket** plates identify Faster Starting Throws and Additional Starting Tomatoes. Their editable SVG source is retained in `tools/build_prestige_art.py`; both accompany actual paid orders. Cream, green ink, muted sage, tomato red and antique gold preserve the archive palette. No new fruit or knife is counted.
+
+Four revealed archive branches use a three-column native printed grid with two visible rows. The bounded category area can scroll for future branches; undiscovered categories stay absent. Purchase scrolling moves below the actual tab height without crossing the reset footer. Category badges, clipped-title dwell, vines, persistent independent read state, scroll retention and Reduced Motion remain functional. Ordinary and permanent production labels show actual combined current/next intervals and batch counts, including shared-floor/ceiling saturation.
+
+Reviewed actual invitation, paid orders, four-category 16:9 archive, ordinary production composition, mouse-sliced automatic batch, results and post-prestige page (`118`–`124`); the layout also passes at 16:10. Native disabled/focus/selection controls remain the existing original printed family. Camera and audio assets stay unchanged. Human feel, illustration refinement, audible quality, native GPU and target-PC performance remain production work.
+
 ## Shared visual language
 Stylized tactile 3D culinary objects against a quiet warm kitchen. Vintage seed-catalog interfaces: cream paper, botanical green ink, tomato red accents, engraved linework, serif display typography and quiet sans-serif annotations. No emoji or mixed icon packs. Restrained gold denotes prestigious equipment and permanent seeds, never generic mobile-game gloss.
 

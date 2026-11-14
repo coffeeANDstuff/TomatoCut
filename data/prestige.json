@@ -407,10 +407,48 @@
       "effect_values": {
         "bonus_per_level": 0.2
       }
+    },
+    {
+      "id": "faster_starting_throws",
+      "name": "Faster Starting Throws",
+      "category": "Permanent Production",
+      "description": "The kitchen winds itself a little tighter. Every automatic launch arrives sooner, including this cycle; ordinary Faster Throwing remains separate.",
+      "effect": "10% shorter launch interval per level, compounded; shared 0.55s floor",
+      "base_cost": 2,
+      "growth": 2,
+      "max_level": 5,
+      "requires": {
+        "permanent_slice_value": 1
+      },
+      "illustration": "res://assets/illustrations/prestige/faster_starting_throws.svg",
+      "effect_values": {
+        "interval_multiplier": 0.9
+      }
+    },
+    {
+      "id": "additional_starting_tomatoes",
+      "name": "Additional Starting Tomatoes",
+      "category": "Permanent Production",
+      "description": "Extra places in every ordinary launch, including this cycle. Cultivated Double Toss adds separately up to the shared six-tomato limit; no variety is unlocked.",
+      "effect": "+1 tomato per automatic launch per level; shared maximum 6",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "faster_starting_throws": 2
+      },
+      "illustration": "res://assets/illustrations/prestige/additional_starting_tomatoes.svg",
+      "effect_values": {
+        "bonus_per_level": 1
+      }
     }
   ],
   "time_limits": {
     "starting_bonus": 12,
     "overtime_multiplier": 2
+  },
+  "production_limits": {
+    "minimum_multiplier": 0.5,
+    "starting_tomatoes": 3
   }
 }

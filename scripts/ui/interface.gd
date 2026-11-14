@@ -465,6 +465,11 @@ func upgrade_entry(d: Dictionary, count: int, list: VBoxContainer, category: Str
 	entry.add_child(effect)
 	if d.id == "extra_cuts":
 		entry.add_child(label("Currently %d rewarded cuts per tomato" % progress.max_cuts(),16,false,MUTED))
+	if d.id in ["faster_throwing","double_toss"]:
+		var next_level := mini(int(d.max_level),progress.level(d.id)+1)
+		var comparison := "Launch interval: %.2fs → %.2fs · floor %.2fs" % [progress.launch_interval(),progress.launch_interval(next_level),progress.effect_value("faster_throwing","minimum_interval")] if d.id == "faster_throwing" else "Tomatoes per launch: %d → %d · maximum %d" % [progress.launch_count(),progress.launch_count(next_level),Progression.MAX_LAUNCH_COUNT]
+		var current: Label = label(comparison,16,true); current.name = "CurrentProduction_"+d.id
+		current.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; entry.add_child(current)
 	if d.id in ["extra_seconds","overtime"]:
 		var next_level := mini(int(d.max_level),progress.level(d.id)+1)
 		var comparison: String

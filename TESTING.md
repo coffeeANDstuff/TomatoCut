@@ -2,6 +2,40 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Permanent Production — v0.17.0 (2026-11-14, America/Los_Angeles)
+
+Continued clean `8670579`, fetched matching remote main and passed **856/856** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Linux x86-64, user-owned Xorg `:98`, software OpenGL llvmpipe/Dummy audio. Test ledgers isolate under `user://tests/`. No cloud configuration publication.
+
+```sh
+./tools/cloud.sh ./tools/check.sh
+python tools/build_prestige_art.py
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/permanent_production_render.gd
+./tools/cloud.sh godot --headless --path . --script tools/simulate_permanent_production.gd
+./tools/cloud.sh godot --headless --path . --export-release 'Windows Desktop'
+./tools/cloud.sh godot --headless --path . --export-release 'Linux Test'
+# From /tmp, sequentially (the package suite shares its isolated fixture path):
+/workspace/TomatoCut/tools/cloud.sh godot --headless --audio-driver Dummy --main-pack /workspace/TomatoCut/exports/windows/TomatoCut.exe --script /workspace/TomatoCut/tests/package_smoke.gd
+/workspace/TomatoCut/tools/cloud.sh godot --headless --audio-driver Dummy --main-pack /workspace/TomatoCut/exports/linux/TomatoCut.x86_64 --script /workspace/TomatoCut/tests/package_smoke.gd
+# Matching Linux executable boot:
+./tools/cloud.sh exports/linux/TomatoCut.x86_64 --headless --quit-after 10 -- --save-path=user://tests/v017-linux-boot.json
+python -m py_compile tools/*.py
+bash -n tools/*.sh
+/tmp/tomatocut-actionlint/actionlint
+git diff --check
+```
+
+**914 logic checks pass, zero failures; 58 new.** Real paid speed/count gates and caps, actual receipts/seed conservation, separate ordinary prerequisites and no variety/event grants; compatible pre-production v5 ledgers, persistent independent read state, atomic orphan/receipt rejection; malformed/missing/nonfinite/fractional/budget-breaking/renamed-effect/predecessor/plate validation; 150 numeric preview combinations; cloned repeatable model/no fixture leakage/zero-hit earnings; real failed purchase/reset writes and unchanged prior disk ledger; actual immediate two-member batch and four batches before a ten-second deadline, no uncut income, actual independent family rewards and banking, live denial, prestige/New Game/preferences. Actual seeded automatic ordinary production and all five independently bought events coexist within nineteen roots. Maximum whole-wave reservations block Rainbow without drawing RNG beside the ordinary batch, then permit it on a later check after capacity clears. A partially fitting ordinary batch respects 24 roots. Long-frame skipping works at both intermediate and minimum-interval/six-tomato production. Existing fragment/drop/cache/cut/collision/critical/equipment/event tests remain green.
+
+**19 new rendered checks pass, zero failures.** Real preview/confirmed prestige, actual native seed purchases, hidden category/successor behavior, original plate/read dwell, four printed native categories without overlap at 16:10/16:9, purchase-space/scroll retention, independent unread sibling, normal prerequisites, effective composed catalog values, actual three-root automatic launch and mouse swipe earning exactly **$3.75/three unique families**, fixed camera, live denial, results/disk/historical receipts, another prestige, Reduced Motion/Effects, long-frame replay and confirmed New Game. Captures **118–124** were visually inspected. Native confirmations use production callbacks after real preview clicks, not automated OS-dialog input. All sixteen earlier rendered flows pass: original loop 13, Cherry 13, Roma 12, discovery 14, Critical Slice 15, equipment 16, modifications 18, Steak 10, prestige 19, Golden 17, Stampede 17, printed buttons 18, Giant 21, Rainbow 17, Jackpot 19 and Permanent Time 17.
+
+**Windows and Linux embedded packs: 154/154 checks each, zero failures; 16 new.** Invoked from `/tmp` using host Godot and the embedded resources, with tests excluded from the exported game. Both original production plates/real fourth category, paid helpers/gates/receipts, normal prerequisite/current-next composition, actual three-root launch and cuts, live denial, banked disk values, prestige, long-frame skipping/deadline, saturated floor/count comparisons and New Game/preferences pass. Matching Linux executable boot succeeds. This does not execute the Windows PE natively.
+
+Initial development harness corrections: a fragment-budget assertion used the wrong constant name; corrected to `MAX_PIECES`/`MAX_DROPS`. Replacing a domain test's funded ledger also needed its explicit preference fixture. First concurrent packed runs collided on the shared test path; final runs were sequential. The new packed fixture initially tried the archive while New Game's real round was active; explicitly completed that round before staging the next prestige. Gameplay guards remain intact. Final logs have no script/resource/runtime errors.
+
+**Model:** `PRODUCTION_BALANCE_REPORT.md` records 36 combinations, cloned real paid ledgers, seed 431, ten minutes, no in-sample purchases, Permanent Slice Value 1 controlled, fixture income/round excluded. Fresh 80% control/first speed **$121.25/$121.25**, speed 2 + tomatoes 1 **$228.75**, max permanent **$592.50**. Ordinary Faster Throwing 4 + Double Toss 1 control/max permanent **$302.50/$1,281.25**. All max ordinary profiles saturate at 0.55s/six and **$3,776.25**. Whole launch windows, misses, strike bandwidth and final incomplete rounds prevent continuous guaranteed returns. Spatial occupancy/events/human input/FPS are excluded; no old-price or human ROI claim follows.
+
+Python compilation, shell syntax, actionlint 1.7.7 and whitespace checks pass. Versions/build instructions/required original production source/art/report and documentation identify 0.17.0. Preflight `python tools/package.py` and `python tools/verify_package.py exports/TomatoCut-Full-v0.17.0.zip --extract-source /tmp/tomatocut-v017-preflight` pass safe paths, unique entries, CRC, complete payload hashes, required source/art, version/executable/source identity and portable script permissions (**416 payload files, 407 source files**). That independent extraction imports without the checkout cache and passes **914/914**, no errors. Preflight build metadata honestly says dirty=true. Final clean archive/GitHub delivery proofs follow in the delivery record. Native Windows/Forward+/audible quality/supported-PC 60 FPS and human balance remain unverified.
+
 ## Permanent Time — v0.16.0 (2026-11-14, America/Los_Angeles)
 
 Continued clean `c51cb9a`, fetched matching remote main and passed **804/804** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Linux x86-64. All ledgers isolate under `user://tests/`; production saves remain untouched. Retained user-owned Xorg `:98` supports software OpenGL/Dummy audio. No environment configuration publication was needed.

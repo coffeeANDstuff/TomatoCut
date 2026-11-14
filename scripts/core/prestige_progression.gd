@@ -52,6 +52,31 @@ func validate() -> PackedStringArray:
 		var key := "starting_bonus" if id == "starting_round_time" else "overtime_multiplier"
 		if limits is Dictionary and number(limits.get(key)) and number(coefficient) and number(d.get("max_level")):
 			if float(coefficient)*float(d.max_level)+(0 if id == "starting_round_time" else 1) > float(limits[key])+.000001: errors.append(id+": exceeds the permanent time budget")
+	var production: Variant = config.get("production_limits")
+	if not production is Dictionary:
+		errors.append("Missing permanent production limits")
+	else:
+		var minimum: Variant = production.get("minimum_multiplier")
+		var bonus: Variant = production.get("starting_tomatoes")
+		if not number(minimum) or float(minimum) <= 0 or float(minimum) > 1: errors.append("Invalid permanent throw multiplier limit")
+		if not number(bonus) or float(bonus) != floorf(float(bonus)) or float(bonus) < 1 or float(bonus) > 5: errors.append("Invalid permanent tomato bonus limit")
+	for id: String in ["faster_starting_throws","additional_starting_tomatoes"]:
+		var d := definition(id)
+		if d.is_empty(): errors.append("Missing permanent production investment: "+id); continue
+		if d.get("category") != "Permanent Production" or not d.get("illustration") is String or not ResourceLoader.exists(d.illustration): errors.append(id+": invalid permanent production presentation")
+		var predecessor := "permanent_slice_value" if id == "faster_starting_throws" else "faster_starting_throws"
+		if d.get("requires") is Dictionary and int(d.requires.get(predecessor,0)) < 1: errors.append(id+": requires its permanent predecessor")
+		var coefficients: Variant = d.get("effect_values")
+		var key := "interval_multiplier" if id == "faster_starting_throws" else "bonus_per_level"
+		var coefficient: Variant = coefficients.get(key) if coefficients is Dictionary else null
+		if not number(coefficient) or float(coefficient) <= 0:
+			errors.append(id+": missing positive production coefficient"); continue
+		if id == "faster_starting_throws":
+			if float(coefficient) >= 1: errors.append(id+": throw multiplier must improve cadence")
+			if production is Dictionary and number(production.get("minimum_multiplier")) and number(d.get("max_level")) and pow(float(coefficient),float(d.max_level)) < float(production.minimum_multiplier)-.000001: errors.append(id+": exceeds the permanent cadence budget")
+		else:
+			if float(coefficient) != floorf(float(coefficient)): errors.append(id+": tomato bonus must be integral")
+			if production is Dictionary and number(production.get("starting_tomatoes")) and number(d.get("max_level")) and float(coefficient)*float(d.max_level) > float(production.starting_tomatoes): errors.append(id+": exceeds the permanent tomato budget")
 	return errors
 
 func definition(id: String) -> Dictionary:
@@ -78,6 +103,16 @@ func overtime_multiplier(at_level: int = -1) -> float:
 	var d := definition("overtime_bonus")
 	var owned := level("overtime_bonus") if at_level < 0 else clampi(at_level,0,int(d.get("max_level",0)))
 	return clampf(1+float(d.get("effect_values",{}).get("bonus_per_level",0))*owned,1,_time_limit("overtime_multiplier",1))
+
+func throw_interval_multiplier(at_level: int = -1) -> float:
+	var d := definition("faster_starting_throws")
+	var owned := clampi(level("faster_starting_throws") if at_level < 0 else at_level,0,int(d.get("max_level",0)))
+	return clampf(pow(float(d.get("effect_values",{}).get("interval_multiplier",1)),owned),float(config.get("production_limits",{}).get("minimum_multiplier",1)),1)
+
+func starting_tomato_bonus(at_level: int = -1) -> int:
+	var d := definition("additional_starting_tomatoes")
+	var owned := clampi(level("additional_starting_tomatoes") if at_level < 0 else at_level,0,int(d.get("max_level",0)))
+	return clampi(int(float(d.get("effect_values",{}).get("bonus_per_level",0))*owned),0,int(config.get("production_limits",{}).get("starting_tomatoes",0)))
 
 func price(id: String, at_level: int = -1) -> int:
 	var d := definition(id)

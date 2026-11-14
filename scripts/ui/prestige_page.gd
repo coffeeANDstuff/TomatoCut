@@ -30,12 +30,19 @@ static func build(ui) -> void:
 	var next: Label = ui.label("Next seed at "+Progression.cash(permanent.next_threshold())+"\nCompleted-round earnings only.\nPurchases do not reduce this total.",15,false,ui.MUTED)
 	next.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	ui.place(next,Vector2(48,552),Vector2(270,100))
-	var tabs := HBoxContainer.new(); tabs.add_theme_constant_override("separation",12)
-	ui.place(tabs,Vector2(350,195),Vector2(870,48))
+	# Three readable columns, at most two visible rows. Future categories scroll
+	# inside this bounded area instead of pushing purchases into the footer.
+	var tab_height := 48 if categories.size() <= 3 else 108
+	var tab_scroll := ScrollContainer.new(); tab_scroll.name = "ArchiveCategories"
+	tab_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	ui.place(tab_scroll,Vector2(350,195),Vector2(870,tab_height))
+	var tabs := GridContainer.new(); tabs.columns = 3; tabs.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tabs.add_theme_constant_override("h_separation",12); tabs.add_theme_constant_override("v_separation",12)
+	tab_scroll.add_child(tabs)
 	for name: String in categories:
 		var selected: String = name
 		var tab: Button = ui.button(name,func(): ui.archive(selected))
-		tab.name = "ArchiveCategory_"+name; tab.custom_minimum_size.x = 230
+		tab.name = "ArchiveCategory_"+name; tab.custom_minimum_size = Vector2(270,48); tab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		if name == category: tab.theme_type_variation = "PrintSelected"
 		tabs.add_child(tab)
 		var badge := DiscoveryBadge.new(); badge.visible = not permanent.unseen(name).is_empty(); tab.add_child(badge); ui.category_badges[name] = badge
@@ -43,7 +50,7 @@ static func build(ui) -> void:
 	scroll.name = "ArchiveScroll"
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui.content.add_child(scroll)
-	scroll.offset_left = 350; scroll.offset_top = 263; scroll.offset_right = -55; scroll.offset_bottom = -195
+	scroll.offset_left = 350; scroll.offset_top = 195+tab_height+20; scroll.offset_right = -55; scroll.offset_bottom = -195
 	scroll.set_meta("category",category)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	var list := VBoxContainer.new()
@@ -71,8 +78,10 @@ static func build(ui) -> void:
 		elif d.id == "starting_cash": comparison = "Next starting balance: %s → %s" % [Progression.cash(permanent.effect(d.id)),Progression.cash(float(d.effect_values.bonus_per_level)*next_level)]
 		elif d.id == "starting_round_time": comparison = "Round start: %.0fs → %.0fs · ceiling %.0fs" % [p.round_duration(),minf(p.round_ceiling(),p.round_duration()-permanent.starting_time_bonus()+permanent.starting_time_bonus(next_level)),p.round_ceiling()]
 		elif d.id == "overtime_bonus": comparison = "Overtime multiplier: ×%.2f → ×%.2f · normal Overtime required" % [permanent.overtime_multiplier(),permanent.overtime_multiplier(next_level)]
+		elif d.id == "faster_starting_throws": comparison = "Launch interval: %.2fs → %.2fs · floor %.2fs" % [p.launch_interval(),p.launch_interval(-1,next_level),p.effect_value("faster_throwing","minimum_interval")]
+		elif d.id == "additional_starting_tomatoes": comparison = "Tomatoes per launch: %d → %d · maximum %d" % [p.launch_count(),p.launch_count(-1,next_level),Progression.MAX_LAUNCH_COUNT]
 		else: comparison = EventCatalog.new().summary(d.id,permanent)
-		var effects: Label = ui.label(comparison,18,true); effects.name = "PermanentEffect_"+d.id; entry.add_child(effects)
+		var effects: Label = ui.label(comparison,18,true); effects.name = "PermanentEffect_"+d.id; effects.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; entry.add_child(effects)
 		var id: String = d.id
 		var action: Button = ui.button("Maximum cultivated" if level >= int(d.max_level) else "Cultivate  ·  %d %s   /   Level %d of %d" % [permanent.price(id),"seed" if permanent.price(id) == 1 else "seeds",level,int(d.max_level)],func(): ui.permanent_purchase_requested.emit(id),false,"PrintCultivate")
 		action.name = "PurchasePermanent_"+id
