@@ -1,0 +1,20 @@
+{
+  "threshold": 100000000,
+  "exponent": 0.45,
+  "upgrades": [
+    {
+      "id": "permanent_slice_value", "name": "Permanent Slice Value", "category": "Permanent Wealth",
+      "description": "Good seeds remember a productive kitchen. Every future cut benefits, including this cycle.",
+      "effect": "+25% permanent cut value per level",
+      "base_cost": 1, "growth": 2, "max_level": 5, "requires": {},
+      "effect_values": {"bonus_per_level": 0.25}
+    },
+    {
+      "id": "starting_cash", "name": "Starting Cash", "category": "Permanent Wealth",
+      "description": "A small envelope for the next beginning. Granted after your next prestige, never counted as harvest earnings.",
+      "effect": "+$5 starting cash per level on future prestige resets",
+      "base_cost": 2, "growth": 2, "max_level": 5, "requires": {"permanent_slice_value": 1},
+      "effect_values": {"bonus_per_level": 5}
+    }
+  ]
+}

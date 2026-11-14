@@ -15,6 +15,7 @@ var state := "home"
 var countdown_cue := 4
 var save_path := "user://progress.json"
 var ability_rng := RandomNumberGenerator.new()
+var prestige_token := ""
 
 func _ready() -> void:
 	ability_rng.randomize()
@@ -57,6 +58,11 @@ func _ready() -> void:
 	ui.settings_changed.connect(settings_changed)
 	ui.catalog_viewed.connect(save_progress)
 	ui.discovery_presented.connect(func(): audio.play("discovery"))
+	ui.archive_requested.connect(show_archive)
+	ui.prestige_requested.connect(request_prestige)
+	ui.prestige_confirmed.connect(confirm_prestige)
+	ui.prestige_canceled.connect(func(): prestige_token = "")
+	ui.permanent_purchase_requested.connect(purchase_permanent)
 	apply_settings()
 	sync_equipment()
 	ui.home(store.has_save,store.warning)
@@ -276,7 +282,9 @@ func purchase(id: String) -> void:
 		ui.catalog()
 
 func new_game() -> void:
+	var preferences := progress.settings.duplicate(true)
 	progress = Progression.new()
+	progress.settings = preferences
 	ui.progress = progress
 	ui.selected_knife = ""
 	ui.selected_modification = ""
@@ -285,6 +293,53 @@ func new_game() -> void:
 	save_progress()
 	apply_settings()
 	start_round()
+
+func show_archive() -> void:
+	if state == "playing": return
+	state = "archive"
+	clear_field()
+	kitchen.show_hero(false)
+	ui.archive()
+	audio.play("paper")
+
+func request_prestige() -> void:
+	if state != "archive": return
+	var preview := progress.prestige_preview()
+	if preview.reward > 0:
+		prestige_token = preview.token
+		ui.confirm_prestige(preview)
+
+func confirm_prestige(token: String) -> void:
+	if state != "archive" or token.is_empty() or token != prestige_token: return
+	prestige_token = ""
+	var candidate := Progression.new()
+	if not candidate.restore(progress.snapshot()) or not candidate.claim_prestige(token):
+		ui.show_notice("The ledger changed. Review a fresh prestige preview.")
+		return
+	if not commit_permanent(candidate): return
+	ui.selected_knife = ""; ui.selected_modification = ""; ui.modification_target = ""
+	ui.selected_category = "Time"
+	ui.archive()
+	audio.play("prestige")
+
+func purchase_permanent(id: String) -> void:
+	if state != "archive": return
+	var candidate := Progression.new()
+	if not candidate.restore(progress.snapshot()) or not candidate.prestige.purchase(id): return
+	if not commit_permanent(candidate): return
+	ui.archive()
+	audio.play("purchase")
+
+func commit_permanent(candidate: Progression) -> bool:
+	# Permanent currency/reset becomes active only after atomic save replacement.
+	if not store.write(candidate):
+		ui.show_notice(store.warning)
+		return false
+	progress = candidate
+	ui.progress = progress
+	audio.progress = progress
+	sync_equipment()
+	return true
 
 func settings_changed() -> void:
 	apply_settings()

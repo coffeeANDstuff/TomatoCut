@@ -79,7 +79,7 @@ func run() -> void:
 	await capture("52-honing-kit-reduced-motion")
 	await click(game.ui.content.find_child("Apply_honing_kit",true,false))
 	var restored := Progression.new()
-	check(game.store.load_into(restored) and restored.snapshot().version == 4 and restored.owned_modifications == ["honing_kit"] and restored.applied_modifications == {"honing_kit":"plastic_picnic"} and restored.settings.reduced_motion,"actual GUI purchases, assignment and preferences reload from the v4 ledger")
+	check(game.store.load_into(restored) and restored.snapshot().version == 5 and restored.owned_modifications == ["honing_kit"] and restored.applied_modifications == {"honing_kit":"plastic_picnic"} and restored.settings.reduced_motion,"actual GUI purchases, assignment and preferences reload from the v5 ledger")
 	game.show_home(); await frames(); await click(find_button(game.ui.content,"New game"))
 	check(game.ui.confirmation.visible and "modifications" in game.ui.confirmation.dialog_text,"new game explicitly confirms replacing purchased modifications")
 	game.ui.confirmation.get_ok_button().pressed.emit(); await frames()

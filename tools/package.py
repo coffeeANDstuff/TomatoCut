@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Equipment modifications milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Prestige milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -76,6 +76,12 @@ The stone icon opens Knife Modifications. The $30 Honing Kit adds +0.50
 sharpness to one owned knife. Purchase first, then Apply separately. Move or
 remove preparation freely between rounds; the kit stays owned.
 All rotating product previews become still with Reduced Motion.
+The envelope icon opens the Rare-seed Archive. Completed-round cycle earnings
+qualify for prestige; first seed threshold is provisionally $100M. Preview and
+confirm before normal investments reset. Seeds, permanent upgrades, discovery,
+lifetime and settings survive. Cultivate Permanent Slice Value for an immediate
+25% cut-value bonus per level. Starting Cash reveals after its first level and
+grants $5 per level on future prestige resets. New Game clears permanence while retaining preferences.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

@@ -16,6 +16,11 @@ signal new_game_requested
 signal settings_changed
 signal catalog_viewed
 signal discovery_presented
+signal archive_requested
+signal prestige_requested
+signal prestige_confirmed(token: String)
+signal prestige_canceled
+signal permanent_purchase_requested(id: String)
 
 const INK := Color("213d35")
 const CREAM := Color("f4ead5")
@@ -36,6 +41,8 @@ var selected_modification := ""
 var modification_target := ""
 var save_exists := false
 var confirmation: ConfirmationDialog
+var prestige_confirmation: ConfirmationDialog
+var pending_prestige := ""
 var moving: Array[Dictionary] = []
 var catalog_entries: Dictionary = {}
 var category_badges: Dictionary = {}
@@ -67,10 +74,21 @@ func _ready() -> void:
 	root.add_child(tips)
 	confirmation = ConfirmationDialog.new()
 	confirmation.title = "Open a fresh ledger?"
-	confirmation.dialog_text = "This replaces your money, upgrades, knives and modifications.\nYour previous ledger will be kept as a backup."
+	confirmation.dialog_text = "This replaces your money, upgrades, knives and modifications.\nTomato Seeds and permanent upgrades are also cleared.\nPreferences stay; your previous ledger is kept as a backup."
 	confirmation.ok_button_text = "Start new game"
 	confirmation.confirmed.connect(func(): new_game_requested.emit())
 	root.add_child(confirmation)
+	prestige_confirmation = ConfirmationDialog.new()
+	prestige_confirmation.title = "Begin another season?"
+	prestige_confirmation.ok_button_text = "Prestige and collect seeds"
+	prestige_confirmation.confirmed.connect(func():
+		var token := pending_prestige
+		pending_prestige = ""
+		prestige_confirmed.emit(token))
+	prestige_confirmation.canceled.connect(func():
+		pending_prestige = ""
+		prestige_canceled.emit())
+	root.add_child(prestige_confirmation)
 
 func style(fill: Color, border: Color = Color.TRANSPARENT) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
@@ -81,6 +99,9 @@ func style(fill: Color, border: Color = Color.TRANSPARENT) -> StyleBoxFlat:
 	return s
 
 func clear(next: String) -> void:
+	if is_instance_valid(prestige_confirmation): prestige_confirmation.hide()
+	if not pending_prestige.is_empty(): prestige_canceled.emit()
+	pending_prestige = ""
 	screen = next
 	catalog_entries.clear()
 	category_badges.clear()
@@ -138,15 +159,16 @@ func icon(symbol: String, title: String, action: Callable) -> InkButton:
 	var b := InkButton.new()
 	b.symbol = symbol
 	b.has_discovery = symbol == "sprout" and not progress.unseen().is_empty()
+	if symbol == "archive": b.has_discovery = not progress.prestige.unseen().is_empty()
 	b.pressed.connect(action)
 	tips.bind(b,title)
 	return b
 
-func header(title: String, subtitle: String) -> void:
+func header(title: String, subtitle: String, currency: String = "") -> void:
 	place(label("T / C     •     THE CULINARY INSTITUTION",14),Vector2(48,24),Vector2(600,28))
 	place(label(title,46,true),Vector2(48,68),Vector2(800,64))
 	place(label(subtitle,16,false,MUTED),Vector2(50,135),Vector2(900,28))
-	var balance := label(Progression.cash(progress.money),26,true)
+	var balance := label(Progression.cash(progress.money) if currency.is_empty() else currency,26,true)
 	balance.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	balance.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	content.add_child(balance)
@@ -157,7 +179,7 @@ func header(title: String, subtitle: String) -> void:
 	var row := HBoxContainer.new()
 	row.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
 	content.add_child(row)
-	row.offset_left = -286
+	row.offset_left = -328
 	row.offset_top = -74
 	row.offset_right = -48
 	row.offset_bottom = -26
@@ -165,6 +187,7 @@ func header(title: String, subtitle: String) -> void:
 	row.add_child(icon("home","Home",func(): home_requested.emit()))
 	row.add_child(icon("sprout","Seed catalog",func(): catalog_requested.emit()))
 	row.add_child(icon("knife","Equipment catalog",func(): equipment_requested.emit()))
+	row.add_child(icon("archive","Rare-seed archive",func(): archive_requested.emit()))
 	row.add_child(icon("gear","Settings",func(): settings_requested.emit()))
 
 func home(valid_save: bool, warning: String = "") -> void:
@@ -193,6 +216,7 @@ func home(valid_save: bool, warning: String = "") -> void:
 	row.add_theme_constant_override("separation",12)
 	row.add_child(icon("gear","Settings",func(): settings_requested.emit()))
 	row.add_child(icon("knife","Equipment catalog",func(): equipment_requested.emit()))
+	row.add_child(icon("archive","Rare-seed archive",func(): archive_requested.emit()))
 	if valid_save:
 		row.add_child(button("New game",func(): confirmation.popup_centered()))
 	place(label("BALANCE   " + Progression.cash(progress.money)+"\nEQUIPPED   "+progress.equipment.definition(progress.equipped_knife).name,14,false,MUTED),Vector2(34,493),Vector2(355,52),panel)
@@ -337,7 +361,8 @@ func results(session: RoundSession) -> void:
 		stats.add_child(label(item[0],18,false,MUTED))
 		stats.add_child(label(item[1],20,true))
 	place(button("Play again",func(): play_requested.emit(),true),Vector2(40,478),Vector2(540,52),panel)
-	place(button("Visit the seed catalog",func(): catalog_requested.emit()),Vector2(40,546),Vector2(410,48),panel)
+	place(button("Visit the seed catalog",func(): catalog_requested.emit()),Vector2(40,546),Vector2(350,48),panel)
+	place(icon("archive","Rare-seed archive",func(): archive_requested.emit()),Vector2(412,546),Vector2(48,48),panel)
 	place(icon("knife","Equipment catalog",func(): equipment_requested.emit()),Vector2(472,546),Vector2(48,48),panel)
 	place(icon("home","Home",func(): home_requested.emit()),Vector2(532,546),Vector2(48,48),panel)
 
@@ -520,7 +545,8 @@ func render_varieties(list: VBoxContainer) -> void:
 				upgrade_entry(d,number,list,"Cultivation")
 
 func watch_discovery(id: String, title: Control, vine: CatalogVine, artwork: Control) -> void:
-	if id in catalog_entries or id in progress.viewed:
+	var read: Array = progress.prestige.viewed if screen == "archive" else progress.viewed
+	if id in catalog_entries or id in read:
 		return
 	catalog_entries[id] = {"title":title,"vine":vine,"artwork":artwork,"dwell":0.0,"presented":false}
 	vine.growth = 0
@@ -529,8 +555,9 @@ func watch_discovery(id: String, title: Control, vine: CatalogVine, artwork: Con
 		artwork.modulate.a = 0
 
 func update_discoveries(delta: float) -> void:
-	if screen != "catalog" or catalog_entries.is_empty(): return
-	var scroll := content.get_node("CatalogScroll") as ScrollContainer
+	if not screen in ["catalog","archive"] or catalog_entries.is_empty() or confirmation.visible or prestige_confirmation.visible: return
+	var archive_page := screen == "archive"
+	var scroll := content.get_node("ArchiveScroll" if archive_page else "CatalogScroll") as ScrollContainer
 	var bounds := scroll.get_global_rect().intersection(root.get_global_rect())
 	var exposed: Array[String] = []
 	var presented := false
@@ -558,14 +585,26 @@ func update_discoveries(delta: float) -> void:
 	if presented: discovery_presented.emit() # One quiet cue per visible batch.
 	if exposed.is_empty(): return
 	for id: String in exposed: catalog_entries.erase(id)
-	if progress.mark_viewed(exposed):
+	var changed := progress.prestige.mark_viewed(exposed) if archive_page else progress.mark_viewed(exposed)
+	if changed:
 		for category: String in category_badges:
-			category_badges[category].visible = not progress.unseen(category).is_empty()
+			category_badges[category].visible = not (progress.prestige.unseen(category) if archive_page else progress.unseen(category)).is_empty()
 		for child: Node in content.find_children("*","Button",true,false):
 			if child is InkButton and child.symbol == "sprout":
 				child.has_discovery = not progress.unseen().is_empty()
 				child.queue_redraw()
+			if child is InkButton and child.symbol == "archive":
+				child.has_discovery = not progress.prestige.unseen().is_empty()
+				child.queue_redraw()
 		catalog_viewed.emit()
+
+func archive() -> void:
+	PrestigePage.build(self)
+
+func confirm_prestige(preview: Dictionary) -> void:
+	pending_prestige = preview.token
+	prestige_confirmation.dialog_text = ("Collect %d Tomato %s and begin cycle %d.\n\n" % [preview.reward,"Seed" if int(preview.reward) == 1 else "Seeds",int(preview.cycle)+2])+"Resets: money, normal upgrades, tomato cultivation, discoveries,\nknives and modifications.\n\nKeeps: Tomato Seeds, permanent upgrades and their discoveries,\nlifetime statistics and settings.\n\n"+("Your new starting balance will be "+Progression.cash(preview.starting_cash)+".\nYour current cycle earnings are consumed once.")
+	prestige_confirmation.popup_centered()
 
 func settings() -> void:
 	clear("settings")

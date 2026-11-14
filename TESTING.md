@@ -2,6 +2,35 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Prestige milestone — v0.9.0 (2026-11-13, America/Los_Angeles)
+
+Continued clean `93eae2d`, confirmed matching remote main and verified **399/399** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Blender assets retained, Linux x86-64. All ledgers are isolated under `user://tests/`; production saves are untouched.
+
+```sh
+./tools/cloud.sh ./tools/check.sh
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/prestige_render.gd
+./tools/cloud.sh godot --headless --path . --script tools/simulate_prestige.gd
+# Also ran all eight existing rendered flows in the same display mode.
+```
+
+**477 headless checks pass, zero failures** (**78 new**). Coverage: completed-round versus unbanked/staged/starting income; inclusive/concave/next-currency-boundary formula; pure preview and full-state staleness; issued confirmation requirement, cancellation/navigation and duplicate denial; complete normal reset and lifetime/settings/permanent preservation; both real permanent purchases, price limits, no free levels and future starting cash; valid JSON v5 and v1–v4 migration; malformed identities/currency/counters/prerequisites/discovery and atomic rejection; corrupt/missing-data foundation; actual failed reset/purchase save paths preserving active state; large totals and future threshold tuning; model/page/real equipment synchronization; actual $1.25 first cut and premium critical/recut values with unchanged damage/chance/family budgets; New Game clearing progress and retaining preferences.
+
+**130 rendered checks pass, zero failures:** original loop 13, Cherry 13, Roma 12, discovery 14, Critical Slice 15, equipment 16, modifications 18, Steak 10, prestige **19**. Actual GUI clicks/mouse motion exercise navigation, permanent purchases/reveals, paid rewards, second-cycle starting cash and preference retention. Native confirmation/cancel controls use their production button callbacks after the real preview click; no OS-dialog mouse automation is claimed. The native New Game dialog separately confirms clearing seeds/upgrades. All earlier flows pass after adding envelope navigation; reset-related flows were rerun after fixing preference retention.
+
+Inspected seven captures `58`–`64`: fresh/eligible/completed archive, real permanent branch, 16:9, actual permanent cut and second reset. Original SVG envelope/seal and icon match the existing paper/ink/gold style. Scroll/action rectangles fit both aspects. Discovery uses clipped-title dwell and shared vines/fades; permanent read state survives reset. Modal dialogs pause acknowledgement. No camera movement was introduced.
+
+Two initial prestige comparisons failed because loaded lifetime counts remained JSON floats while live counts were integers. Restore now normalizes known lifetime counters/earnings before hashing; exact round-trip and saved-candidate comparisons pass. New Game's old preference reset was corrected and covered in headless, rendered and packed games. Historical seed validation was decoupled from current formula/prices: a 100× threshold retune and changed future prices preserve already-paid levels and currency; malformed price receipts are rejected. Final runs show no script/resource/runtime errors; the known software-driver VSync warning remains.
+
+`tools/build_prestige_art.py` and audio generation completed; existing Blender/GLB and earlier WAV bytes were retained. Static checks include Python compilation, shell syntax, `git diff --check`, and actionlint 1.7.7. PRESTIGE_BALANCE_REPORT.md records exact fixed-seed results: 80%-accuracy eligibility 74.0m, 100% 45.5m, 55% not within 90m. This is a model with substantial spread, not human balance. No prior prices changed.
+
+### Prestige export and delivery evidence
+
+Both Windows Desktop and Linux Test export with retained official SHA-512-verified 4.6.3 templates. From `/tmp`, the host editor runs `tests/package_smoke.gd` against each binary's `--main-pack`: **48/48 pass per target**. Added gates load actual prestige JSON/envelope/cue, request/confirm/reset, deny duplicates, restore the complete ledger, buy real permanent investments, slice for the permanent reward, bank actual earnings, grant future starting cash and confirm fresh-game preference retention. Matching Linux binary boots headlessly without errors. The Windows PE is not executed natively by these checks.
+
+The full preflight archive passes safe/unique paths, CRC, complete SHA-256 payload manifest, required art/data/tests/report, portable script modes and source/build/version identity (**238 payload files**). Its fresh extracted source imports without the checkout cache and passes **477/477**. Preflight metadata honestly records its uncommitted state. Final clean-source archive/public delivery evidence will be recorded here without moving the release tag.
+
+Native Windows, Forward+ GPU rendering, audible quality, supported-PC 60 FPS and human prestige timing remain **unverified**. All five prestige events and broader permanent branches remain unimplemented, with no placeholder unlocks or event occurrences.
+
 ## Preparation milestone — v0.8.0 (2026-11-13, America/Los_Angeles)
 
 Continued clean `92813db`, confirmed matching remote main, and passed **324/324** baseline checks. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64. Tests use `user://tests/`; production saves are untouched.

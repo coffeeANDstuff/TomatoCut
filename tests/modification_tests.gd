@@ -28,7 +28,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	check.call(not safety.harvest.distribution(safety.levels,safety.strength()).has("roma"), "removing preparation re-evaluates harvest safety without persisting a spawn selection")
 	p.apply_modification("honing_kit","plastic_picnic")
 	var restored := Progression.new()
-	check.call(restored.restore(JSON.parse_string(JSON.stringify(p.snapshot()))) and restored.applied_modifications == p.applied_modifications and restored.strength() == 1.5, "v4 JSON persists the kit's ownership and actual target")
+	check.call(restored.restore(JSON.parse_string(JSON.stringify(p.snapshot()))) and restored.applied_modifications == p.applied_modifications and restored.strength() == 1.5, "v5 JSON persists the kit's ownership and actual target")
 	var legacy := p.snapshot(); legacy.version = 3; legacy.equipment.erase("modifications")
 	check.call(restored.restore(JSON.parse_string(JSON.stringify(legacy))) and restored.owned_knives == p.owned_knives and restored.equipped_knife == "plastic_picnic" and restored.owned_modifications.is_empty() and restored.strength() == 1, "v3 JSON migrates owned/equipped knives without granting a free kit")
 	legacy.equipment.modifications = {"owned":["honing_kit"],"applied":{"honing_kit":"plastic_picnic"}}
@@ -37,14 +37,14 @@ static func run(tree: SceneTree, check: Callable) -> void:
 		legacy.version = version; legacy.erase("equipment")
 		if version == 1: legacy.lifetime.erase("tomatoes")
 		else: legacy.lifetime.tomatoes = 0
-		check.call(restored.restore(JSON.parse_string(JSON.stringify(legacy))) and restored.owned_knives == ["rusty_butter"] and restored.owned_modifications.is_empty() and restored.snapshot().version == 4, "legacy v%d migrates all equipment defaults into v4" % version)
+		check.call(restored.restore(JSON.parse_string(JSON.stringify(legacy))) and restored.owned_knives == ["rusty_butter"] and restored.owned_modifications.is_empty() and restored.snapshot().version == 5, "legacy v%d migrates all equipment defaults into v5" % version)
 	restored.restore(p.snapshot())
 	var before := restored.snapshot()
 	for invalid: Variant in [null,{}, {"owned":[],"applied":{"honing_kit":"plastic_picnic"}}, {"owned":["missing"],"applied":{}}, {"owned":["honing_kit","honing_kit"],"applied":{}}, {"owned":[1],"applied":{}}, {"owned":["honing_kit"],"applied":{"honing_kit":"missing"}}, {"owned":["honing_kit"],"applied":{"honing_kit":1}}, {"owned":["honing_kit"],"applied":[]}, {"owned":"honing_kit","applied":{}}]:
 		var data := p.snapshot(); data.money = 999; data.equipment.modifications = invalid
-		check.call(not restored.restore(data) and restored.snapshot() == before, "malformed v4 preparation rejected before any progress mutation: "+str(invalid))
+		check.call(not restored.restore(data) and restored.snapshot() == before, "malformed current preparation rejected before any progress mutation: "+str(invalid))
 	var missing := p.snapshot(); missing.equipment.erase("modifications")
-	check.call(not restored.restore(missing) and restored.snapshot() == before, "v4 inventory requires its preparation payload")
+	check.call(not restored.restore(missing) and restored.snapshot() == before, "current inventory requires its preparation payload")
 	var unowned := p.snapshot(); unowned.equipment.owned = ["rusty_butter"]; unowned.equipment.equipped = "rusty_butter"
 	check.call(not restored.restore(unowned), "saved kit cannot be applied to an unowned knife")
 	# A second valid definition is a validation fixture, not shipped content.

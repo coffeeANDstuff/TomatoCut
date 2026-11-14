@@ -1,6 +1,47 @@
 # Progress
 
-## Current session — v0.8 (2026-11-13, America/Los_Angeles)
+## Current session — v0.9 (2026-11-13, America/Los_Angeles)
+
+Continued clean main at **93eae2d**, confirmed matching remote source and verified the **399/399** baseline. Highest-priority incomplete milestone was Phase 5's first complete prestige transaction. All working normal varieties, equipment, preparation, abilities, harvest, discovery and original art were retained.
+
+### Completed
+- **TESTED** — Authored prestige formula: provisional **$100M** threshold, exponent **0.45**, qualifying completed-round cycle earnings. Spending does not remove qualification, while unfinished rounds, manually staged balances and starting cash cannot add it. Each ledger has a persistent identity and cycle counter; seed currency conserves total earned minus real permanent purchases.
+- **TESTED** — Actual rare-seed archive with original engraved envelope/seal SVG and line icon; current cycle income, seed quote, next boundary and explicit reset/preserve consequences. Native confirmation is required through an issued full-state quote. Cancellation/navigation invalidate it; changed/stale/duplicate/unissued claims cannot reset the run or duplicate seeds.
+- **TESTED** — Save-before-adopt transaction: clone/validate/reset or purchase a candidate, atomically write its full ledger, then update all active references and equipment. Failed writes retain the active money, equipment, qualifying earnings, seeds and reward effects. Prestige clears normal money/upgrades/variety investments/discovery/knives/modifications while preserving lifetime statistics, preferences and permanent state.
+- **TESTED** — Real **Permanent Slice Value** branch: first cost 1 seed, +25% ordinary cut value per level immediately, growth 2, five levels. Its first level reveals **Starting Cash**, first cost 2 seeds, +$5 per level on future resets, growth 2, five levels. Starting cash grants neither qualifying income nor normal upgrade/unlock levels. Actual post-reset whole-fruit, critical premium and recut rewards use the same production pipeline and family limits.
+- **TESTED** — Permanent reveal/read persistence reuses clipped-title dwell, botanical vine/art/title fades, quiet discovery cue and unread envelope dots. Discovery updates pause behind confirmation dialogs; Reduced Motion still shows a stable complete branch. No empty permanent categories or event placeholders are exposed.
+- **TESTED** — Save schema **5** validates lineage/cycles, finite income, seed budgets, prerequisite levels, discovery and read-state types before mutation. Existing v1–v4 progress migrates its lifetime completed-round earnings into its single pre-prestige cycle, preserving supported equipment without free seeds/levels. Lifetime counters restore to canonical integer/float types. Historical unit-price receipts conserve total seeds minus actual paid prices. Threshold and price tuning cannot retroactively invalidate earned currency or owned permanent levels.
+- **TESTED** — Confirmed New Game clears normal/permanent progress and lifetime statistics, creates a new ledger identity and retains preferences. Its dialog now explicitly describes clearing seeds/permanent investments. Native gameplay settings no longer unexpectedly revert during a fresh start.
+- **TESTED** — **477/477** headless checks (**78 new**), including real failed-save paths, actual clone/save/adopt, issued/stale/duplicate tokens, all old-schema migrations, malformed/corrupt state, threshold/rounding/large-counter and retuning cases, permanent limits/spending, native-page integration, real normal/critical/recut rewards, confirmation cancellation/navigation, reset coverage and preferences.
+- **TESTED** — **130 rendered checks** across all nine flows (111 existing + 19 prestige), zero failures. Real mouse input covers archive entry, seed purchases, actual permanent cut payout, normal reset and second-cycle starting cash. Native confirmation/cancel buttons use their production callbacks, not OS-dialog click automation. Seven captures `58`–`64` include fresh/eligible/completed archive, permanent branch, 16:9, actual reward and second reset; actual pages were inspected.
+- **TESTED** — Original short successful-prestige WAV loads/dispatches through the bounded shared audio pool. Both Windows/Linux exports pass **48 embedded-pack checks** each, including the actual archive/art/cue, issued confirmation, durable seed ledger, reset, two investments, real payout, future cash and fresh-game preference retention. Matching Linux binary boots headlessly. This is not native Windows execution or audible review.
+- **TESTED** — New `PRESTIGE_BALANCE_REPORT.md` runs the production 90-minute model: first eligibility at **74.0 min** for 80% accuracy, **45.5 min** at 100%, and **not reached** at 55%. The first threshold is provisional and human timing is unverified. A legitimate staged claim/purchase changes the production round's first cut from $1 to $1.25. Older prices and first-cycle model results are preserved.
+- **TESTED** — Full preflight package passes safe paths, CRC, complete SHA-256 payload coverage, required art/data/tests/report, portable script modes and source/build/version identity (**238 payload files**). Fresh extracted source imports without the checkout cache and passes **477/477**.
+- **IN PROGRESS** — Final clean committed-source archive and GitHub v0.9.0 release delivery. Evidence will be recorded without moving the immutable tag.
+
+### Remaining and limitations
+- **IN PROGRESS** — Phase 5: the core prestige/first permanent wealth branch is functional; broader permanent production/cutting/time/harvest/wealth and **all five independently gated automatic events** remain. No event can currently occur.
+- **NOT STARTED** — Remaining 22 normal varieties, 22 knives, other normal abilities, mastery/achievements, additional environments/cosmetics/music and full production content/polish remain in the master roadmap.
+- **IN PROGRESS** — Human novice pacing, prestige timing/repeat-cycle benefit, equipment value, durable-fragment feel and final art. The model does not buy equipment or permanent upgrades, perform resets, or model missing content/events/spatial human input.
+- **BLOCKED** — Native Windows execution, Forward+ GPU validation, audible listening and target-PC 60 FPS need suitable hardware unavailable here. Software OpenGL/Dummy audio verify functional paths only.
+
+### Continuity
+- `PrestigeProgression` loads `data/prestige.json`, owns validated seed/level/discovery state and computes reward quotes. `Progression.complete_round` alone banks actual qualifying income; `reward` applies permanent value. `claim_prestige` uses defaults for every normal field while copying permanence, lifetime and preferences.
+- Main requires an issued confirmation token, then validates/saves a candidate before adoption. The quote covers the complete canonical state. New Game creates a new identity; cancel/page changes clear transient tokens. Do not weaken this ordering or apply a failed candidate.
+- Saved seed conservation uses recorded per-level prices and a tuning-independent earned-income bound, not current prices or today's threshold times earlier rewards. Permanent threshold/exponent are authored/provisional; future balancing must retain earned progress. Settings and known lifetime counts are normalized before hashing/restoring.
+- Archive presentation lives in `PrestigePage`, shares discovery infrastructure, and only lists real revealed upgrades. New art is source SVG plus its generator; all Blender/GLB assets remain intact. `tools/simulate_prestige.gd` writes the separate model report; the old economy model now also records first eligibility without performing a reset.
+- All tests isolate `user://tests/`; eligible large incomes are explicit fixtures, followed by production reset/purchase/input paths. Numerical JSON comparison failures were corrected through canonical restore, as documented in TESTING.md.
+- GitHub pushes, milestone releases and prominent full-package delivery remain authorized. Exports are ignored. No environment configuration draft/publication was changed.
+
+## Exact next task
+Implement **Golden Harvest**, the first separately gated prestige event, following GAME_DESIGN.md §§16–17. Add a real permanent seed-funded unlock with dedicated prerequisite/reveal and save/reset preservation. Only its purchased level permits a bounded automatic golden-tomato event during rounds. Author its original model/interior/materials, restrained cues, premium reward/family behavior and actual archive branch. Test zero locked probability, no normal-upgrade bypass, automatic scheduling, reset/persistence, spawn/fragment budgets and unique rewards. Keep the other four events independently locked until genuinely implemented; retain the full normal 25-variety/25-knife and permanent-branch scope.
+
+---
+
+# Historical milestones
+The current v0.9 section supersedes incomplete-feature statements below.
+
+## Milestone — v0.8 (2026-11-13, America/Los_Angeles)
 
 Continued clean main at **92813db**, verified **324/324** baseline checks and confirmed remote main had no newer source changes. Highest-priority incomplete work was Phase 4's first real modification. Completed that path, then integrated the next specified Steak Knife. Earlier models, cultivation prices, slicing, critical ability, harvest and discovery remain intact.
 
@@ -34,11 +75,6 @@ Continued clean main at **92813db**, verified **324/324** baseline checks and co
 
 ## Exact next task
 Implement **Phase 5's first complete prestige transaction** following GAME_DESIGN.md §16: qualifying completed-round cycle earnings, authored diminishing-return seeds, an actual rare-seed archive preview with reset/preserve consequences and confirmation, compatible saves and a transaction/cycle identity preventing repeat claims. Reset normal money/upgrades/harvest/discovery/knives/modifications exactly once while preserving lifetime statistics/settings/permanent state. Include the first real seed-funded permanent branch so reset has a benefit. Test cancellation, duplicate/stale confirmations, migration, normal equipment reset and permanent preservation. Keep every special event impossible until its own dedicated permanent unlock exists. Simulate provisional timing without claiming 60–90-minute human balance.
-
----
-
-# Historical milestones
-The current v0.8 section supersedes incomplete-feature statements below.
 
 ## Milestone — v0.7 (2026-11-12, America/Los_Angeles)
 

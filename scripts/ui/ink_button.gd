@@ -40,6 +40,10 @@ func _draw() -> void:
 			draw_polyline(PackedVector2Array([c+Vector2(-12,0),c+Vector2(5,-8),c+Vector2(13,-2),c+Vector2(-4,7),c+Vector2(-12,0),c+Vector2(-12,5),c+Vector2(-4,12),c+Vector2(13,3),c+Vector2(13,-2)]),color,w,true)
 			draw_line(c+Vector2(-4,7),c+Vector2(-4,12),color,w,true)
 			draw_line(c+Vector2(-3,-2),c+Vector2(3,2),color,w,true)
+		"archive":
+			draw_rect(Rect2(c+Vector2(-13,-9),Vector2(26,19)),color,false,w)
+			draw_polyline(PackedVector2Array([c+Vector2(-13,-9),c+Vector2(0,1),c+Vector2(13,-9)]),color,w,true)
+			draw_arc(c+Vector2(0,4),3.5,0,TAU,16,color,w,true)
 		"back":
 			draw_line(c+Vector2(-10,0),c+Vector2(11,0),color,w,true)
 			draw_polyline(PackedVector2Array([c+Vector2(-2,-8),c+Vector2(-10,0),c+Vector2(-2,8)]),color,w,true)

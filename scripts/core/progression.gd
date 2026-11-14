@@ -10,6 +10,7 @@ var equipped_knife := EquipmentCatalog.STARTER
 var owned_modifications: Array = []
 # Stable modification ID -> owned knife ID. Each kit prepares one instrument.
 var applied_modifications: Dictionary = {}
+var prestige := PrestigeProgression.new()
 var money: float = 0.0
 var levels: Dictionary = {}
 var discovered: Array = []
@@ -154,7 +155,7 @@ func round_ceiling() -> float:
 func reward(combo: int, tomato_value: float = 1.0) -> float:
 	var base := 1.0 + effect_value("better_prices","value_bonus") * level("better_prices")
 	var combo_bonus := 1.0 + effect_value("combo_cash","bonus_per_step") * level("combo_cash") * mini(combo-1,int(effect_value("combo_cash","max_steps")))
-	return snappedf(base * combo_bonus * tomato_value,0.01)
+	return snappedf(base * combo_bonus * tomato_value * (1.0+prestige.effect("permanent_slice_value")),0.01)
 
 func complete_round(earnings: float, cuts: int, tomatoes_sliced: int = -1) -> void:
 	money += earnings
@@ -162,13 +163,31 @@ func complete_round(earnings: float, cuts: int, tomatoes_sliced: int = -1) -> vo
 	lifetime.cuts += cuts
 	lifetime.tomatoes += cuts if tomatoes_sliced < 0 else tomatoes_sliced
 	lifetime.earnings += earnings
+	prestige.cycle_earnings += earnings
+
+func prestige_preview() -> Dictionary:
+	return {"token":JSON.stringify(snapshot()).sha256_text(),"cycle":prestige.cycle,"earnings":prestige.cycle_earnings,"reward":prestige.reward(),"starting_cash":prestige.effect("starting_cash")}
+
+func claim_prestige(token: String) -> bool:
+	var preview := prestige_preview()
+	if preview.reward <= 0 or token != preview.token: return false
+	var fresh := Progression.new()
+	if not fresh.prestige.restore(prestige.snapshot(),float(lifetime.earnings)): return false
+	fresh.prestige.seeds += int(preview.reward)
+	fresh.prestige.total_seeds += int(preview.reward)
+	fresh.prestige.cycle += 1
+	fresh.prestige.cycle_earnings = 0
+	fresh.lifetime = lifetime.duplicate(true)
+	fresh.settings = settings.duplicate(true)
+	fresh.money = fresh.prestige.effect("starting_cash")
+	return restore(fresh.snapshot())
 
 func snapshot() -> Dictionary:
-	return {"version": 4, "money": money, "levels": levels.duplicate(), "discovered": discovered.duplicate(), "viewed": viewed.duplicate(), "equipment":{"owned":owned_knives.duplicate(),"equipped":equipped_knife,"modifications":{"owned":owned_modifications.duplicate(),"applied":applied_modifications.duplicate()}}, "lifetime": lifetime.duplicate(), "settings": settings.duplicate()}
+	return {"version": 5, "prestige":prestige.snapshot(), "money": money, "levels": levels.duplicate(), "discovered": discovered.duplicate(), "viewed": viewed.duplicate(), "equipment":{"owned":owned_knives.duplicate(),"equipped":equipped_knife,"modifications":{"owned":owned_modifications.duplicate(),"applied":applied_modifications.duplicate()}}, "lifetime": lifetime.duplicate(), "settings": settings.duplicate()}
 
 func restore(data: Dictionary) -> bool:
 	# Reject unsupported/ill-typed data before mutating any progress.
-	if not _number(data.get("version")) or (data.version != 1 and data.version != 2 and data.version != 3 and data.version != 4) or not _number(data.get("money")) or float(data.money) < 0 or float(data.money) > 1e15:
+	if not _number(data.get("version")) or (data.version != 1 and data.version != 2 and data.version != 3 and data.version != 4 and data.version != 5) or not _number(data.get("money")) or float(data.money) < 0 or float(data.money) > 1e15:
 		return false
 	if not data.get("levels") is Dictionary or not data.get("discovered") is Array or not data.get("lifetime") is Dictionary or not data.get("settings") is Dictionary:
 		return false
@@ -208,6 +227,13 @@ func restore(data: Dictionary) -> bool:
 				return false
 		elif not _number(data.settings[key]) or float(data.settings[key]) < 0 or float(data.settings[key]) > 1:
 			return false
+	var permanent := PrestigeProgression.new()
+	if data.version == 5:
+		if not permanent.restore(data.get("prestige"),float(data.lifetime.earnings)): return false
+	else:
+		# All old builds had a single normal cycle; spending never removes earnings.
+		permanent.cycle_earnings = float(data.lifetime.earnings)
+	prestige = permanent
 	money = float(data.money)
 	levels = clean
 	discovered = data.discovered.duplicate()
@@ -217,6 +243,9 @@ func restore(data: Dictionary) -> bool:
 	owned_modifications = data.equipment.modifications.owned.duplicate() if data.version >= 4 else []
 	applied_modifications = data.equipment.modifications.applied.duplicate() if data.version >= 4 else {}
 	lifetime = data.lifetime.duplicate()
+	lifetime.rounds = int(data.lifetime.rounds)
+	lifetime.cuts = int(data.lifetime.cuts)
+	lifetime.earnings = float(data.lifetime.earnings)
 	lifetime.tomatoes = int(tomato_count)
 	for key: String in settings:
 		if data.settings.has(key):

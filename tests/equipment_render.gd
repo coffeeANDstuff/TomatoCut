@@ -70,7 +70,7 @@ func run() -> void:
 	check(not preview.is_processing() and preview.pivot.rotation == pose,"reduced-motion setting freezes the real product preview at a useful pose")
 	await click(game.ui.content.find_child("Equip_plastic_picnic",true,false) as Button)
 	var loaded := Progression.new()
-	check(game.store.load_into(loaded) and loaded.equipped_knife == "plastic_picnic" and loaded.owned_knives.size() == 2 and loaded.settings.reduced_motion and loaded.snapshot().version == 4,"GUI inventory, selected blade and preferences reload from the v4 disk ledger")
+	check(game.store.load_into(loaded) and loaded.equipped_knife == "plastic_picnic" and loaded.owned_knives.size() == 2 and loaded.settings.reduced_motion and loaded.snapshot().version == 5,"GUI inventory, selected blade and preferences reload from the v5 disk ledger")
 	game.show_home(); await frames()
 	await click(find_button(game.ui.content,"New game"))
 	await frames()

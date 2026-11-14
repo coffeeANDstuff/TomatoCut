@@ -1,18 +1,18 @@
 # Tomato Cut
 
-**[DOWNLOAD THE FULL PACKAGE — v0.8.0 (Windows game + complete source and art)](https://github.com/coffeeANDstuff/TomatoCut/releases/download/v0.8.0/TomatoCut-Full-v0.8.0.zip)**
+**[DOWNLOAD THE FULL PACKAGE — v0.9.0 (Windows game + complete source and art)](https://github.com/coffeeANDstuff/TomatoCut/releases/download/v0.9.0/TomatoCut-Full-v0.9.0.zip)**
 
-[Latest release and all downloads](https://github.com/coffeeANDstuff/TomatoCut/releases/latest) · [Windows game only](https://github.com/coffeeANDstuff/TomatoCut/releases/download/v0.8.0/TomatoCut-Windows-v0.8.0.zip) · [Version history](https://github.com/coffeeANDstuff/TomatoCut/releases)
+[Latest release and all downloads](https://github.com/coffeeANDstuff/TomatoCut/releases/latest) · [Windows game only](https://github.com/coffeeANDstuff/TomatoCut/releases/download/v0.9.0/TomatoCut-Windows-v0.9.0.zip) · [Version history](https://github.com/coffeeANDstuff/TomatoCut/releases)
 
 Unzip the full package and run **`Windows/TomatoCut.exe`**. The complete editable Godot project, Blender sources and handoff documents are in **`Source/`**. This is an ongoing development milestone; native Windows playtesting is still pending.
 
 ---
 
-A rather serious institution for slicing tomatoes. An ongoing **Godot 4.6 / GDScript** Windows game project. The v0.8 milestone implements Standard Red, Cherry and Roma tomatoes, three distinct knives with a buy/equip catalog, real preparation and rotating 3D previews, seeded halves/wedges/eighths, swept slicing and recutting, ten-second starting rounds, results/replay, eighteen upgrades, automatic harvest progression, saving and an illustrated culinary catalog. It is not the complete game described in the master design.
+A rather serious institution for slicing tomatoes. An ongoing **Godot 4.6 / GDScript** Windows game project. The v0.9 milestone implements Standard Red, Cherry and Roma tomatoes, three distinct knives with a buy/equip catalog, real preparation and rotating 3D previews, seeded halves/wedges/eighths, swept slicing and recutting, ten-second starting rounds, results/replay, eighteen normal upgrades, two permanent investments, confirmed prestige, automatic harvest progression, saving and an illustrated culinary catalog. It is not the complete game described in the master design.
 
 ## Play the Windows milestone
 
-The complete `TomatoCut-Full-v0.8.0.zip` includes `Windows/` (ready-to-play build) and `Source/` (complete editable project, art, tests and documentation). Unzip it and run `Windows/TomatoCut.exe`. A separate `TomatoCut-Windows-v0.8.0.zip` is also produced. No Godot editor is required. Use a Vulkan-capable Windows PC for the default Forward+ renderer. If your hardware cannot run it, `Play-Compatibility.bat` starts the same build with Godot's OpenGL compatibility renderer.
+The complete `TomatoCut-Full-v0.9.0.zip` includes `Windows/` (ready-to-play build) and `Source/` (complete editable project, art, tests and documentation). Unzip it and run `Windows/TomatoCut.exe`. A separate `TomatoCut-Windows-v0.9.0.zip` is also produced. No Godot editor is required. Use a Vulkan-capable Windows PC for the default Forward+ renderer. If your hardware cannot run it, `Play-Compatibility.bat` starts the same build with Godot's OpenGL compatibility renderer.
 
 - Click **Begin slicing** (or **Continue**).
 - Move the mouse through airborne tomatoes. No mouse button is needed to slice.
@@ -29,9 +29,12 @@ The complete `TomatoCut-Full-v0.8.0.zip` includes `Windows/` (ready-to-play buil
 - Open the **knife icon** from Home, Results or the menu navigation for the equipment catalog. The starter Rusty Butter Knife is already owned. Buy the **Plastic Picnic Knife** for **$20**, then **Equip** it separately. Its molded blade has about 22% more cutting-edge length; it grants reach rather than extra damage or money. Re-equipping either owned knife is free. Reduced Motion freezes the rotating 3D preview.
 - The **Steak Knife** costs **$60**, has **1.50 base sharpness**, and uses its own compact forged edge and original cut cue. It stacks with Sharp Edge cultivation; it does not grant purchased upgrade levels or extra cut value.
 - The **stone icon** opens **Knife Modifications**. Buy the reusable **Honing Kit for $30**, then **Apply** it to an owned knife for **+0.50 sharpness**. The kit prepares one knife at a time; moving or removing it between rounds is free. A knife accepts one preparation. Buying leaves application separate, and choosing a preparation target never changes the equipped knife. The page shows current/prepared power and the actual assigned instrument.
+- Open the **envelope icon** for the **Rare-seed Archive**. Qualifying earnings come from completed rounds in the current prestige cycle; spending money does not reduce them. The provisional first-seed threshold is **$100M** and rewards follow `floor((CycleEarnings / Threshold)^0.45)`.
+- **Preview prestige** shows the reward and reset/preserve consequences, then requests confirmation. Prestige resets money, normal upgrades/cultivation/discovery, knives and modifications. It preserves Tomato Seeds, permanent upgrades/discovery, lifetime statistics and settings. A failed save retains the active run; stale or repeated confirmations cannot claim the same cycle again.
+- **Permanent Slice Value** initially costs **1 seed**, adds **25% cut value per level** immediately, and reveals **Starting Cash** after its first level. Starting Cash initially costs **2 seeds** and grants **$5 per level on future prestige resets**. Both have five levels and double their seed price each level. Starting cash never counts as qualifying earnings or grants normal upgrades/varieties.
 - **New game** asks for confirmation. Normal progress saves automatically after rounds, purchases and settings changes.
 
-Earned cut rewards are rounded to whole cents; existing saved balances are preserved. Save version **4** adds owned/applied modifications to equipment. Existing **v3** saves retain owned/equipped knives and receive no free preparation. Existing **v1/v2** saves retain money, upgrades, discovery/read state, settings and lifetime statistics, and receive only the free starter. Version 1 also gains the separate lifetime tomato count. Invalid v4 inventory or assignments are rejected before any progress changes; the existing backup/recovery system applies. Older game builds cannot read the new schema. New Game resets knives and modifications; prestige reset integration is still future work.
+Earned cut rewards are rounded to whole cents; existing saved balances are preserved. Save version **5** adds the cycle identity, qualifying earnings, seed accounting, permanent levels and discovery/read state. Existing **v1–v4** saves migrate their lifetime completed-round earnings into their first prestige cycle, retaining their supported normal equipment/progress and granting no seeds or permanent levels. Older equipment migrations remain supported. Invalid currency, counters, assignments or permanent state are rejected before mutation and use existing backup recovery. New Game also clears permanent progress while retaining preferences. Older game builds cannot read the new schema.
 
 Windows progress is stored in `%APPDATA%\Godot\app_userdata\Tomato Cut\progress.json`; a `.bak` backup is retained. Invalid saves are recovered or preserved in `.corrupt.*` files, with a visible notice. Closing an unfinished round forfeits that round's unsaved earnings.
 
@@ -61,6 +64,7 @@ blender --background --python tools/build_equipment_assets.py
 blender --background --python tools/build_modification_assets.py
 blender --background --python tools/build_steak_assets.py
 python3 tools/build_catalog_art.py
+python3 tools/build_prestige_art.py
 python3 tools/build_audio.py
 ```
 
@@ -79,18 +83,20 @@ godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/equipment_render.gd
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/modification_render.gd
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/steak_render.gd
+godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/prestige_render.gd
 ```
 
 To reproduce the early balance model and inspect prepared fragment assets:
 
 ```sh
 godot --headless --path . --script tools/simulate_economy.gd
+godot --headless --path . --script tools/simulate_prestige.gd
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/fragment_gallery.gd
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/fragment_gallery.gd -- --cherry
 godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/fragment_gallery.gd -- --roma
 ```
 
-`BALANCE_REPORT.md` records assumptions and modeled results; it does not replace human balance testing. The fragment gallery is a developer inspection of the exact in-game GLBs.
+`BALANCE_REPORT.md` and `PRESTIGE_BALANCE_REPORT.md` record assumptions and modeled results; it does not replace human balance testing. The fragment gallery is a developer inspection of the exact in-game GLBs.
 
 The rendered smoke test injects real GUI mouse events and writes screenshots to ignored `artifacts/`. It isolates its saves under `user://tests/`. All automated tests keep the player's primary ledger untouched.
 
@@ -100,7 +106,7 @@ Install official **Godot 4.6.3 export templates** using the editor's Export Temp
 mkdir -p exports/windows
 godot --headless --path . --export-release "Windows Desktop"
 python3 tools/package.py
-python3 tools/verify_package.py exports/TomatoCut-Full-v0.8.0.zip
+python3 tools/verify_package.py exports/TomatoCut-Full-v0.9.0.zip
 ```
 
 For embedded resource-pack smoke testing, run the Godot editor executable from outside the checkout with `--main-pack /absolute/path/to/exported-binary --script /absolute/path/to/tests/package_smoke.gd`. This tests packed game resources with the host engine; it is separate from native Windows validation.
@@ -120,7 +126,7 @@ This wrapper is optional outside the managed workspace. Live display processes d
 
 ## Version history
 
-Source milestones are tracked with Git commits and annotated tags: `v0.1.0` (vertical slice), `v0.2.0` (recuts/core upgrades), `v0.3.0` (Cherry/automatic harvest), `v0.4.0` (Roma/durable harvest and complete packaging), `v0.5.0` (botanical discovery and downloadable GitHub releases), `v0.6.0` (Critical Slice and seven-category catalog foundation), `v0.7.0` (equipment ownership, preview and blade-specific reach), and `v0.8.0` (reusable Honing Kit and forged Steak Knife). Generated builds stay in ignored `exports/`. The tagged release workflow verifies official Godot checksums, runs regressions, exports and checks both embedded packs, verifies a full ZIP and a fresh source extraction, then publishes Full/Windows/Source ZIP assets and checksums to GitHub Releases. The full package is linked prominently above. Reproduce builds using the documented export commands. A failed release workflow can be retried from the repository Actions tab with its existing milestone tag; no personal token is required.
+Source milestones are tracked with Git commits and annotated tags: `v0.1.0` (vertical slice), `v0.2.0` (recuts/core upgrades), `v0.3.0` (Cherry/automatic harvest), `v0.4.0` (Roma/durable harvest and complete packaging), `v0.5.0` (botanical discovery and downloadable GitHub releases), `v0.6.0` (Critical Slice and seven-category catalog foundation), `v0.7.0` (equipment ownership, preview and blade-specific reach), `v0.8.0` (reusable Honing Kit and forged Steak Knife), and `v0.9.0` (confirmed prestige, rare-seed archive and permanent wealth). Generated builds stay in ignored `exports/`. The tagged release workflow verifies official Godot checksums, runs regressions, exports and checks both embedded packs, verifies a full ZIP and a fresh source extraction, then publishes Full/Windows/Source ZIP assets and checksums to GitHub Releases. The full package is linked prominently above. Reproduce builds using the documented export commands. A failed release workflow can be retried from the repository Actions tab with its existing milestone tag; no personal token is required.
 
 ## Continue development
 

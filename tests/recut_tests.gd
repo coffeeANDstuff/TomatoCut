@@ -16,7 +16,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	legacy.discovered.erase("extra_cuts")
 	legacy.lifetime.erase("tomatoes")
 	legacy.lifetime.cuts = 42
-	check.call(loaded.restore(legacy) and loaded.lifetime.tomatoes == 42 and loaded.snapshot().version == 4, "v1 saves migrate tomato statistics and equipment defaults without losing progress")
+	check.call(loaded.restore(legacy) and loaded.lifetime.tomatoes == 42 and loaded.snapshot().version == 5, "v1 saves migrate tomato statistics and equipment defaults without losing progress")
 	var invalid := p.snapshot()
 	invalid.lifetime.tomatoes = 5
 	check.call(not loaded.restore(invalid), "inconsistent v2 sliced-tomato count rejected")
@@ -83,7 +83,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	game.finish_round()
 	check.call(game.progress.lifetime.cuts == 7 and game.progress.lifetime.tomatoes == 1, "results and lifetime separate rewarded cuts from unique tomatoes")
 	var restored := Progression.new()
-	check.call(game.store.load_into(restored) and restored.lifetime.cuts == 7 and restored.lifetime.tomatoes == 1, "v2 round save preserves multi-cut statistics")
+	check.call(game.store.load_into(restored) and restored.lifetime.cuts == 7 and restored.lifetime.tomatoes == 1, "current round save preserves multi-cut statistics")
 
 	# Damage is independent of the reward ledger and cannot repeat in one stroke.
 	game.start_round()

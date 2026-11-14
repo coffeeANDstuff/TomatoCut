@@ -18,6 +18,7 @@ static func simulate(accuracy: float, minutes: float, seed_value: int, investing
 	var elapsed := 0.0
 	var purchases: Array = []
 	var milestones: Dictionary = {}
+	var prestige_at := -1.0
 	while elapsed < minutes*60:
 		var session := RoundSession.new()
 		session.begin(progress)
@@ -52,6 +53,7 @@ static func simulate(accuracy: float, minutes: float, seed_value: int, investing
 			break
 		elapsed += round_elapsed+MENU_SECONDS
 		progress.complete_round(session.earnings,session.cuts,session.tomatoes_sliced)
+		if prestige_at < 0 and progress.prestige.reward() > 0: prestige_at = snappedf(elapsed,.1)
 		if investing:
 			for i in range(4):
 				var plan := choose_purchase(progress,accuracy)
@@ -62,7 +64,7 @@ static func simulate(accuracy: float, minutes: float, seed_value: int, investing
 		for minute: int in [2,10]:
 			if elapsed <= minute*60:
 				milestones[str(minute)] = {"rounds":progress.lifetime.rounds,"earned":snappedf(progress.lifetime.earnings,.01),"purchases":purchases.size()}
-	return {"accuracy":accuracy,"seconds":snappedf(elapsed,.1),"rounds":progress.lifetime.rounds,"tomatoes":progress.lifetime.tomatoes,"cuts":progress.lifetime.cuts,"earned":snappedf(progress.lifetime.earnings,.01),"money":snappedf(progress.money,.01),"levels":progress.levels,"purchases":purchases,"milestones":milestones}
+	return {"accuracy":accuracy,"seconds":snappedf(elapsed,.1),"rounds":progress.lifetime.rounds,"tomatoes":progress.lifetime.tomatoes,"cuts":progress.lifetime.cuts,"earned":snappedf(progress.lifetime.earnings,.01),"money":snappedf(progress.money,.01),"levels":progress.levels,"purchases":purchases,"milestones":milestones,"prestige_at":prestige_at}
 
 static func rate(progress: Progression, accuracy: float) -> float:
 	var mix := progress.harvest.distribution(progress.levels,progress.strength())
