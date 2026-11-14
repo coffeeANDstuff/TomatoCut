@@ -15,6 +15,7 @@ var visual: Node3D
 var damage_time := 0.0
 var collision := "circle"
 var proxy := PackedVector3Array()
+var launch_delay := 0.0
 
 func _init() -> void:
 	visual = MODEL.instantiate()
@@ -23,6 +24,7 @@ func _init() -> void:
 func configure(data: Dictionary) -> void:
 	variety_id = data.id
 	gravity = float(data.gravity)
+	launch_delay = float(data.get("launch_delay",0))
 	durability = float(data.durability)
 	radius = float(data.radius)
 	collision = data.collision
@@ -47,6 +49,10 @@ func intersects(previous: Transform2D, current: Transform2D, edge: Array[Vector2
 func _physics_process(delta: float) -> void:
 	damage_time = maxf(0, damage_time - delta)
 	visual.scale = Vector3(1.06, 0.94, 1) if damage_time > 0 else Vector3.ONE
+	if launch_delay > 0:
+		var waiting := minf(delta,launch_delay)
+		launch_delay -= waiting; delta -= waiting
+		if delta <= 0: return
 	age += delta
 	velocity.y -= gravity * delta
 	position += Vector3(velocity.x, velocity.y, 0) * delta

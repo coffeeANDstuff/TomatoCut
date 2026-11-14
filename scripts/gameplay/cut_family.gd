@@ -8,6 +8,7 @@ var event_id := ""
 var event_group := 0
 var model_scale := 1.0
 var mass := 1.0
+var split_impulse := 0.0
 var cut_value := 1.0
 var fragment_durability := 1.0
 var limit: int

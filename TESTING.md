@@ -2,6 +2,35 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Giant Harvest — v0.13.0 (2026-11-14, America/Los_Angeles)
+
+Continued clean `fab1485`, fetched matching remote main and passed **604/604** baseline after environment access recovered. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64. All ledgers isolate under `user://tests/`; production saves are untouched. Started a user-owned Xorg dummy `:98` for rendered checks; no environment configuration change/publication was needed.
+
+```sh
+./tools/cloud.sh ./tools/check.sh
+./tools/cloud.sh blender --background --python tools/build_assets.py -- --giant
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/giant_render.gd
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/fragment_gallery.gd -- --giant
+./tools/cloud.sh godot --headless --path . --script tools/simulate_events.gd
+# All twelve prior rendered flows also ran in the same mode.
+```
+
+**678 logic checks pass; zero failures** (**74 new**). Coverage: separate gate/prerequisite/no normal bypass and sibling independence; real paid frequency/value/bonus cuts, limits and seven-cut clamp; actual receipts/v5 round-trip, old missing-field discovery/no free purchases, malformed/combined counters; cue/launch/delay/bonus-budget and duplicate-specimen validation; fractional due time, cooldown/active/capacity/no RNG/caps and unissued permits; actual giant model/hull/mass/delay/arc, six ordinary accepted strikes without premature money, same-stroke denial, seeded halves/resistant recuts and exact family payout; grouped remaining-strike feedback; premium Roma quality, critical damage and normal/permanent price composition; actual banking/disk/prestige/New Game; simultaneous three events at 24 roots, no overbooking, five-specimen three-model cache; all four batched scenes within eight meshes; actual projected cut-face opening toward the camera for five swipe directions; mixed summary/replay layout.
+
+**203 rendered checks across thirteen flows pass; zero failures:** original loop 13, Cherry 13, Roma 12, discovery 14, Critical Slice 15, equipment 16, modifications 18, Steak 10, prestige 19, Golden Harvest 17, Stampede 17, printed controls 18 and Giant **21**. Actual mouse input purchases the giant gate/improvements independently, follows the automatic scheduler, performs six distinct starter strikes ($75), two fragment strikes ($150), denies live investments and banks one unique specimen. Another prestige/reload, reduced effects/motion/disabled labels and New Game pass. A real mixed round purchases/schedules/slices Golden, Stampede and Giant specimens through mouse input for $102.50; the combined two-line lifetime summary fits above stats/replay at 16:9. Native confirmation uses production callbacks after real GUI preview clicks, not OS-dialog click automation.
+
+Inspected captures **86–94**: actual invitation/improvements, 16:9 archive, automatic giant, resistance, separated seeded halves, exact fragment gallery, results/post-prestige and combined results. Explicit funded/eligible/time/pose fixtures and fixed physical steps isolate actual production transactions/scheduling/input; no human feel or FPS claim is made. Original prior assets and all printed controls remain intact. Material review toned down initially bright flesh. Blender batching retains vertex counts and the source tests confirm scene-node bounds.
+
+Visual review found reverse-swiped root halves tumbled their cut faces away from the camera. FragmentManager now derives initial tumble from the actual outward normal; five directional geometry checks and rendered exposed seeds pass, while the previous rightward behavior and family/collision rules remain. Giant-only opening impulse improves large-half separation. Rapid giant root resistance now updates one label and clears it on success. Initial test fixtures used exact Vector3 float32 scale equality and over-constrained three-event winning rolls; corrected approximate/chance-specific fixtures, with production director unchanged. Final runs have no script/resource/runtime errors; software VSync warnings remain.
+
+EVENT_BALANCE_REPORT.md runs production schedules and real permanent purchases over seven profiles, 5,000 rounds per length. Locked counts remain zero; isolated earlier event results are unchanged. Giant-only mean counts 0.0536/0.3230 over 10s/40s, max one/two; all-event max gives 0.1830/0.8382. Assumes 6.5s giant and 3.5s other active groups with no normal background, geometry RNG, actual damage/slicing/fragment survival or earnings. Costs/rates/value remain provisional; no prior prices changed.
+
+### Giant export and delivery evidence
+
+Windows/Linux exports succeed with retained official SHA-512-verified Godot 4.6.3 templates. From `/tmp`, host-editor `--main-pack` runs **90/90 checks per target**, zero failures (**16 new**). New gates validate actual giant assets/art/cue/metadata, own gate/improvements, automatic large hull/cut capacity, launch anticipation/arc, real resisted/duplicate damage, sixth-strike premium, two-hit fragment recut, cooldown/no extra RNG, banked unique count/results/disk and another prestige/New Game. All prior 74 gates remain. Matching Linux executable boots headlessly without errors. Windows PE is not executed natively by these checks.
+
+Python compilation, shell syntax, `git diff --check` and actionlint **1.7.7** pass. Full preflight passes safe/unique paths, CRC, complete SHA-256 manifest, required original giant art/source/tests, portable scripts and source/build/version identity (**342 payload files**). Fresh extraction `/tmp/tomatocut-v013-preflight` imports without the checkout cache and passes **678/678**, no script/resource/runtime errors. Preflight metadata honestly records uncommitted source; final clean archive/GitHub delivery follows milestone commit. Native Windows, Forward+, audible listening, supported-PC 60 FPS, human pacing and wider production polish remain **unverified**. Two events, broader permanent branches and remaining full content remain incomplete.
+
 ## Printed controls — v0.12.0 (2026-11-13, America/Los_Angeles)
 
 Continued clean `956c10f`, fetched matching remote main and passed **604/604** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Linux x86-64. All saves isolate under `user://tests/`; production saves are untouched.

@@ -141,6 +141,7 @@ func _spawn_specimen(data: Dictionary, value: float, event_id: String = "", grou
 	tomato.family.event_group = group
 	tomato.family.model_scale = float(data.model_scale)
 	tomato.family.mass = float(data.mass)
+	tomato.family.split_impulse = float(data.get("split_impulse",0))
 	tomato.family.fragment_durability = float(data.fragment_durability)
 	tomato.family.cut_value = value
 	tomato.position = Vector3(randf_range(-4.6,4.6),-4.5,0)
@@ -186,7 +187,7 @@ func process_blade() -> int:
 			tomato.durability -= float(strike.damage)
 			if tomato.durability > 0:
 				tomato.damage_time = 0.08
-				damage_feedback(tomato.position,tomato.durability)
+				damage_feedback(tomato.position,tomato.durability,tomato.family.event_id)
 				continue
 			tomato.sliced = true
 			tomato.family.record_split()
@@ -207,12 +208,13 @@ func critical_feedback(at: Vector3) -> void:
 	ui.popup_critical(kitchen.camera.unproject_position(at))
 	audio.play("critical")
 
-func damage_feedback(at: Vector3, remaining: float) -> void:
+func damage_feedback(at: Vector3, remaining: float, event_id: String = "") -> void:
 	var strikes := int(ceilf(remaining/progress.strength()))
-	ui.popup_damage("%d more %s" % [strikes,"strike" if strikes == 1 else "strikes"], kitchen.camera.unproject_position(at))
+	ui.popup_damage("%d more %s" % [strikes,"strike" if strikes == 1 else "strikes"], kitchen.camera.unproject_position(at),event_id if event_id == "giant_harvest" else "")
 	audio.play("resist")
 
 func cut_feedback(at: Vector3, first_slice: bool, tomato_value: float = 1.0, event_id: String = "") -> void:
+	if first_slice: ui.dismiss_feedback(event_id)
 	var reward := session.record_cut(progress, first_slice, tomato_value,event_id)
 	ui.popup_cash("+" + Progression.cash(reward), kitchen.camera.unproject_position(at))
 	audio.play(progress.equipment.definition(progress.equipped_knife).get("slice_sound","slice"))
@@ -222,7 +224,7 @@ func finish_round() -> void:
 		return
 	state = "results"
 	session.running = false
-	progress.complete_round(session.earnings,session.cuts,session.tomatoes_sliced,session.golden_tomatoes,session.stampede_tomatoes)
+	progress.complete_round(session.earnings,session.cuts,session.tomatoes_sliced,session.golden_tomatoes,session.stampede_tomatoes,session.giant_tomatoes)
 	save_progress()
 	clear_field()
 	ui.results(session)

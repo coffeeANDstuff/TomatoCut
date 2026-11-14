@@ -7,8 +7,11 @@ var progress: Progression
 var cursor := 0
 
 func _ready() -> void:
-	for id: String in ["slice", "resist", "launch", "paper", "bell", "purchase", "discovery", "critical", "prestige", "golden", "stampede"]:
+	for id: String in ["slice", "resist", "launch", "paper", "bell", "purchase", "discovery", "critical", "prestige"]:
 		sounds[id] = load("res://assets/audio/%s.wav" % id)
+	for event: Dictionary in EventCatalog.new().definitions:
+		var cue: String = event.cue
+		if not sounds.has(cue): sounds[cue] = load("res://assets/audio/%s.wav" % cue)
 	if progress != null:
 		for knife: Dictionary in progress.equipment.knives:
 			var cue: String = knife.get("slice_sound","slice")

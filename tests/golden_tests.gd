@@ -12,7 +12,7 @@ static func prepared(credits: int = 40) -> Progression:
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
 	var catalog := EventCatalog.new()
-	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 2 and p.harvest.varieties.size() == 3, "two independently defined events validate separately from the unchanged three normal varieties")
+	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 3 and p.harvest.varieties.size() == 3, "three independently defined events validate separately from the unchanged three normal varieties")
 	check.call(not "golden_harvest" in p.prestige.discovered and not p.prestige.purchase("golden_harvest") and not p.purchase("golden_harvest"), "fresh and normal-catalog purchases cannot activate a hidden prestige event")
 	var rng := RandomNumberGenerator.new(); rng.seed = 321
 	var director := EventDirector.new(); director.begin()

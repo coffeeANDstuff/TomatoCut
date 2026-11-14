@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.12.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.13.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -36,6 +36,9 @@ with zipfile.ZipFile(args.archive) as z:
     button_art |= {'Source/assets/illustrations/buttons/'+name+'.svg' for name in ['focus','checked','unchecked']}
     button_art |= {'Source/scripts/ui/printed_buttons.gd', 'Source/tools/build_button_art.py', 'Source/tests/button_render.gd'}
     assert button_art <= set(hashes), 'Missing original printed control artwork or source'
+    giant_assets = {'Source/art/giant_harvest.blend', 'Source/assets/models/events/giant.glb', 'Source/assets/audio/giant.wav', 'Source/assets/illustrations/prestige/giant_harvest.svg', 'Source/tests/giant_tests.gd', 'Source/tests/giant_render.gd'}
+    giant_assets |= {'Source/assets/models/fragments/event_giant_'+shape+'.glb' for shape in ['half','wedge','chunk']}
+    assert giant_assets <= set(hashes), 'Missing original giant content/source'
     info = json.loads(z.read('BUILD_INFO.json'))
     version = re.search(r'config/version="([^"]+)"', z.read('Source/project.godot').decode()).group(1)
     assert info['version'] == version, 'Source/build version mismatch'

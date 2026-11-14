@@ -157,6 +157,78 @@
       "effect_values": {
         "bonus_per_level": 0.5
       }
+    },
+    {
+      "id": "giant_harvest",
+      "name": "Giant Harvest",
+      "description": "A dedicated permit for one unusually substantial visitor. Ordinary Beefsteaks are a separate matter.",
+      "effect": "Unlocks automatic durable giant tomato events",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 1,
+      "requires": {
+        "starting_cash": 1
+      },
+      "category": "Special Events",
+      "event_id": "giant_harvest",
+      "illustration": "res://assets/illustrations/prestige/giant_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 1
+      }
+    },
+    {
+      "id": "giant_frequency",
+      "name": "Giant Frequency",
+      "description": "A more generous appointment book for very large produce. Full-field and active-family limits still apply.",
+      "effect": "+4 percentage points per giant check per level",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "giant_harvest": 1
+      },
+      "category": "Special Events",
+      "event_id": "giant_harvest",
+      "illustration": "res://assets/illustrations/prestige/giant_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 0.04
+      }
+    },
+    {
+      "id": "giant_rewards",
+      "name": "Giant Rewards",
+      "description": "Substantial produce now receives a substantial invoice. Damage alone still earns nothing.",
+      "effect": "+50% base giant cut value per level",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "giant_harvest": 1
+      },
+      "category": "Special Events",
+      "event_id": "giant_harvest",
+      "illustration": "res://assets/illustrations/prestige/giant_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 0.5
+      }
+    },
+    {
+      "id": "giant_bonus_cuts",
+      "name": "Giant Bonus Cuts",
+      "description": "One more useful division of the enormous original. Every descendant still shares its family ledger.",
+      "effect": "+1 rewarded giant cut per level; shared maximum 7",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 2,
+      "requires": {
+        "giant_harvest": 1
+      },
+      "category": "Special Events",
+      "event_id": "giant_harvest",
+      "illustration": "res://assets/illustrations/prestige/giant_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 1
+      }
     }
   ]
 }

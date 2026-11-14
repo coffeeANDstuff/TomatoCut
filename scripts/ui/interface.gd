@@ -344,15 +344,18 @@ func results(session: RoundSession) -> void:
 	var event_stats: Array[String] = []
 	if session.golden_tomatoes > 0: event_stats.append("GOLDEN %d (%d total)" % [session.golden_tomatoes,progress.lifetime.golden_tomatoes])
 	if session.stampede_tomatoes > 0: event_stats.append("STAMPEDE %d (%d total)" % [session.stampede_tomatoes,progress.lifetime.stampede_tomatoes])
+	if session.giant_tomatoes > 0: event_stats.append("GIANTS %d (%d total)" % [session.giant_tomatoes,progress.lifetime.giant_tomatoes])
+	var extra_row := event_stats.size() == 3
 	if not event_stats.is_empty():
-		var summary := label("  ·  ".join(event_stats),14,false,Color("9b7740"))
-		summary.name = "GoldenSummary" if session.golden_tomatoes > 0 else "StampedeSummary"
-		place(summary,Vector2(43,278),Vector2(530,22),panel)
+		var text := "  ·  ".join(event_stats.slice(0,2))+("\n"+event_stats[2] if extra_row else "")
+		var summary := label(text,13 if extra_row else 14,false,Color("9b7740"))
+		summary.name = "GoldenSummary" if session.golden_tomatoes > 0 else "StampedeSummary" if session.stampede_tomatoes > 0 else "GiantSummary"
+		place(summary,Vector2(43,274 if extra_row else 278),Vector2(530,36 if extra_row else 22),panel)
 	var stats := GridContainer.new()
 	stats.columns = 2
 	stats.add_theme_constant_override("h_separation",55)
-	stats.add_theme_constant_override("v_separation",12)
-	place(stats,Vector2(42,304),Vector2(535,150),panel)
+	stats.add_theme_constant_override("v_separation",8 if extra_row else 12)
+	place(stats,Vector2(42,316 if extra_row else 304),Vector2(535,150),panel)
 	for item: Array in [["Tomatoes sliced",str(session.tomatoes_sliced)],["Rewarded cuts",str(session.cuts)],["Best combo",str(session.best_combo)],["Bonus earnings",Progression.cash(session.bonus)],["Current balance",Progression.cash(progress.money)]]:
 		stats.add_child(label(item[0],18,false,MUTED))
 		stats.add_child(label(item[1],20,true))
@@ -657,8 +660,14 @@ func popup_cash(text: String, screen_position: Vector2) -> void:
 	node.position = screen_position-Vector2(20,25)
 	moving.append({"node":node,"life":0.75})
 
-func popup_damage(text: String, screen_position: Vector2) -> void:
-	popup_impact(text,screen_position,false)
+func popup_damage(text: String, screen_position: Vector2, group: String = "") -> void:
+	popup_impact(text,screen_position,false,group)
+
+func dismiss_feedback(group: String) -> void:
+	if group.is_empty(): return
+	for i in range(moving.size()-1,-1,-1):
+		if moving[i].get("group","") == group:
+			moving[i].node.hide(); moving[i].node.queue_free(); moving.remove_at(i)
 
 func popup_critical(screen_position: Vector2) -> void:
 	popup_impact("Critical slice",screen_position,true)
@@ -674,9 +683,15 @@ func popup_event(text: String, screen_position: Vector2, indicator_name: String)
 	node.position = screen_position-Vector2(60,45)
 	moving.append({"node":node,"life":1.0})
 
-func popup_impact(text: String, screen_position: Vector2, critical: bool) -> void:
+func popup_impact(text: String, screen_position: Vector2, critical: bool, group: String = "") -> void:
 	if not progress.settings.damage_indicators:
 		return
+	if not group.is_empty():
+		for item: Dictionary in moving:
+			if item.get("group","") == group:
+				item.node.text = text; item.node.position = screen_position-Vector2(30,50)
+				item.node.modulate.a = 1; item.life = .75
+				return
 	var node := label(text,22,true,CREAM)
 	node.add_theme_color_override("font_shadow_color",INK)
 	node.add_theme_constant_override("shadow_offset_x",1)
@@ -684,7 +699,7 @@ func popup_impact(text: String, screen_position: Vector2, critical: bool) -> voi
 	node.name = "CriticalIndicator" if critical else "DamageIndicator"
 	root.add_child(node)
 	node.position = screen_position-Vector2(30,78 if critical else 50)
-	moving.append({"node":node,"life":0.75})
+	moving.append({"node":node,"life":0.75,"group":group})
 
 func _process(delta: float) -> void:
 	update_discoveries(delta)

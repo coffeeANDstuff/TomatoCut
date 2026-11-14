@@ -41,7 +41,10 @@
         "chunk": "res://assets/models/fragments/event_golden_chunk.glb"
       }
     },
-    "kind": "specimen"
+    "kind": "specimen",
+    "cue": "golden",
+    "caption": "Golden Harvest",
+    "indicator": "GoldenIndicator"
   },
   {
     "id": "stampede_season",
@@ -59,6 +62,61 @@
     "active_limit": 1,
     "reward_multiplier": 2,
     "wave_size": 6,
-    "size_scale": 0.68
+    "size_scale": 0.68,
+    "cue": "stampede",
+    "caption": "Tomato Stampede",
+    "indicator": "StampedeIndicator"
+  },
+  {
+    "id": "giant_harvest",
+    "name": "The Big One",
+    "kind": "specimen",
+    "unlock_upgrade": "giant_harvest",
+    "frequency_upgrade": "giant_frequency",
+    "value_upgrade": "giant_rewards",
+    "bonus_cut_upgrade": "giant_bonus_cuts",
+    "interval": 6,
+    "initial_delay": 6,
+    "chance": 0.06,
+    "cooldown": 18,
+    "round_limit": 2,
+    "active_limit": 1,
+    "reward_multiplier": 40,
+    "cue": "giant",
+    "caption": "The Big One",
+    "indicator": "GiantIndicator",
+    "spawn_half_width": 1.6,
+    "spawn_y": -5.0,
+    "specimen": {
+      "id": "event_giant",
+      "name": "The Big One",
+      "model": "res://assets/models/events/giant.glb",
+      "model_scale": 1.65,
+      "radius": 1.6,
+      "gravity": 3.6,
+      "launch_min": 6.4,
+      "launch_max": 6.8,
+      "launch_delay": 0.22,
+      "spin": 0.24,
+      "spin_z": 0.18,
+      "durability": 6,
+      "fragment_durability": 2,
+      "mass": 8,
+      "collision": "hull",
+      "proxy_axes": [
+        0.84,
+        0.62,
+        0.7
+      ],
+      "proxy_lobe": 0.13,
+      "proxy_lobe_count": 9,
+      "proxy_taper": -0.06,
+      "fragments": {
+        "half": "res://assets/models/fragments/event_giant_half.glb",
+        "wedge": "res://assets/models/fragments/event_giant_wedge.glb",
+        "chunk": "res://assets/models/fragments/event_giant_chunk.glb"
+      },
+      "split_impulse": 2.8
+    }
   }
 ]

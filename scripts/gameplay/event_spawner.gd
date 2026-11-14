@@ -8,8 +8,13 @@ static func spawn(game, id: String) -> Tomato:
 	var group: int = game.events.count(id)
 	if d.kind == "specimen":
 		var fruit: Tomato = game._spawn_specimen(d.specimen,catalog.cut_value(id,game.progress),id,group)
-		game.ui.popup_event("Golden Harvest",game.kitchen.camera.unproject_position(Vector3(fruit.position.x,-2.6,0)),"GoldenIndicator")
-		game.audio.play("golden")
+		fruit.family.limit = catalog.cut_limit(id,game.progress)
+		if d.has("spawn_half_width"):
+			fruit.position.x = game.event_rng.randf_range(-float(d.spawn_half_width),float(d.spawn_half_width))
+			fruit.position.y = float(d.spawn_y)
+			fruit.velocity.x = -fruit.position.x*.12
+		game.ui.popup_event(d.caption,game.kitchen.camera.unproject_position(Vector3(fruit.position.x,-2.6,0)),d.indicator)
+		game.audio.play(d.cue)
 		return fruit
 	var first: Tomato
 	var count := catalog.spawn_count(id,game.progress.prestige)
@@ -25,8 +30,8 @@ static func spawn(game, id: String) -> Tomato:
 		fruit.position = Vector3(lerpf(-4.4,4.4,float(i)/float(count-1)),-4.5-.12*(i%3),0)
 		fruit.velocity = Vector2(-fruit.position.x*.16,game.event_rng.randf_range(float(data.launch_min),float(data.launch_max)))
 		if first == null: first = fruit
-	game.ui.popup_event("Tomato Stampede  ·  %d specimens" % count,game.kitchen.camera.unproject_position(Vector3(0,-2.6,0)),"StampedeIndicator")
-	game.audio.play("stampede")
+	game.ui.popup_event("%s  ·  %d specimens" % [d.caption,count],game.kitchen.camera.unproject_position(Vector3(0,-2.6,0)),d.indicator)
+	game.audio.play(d.cue)
 	return first
 
 static func active_groups(game) -> Dictionary:

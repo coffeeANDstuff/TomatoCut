@@ -2,7 +2,7 @@
 from pathlib import Path
 import math,random,struct,wave
 out=Path(__file__).resolve().parents[1]/'assets/audio'
-for name,duration in [('slice',.22),('steak_slice',.14),('resist',.11),('launch',.16),('paper',.055),('bell',.6),('purchase',.28),('discovery',.32),('critical',.14),('prestige',.48),('golden',.30),('stampede',.36)]:
+for name,duration in [('slice',.22),('steak_slice',.14),('resist',.11),('launch',.16),('paper',.055),('bell',.6),('purchase',.28),('discovery',.32),('critical',.14),('prestige',.48),('golden',.30),('stampede',.36),('giant',.42)]:
  rng=random.Random(name); rate=24000; samples=[]; filtered=0.
  for i in range(int(rate*duration)):
   t=i/rate; phase=t/duration; filtered=.65*filtered+.35*rng.uniform(-1,1)
@@ -15,6 +15,7 @@ for name,duration in [('slice',.22),('steak_slice',.14),('resist',.11),('launch'
   elif name=='critical': a=(.26*math.sin(2*math.pi*330*t)+.11*math.sin(2*math.pi*660*t)+.24*filtered)*math.sin(math.pi*phase)*math.exp(-6*phase)
   elif name=='prestige': a=.12*(math.sin(2*math.pi*392*t)+.65*math.sin(2*math.pi*493.88*t)+.4*math.sin(2*math.pi*587.33*t))*math.sin(math.pi*phase)*math.exp(-3*phase)
   elif name=='stampede': a=.12*(math.sin(2*math.pi*(196*t+180*t*t))+.45*math.sin(2*math.pi*293.66*t))*math.sin(math.pi*phase)*math.exp(-3*phase)+.05*filtered*(1-phase)**2
+  elif name=='giant': a=(.16*math.sin(2*math.pi*(96*t-32*t*t))+.07*math.sin(2*math.pi*192*t)+.065*filtered)*math.sin(math.pi*phase)*math.exp(-4*phase)
   elif name=='golden': a=.105*(math.sin(2*math.pi*659.25*t)+.5*math.sin(2*math.pi*987.77*t))*math.sin(math.pi*phase)*math.exp(-4*phase)
   else:
    hz=660 if name=='bell' else 880

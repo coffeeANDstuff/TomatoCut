@@ -52,9 +52,13 @@ func split(at: Vector3, velocity: Vector2, direction: Vector2, reduced: bool = f
 	var angle := normal.angle()
 	for side: int in [-1, 1]:
 		var frame := Basis(Vector3.FORWARD, -angle) * Basis.from_scale(Vector3(side, 1, 1) * ledger.model_scale)
-		var impulse := 2.0 / sqrt(ledger.mass)
+		# Large authored specimens need enough opening to reveal their interiors.
+		var impulse := ledger.split_impulse if ledger.split_impulse > 0 else 2.0 / sqrt(ledger.mass)
 		var motion := Vector3(velocity.x + normal.x * side * impulse, velocity.y + normal.y * side * impulse, 0.8)
-		acquire_piece().configure("half", ledger, at, frame, motion, Vector3(-side * 4.0, -side * 2.2, side * 0.8))
+		# Open each flesh face toward the camera for either swipe direction.
+		var outward := -side*Vector3(normal.x,normal.y,0)
+		var tumble := outward.cross(Vector3.BACK)*4+outward*2.2+Vector3(0,0,side*.8)
+		acquire_piece().configure("half", ledger, at, frame, motion, tumble)
 	emit_juice(at, reduced,ledger.event_id)
 
 func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: float, reduced: bool, damage_roll: Callable = Callable(), edge: Array[Vector2] = SliceSystem.DEFAULT_EDGE) -> Array[Dictionary]:

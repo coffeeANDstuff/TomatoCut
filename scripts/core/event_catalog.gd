@@ -38,6 +38,10 @@ func spawn_count(id: String, permanent: PrestigeProgression) -> int:
 	if d.kind == "specimen": return 1
 	return int(d.wave_size)+int(permanent.effect(d.size_upgrade))
 
+func cut_limit(id: String, progress) -> int:
+	var d := definition(id)
+	return clampi(progress.max_cuts()+int(progress.prestige.effect(str(d.get("bonus_cut_upgrade","")))),1,7)
+
 func cut_value(id: String, progress) -> float:
 	if not unlocked(id,progress.prestige): return 0
 	var best := 1.0
@@ -60,6 +64,10 @@ func summary(id: String, permanent: PrestigeProgression) -> String:
 		var current := spawn_count(d.id,permanent)
 		var next := current if permanent.level(id) >= int(upgrade.max_level) else current+int(upgrade.effect_values.bonus_per_level)
 		return "Tomatoes per wave: %d → %d" % [current,next]
+	if id == d.get("bonus_cut_upgrade",""):
+		var current := int(permanent.effect(id))
+		var next := current if permanent.level(id) >= int(upgrade.max_level) else current+int(upgrade.effect_values.bonus_per_level)
+		return "Additional giant cuts: +%d → +%d · shared cap 7" % [current,next]
 	var current := multiplier(d.id,permanent)
 	var next := current if permanent.level(id) >= int(permanent.definition(id).max_level) else current+float(d.reward_multiplier)*float(permanent.definition(id).effect_values.bonus_per_level)
 	return ("Best eligible cut value: ×%.0f → ×%.0f" if d.kind == "specimen" else "Selected variety cut value: ×%.0f → ×%.0f") % [current,next]
@@ -67,6 +75,7 @@ func summary(id: String, permanent: PrestigeProgression) -> String:
 func validate(permanent: PrestigeProgression) -> PackedStringArray:
 	var errors := PackedStringArray()
 	var seen: Dictionary = {}
+	var seen_specimens: Dictionary = {}
 	if definitions.is_empty(): errors.append("Missing event definitions")
 	for raw: Variant in definitions:
 		if not raw is Dictionary or not raw.get("id") is String or raw.id.is_empty():
@@ -74,6 +83,9 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 		var id: String = raw.id
 		if seen.has(id): errors.append("Duplicate event ID: "+id)
 		seen[id] = true
+		for key: String in ["caption","indicator","cue"]:
+			if not raw.get(key) is String or raw[key].is_empty(): errors.append(id+": missing "+key)
+		if raw.get("cue") is String and not ResourceLoader.exists("res://assets/audio/"+raw.cue+".wav"): errors.append(id+": missing event cue")
 		if raw.get("kind") not in ["specimen","wave"]: errors.append(id+": invalid event kind")
 		for key: String in ["interval","initial_delay","cooldown","round_limit","active_limit","reward_multiplier","chance"]:
 			var value: Variant = raw.get(key)
@@ -82,6 +94,15 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 		for key: String in ["unlock_upgrade","frequency_upgrade","value_upgrade"]:
 			if not raw.get(key) is String or permanent.definition(raw[key]).is_empty(): errors.append(id+": missing "+key)
 		var unlock := permanent.definition(str(raw.get("unlock_upgrade","")))
+		if raw.has("bonus_cut_upgrade"):
+			var bonus := permanent.definition(str(raw.bonus_cut_upgrade))
+			if bonus.is_empty() or unlock.is_empty() or int(bonus.get("requires",{}).get(unlock.get("id",""),0)) < 1:
+				errors.append(id+": bonus cuts require their dedicated unlock")
+			elif not PrestigeProgression.number(bonus.effect_values.bonus_per_level) or float(bonus.effect_values.bonus_per_level) < 1 or float(bonus.effect_values.bonus_per_level) != floorf(float(bonus.effect_values.bonus_per_level)) or float(bonus.effect_values.bonus_per_level)*int(bonus.max_level) > 6:
+				errors.append(id+": invalid bonus cut budget")
+		for key: String in ["spawn_half_width","spawn_y"]:
+			if raw.has(key) and (not PrestigeProgression.number(raw[key]) or (key == "spawn_half_width" and (float(raw[key]) <= 0 or float(raw[key]) > 4.6)) or (key == "spawn_y" and (float(raw[key]) < -5.4 or float(raw[key]) > -4.5))): errors.append(id+": invalid "+key)
+		if raw.has("spawn_half_width") != raw.has("spawn_y"): errors.append(id+": incomplete controlled launch")
 		for key: String in ["frequency_upgrade","value_upgrade"]:
 			var upgrade := permanent.definition(str(raw.get(key,"")))
 			if not upgrade.is_empty() and (unlock.is_empty() or int(upgrade.requires.get(unlock.id,0)) < 1): errors.append(id+": improvement must require its dedicated unlock")
@@ -106,6 +127,10 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 			errors.append(id+": missing specimen"); continue
 		var fruit: Dictionary = raw.specimen
 		if not fruit.get("id") is String or not fruit.id.begins_with("event_"): errors.append(id+": invalid event specimen ID")
+		elif seen_specimens.has(fruit.id): errors.append(id+": duplicate event specimen ID")
+		else: seen_specimens[fruit.id] = true
+		if fruit.has("launch_delay") and (not PrestigeProgression.number(fruit.launch_delay) or float(fruit.launch_delay) < 0 or float(fruit.launch_delay) > .5): errors.append(id+": invalid launch delay")
+		if fruit.has("split_impulse") and (not PrestigeProgression.number(fruit.split_impulse) or float(fruit.split_impulse) <= 0 or float(fruit.split_impulse) > 6): errors.append(id+": invalid split impulse")
 		for key: String in ["model_scale","radius","gravity","launch_min","launch_max","durability","fragment_durability","mass","spin","spin_z"]:
 			if not PrestigeProgression.number(fruit.get(key)) or float(fruit[key]) <= 0: errors.append(id+": invalid specimen "+key)
 		if not fruit.get("model") is String or not ResourceLoader.exists(fruit.model): errors.append(id+": missing whole model")

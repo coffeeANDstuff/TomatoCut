@@ -12,7 +12,7 @@ static func prepared() -> Progression:
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
 	var catalog := EventCatalog.new()
-	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 2,"both implemented events validate with independent permanent gates")
+	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 3,"three implemented events validate with independent permanent gates")
 	check.call(not p.prestige.purchase("stampede_season") and not p.purchase("stampede_season") and catalog.probability("stampede_season",p.prestige) == 0,"fresh normal cultivation cannot buy or activate Stampede Season")
 	p.prestige.levels.stampede_frequency = 3
 	check.call(catalog.probability("stampede_season",p.prestige) == 0,"stampede frequency alone cannot bypass its dedicated permanent unlock")

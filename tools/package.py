@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Printed Culinary Buttons milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Giant Harvest milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -101,6 +101,16 @@ raise the wave to twelve specimens; the entire wave must fit the shared cap.
 Each specimen has its own normal cut budget and starts at twice its variety's
 quality value. Ordinary price/combo/permanent bonuses apply once afterward.
 Round/lifetime stampede fruit counts and investments survive prestige.
+Giant Harvest is a separate 3-seed unlock after Starting Cash 1. The Big One
+is an enormous nine-ribbed specimen with a brief heavy-launch anticipation.
+It starts with six resistance and two-hit fragments. Reverse a swipe or pause
+to strike again; damage alone earns no money. The first split pays 40 times
+the best eligible normal quality value, before ordinary/permanent bonuses.
+Giant Frequency, Rewards and Bonus Cuts each start at 3 seeds. Frequency caps
+at 18%, value at 100 times, and two bonus cuts stay within the shared seven-cut
+limit. Checks start at 6s, with 18s cooldown, one active giant and two/round.
+Giants are separate from ordinary Beefsteaks. Investments and unique giant
+counts survive prestige; New Game clears them. No sibling event unlock is needed.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

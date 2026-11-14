@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.12.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.13.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -240,6 +240,48 @@ func run() -> void:
 	check(game.progress.prestige.level("stampede_season") == 1 and game.progress.prestige.level("larger_stampedes") == 1 and game.progress.lifetime.stampede_tomatoes == 1,"packaged prestige preserves stampede investments and lifetime history")
 	game.new_game()
 	check(game.progress.prestige.level("stampede_season") == 0 and game.progress.lifetime.stampede_tomatoes == 0 and game.events.catalog.probability("stampede_season",game.progress.prestige) == 0,"packaged confirmed fresh game clears permanent stampede ownership and history")
+	game.finish_round()
+	check(game.events.catalog.probability("giant_harvest",game.progress.prestige) == 0 and game.spawn_event("giant_harvest") == null,"packaged fresh progress cannot activate the locked giant event")
+	game.progress = Progression.new(); game.ui.progress = game.progress; game.audio.progress = game.progress
+	game.progress.complete_round(ceilf(threshold*pow(100,1.0/float(game.progress.prestige.config.exponent)))+1,1,1)
+	game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	for id: String in ["permanent_slice_value","starting_cash","giant_harvest","giant_frequency","giant_rewards","giant_bonus_cuts"]: game.purchase_permanent(id)
+	game.ui.archive("Special Events")
+	check(game.events.catalog.validate(game.progress.prestige).is_empty() and game.ui.content.find_child("PrestigeTitle_giant_harvest",true,false) != null and ResourceLoader.exists("res://assets/illustrations/prestige/giant_harvest.svg"),"packaged giant data, all original models, cue and illustrated printed archive validate")
+	check(game.progress.prestige.level("golden_harvest") == 0 and game.progress.prestige.level("stampede_season") == 0 and is_equal_approx(game.events.catalog.probability("giant_harvest",game.progress.prestige),.1) and game.events.catalog.cut_value("giant_harvest",game.progress) == 60 and game.events.catalog.cut_limit("giant_harvest",game.progress) == 2,"packaged paid giant effects work without sibling unlocks or free normal cuts")
+	game.progress.money = 1000
+	for i in range(10): game.progress.purchase("extra_seconds")
+	game.start_round(); game.session.launch_clock = 1000
+	for candidate in range(1,10000):
+		var probe := RandomNumberGenerator.new(); probe.seed = candidate
+		if probe.randf() < .1: game.event_rng.seed = candidate; break
+	game._physics_process(6)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false)
+	check(fruit.variety_id == "event_giant" and fruit.collision == "hull" and is_equal_approx(fruit.scale.x,1.65) and fruit.durability == 6 and fruit.family.limit == 2 and game.events.count("giant_harvest") == 1,"packaged scheduler launches the actual enormous durable specimen with its paid family budget")
+	check(game.audio.sounds.get("giant") is AudioStreamWAV and game.audio.players[(game.audio.cursor-1)%8].stream == game.audio.sounds.giant and game.ui.root.find_child("GiantIndicator",false,false) != null,"packaged giant dispatches its own data-driven cue and identifier")
+	var initial: Vector3 = fruit.position; fruit._physics_process(.1)
+	check(fruit.position == initial and fruit.launch_delay > 0,"packaged giant anticipation delays actual launch movement")
+	fruit._physics_process(.2)
+	check(fruit.position.y > initial.y and is_zero_approx(fruit.launch_delay),"packaged giant starts its controlled real arc after the remaining delay")
+	fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(fruit.durability == 5 and game.process_blade() == 0 and fruit.durability == 5 and game.session.earnings == 0,"packaged giant damage and duplicate overlap cannot award premature money or repeat damage")
+	for i in range(4): game.knife.track(Vector2(-3 if i%2 == 0 else 3,0)); game.process_blade()
+	check(fruit.durability == 1 and game.session.earnings == 0 and game.ui.root.find_child("DamageIndicator",false,false).text == "1 more strike","packaged five-strike giant still owes one hit and keeps one current resistance label")
+	game.knife.track(Vector2(-3,0))
+	check(game.process_blade() == 1 and game.session.earnings == 75 and game.session.giant_tomatoes == 1 and game.fragments.pieces[0].models.has("event_giant/half"),"packaged sixth strike splits original seeded giant halves for the paid premium once")
+	game.knife.track(Vector2(3,0))
+	check(game.process_blade() == 0 and game.session.earnings == 75,"packaged giant fragments retain two-hit resistance without a damage-only payout")
+	game.knife.track(Vector2(-3,0))
+	check(game.process_blade() == 1 and game.session.earnings == 150 and game.session.giant_tomatoes == 1 and game.session.tomatoes_sliced == 1,"packaged giant recut spends the actual family budget without a second unique count")
+	event_rng_before = game.event_rng.state; game._physics_process(6)
+	check(game.events.count("giant_harvest") == 1 and game.event_rng.state == event_rng_before,"packaged active giant descendants and cooldown consume no extra event randomness")
+	game.finish_round()
+	check(game.progress.lifetime.giant_tomatoes == 1 and game.store.load_into(restored) and restored.lifetime.giant_tomatoes == 1 and game.ui.content.find_child("GiantSummary",true,false) != null,"packaged giant lifetime count and real results bank and reload together")
+	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(game.progress.prestige.level("giant_harvest") == 1 and game.progress.prestige.level("giant_bonus_cuts") == 1 and game.progress.lifetime.giant_tomatoes == 1,"packaged prestige preserves giant purchases and lifetime progress")
+	game.new_game()
+	check(game.progress.prestige.level("giant_harvest") == 0 and game.progress.lifetime.giant_tomatoes == 0 and game.events.catalog.probability("giant_harvest",game.progress.prestige) == 0,"packaged New Game relocks giants and clears their history")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow
