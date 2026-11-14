@@ -228,5 +228,55 @@
         }
       }
     ]
+  },
+  {
+    "id": "jackpot_harvest",
+    "name": "Tomato Jackpot",
+    "kind": "specimen",
+    "unlock_upgrade": "jackpot_harvest",
+    "frequency_upgrade": "jackpot_frequency",
+    "value_upgrade": "jackpot_multiplier",
+    "duration_upgrade": "jackpot_duration",
+    "interval": 8,
+    "initial_delay": 8,
+    "chance": 0.025,
+    "cooldown": 32,
+    "round_limit": 1,
+    "active_limit": 1,
+    "reward_multiplier": 250,
+    "cue": "jackpot",
+    "caption": "Tomato Jackpot",
+    "indicator": "JackpotIndicator",
+    "spawn_half_width": 2.2,
+    "spawn_y": -4.5,
+    "specimen": {
+      "id": "event_jackpot",
+      "name": "Tomato Jackpot",
+      "model": "res://assets/models/events/jackpot.glb",
+      "model_scale": 1.08,
+      "radius": 0.9,
+      "gravity": 4.8,
+      "launch_min": 8.0,
+      "launch_max": 8.4,
+      "spin": 0.32,
+      "spin_z": 0.24,
+      "durability": 2,
+      "fragment_durability": 1,
+      "mass": 1.4,
+      "collision": "hull",
+      "proxy_axes": [
+        0.64,
+        0.7,
+        0.58
+      ],
+      "proxy_lobe": 0.1,
+      "proxy_lobe_count": 10,
+      "proxy_taper": -0.24,
+      "fragments": {
+        "half": "res://assets/models/fragments/event_jackpot_half.glb",
+        "wedge": "res://assets/models/fragments/event_jackpot_wedge.glb",
+        "chunk": "res://assets/models/fragments/event_jackpot_chunk.glb"
+      }
+    }
   }
 ]

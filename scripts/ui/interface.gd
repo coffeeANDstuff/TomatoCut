@@ -346,11 +346,12 @@ func results(session: RoundSession) -> void:
 	if session.stampede_tomatoes > 0: event_stats.append("STAMPEDE %d (%d total)" % [session.stampede_tomatoes,progress.lifetime.stampede_tomatoes])
 	if session.giant_tomatoes > 0: event_stats.append("GIANTS %d (%d total)" % [session.giant_tomatoes,progress.lifetime.giant_tomatoes])
 	if session.rainbow_tomatoes > 0: event_stats.append("RAINBOW %d (%d total)" % [session.rainbow_tomatoes,progress.lifetime.rainbow_tomatoes])
+	if session.jackpot_tomatoes > 0: event_stats.append("JACKPOT %d (%d total)" % [session.jackpot_tomatoes,progress.lifetime.jackpot_tomatoes])
 	var extra_row := event_stats.size() > 2
 	if not event_stats.is_empty():
 		var text := "  ·  ".join(event_stats.slice(0,2))+("\n"+"  ·  ".join(event_stats.slice(2)) if extra_row else "")
 		var summary := label(text,13 if extra_row else 14,false,Color("9b7740"))
-		summary.name = "GoldenSummary" if session.golden_tomatoes > 0 else "StampedeSummary" if session.stampede_tomatoes > 0 else "GiantSummary" if session.giant_tomatoes > 0 else "RainbowSummary"
+		summary.name = "GoldenSummary" if session.golden_tomatoes > 0 else "StampedeSummary" if session.stampede_tomatoes > 0 else "GiantSummary" if session.giant_tomatoes > 0 else "RainbowSummary" if session.rainbow_tomatoes > 0 else "JackpotSummary"
 		place(summary,Vector2(43,274 if extra_row else 278),Vector2(530,36 if extra_row else 22),panel)
 	var stats := GridContainer.new()
 	stats.columns = 2

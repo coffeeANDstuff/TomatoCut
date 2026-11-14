@@ -210,7 +210,9 @@ func critical_feedback(at: Vector3) -> void:
 
 func damage_feedback(at: Vector3, remaining: float, event_id: String = "") -> void:
 	var strikes := int(ceilf(remaining/progress.strength()))
-	ui.popup_damage("%d more %s" % [strikes,"strike" if strikes == 1 else "strikes"], kitchen.camera.unproject_position(at),event_id if event_id == "giant_harvest" else "")
+	var event := events.catalog.definition(event_id)
+	var group := event_id if event.get("kind","") == "specimen" and int(event.get("active_limit",0)) == 1 else ""
+	ui.popup_damage("%d more %s" % [strikes,"strike" if strikes == 1 else "strikes"], kitchen.camera.unproject_position(at),group)
 	audio.play("resist")
 
 func cut_feedback(at: Vector3, first_slice: bool, tomato_value: float = 1.0, event_id: String = "") -> void:
@@ -224,7 +226,7 @@ func finish_round() -> void:
 		return
 	state = "results"
 	session.running = false
-	progress.complete_round(session.earnings,session.cuts,session.tomatoes_sliced,session.golden_tomatoes,session.stampede_tomatoes,session.giant_tomatoes,session.rainbow_tomatoes)
+	progress.complete_round(session.earnings,session.cuts,session.tomatoes_sliced,session.golden_tomatoes,session.stampede_tomatoes,session.giant_tomatoes,session.rainbow_tomatoes,session.jackpot_tomatoes)
 	save_progress()
 	clear_field()
 	ui.results(session)

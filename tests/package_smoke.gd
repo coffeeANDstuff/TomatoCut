@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.14.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.15.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -331,6 +331,55 @@ func run() -> void:
 	check(game.progress.prestige.level("heirloom_celebration") == 1 and game.progress.prestige.level("extended_harvest") == 1 and game.progress.lifetime.rainbow_tomatoes == 7,"packaged prestige preserves actual rainbow purchases and unique history")
 	game.new_game()
 	check(game.progress.prestige.level("heirloom_celebration") == 0 and game.progress.lifetime.rainbow_tomatoes == 0 and game.events.catalog.probability("heirloom_celebration",game.progress.prestige) == 0,"packaged New Game clears rainbow ownership and history")
+	game.finish_round()
+	check(game.events.catalog.probability("jackpot_harvest",game.progress.prestige) == 0 and game.spawn_event("jackpot_harvest") == null,"packaged fresh progress cannot activate locked Tomato Jackpot")
+	game.progress = Progression.new(); game.ui.progress = game.progress; game.audio.progress = game.progress
+	game.progress.complete_round(ceilf(threshold*pow(100,1.0/float(game.progress.prestige.config.exponent)))+1,1,1)
+	game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	for id: String in ["permanent_slice_value","starting_cash","jackpot_harvest","jackpot_frequency","jackpot_multiplier","jackpot_duration"]: game.purchase_permanent(id)
+	game.ui.archive("Special Events")
+	check(game.events.catalog.validate(game.progress.prestige).is_empty() and game.ui.content.find_child("PrestigeTitle_jackpot_harvest",true,false) != null and ResourceLoader.exists("res://assets/illustrations/prestige/jackpot_harvest.svg"),"packaged jackpot definitions, original model/cue/plate and dedicated printed archive validate")
+	var jackpot_specimen: Dictionary = game.events.catalog.specimen("event_jackpot"); var jackpot_models := 0; var jackpot_batched := true
+	for path: String in [jackpot_specimen.model]+jackpot_specimen.fragments.values():
+		var model: Node = load(path).instantiate()
+		jackpot_batched = jackpot_batched and model.find_children("*","MeshInstance3D",true,false).size() <= 8
+		jackpot_models += 1; model.free()
+	check(jackpot_models == 4 and jackpot_batched,"all four original garnet-heart whole/interior/prepared scenes load from the pack within node budgets")
+	check(game.progress.prestige.level("golden_harvest") == 0 and game.progress.prestige.level("stampede_season") == 0 and game.progress.prestige.level("giant_harvest") == 0 and game.progress.prestige.level("heirloom_celebration") == 0 and is_equal_approx(game.events.catalog.probability("jackpot_harvest",game.progress.prestige),.04) and game.events.catalog.cut_value("jackpot_harvest",game.progress) == 375 and is_equal_approx(game.events.catalog.flight_multiplier("jackpot_harvest",game.progress.prestige),1.15),"packaged jackpot chance, value and duration investments work independently of all sibling events")
+	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"standard_red":1.0} and game.progress.max_cuts() == 1,"packaged jackpot ownership grants no ordinary Golden Beauty or normal upgrades")
+	game.progress.money = 10000
+	game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts")
+	for i in range(20): game.progress.purchase("extra_seconds")
+	game.start_round(); game.session.launch_clock = 1000
+	for candidate in range(1,10000):
+		var probe := RandomNumberGenerator.new(); probe.seed = candidate
+		if probe.randf() < .04: game.event_rng.seed = candidate; break
+	game._physics_process(8)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false)
+	check(fruit.variety_id == "event_jackpot" and fruit.collision == "hull" and is_equal_approx(fruit.scale.x,1.08) and fruit.durability == 2 and fruit.family.limit == 2 and absf(fruit.position.x) <= 2.2,"packaged scheduler launches the original controlled jackpot hull with normal family capacity")
+	check(is_equal_approx(fruit.gravity,4.8/pow(1.15,2)) and fruit.velocity.y >= 8.0/1.15 and fruit.velocity.y <= 8.4/1.15,"packaged paid duration dilates gravity and launch speed consistently at the same arc height")
+	check(game.audio.sounds.get("jackpot") is AudioStreamWAV and game.audio.players[(game.audio.cursor-1)%8].stream == game.audio.sounds.jackpot and game.ui.root.find_child("JackpotIndicator",false,false) != null,"packaged jackpot dispatches its original restrained cue and textual caption")
+	var jackpot_initial := fruit.position; fruit._physics_process(.2)
+	check(fruit.position.y > jackpot_initial.y and game.spawn_event("jackpot_harvest") == null,"packaged jackpot advances its real arc and denies a consumed spawn permit")
+	fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	var jackpot_damage: Label
+	for feedback: Dictionary in game.ui.moving:
+		if feedback.get("group","") == "jackpot_harvest": jackpot_damage = feedback.node
+	check(is_equal_approx(fruit.durability,.5) and game.process_blade() == 0 and fruit.durability == .5 and game.session.earnings == 0 and jackpot_damage != null,"packaged resisted jackpot and duplicate overlap cannot repeat damage or pay premature money")
+	game.knife.track(Vector2(-3,0))
+	check(game.process_blade() == 1 and game.session.earnings == 468.75 and game.session.jackpot_tomatoes == 1 and game.fragments.pieces[0].models.has("event_jackpot/half"),"packaged second strike splits original seeded jackpot halves for its paid premium exactly once")
+	check((not is_instance_valid(jackpot_damage) or not jackpot_damage.visible) and game.fragments.pieces[0].life == 3,"packaged successful jackpot dismisses obsolete resistance and keeps normal fragment lifetime")
+	game.knife.track(Vector2(3,0))
+	check(game.process_blade() == 1 and game.session.earnings == 937.5 and game.session.jackpot_tomatoes == 1 and game.session.tomatoes_sliced == 1,"packaged real jackpot recut spends its family budget without another unique count")
+	event_rng_before = game.event_rng.state; game._physics_process(8)
+	check(game.events.count("jackpot_harvest") == 1 and game.event_rng.state == event_rng_before and EventSpawner.active_groups(game) == {"jackpot_harvest":1},"packaged jackpot descendants retain a reservation while one-per-round cap draws no further randomness")
+	game.finish_round()
+	check(game.progress.lifetime.jackpot_tomatoes == 1 and game.store.load_into(restored) and restored.lifetime.jackpot_tomatoes == 1 and game.ui.content.find_child("JackpotSummary",true,false) != null,"packaged unique jackpot history, actual results and disk ledger bank together")
+	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(game.progress.prestige.level("jackpot_harvest") == 1 and game.progress.prestige.level("jackpot_duration") == 1 and game.progress.lifetime.jackpot_tomatoes == 1,"packaged prestige preserves jackpot investments and unique lifetime progress")
+	game.new_game()
+	check(game.progress.prestige.level("jackpot_harvest") == 0 and game.progress.lifetime.jackpot_tomatoes == 0 and game.events.catalog.probability("jackpot_harvest",game.progress.prestige) == 0,"packaged New Game relocks jackpots and clears their history")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

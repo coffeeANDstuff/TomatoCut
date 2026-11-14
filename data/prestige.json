@@ -301,6 +301,78 @@
       "effect_values": {
         "bonus_per_level": 1
       }
+    },
+    {
+      "id": "jackpot_harvest",
+      "name": "Jackpot Harvest",
+      "description": "A sealed invitation for one exceptionally rare archive specimen. Golden Beauty and the other event invitations are separate matters.",
+      "effect": "Unlocks automatic exceptionally rare Tomato Jackpots",
+      "base_cost": 5,
+      "growth": 2,
+      "max_level": 1,
+      "requires": {
+        "starting_cash": 1
+      },
+      "category": "Special Events",
+      "event_id": "jackpot_harvest",
+      "illustration": "res://assets/illustrations/prestige/jackpot_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 1
+      }
+    },
+    {
+      "id": "jackpot_frequency",
+      "name": "Jackpot Frequency",
+      "description": "A few more appointments for the rarest visitor. It still appears at most once per round.",
+      "effect": "+1.5 percentage points per jackpot check per level",
+      "base_cost": 4,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "jackpot_harvest": 1
+      },
+      "category": "Special Events",
+      "event_id": "jackpot_harvest",
+      "illustration": "res://assets/illustrations/prestige/jackpot_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 0.015
+      }
+    },
+    {
+      "id": "jackpot_multiplier",
+      "name": "Jackpot Multiplier",
+      "description": "The specimen carries a considerably more persuasive invoice. Damage alone still earns nothing.",
+      "effect": "+50% base jackpot cut value per level",
+      "base_cost": 4,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "jackpot_harvest": 1
+      },
+      "category": "Special Events",
+      "event_id": "jackpot_harvest",
+      "illustration": "res://assets/illustrations/prestige/jackpot_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 0.5
+      }
+    },
+    {
+      "id": "jackpot_duration",
+      "name": "Jackpot Duration",
+      "description": "A slower passage through the same arc gives the whole specimen more time at the board. The round timer and fragment lives stay unchanged.",
+      "effect": "+15% whole-specimen airtime per level at the same arc height",
+      "base_cost": 4,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "jackpot_harvest": 1
+      },
+      "category": "Special Events",
+      "event_id": "jackpot_harvest",
+      "illustration": "res://assets/illustrations/prestige/jackpot_harvest.svg",
+      "effect_values": {
+        "bonus_per_level": 0.15
+      }
     }
   ]
 }

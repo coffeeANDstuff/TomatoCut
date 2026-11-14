@@ -24,7 +24,7 @@ static func swipe(game, x: float) -> int:
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
 	var catalog := EventCatalog.new()
-	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 4 and p.harvest.varieties.size() == 3,"four real independently gated events validate without extending the normal variety collection")
+	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 5 and p.harvest.varieties.size() == 3,"five real independently gated events validate without extending the normal variety collection")
 	var forms: Dictionary = {}; var paths: Dictionary = {}; var batched := true
 	for fruit: Dictionary in catalog.definition("heirloom_celebration").specimens:
 		forms[str(fruit.proxy_axes)+str(fruit.proxy_taper)] = true
@@ -45,7 +45,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	var seeds := p.prestige.seeds
 	check.call(p.prestige.purchase("heirloom_celebration") and p.prestige.seeds == seeds-4 and not p.prestige.purchase("heirloom_celebration"),"Heirloom Celebration costs four permanent seeds exactly once")
 	check.call(is_equal_approx(catalog.probability("heirloom_celebration",p.prestige),.08) and catalog.cut_value("heirloom_celebration",p) == 8 and catalog.spawn_count("heirloom_celebration",p.prestige) == 6,"own gate permits six colorful specimens at eightfold best eligible quality")
-	check.call(catalog.probability("golden_harvest",p.prestige) == 0 and catalog.probability("stampede_season",p.prestige) == 0 and catalog.probability("giant_harvest",p.prestige) == 0 and catalog.probability("jackpot_harvest",p.prestige) == 0,"rainbow ownership leaves every sibling and the future jackpot locked")
+	check.call(catalog.probability("golden_harvest",p.prestige) == 0 and catalog.probability("stampede_season",p.prestige) == 0 and catalog.probability("giant_harvest",p.prestige) == 0 and catalog.probability("jackpot_harvest",p.prestige) == 0,"rainbow ownership leaves every unpurchased sibling including the jackpot locked")
 	check.call(p.harvest.distribution(p.levels,p.strength()) == {"standard_red":1.0} and p.max_cuts() == 1,"original archive collection grants no ordinary variety, frequency, dominance or cut levels")
 	for id: String in IDS.slice(1):
 		check.call(id in p.prestige.unseen() and p.prestige.purchase(id),"rainbow unlock reveals a real paid successor: "+id)

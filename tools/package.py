@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Rainbow Harvest milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Tomato Jackpot milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -121,6 +121,16 @@ quality, and wave size from six to nine. Checks begin at 7s, with 21s cooldown,
 one active wave and two/round. Every wave must fit in full. Each tomato owns
 its normal family cut budget; price/combo/permanent bonuses apply once.
 Investments and unique rainbow counts survive prestige; New Game clears them.
+Jackpot Harvest is a separate 5-seed invitation after Starting Cash 1. Its
+exceptionally rare garnet-heart specimen has ten gilded ribs, two resistance
+points and its own seeded fragments. Normal Golden Beauty is separate.
+Jackpot Frequency, Jackpot Multiplier and Jackpot Duration start at 4 seeds,
+double each level and have three levels: 2.5% to 7% chance per 8s check,
+250x to 625x best eligible normal quality value, and 1x to 1.45x whole-fruit
+airtime at the same arc height. Duration changes no round timer, fragment life
+or family cut budget. One jackpot per round, 32s cooldown and shared budgets
+still apply. Captured value, ordinary price/combo/permanent factors, durable
+unique counts, prestige preservation and New Game use the same real paths.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

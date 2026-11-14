@@ -40,3 +40,13 @@ for x,y,r in [(42,69,18),(81,45,15),(120,63,19),(165,43,14),(180,96,16)]:
 <path d="M45 65Q39 48 48 44M109 56Q105 37 117 34M179 45Q174 25 187 24M27 147H196M44 155H62M101 155H119M169 155H187" stroke="#ba8e4e"/>
 <path d="M29 137Q108 145 197 137M45 161L39 166M111 161L105 166M179 161L173 166"/>
 </g></svg>''')
+
+# Original rare-specimen plate: a garnet heart with fine gilded ribs and seed seal.
+(out/'jackpot_harvest.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" width="220" height="180" viewBox="0 0 220 180"><g stroke="#213d35" stroke-width="1.8" stroke-linejoin="round" fill="none">
+<path d="M110 47C88 27 57 35 45 57C28 88 54 128 110 153C164 126 191 87 176 57C164 35 133 27 110 47Z" fill="#a45159"/>
+<path d="M110 51C88 75 92 123 110 150M91 45C65 71 77 117 109 151M70 45C45 77 64 117 110 151M129 45C155 71 143 117 111 151M150 45C175 77 156 117 110 151M110 51C132 75 128 123 110 150" stroke="#d1ad69"/>
+<path d="M110 54L82 43L94 57L75 66L103 65L110 84L119 64L146 68L130 56L145 42L121 48L124 32Z" fill="#8a9b7a"/>
+<path d="M109 49C107 25 121 19 134 30" stroke-width="5"/>
+<circle cx="181" cy="137" r="23" fill="#f4ead5" stroke="#ba8e4e"/><circle cx="181" cy="137" r="18" stroke="#ba8e4e"/>
+<path d="M174 143C165 129 183 119 188 130C194 140 178 153 174 143Z" fill="#d1ad69"/><path d="M176 143L185 129M166 160L159 176L179 168L189 176L197 160M24 53L31 45M29 71L17 68M183 44L191 50M189 65L202 64M57 164H135" stroke="#ba8e4e"/>
+</g></svg>''')

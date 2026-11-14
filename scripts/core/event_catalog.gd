@@ -45,6 +45,9 @@ func cut_limit(id: String, progress) -> int:
 	var d := definition(id)
 	return clampi(progress.max_cuts()+int(progress.prestige.effect(str(d.get("bonus_cut_upgrade","")))),1,7)
 
+func flight_multiplier(id: String, permanent: PrestigeProgression) -> float:
+	return 1.0+permanent.effect(str(definition(id).get("duration_upgrade","")))
+
 func cut_value(id: String, progress) -> float:
 	if not unlocked(id,progress.prestige): return 0
 	var best := 1.0
@@ -62,7 +65,8 @@ func summary(id: String, permanent: PrestigeProgression) -> String:
 		var chance := probability(d.id,permanent)
 		var bonus: float = permanent.definition(id).effect_values.bonus_per_level
 		var next := chance if permanent.level(id) >= int(permanent.definition(id).max_level) else minf(1,chance+bonus)
-		return "Chance each %.0fs check: %.0f%% → %.0f%%" % [d.interval,chance*100,next*100]
+		var precise := not is_equal_approx(chance*100,roundf(chance*100)) or not is_equal_approx(next*100,roundf(next*100))
+		return ("Chance each %.0fs check: %.1f%% → %.1f%%" if precise else "Chance each %.0fs check: %.0f%% → %.0f%%") % [d.interval,chance*100,next*100]
 	if id == d.get("size_upgrade",""):
 		var current := spawn_count(d.id,permanent)
 		var next := current if permanent.level(id) >= int(upgrade.max_level) else current+int(upgrade.effect_values.bonus_per_level)
@@ -71,6 +75,10 @@ func summary(id: String, permanent: PrestigeProgression) -> String:
 		var current := int(permanent.effect(id))
 		var next := current if permanent.level(id) >= int(upgrade.max_level) else current+int(upgrade.effect_values.bonus_per_level)
 		return "Additional giant cuts: +%d → +%d · shared cap 7" % [current,next]
+	if id == d.get("duration_upgrade",""):
+		var current := flight_multiplier(d.id,permanent)
+		var next := current if permanent.level(id) >= int(upgrade.max_level) else current+float(upgrade.effect_values.bonus_per_level)
+		return "Whole-specimen airtime: ×%.2f → ×%.2f · same arc height" % [current,next]
 	var current := multiplier(d.id,permanent)
 	var next := current if permanent.level(id) >= int(permanent.definition(id).max_level) else current+float(d.reward_multiplier)*float(permanent.definition(id).effect_values.bonus_per_level)
 	return ("Best eligible cut value: ×%.0f → ×%.0f" if d.kind == "specimen" or d.has("specimens") else "Selected variety cut value: ×%.0f → ×%.0f") % [current,next]
@@ -97,6 +105,12 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 		for key: String in ["unlock_upgrade","frequency_upgrade","value_upgrade"]:
 			if not raw.get(key) is String or permanent.definition(raw[key]).is_empty(): errors.append(id+": missing "+key)
 		var unlock := permanent.definition(str(raw.get("unlock_upgrade","")))
+		if raw.has("duration_upgrade"):
+			var duration := permanent.definition(str(raw.duration_upgrade))
+			if raw.get("kind") != "specimen" or duration.is_empty() or unlock.is_empty() or int(duration.get("requires",{}).get(unlock.get("id",""),0)) < 1:
+				errors.append(id+": duration requires a dedicated specimen unlock")
+			elif not PrestigeProgression.number(duration.effect_values.bonus_per_level) or float(duration.effect_values.bonus_per_level) <= 0 or float(duration.effect_values.bonus_per_level)*int(duration.max_level) > 1:
+				errors.append(id+": invalid flight duration budget")
 		if raw.has("bonus_cut_upgrade"):
 			var bonus := permanent.definition(str(raw.bonus_cut_upgrade))
 			if bonus.is_empty() or unlock.is_empty() or int(bonus.get("requires",{}).get(unlock.get("id",""),0)) < 1:

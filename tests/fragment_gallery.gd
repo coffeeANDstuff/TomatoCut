@@ -17,6 +17,7 @@ func run() -> void:
 	if "--giant" in OS.get_cmdline_user_args(): variety = "event_giant"
 	for color: String in ["amber","sage","violet"]:
 		if "--rainbow-"+color in OS.get_cmdline_user_args(): variety = "event_rainbow_"+color
+	if "--jackpot" in OS.get_cmdline_user_args(): variety = "event_jackpot"
 	var index := 0
 	for shape: String in ["half","wedge","chunk"]:
 		var frame := Basis.from_euler(Vector3(-.55,.85,-.15))
@@ -36,6 +37,7 @@ func run() -> void:
 	if variety == "event_golden": target = "69-golden-fragment-study"
 	if variety == "event_giant": target = "89-giant-fragment-study"
 	if variety.begins_with("event_rainbow_"): target = "103-"+variety+"-fragments"
+	if variety == "event_jackpot": target = "107-jackpot-fragments"
 	var error := root.get_texture().get_image().save_png("res://artifacts/"+target+".png")
 	manager.queue_free(); kitchen.queue_free()
 	await process_frame

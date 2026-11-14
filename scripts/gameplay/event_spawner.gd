@@ -13,6 +13,12 @@ static func spawn(game, id: String) -> Tomato:
 			fruit.position.x = game.event_rng.randf_range(-float(d.spawn_half_width),float(d.spawn_half_width))
 			fruit.position.y = float(d.spawn_y)
 			fruit.velocity.x = -fruit.position.x*.12
+		# Dilate the trajectory's time without raising its apex or changing its
+		# cut value, round timer, fragment lifetime, cooldown or family budget.
+		var duration := catalog.flight_multiplier(id,game.progress.prestige)
+		fruit.velocity /= duration
+		fruit.gravity /= duration*duration
+		fruit.spin /= duration
 		game.ui.popup_event(d.caption,game.kitchen.camera.unproject_position(Vector3(fruit.position.x,-2.6,0)),d.indicator)
 		game.audio.play(d.cue)
 		return fruit
