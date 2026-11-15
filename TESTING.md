@@ -2,7 +2,7 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
-## Golden Multipliers — v0.24.0 (2026-11-15, America/Los_Angeles)
+## Golden Multipliers — v0.24.1 (2026-11-15, America/Los_Angeles)
 
 Continued clean `4c14ab4`, passed **1,297/1,297** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Linux x86-64, retained Xorg `:98`, llvmpipe OpenGL/Dummy audio. Isolated saves use `user://tests/`. No cloud environment configuration publication.
 
@@ -29,7 +29,7 @@ DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility 
 
 **Diagnostic:** `GOLDEN_MULTIPLIER_BALANCE_REPORT.md` contains 36 actual paid profile/level/budget sequences with production progression/event/family/session helpers. Every budget is actually bought, including zero/one/six normal Extra Cuts; Roma and Combo Cash prerequisites are actual orders. One-cut rows stay unchanged. Standard Red seven-cut control/first/max totals **$262.50/$459.39/$571.88**; cultivated Roma **$2,625/$4,593.75/$5,718.75**. Fixture income is excluded and each cut rounds separately. Prescribed accepted splits exclude blade/flight/fragment/timing/occupancy, actual event chance, player accuracy, income rate, human seed ROI and FPS. Costs/readability remain provisional; older report scopes/prices stay unchanged.
 
-Python compilation, all shell syntax, five release-gate contract tests, actionlint 1.7.7 and whitespace checks pass. Package metadata/instructions/required original source-art/report identify **0.24.0**. Preflight Full ZIP passes safe paths, unique entries, CRC, complete SHA-256 manifest, portable modes and version/executable/source identity (**495 payload files/486 source files**), recording dirty=true honestly. Independent extraction imports and passes **1,361/1,361** through guarded fresh processes, no checkout caches, script/resource/runtime errors or retry. Initial verification invocation used an unsupported version argument and then an incorrect extra `Source/` path; corrected the commands below before successful validation. Neither invocation reached game tests.
+Python compilation, all shell syntax, five release-gate contract tests, actionlint 1.7.7 and whitespace checks pass. Package metadata/instructions/required original source-art/report identify **0.24.1**. Preflight Full ZIP passes safe paths, unique entries, CRC, complete SHA-256 manifest, portable modes and version/executable/source identity (**495 payload files/486 source files**), recording dirty=true honestly. Independent extraction imports and passes **1,361/1,361** through guarded fresh processes, no checkout caches, script/resource/runtime errors or retry. Initial verification invocation used an unsupported version argument and then an incorrect extra `Source/` path; corrected the commands below before successful validation. Neither invocation reached game tests.
 
 ```sh
 python -m py_compile tools/*.py
@@ -38,12 +38,16 @@ for script in tools/*.sh; do bash -n "$script"; done
 /tmp/tomatocut-actionlint/actionlint
 git diff --check
 python tools/package.py
-python tools/verify_package.py exports/TomatoCut-Full-v0.24.0.zip --extract-source /tmp/tomatocut-v024-preflight
+python tools/verify_package.py exports/TomatoCut-Full-v0.24.1.zip --extract-source /tmp/tomatocut-v024-preflight
 ./tools/cloud.sh ./tools/ci_godot.sh --headless --path /tmp/tomatocut-v024-preflight --editor --import --quit
 ./tools/cloud.sh ./tools/ci_godot.sh --headless --path /tmp/tomatocut-v024-preflight --script /tmp/tomatocut-v024-preflight/tests/run_tests.gd
 ```
 
 Clean package and public delivery proofs follow separately. Native Windows input/save/menu testing, Forward+ hardware, audible review, supported-PC 60 FPS and human balance remain unverified. Full Phase 5 and content scope remain incomplete.
+
+**Release correction:** immutable v0.24.0 source `2b5d5e64fc2ed91858b21544f51a573818e85906` passes clean local fresh imports and all 1,361 checks without retry. Public [run 43737221726](https://github.com/coffeeANDstuff/TomatoCut/actions/runs/43737221726) passes earlier checks but fails its five-second fresh-source step with two `ERROR: /root: The caller thread can't call the function propagate_notification()` messages. Strict error detection correctly refuses retry and skips publication. Anonymous logs expose the annotations/step status, not the complete stack trace. Godot 4.6's `EditorFileSystem::reimport_files()` reads the supported project setting `editor/import/use_multiple_threads`; v0.24.1 sets it false to serialize resource import. This addresses the worker import path without changing runtime behavior, weakening errors or retagging v0.24.0. Verification results for the correction follow after execution.
+
+Serial-import v0.24.1 fresh extracted source imports and passes **1,361/1,361**, no script/resource/runtime errors or retry. Rebuilt v0.24.1 Windows/Linux exports each pass **282/282** through the unchanged strict guard; Linux boots. Python compilation, five gate-contract tests, actionlint and whitespace checks pass again. Native gameplay flows were not repeated for this editor-only correction; the existing 429 checks verify unchanged gameplay. Clean source/package and public delivery are verified separately below.
 
 ## Stampede Combo Bonuses — v0.23.0 (2026-11-14, America/Los_Angeles)
 

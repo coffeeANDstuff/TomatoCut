@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.24.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.24.1.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
