@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Giant Weak Points milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Heirloom Collection milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -180,6 +180,18 @@ Ordinary body strikes keep ordinary damage. Equipped, cultivated, permanent,
 prepared and critical strength compose once. No extra cut value is granted;
 separated pieces retain their usual two-hit resistance and no seam bonus.
 Reduced Motion/Effects and disabled damage labels preserve the gameplay mark.
+Heirloom Multiplier requires the separately paid Heirloom Celebration and
+Rainbow Rewards 1. Its 4/8/16-seed levels grant +25/+50/+75% cut value per
+additional distinct Rainbow variety successfully split in the same wave.
+The first variety has no collection bonus; all three reach x1.5/x2/x2.5.
+Each family captures its multiplier on its first successful split; recuts keep
+that value. Later varieties cannot inflate an earlier family, damage/misses
+do not collect, and new waves/rounds start empty. Normal price/combo/wealth
+apply once, critical damage does not multiply money, and all ordinary/event
+prerequisites remain. The original three-specimen tally plate and one grouped
+local collection label explain real paid effects. Settings preserve rewards;
+prestige retains paid levels, New Game clears them and preserves preferences.
+Results label the existing combo-only statistic as Combo bonus.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

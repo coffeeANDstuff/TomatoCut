@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.20.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.21.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -637,6 +637,66 @@ func run() -> void:
 	check(game.progress.prestige.paid.giant_weak_points == [3,6,12] and game.events.catalog.weak_point_multiplier("giant_harvest",game.progress.prestige) == 2.5 and "×2.50 → ×2.50" in game.ui.content.find_child("PermanentEffect_giant_weak_points",true,false).text,"packaged maximum real paid weak points saturate at an honest aimed multiplier")
 	game.new_game()
 	check(game.progress.prestige.level("giant_weak_points") == 0 and game.events.catalog.weak_point_multiplier("giant_harvest",game.progress.prestige) == 1 and game.progress.settings.reduced_effects,"packaged New Game clears paid weak points and its event gate while preserving preferences")
+	game.progress.settings.damage_indicators = true # Explicit feedback-on fixture after testing preserved preferences.
+	game.finish_round(); game.progress.complete_round(ceilf(threshold*pow(200,1.0/float(game.progress.prestige.config.exponent)))+1,1,1)
+	game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	game.purchase_permanent("permanent_slice_value"); game.purchase_permanent("starting_cash"); game.purchase_permanent("heirloom_celebration")
+	check(game.ui.content.find_child("PurchasePermanent_heirloom_multiplier",true,false) == null and game.events.catalog.collection_increment("heirloom_celebration",game.progress.prestige) == 0,"packaged actual Rainbow gate keeps collection hidden behind its paid reward predecessor")
+	game.purchase_permanent("rainbow_rewards"); game.ui.archive("Special Events")
+	check(game.events.catalog.validate(game.progress.prestige).is_empty() and ResourceLoader.exists("res://assets/illustrations/prestige/heirloom_multiplier.svg") and game.ui.content.find_child("PurchasePermanent_heirloom_multiplier",true,false) != null,"packaged real collection invitation loads original three-specimen tally art and valid authored budgets")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(7)
+	fruit = game.tomatoes.get_child(0)
+	check(fruit.family.heirloom_wave == null,"packaged Rainbow wave without paid collection grants no hidden ledger or bonus")
+	game.finish_round(); game.show_archive(); game.purchase_permanent("heirloom_multiplier")
+	check(game.progress.prestige.seeds == 186 and game.progress.prestige.paid.heirloom_multiplier == [4] and game.events.catalog.cut_value("heirloom_celebration",game.progress) == 12 and game.progress.strength() == 1,"packaged collection pays four seeds without changing normal cutting or captured base Rainbow value")
+	game.progress.money = 10000; game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts"); game.fragments.set_physics_process(false)
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(7)
+	var collection_roots: Array[Tomato] = []; var collection_families: Array[CutFamily] = []; var collection_index := 0
+	for root_fruit: Tomato in game.tomatoes.get_children():
+		root_fruit.set_physics_process(false); root_fruit.position = Vector3(-3.5+1.4*collection_index,0,0); root_fruit.velocity = Vector2.ZERO; collection_index += 1; collection_roots.append(root_fruit); collection_families.append(root_fruit.family)
+	var collection: HeirloomWave = collection_families[0].heirloom_wave; var shared_collection := true
+	for ledger: CutFamily in collection_families: shared_collection = shared_collection and ledger.heirloom_wave == collection and ledger.cut_value == 12
+	check(collection_roots.size() == 6 and shared_collection and collection.varieties.is_empty(),"packaged six actual scheduled Rainbow roots share one empty wave ledger and independent captured families")
+	var collection_rng: int = game.ability_rng.state; var collection_event_rng: int = game.event_rng.state
+	game.knife.reset(); game.knife.track(Vector2(-6,2)); game.knife.track(Vector2(6,2)); game.process_blade()
+	check(collection.varieties.is_empty() and game.session.earnings == 0,"packaged real blade miss cannot collect varieties or grant money")
+	game.knife.reset(); game.knife.track(Vector2(-6,0)); game.knife.track(Vector2(6,0)); game.process_blade()
+	check(game.session.cuts == 6 and game.session.rainbow_tomatoes == 6 and game.session.earnings == 123.75 and collection.varieties.size() == 3 and collection_families[0].heirloom_multiplier == 1 and collection_families[1].heirloom_multiplier == 1.25 and collection_families[2].heirloom_multiplier == 1.5,"packaged actual wide sweep captures distinct-color bonuses once per successful family without retroactive inflation")
+	check(game.process_blade() == 0 and game.session.earnings == 123.75 and game.ability_rng.state == collection_rng and game.event_rng.state == collection_event_rng,"packaged same-stroke descendants cannot duplicate collection or consume additional event/locked-critical RNG")
+	var collection_labels := 0
+	for item: Dictionary in game.ui.moving:
+		if item.get("group","") == "heirloom_celebration" and item.node.text == "Heirloom ×1.50 · 3/3 varieties": collection_labels += 1
+	check(collection_labels == 1,"packaged fast collection updates one grouped local label with the actual full-wave multiplier")
+	game.knife.track(Vector2(-6,0)); game.process_blade()
+	check(game.session.cuts == 12 and game.session.rainbow_tomatoes == 6 and game.session.earnings == 247.5 and not collection_families[0].has_budget(),"packaged actual fragment recuts preserve every family's captured collection and shared cut budget")
+	var collection_before: Dictionary = game.progress.snapshot(); game.purchase_permanent("heirloom_multiplier"); game.show_archive()
+	check(game.state == "playing" and game.progress.snapshot() == collection_before,"packaged live collected wave denies archive navigation and permanent spending")
+	game.finish_round()
+	check(game.store.load_into(restored) and restored.prestige.cycle_earnings == 247.5 and restored.lifetime.rainbow_tomatoes == 6 and restored.prestige.paid.heirloom_multiplier == [4],"packaged completed collected wave saves actual money, unique Rainbow history and paid receipts")
+	for upgrade: String in ["better_prices","faster_throwing","unlock_cherry","unlock_roma","critical_slice"]: game.progress.purchase(upgrade)
+	game.progress.buy_knife("steak"); game.progress.equip_knife("steak"); game.progress.buy_modification("honing_kit"); game.progress.apply_modification("honing_kit","steak")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(7); collection_roots.clear()
+	for root_fruit: Tomato in game.tomatoes.get_children(): root_fruit.set_physics_process(false); root_fruit.position = Vector3(5,-4,0); root_fruit.velocity = Vector2.ZERO; collection_roots.append(root_fruit)
+	check(collection_roots[0].family.heirloom_wave != collection and collection_roots[0].family.heirloom_wave.varieties.is_empty(),"packaged new round allocates an independent empty actual wave collection")
+	collection_roots[0].position = Vector3.ZERO; game.knife.reset(); game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0)); game.process_blade()
+	for piece: FragmentPiece in game.fragments.pieces: piece.position = Vector3(5,-4,0)
+	collection_roots[1].position = Vector3.ZERO; game.ability_rng.seed = seam_critical.seed; seam_critical.state = game.ability_rng.state; seam_critical.randf()
+	game.knife.reset(); game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0)); game.process_blade()
+	check(game.progress.strength() == 2.5 and game.session.earnings == 337.5 and collection_roots[1].family.reward_value() == 120 and game.ability_rng.state == seam_critical.state,"packaged actual prepared critical collection composes Roma/Rainbow/collection/normal price/wealth once without a damage payout multiplier")
+	game.finish_round(); await process_frame
+	game.progress.settings.reduced_motion = true; game.progress.settings.reduced_effects = true; game.progress.settings.damage_indicators = false
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(7); collection_roots.clear()
+	for root_fruit: Tomato in game.tomatoes.get_children(): root_fruit.set_physics_process(false); root_fruit.position = Vector3(5,-4,0); root_fruit.velocity = Vector2.ZERO; collection_roots.append(root_fruit)
+	for i in range(2):
+		for piece: FragmentPiece in game.fragments.pieces: piece.position = Vector3(5,-4,0)
+		collection_roots[i].position = Vector3.ZERO; game.knife.reset(); game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0)); game.process_blade()
+	check(game.session.earnings == 337.5 and game.ui.root.find_child("HeirloomIndicator",false,false) == null,"packaged reduced motion/effects and disabled labels preserve actual collection rewards")
+	game.finish_round(); game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(game.progress.prestige.level("heirloom_multiplier") == 1 and game.progress.levels.is_empty() and game.progress.owned_modifications.is_empty() and game.progress.settings.reduced_motion,"packaged prestige retains collection while clearing normal cultivation/preparation and preserving preferences")
+	game.purchase_permanent("heirloom_multiplier"); game.purchase_permanent("heirloom_multiplier"); game.ui.archive("Special Events")
+	check(game.progress.prestige.paid.heirloom_multiplier == [4,8,16] and game.events.catalog.collection_increment("heirloom_celebration",game.progress.prestige) == .75 and "×2.50 → ×2.50" in game.ui.content.find_child("PermanentEffect_heirloom_multiplier",true,false).text,"packaged real maximum collection orders retain receipts and honest saturated peak comparisons")
+	game.new_game()
+	check(game.progress.prestige.level("heirloom_multiplier") == 0 and game.events.catalog.collection_increment("heirloom_celebration",game.progress.prestige) == 0 and game.progress.settings.reduced_motion,"packaged New Game clears collection and gate while retaining preferences")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

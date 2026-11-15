@@ -358,7 +358,7 @@ func results(session: RoundSession) -> void:
 	stats.add_theme_constant_override("h_separation",55)
 	stats.add_theme_constant_override("v_separation",8 if extra_row else 12)
 	place(stats,Vector2(42,316 if extra_row else 304),Vector2(535,150),panel)
-	for item: Array in [["Tomatoes sliced",str(session.tomatoes_sliced)],["Rewarded cuts",str(session.cuts)],["Best combo",str(session.best_combo)],["Bonus earnings",Progression.cash(session.bonus)],["Current balance",Progression.cash(progress.money)]]:
+	for item: Array in [["Tomatoes sliced",str(session.tomatoes_sliced)],["Rewarded cuts",str(session.cuts)],["Best combo",str(session.best_combo)],["Combo bonus",Progression.cash(session.bonus)],["Current balance",Progression.cash(progress.money)]]:
 		stats.add_child(label(item[0],18,false,MUTED))
 		stats.add_child(label(item[1],20,true))
 	place(button("Play again",func(): play_requested.emit(),true),Vector2(40,478),Vector2(540,52),panel)
@@ -715,6 +715,10 @@ func popup_event(text: String, screen_position: Vector2, indicator_name: String)
 	root.add_child(node)
 	node.position = screen_position-Vector2(60,45)
 	moving.append({"node":node,"life":1.0})
+
+func popup_heirloom(screen_position: Vector2, multiplier: float, collected: int, total: int, critical: bool = false) -> void:
+	var text := ("Critical heirloom ×%.2f" if critical else "Heirloom ×%.2f") % multiplier
+	popup_impact(text+" · %d/%d varieties" % [collected,total],screen_position,critical,"heirloom_celebration","HeirloomIndicator")
 
 func popup_weak_point(screen_position: Vector2, multiplier: float, remaining: float, critical: bool, group: String) -> void:
 	var text := ("Critical seam ×%.2f" if critical else "Weak point ×%.2f") % multiplier

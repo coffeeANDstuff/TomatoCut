@@ -191,7 +191,8 @@ func process_blade() -> int:
 			if weak: strike.damage *= tomato.weak_point.multiplier
 			if strike.critical:
 				if weak: audio.play("critical")
-				else: critical_feedback(tomato.position)
+				elif tomato.family.heirloom_wave == null or tomato.durability > float(strike.damage): critical_feedback(tomato.position)
+				else: audio.play("critical")
 			tomato.durability -= float(strike.damage)
 			if tomato.durability > 0:
 				tomato.damage_time = 0.08
@@ -203,7 +204,9 @@ func process_blade() -> int:
 			tomato.sliced = true
 			tomato.family.record_split()
 			fragments.split(tomato.position,tomato.velocity,direction,progress.settings.reduced_effects,tomato.family)
-			cut_feedback(tomato.position, true, tomato.family.cut_value,tomato.family.event_id)
+			cut_feedback(tomato.position, true, tomato.family.reward_value(),tomato.family.event_id)
+			if tomato.family.heirloom_wave != null:
+				ui.popup_heirloom(kitchen.camera.unproject_position(tomato.position),tomato.family.heirloom_multiplier,tomato.family.heirloom_wave.varieties.size(),tomato.family.heirloom_wave.allowed.size(),strike.critical)
 			if weak: ui.popup_weak_point(kitchen.camera.unproject_position(tomato.weak_point.center_world()),tomato.weak_point.multiplier,0,strike.critical,tomato.family.event_id)
 			tomato.hide()
 			tomato.queue_free()
@@ -228,7 +231,7 @@ func damage_feedback(at: Vector3, remaining: float, event_id: String = "") -> vo
 	audio.play("resist")
 
 func cut_feedback(at: Vector3, first_slice: bool, tomato_value: float = 1.0, event_id: String = "") -> void:
-	if first_slice: ui.dismiss_feedback(event_id)
+	if first_slice and events.catalog.definition(event_id).get("kind","") == "specimen": ui.dismiss_feedback(event_id)
 	var reward := session.record_cut(progress, first_slice, tomato_value,event_id)
 	ui.popup_cash("+" + Progression.cash(reward), kitchen.camera.unproject_position(at))
 	audio.play(progress.equipment.definition(progress.equipped_knife).get("slice_sound","slice"))

@@ -242,7 +242,11 @@
           "chunk": "res://assets/models/fragments/event_rainbow_violet_chunk.glb"
         }
       }
-    ]
+    ],
+    "collection_upgrade": "heirloom_multiplier",
+    "collection": {
+      "maximum_multiplier": 2.5
+    }
   },
   {
     "id": "jackpot_harvest",

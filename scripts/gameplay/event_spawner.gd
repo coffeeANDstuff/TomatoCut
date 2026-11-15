@@ -34,6 +34,9 @@ static func spawn(game, id: String) -> Tomato:
 	# of normal unlocks. The offset varies the fan without dropping any color.
 	var dedicated_value := catalog.cut_value(id,game.progress) if d.has("specimens") else 0.0
 	var offset: int = game.event_rng.randi_range(0,d.specimens.size()-1) if d.has("specimens") else 0
+	var collection: HeirloomWave
+	var increment := catalog.collection_increment(id,game.progress.prestige)
+	if increment > 0: collection = HeirloomWave.new(group,d.specimens,increment,float(d.collection.maximum_multiplier))
 	for i in range(count):
 		var data: Dictionary
 		var value: float
@@ -49,6 +52,7 @@ static func spawn(game, id: String) -> Tomato:
 		data.radius = float(data.radius)*factor
 		data.mass = float(data.mass)*pow(factor,3)
 		var fruit: Tomato = game._spawn_specimen(data,value,id,group,false)
+		fruit.family.heirloom_wave = collection
 		fruit.position = Vector3(lerpf(-4.4,4.4,float(i)/float(count-1)),-4.5-.12*(i%3),0)
 		fruit.velocity = Vector2(-fruit.position.x*.16,game.event_rng.randf_range(float(data.launch_min),float(data.launch_max)))
 		if first == null: first = fruit

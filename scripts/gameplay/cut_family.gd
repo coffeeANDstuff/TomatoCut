@@ -11,6 +11,8 @@ var model_scale := 1.0
 var mass := 1.0
 var split_impulse := 0.0
 var cut_value := 1.0
+var heirloom_wave: HeirloomWave
+var heirloom_multiplier := 1.0
 var fragment_durability := 1.0
 var limit: int
 var rewarded_cuts := 0
@@ -31,5 +33,10 @@ func try_strike(stroke: int) -> bool:
 func record_split() -> bool:
 	if not has_budget():
 		return false
+	if rewarded_cuts == 0 and heirloom_wave != null:
+		heirloom_multiplier = heirloom_wave.capture(variety_id,event_id,event_group)
 	rewarded_cuts += 1
 	return true
+
+func reward_value() -> float:
+	return cut_value*heirloom_multiplier

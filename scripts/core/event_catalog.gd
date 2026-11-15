@@ -62,6 +62,13 @@ func cut_value(id: String, progress) -> float:
 	for normal: String in mix: best = maxf(best,progress.harvest.cut_value(normal,progress.levels))
 	return best*multiplier(id,progress.prestige)
 
+func collection_increment(id: String, permanent: PrestigeProgression, at_level: int = -1) -> float:
+	var d := definition(id)
+	if not unlocked(id,permanent) or not d.has("collection_upgrade"): return 0
+	var upgrade := permanent.definition(d.collection_upgrade)
+	var level := permanent.level(upgrade.id) if at_level < 0 else clampi(at_level,0,int(upgrade.max_level))
+	return clampf(float(upgrade.effect_values.bonus_per_level)*level,0,(float(d.collection.maximum_multiplier)-1)/maxi(1,d.specimens.size()-1))
+
 func summary(id: String, permanent: PrestigeProgression) -> String:
 	var upgrade := permanent.definition(id)
 	var d := definition(str(upgrade.get("event_id","")))
@@ -88,6 +95,11 @@ func summary(id: String, permanent: PrestigeProgression) -> String:
 		return "Whole-specimen airtime: ×%.2f → ×%.2f · same arc height" % [current,next]
 	if id == d.get("weak_point_upgrade",""):
 		return "Aimed whole-Giant damage: ×%.2f → ×%.2f · fresh swipe through visible seam" % [weak_point_multiplier(d.id,permanent),weak_point_multiplier(d.id,permanent,mini(int(upgrade.max_level),permanent.level(id)+1))]
+	if id == d.get("collection_upgrade",""):
+		var current := collection_increment(d.id,permanent)
+		var next := collection_increment(d.id,permanent,permanent.level(id)+1)
+		var additional: int = d.specimens.size()-1
+		return "Per additional variety: +%.0f%% → +%.0f%% · full wave collection ×%.2f → ×%.2f · captured on first split" % [current*100,next*100,1+current*additional,1+next*additional]
 	var current := multiplier(d.id,permanent)
 	var next := current if permanent.level(id) >= int(permanent.definition(id).max_level) else current+float(d.reward_multiplier)*float(permanent.definition(id).effect_values.bonus_per_level)
 	return ("Best eligible cut value: ×%.0f → ×%.0f" if d.kind == "specimen" or d.has("specimens") else "Selected variety cut value: ×%.0f → ×%.0f") % [current,next]
@@ -114,6 +126,8 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 		for key: String in ["unlock_upgrade","frequency_upgrade","value_upgrade"]:
 			if not raw.get(key) is String or permanent.definition(raw[key]).is_empty(): errors.append(id+": missing "+key)
 		var unlock := permanent.definition(str(raw.get("unlock_upgrade","")))
+		if id == "heirloom_celebration" or raw.has("collection_upgrade") or raw.has("collection"):
+			_validate_collection(raw,permanent,errors)
 		if id == "giant_harvest" or raw.has("weak_point_upgrade") or raw.has("weak_point"):
 			_validate_weak_point(raw,permanent,errors)
 		if raw.has("duration_upgrade"):
@@ -163,6 +177,24 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 			errors.append(id+": missing specimen"); continue
 		_validate_specimen(raw.specimen,id,seen_specimens,errors)
 	return errors
+
+func _validate_collection(d: Dictionary, permanent: PrestigeProgression, errors: PackedStringArray) -> void:
+	var id: String = d.id
+	var upgrade := permanent.definition(str(d.get("collection_upgrade","")))
+	var requirements: Variant = upgrade.get("requires")
+	if id != "heirloom_celebration" or d.get("kind") != "wave" or upgrade.is_empty() or not requirements is Dictionary or int(requirements.get("heirloom_celebration",0)) < 1 or int(requirements.get("rainbow_rewards",0)) < 1:
+		errors.append(id+": collection requires its dedicated Rainbow gate and reward predecessor")
+	if not d.get("specimens") is Array or d.specimens.size() != 3:
+		errors.append(id+": collection requires three authored Rainbow specimens")
+	var budget: Variant = d.get("collection")
+	if not budget is Dictionary or not PrestigeProgression.number(budget.get("maximum_multiplier")):
+		errors.append(id+": missing collection multiplier budget"); return
+	var cap := float(budget.maximum_multiplier)
+	if cap <= 1 or cap > 3: errors.append(id+": collection multiplier outside budget")
+	var coefficients: Variant = upgrade.get("effect_values")
+	var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
+	if not PrestigeProgression.number(coefficient) or float(coefficient) <= 0 or not PrestigeProgression.number(upgrade.get("max_level")) or 1+float(coefficient)*float(upgrade.max_level)*2 > cap+.000001:
+		errors.append(id+": collection effect exceeds authored budget")
 
 func _validate_weak_point(d: Dictionary, permanent: PrestigeProgression, errors: PackedStringArray) -> void:
 	var id: String = d.id

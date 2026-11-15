@@ -527,6 +527,25 @@
       "effect_values": {
         "bonus_per_level": 0.5
       }
+    },
+    {
+      "id": "heirloom_multiplier",
+      "name": "Heirloom Multiplier",
+      "category": "Special Events",
+      "description": "Collect distinct Rainbow varieties in the same wave. Each family captures the current collection bonus when first split; recuts keep that value. Missed and merely damaged fruit do not count.",
+      "effect": "+25% cut value per additional distinct Rainbow variety, per level; wave-local, maximum \u00d72.5",
+      "base_cost": 4,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "heirloom_celebration": 1,
+        "rainbow_rewards": 1
+      },
+      "event_id": "heirloom_celebration",
+      "illustration": "res://assets/illustrations/prestige/heirloom_multiplier.svg",
+      "effect_values": {
+        "bonus_per_level": 0.25
+      }
     }
   ],
   "time_limits": {

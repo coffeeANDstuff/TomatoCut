@@ -129,6 +129,15 @@ func validate() -> PackedStringArray:
 		var coefficients: Variant = weak.get("effect_values")
 		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
 		if not number(coefficient) or float(coefficient) <= 0 or float(coefficient)*int(weak.get("max_level",0)) > 2: errors.append("Invalid Giant Weak Points damage coefficient")
+	var collection := definition("heirloom_multiplier")
+	if collection.is_empty(): errors.append("Missing Heirloom Multiplier investment")
+	else:
+		if collection.get("category") != "Special Events" or collection.get("event_id") != "heirloom_celebration" or not collection.get("illustration") is String or not ResourceLoader.exists(collection.illustration): errors.append("Invalid Heirloom Multiplier presentation")
+		var requirements: Variant = collection.get("requires")
+		if not requirements is Dictionary or int(requirements.get("heirloom_celebration",0)) < 1 or int(requirements.get("rainbow_rewards",0)) < 1: errors.append("Heirloom Multiplier requires its Rainbow predecessors")
+		var coefficients: Variant = collection.get("effect_values")
+		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
+		if not number(coefficient) or float(coefficient) <= 0 or not number(collection.get("max_level")) or float(coefficient)*float(collection.max_level) > .75: errors.append("Invalid Heirloom Multiplier coefficient")
 	return errors
 
 func definition(id: String) -> Dictionary:

@@ -24,7 +24,7 @@ static func dominate_cherry(p: Progression) -> void:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
-	check.call(p.prestige.validate().is_empty() and p.prestige.definitions.size() == 30 and p.price("unlock_cherry") == 40 and p.price("unlock_roma") == 180 and p.harvest.cut_value("cherry",p.levels) == 3,"fresh harvest content validates with original list prices and premium base values")
+	check.call(p.prestige.validate().is_empty() and p.prestige.definitions.size() == 31 and p.price("unlock_cherry") == 40 and p.price("unlock_roma") == 180 and p.harvest.cut_value("cherry",p.levels) == 3,"fresh harvest content validates with original list prices and premium base values")
 	check.call(not p.prestige.purchase("reduced_variety_unlock_costs") and not p.prestige.purchase("improved_premium_value") and not p.purchase("improved_premium_value"),"fresh seeds and normal purchases cannot bypass permanent harvest gates")
 	cultivate(p)
 	check.call(not "reduced_variety_unlock_costs" in p.prestige.discovered and p.prestige.levels.is_empty(),"actual normal variety unlocks cannot reveal or grant permanent harvest")

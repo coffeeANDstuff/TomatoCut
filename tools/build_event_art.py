@@ -61,3 +61,12 @@ for x,y,r in [(42,69,18),(81,45,15),(120,63,19),(165,43,14),(180,96,16)]:
 <circle cx="181" cy="137" r="23" fill="#f4ead5" stroke="#ba8e4e"/><circle cx="181" cy="137" r="18" stroke="#ba8e4e"/>
 <path d="M174 143C165 129 183 119 188 130C194 140 178 153 174 143Z" fill="#d1ad69"/><path d="M176 143L185 129M166 160L159 176L179 168L189 176L197 160M24 53L31 45M29 71L17 68M183 44L191 50M189 65L202 64M57 164H135" stroke="#ba8e4e"/>
 </g></svg>''')
+
+# Original collected-heirloom study: three distinct specimens and a seed tally.
+(out/'heirloom_multiplier.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" width="220" height="180" viewBox="0 0 220 180"><g stroke="#213d35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+<path d="M28 23L192 18L199 158L23 163Z" fill="#f4ead5"/><path d="M35 35H181M35 145H184" stroke="#ba8e4e"/>
+<path d="M57 57C22 41 24 99 57 99C91 99 91 42 57 57Z" fill="#d4a24d"/><path d="M108 52C91 51 94 64 91 76C84 105 131 111 130 78C128 63 127 50 115 53Z" fill="#8a9b7a"/><path d="M161 58C137 38 129 81 144 94C155 112 188 93 190 74C192 55 175 51 161 58Z" fill="#9a6e83"/>
+<path d="M57 58L45 50L50 62L41 66L55 65L60 75L64 62L77 58L65 56L67 47ZM111 55L101 48L104 59L96 63L110 62L114 73L117 61L128 57L118 54L119 47ZM162 58L151 51L155 63L147 67L161 65L165 75L168 63L180 58L169 56L171 49Z" fill="#64856d"/>
+<path d="M57 56Q53 45 59 42M111 54Q108 41 116 39M162 57Q163 43 170 41M43 82Q54 90 66 83M103 76Q99 91 110 94M150 81Q163 93 180 77"/>
+<circle cx="56" cy="122" r="10"/><circle cx="111" cy="122" r="10"/><circle cx="165" cy="122" r="10"/><path d="M50 122L55 127L64 116M105 122L110 127L119 116M159 122L164 127L173 116M68 122H98M123 122H152" stroke="#ba8e4e"/>
+</g></svg>''')
