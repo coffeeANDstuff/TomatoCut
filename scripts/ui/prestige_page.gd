@@ -82,6 +82,8 @@ static func build(ui) -> void:
 		elif d.id == "additional_starting_tomatoes": comparison = "Tomatoes per launch: %d → %d · maximum %d" % [p.launch_count(),p.launch_count(-1,next_level),Progression.MAX_LAUNCH_COUNT]
 		elif d.id == "starting_sharpness": comparison = "Equipped sharpness: %.2f → %.2f" % [p.strength(),p.strength(-1,next_level)]
 		elif d.id == "starting_extra_cuts": comparison = "Rewarded cuts per family: %d → %d · maximum %d" % [p.max_cuts(),p.max_cuts(-1,next_level),CutFamily.MAX_CUTS]
+		elif d.id == "reduced_variety_unlock_costs": comparison = "Normal unlock prices: %.0f%% → %.0f%% of list · minimum $1" % [permanent.variety_unlock_multiplier()*100,permanent.variety_unlock_multiplier(next_level)*100]
+		elif d.id == "improved_premium_value": comparison = "Premium normal value: ×%.2f → ×%.2f · Standard Red ×1" % [permanent.premium_value_multiplier(),permanent.premium_value_multiplier(next_level)]
 		else: comparison = EventCatalog.new().summary(d.id,permanent)
 		var effects: Label = ui.label(comparison,18,true); effects.name = "PermanentEffect_"+d.id; effects.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; entry.add_child(effects)
 		var id: String = d.id

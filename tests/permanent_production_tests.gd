@@ -13,7 +13,7 @@ static func prepared(speed: int = 0, tomatoes: int = 0) -> Progression:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
-	check.call(p.prestige.validate().is_empty() and p.prestige.definitions.size() == 27 and p.launch_interval() == 4 and p.launch_count() == 1,"fresh production content validates without changing ordinary launch defaults")
+	check.call(p.prestige.validate().is_empty() and p.prestige.definitions.size() == 29 and p.launch_interval() == 4 and p.launch_count() == 1,"fresh production content validates without changing ordinary launch defaults")
 	check.call(not p.prestige.purchase("faster_starting_throws") and not p.prestige.purchase("additional_starting_tomatoes") and not p.purchase("faster_starting_throws"),"fresh seeds and normal cultivation cannot bypass production gates")
 	p.money = 1e9
 	for i in range(20): p.purchase("faster_throwing")

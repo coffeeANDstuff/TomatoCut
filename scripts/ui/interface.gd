@@ -463,6 +463,15 @@ func upgrade_entry(d: Dictionary, count: int, list: VBoxContainer, category: Str
 	var effect := label(d.effect,18)
 	effect.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	entry.add_child(effect)
+	if d.has("tomato_id"):
+		var data := progress.harvest.definition(d.tomato_id)
+		if d.id == data.unlock_upgrade:
+			var comparison := "List price: %s · Pay: %s (%.0f%% of list)" % [Progression.cash(float(d.base_cost)*pow(float(d.growth),progress.level(d.id))),Progression.cash(progress.price(d.id)),progress.prestige.variety_unlock_multiplier()*100]
+			var current := label(comparison,16,true); current.name = "CurrentHarvest_"+d.id; entry.add_child(current)
+		elif d.id == data.quality_upgrade:
+			var next_level := mini(int(d.max_level),progress.level(d.id)+1)
+			var current := label("Cut reward: %s → %s · premium ×%.2f" % [Progression.cash(progress.reward(1,progress.harvest.cut_value(data.id,progress.levels))),Progression.cash(progress.reward(1,progress.harvest.cut_value(data.id,progress.levels,next_level))),progress.harvest.premium_multiplier(data.id)],16,true)
+			current.name = "CurrentHarvest_"+d.id; entry.add_child(current)
 	if d.id in ["sharp_edge","extra_cuts"]:
 		var next_level := mini(int(d.max_level),progress.level(d.id)+1)
 		var comparison := "Equipped sharpness: %.2f → %.2f" % [progress.strength(),progress.strength(next_level)] if d.id == "sharp_edge" else "Rewarded cuts per family: %d → %d · maximum %d" % [progress.max_cuts(),progress.max_cuts(next_level),CutFamily.MAX_CUTS]
@@ -536,6 +545,9 @@ func render_varieties(list: VBoxContainer) -> void:
 		var status := label("Cultivated · automatically available" if available else "Awaiting Variety Unlock",16)
 		notes.add_child(status)
 		notes.add_child(label("%s base value · %s resistance" % [Progression.cash(data.base_value),str(data.durability)],16))
+		if int(data.tier) > 0:
+			var value := label("%s value: %s · premium ×%.2f" % ["Cultivated" if available else "After unlock",Progression.cash(progress.harvest.cut_value(data.id,progress.levels)),progress.harvest.premium_multiplier(data.id)],16,true)
+			value.name = "HarvestValue_"+data.id; notes.add_child(value)
 		var flight := label("Flight: " + data.flight_description,16,false,MUTED)
 		flight.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		notes.add_child(flight)

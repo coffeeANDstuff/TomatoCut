@@ -5,8 +5,10 @@ const DATA_PATH := "res://data/tomatoes.json"
 var varieties: Array = []
 var upgrades: Dictionary = {}
 var by_id: Dictionary = {}
+var permanent: PrestigeProgression
 
-func _init(upgrade_definitions: Array = []) -> void:
+func _init(upgrade_definitions: Array = [], permanent_progression: PrestigeProgression = null) -> void:
+	permanent = permanent_progression
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(DATA_PATH))
 	if parsed is Array:
 		varieties = parsed
@@ -26,10 +28,19 @@ func unlocked(id: String, levels: Dictionary) -> bool:
 	if entry.is_empty(): return false
 	return id == "standard_red" or int(levels.get(entry.unlock_upgrade,0)) > 0
 
-func cut_value(id: String, levels: Dictionary) -> float:
+func is_variety_unlock(id: String) -> bool:
+	for entry: Dictionary in varieties:
+		if entry.id != "standard_red" and entry.unlock_upgrade == id: return true
+	return false
+
+func premium_multiplier(id: String, at_level: int = -1) -> float:
+	return permanent.premium_value_multiplier(at_level) if permanent != null and int(definition(id).get("tier",0)) > 0 else 1.0
+
+func cut_value(id: String, levels: Dictionary, at_level: int = -1, permanent_level: int = -1) -> float:
 	var entry := definition(id)
 	if entry.is_empty(): return 1.0
-	return float(entry.base_value) * (1.0 + coefficient(entry.quality_upgrade,"value_bonus") * int(levels.get(entry.quality_upgrade,0)))
+	var quality := int(levels.get(entry.quality_upgrade,0)) if at_level < 0 else clampi(at_level,0,int(upgrades.get(entry.quality_upgrade,{}).get("max_level",0)))
+	return float(entry.base_value)*(1.0+coefficient(entry.quality_upgrade,"value_bonus")*quality)*premium_multiplier(id,permanent_level)
 
 func cutting_profile(levels: Dictionary, strength: float) -> CuttingProfile:
 	return CuttingProfile.new(strength,coefficient("critical_slice","chance_per_level")*int(levels.get("critical_slice",0)),coefficient("critical_slice","damage_multiplier"))

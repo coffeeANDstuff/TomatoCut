@@ -475,6 +475,40 @@
       "effect_values": {
         "bonus_per_level": 1
       }
+    },
+    {
+      "id": "reduced_variety_unlock_costs",
+      "name": "Reduced Variety Unlock Costs",
+      "category": "Permanent Harvest",
+      "description": "A well-kept seed order earns better terms. Discounts only normal Variety Unlock purchases, including this cycle; prerequisites stay required and earlier orders are never refunded.",
+      "effect": "-10 percentage points of normal unlock list price per level; minimum 50% and $1",
+      "base_cost": 2,
+      "growth": 2,
+      "max_level": 5,
+      "requires": {
+        "permanent_slice_value": 1
+      },
+      "illustration": "res://assets/illustrations/prestige/reduced_variety_unlock_costs.svg",
+      "effect_values": {
+        "bonus_per_level": 0.1
+      }
+    },
+    {
+      "id": "improved_premium_value",
+      "name": "Improved Premium Value",
+      "category": "Permanent Harvest",
+      "description": "A better invoice for cultivated premium varieties. Multiplies their real quality value, never Standard Red; special families capture the eligible normal value only once.",
+      "effect": "+25% premium normal value per level; no variety or event unlock granted",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "reduced_variety_unlock_costs": 2
+      },
+      "illustration": "res://assets/illustrations/prestige/improved_premium_value.svg",
+      "effect_values": {
+        "bonus_per_level": 0.25
+      }
     }
   ],
   "time_limits": {
@@ -488,5 +522,9 @@
   "cutting_limits": {
     "starting_strength": 1.5,
     "starting_extra_cuts": 3
+  },
+  "harvest_limits": {
+    "minimum_unlock_multiplier": 0.5,
+    "premium_multiplier": 1.75
   }
 }

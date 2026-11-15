@@ -25,7 +25,7 @@ func _init() -> void:
 	if not content_errors.is_empty():
 		push_error("Invalid upgrade content: " + "; ".join(content_errors))
 		definitions.clear()
-	harvest = HarvestProgression.new(definitions)
+	harvest = HarvestProgression.new(definitions,prestige)
 	var harvest_errors := harvest.validate()
 	if not harvest_errors.is_empty():
 		push_error("Invalid tomato content: " + "; ".join(harvest_errors))
@@ -44,9 +44,11 @@ func definition(id: String) -> Dictionary:
 			return item
 	return {}
 
-func price(id: String) -> float:
+func price(id: String, permanent_level: int = -1) -> float:
 	var d := definition(id)
-	return ceil(float(d.base_cost) * pow(float(d.growth), level(id))) if not d.is_empty() else INF
+	if d.is_empty(): return INF
+	var multiplier := prestige.variety_unlock_multiplier(permanent_level) if harvest.is_variety_unlock(id) else 1.0
+	return maxf(1,ceil(float(d.base_cost)*pow(float(d.growth),level(id))*multiplier))
 
 func refresh_discovery() -> void:
 	for item: Dictionary in definitions:
@@ -254,6 +256,7 @@ func restore(data: Dictionary) -> bool:
 		# All old builds had a single normal cycle; spending never removes earnings.
 		permanent.cycle_earnings = float(data.lifetime.earnings)
 	prestige = permanent
+	harvest.permanent = prestige
 	money = float(data.money)
 	levels = clean
 	discovered = data.discovered.duplicate()

@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.18.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.19.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -521,6 +521,57 @@ func run() -> void:
 	check(game.progress.strength() == 12.5 and game.progress.max_cuts() == 7 and game.events.catalog.cut_limit("giant_harvest",game.progress) == 7 and "7 → 7" in game.ui.content.find_child("PermanentEffect_starting_extra_cuts",true,false).text,"packaged maximum ordinary/permanent/giant layers saturate at the same honest seven-cut family ceiling")
 	game.progress.settings.reduced_motion = true; game.new_game()
 	check(game.progress.strength() == 1 and game.progress.max_cuts() == 1 and game.progress.prestige.levels.is_empty() and game.progress.settings.reduced_motion,"packaged New Game clears permanent cutting while retaining preferences")
+	check(game.progress.price("unlock_cherry") == 40 and game.progress.harvest.cut_value("cherry",game.progress.levels) == 3 and not "reduced_variety_unlock_costs" in game.progress.prestige.discovered,"packaged fresh harvest retains original prices/value without revealing permanent nodes")
+	game.finish_round()
+	game.progress.complete_round(ceilf(threshold*pow(200,1.0/float(game.progress.prestige.config.exponent)))+1,1,1)
+	game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	game.purchase_permanent("permanent_slice_value"); game.purchase_permanent("starting_cash"); game.ui.archive("Permanent Harvest")
+	check(game.progress.prestige.validate().is_empty() and game.ui.content.find_child("ArchiveCategory_Permanent Harvest",true,false) != null and ResourceLoader.exists("res://assets/illustrations/prestige/reduced_variety_unlock_costs.svg") and ResourceLoader.exists("res://assets/illustrations/prestige/improved_premium_value.svg"),"packaged sixth archive category loads both original harvest plates and real budgets")
+	game.purchase_permanent("reduced_variety_unlock_costs")
+	check(game.progress.prestige.seeds == 195 and game.progress.price("unlock_cherry") == 36 and game.progress.price("unlock_roma") == 162 and not "improved_premium_value" in game.progress.prestige.discovered,"packaged first discount pays seeds for actual normal unlock prices without bypassing its successor")
+	game.purchase_permanent("reduced_variety_unlock_costs"); game.purchase_permanent("improved_premium_value")
+	check(game.progress.prestige.seeds == 188 and game.progress.price("unlock_cherry") == 32 and game.progress.price("unlock_roma") == 144 and game.progress.harvest.cut_value("cherry",game.progress.levels) == 3.75 and game.progress.harvest.cut_value("roma",game.progress.levels) == 10 and game.progress.harvest.cut_value("standard_red",game.progress.levels) == 1,"packaged paid harvest updates discounted prices and premium normal values while excluding Standard Red")
+	var harvest_locked := true
+	for d: Dictionary in game.events.catalog.definitions: harvest_locked = harvest_locked and game.events.catalog.probability(d.id,game.progress.prestige) == 0
+	check(harvest_locked and game.progress.levels.is_empty() and game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"standard_red":1.0},"packaged harvest grants no normal level, variety, event or manual spawn mix")
+	game.progress.money = 100000
+	check(not game.progress.purchase("unlock_cherry") and not game.progress.purchase("unlock_roma"),"packaged discounted affordable varieties still require their normal prerequisites")
+	game.progress.purchase("better_prices"); game.progress.purchase("faster_throwing"); game.progress.purchase("unlock_cherry")
+	check(game.progress.money == 99955 and game.progress.price("cherry_quality") == 35,"packaged actual Cherry purchase pays thirty-two and does not discount ordinary quality")
+	game.progress.purchase("cherry_quality"); game.show_catalog(); game.ui.catalog("Varieties")
+	check(game.progress.harvest.cut_value("cherry",game.progress.levels) == 4.6875 and "$7.32 → $8.79" in game.ui.content.find_child("CurrentHarvest_cherry_quality",true,false).text and "Pay: $32" in game.ui.content.find_child("CurrentHarvest_unlock_cherry",true,false).text,"packaged normal catalog reports actual discounted prices and combined quality/premium/price/wealth reward forecasts")
+	game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts")
+	for i in range(3): game.progress.purchase("cherry_frequency")
+	game.progress.purchase("cherry_quality")
+	for i in range(10): game.progress.purchase("cherry_dominance")
+	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"cherry":1.0},"packaged actual frequency/quality/dominance investments determine premium automatic harvest")
+	game.start_round(); game._physics_process(0); game.session.launch_clock = 1000
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	var harvest_family: CutFamily = fruit.family
+	game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0)); game.process_blade(); game.knife.track(Vector2(-2,0)); game.process_blade()
+	check(harvest_family.variety_id == "cherry" and harvest_family.cut_value == 5.625 and game.session.cuts == 2 and game.session.tomatoes_sliced == 1 and is_equal_approx(game.session.earnings,17.58),"packaged actual automatic Cherry root/recut captures permanent premium once and earns rounded normal rewards")
+	var harvest_before: Dictionary = game.progress.snapshot(); game.purchase_permanent("improved_premium_value"); game.show_archive()
+	check(game.state == "playing" and game.progress.snapshot() == harvest_before,"packaged live premium harvest denies permanent purchases and archive access")
+	game.finish_round()
+	check(game.store.load_into(restored) and is_equal_approx(restored.prestige.cycle_earnings,17.58) and restored.price("unlock_roma") == 144 and restored.harvest.cut_value("cherry",restored.levels) == 5.625 and restored.harvest.permanent == restored.prestige,"packaged completed premium round saves actual earnings and restores the live permanent harvest binding")
+	game.show_archive(); game.purchase_permanent("golden_harvest"); game.start_round(); game.session.launch_clock = 1000
+	var harvest_rng := RandomNumberGenerator.new(); var harvest_seed := -1
+	for candidate in range(1,10000):
+		harvest_rng.seed = candidate
+		if harvest_rng.randf() < .08: harvest_seed = candidate; break
+	game.event_rng.seed = harvest_seed; game._physics_process(4)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO; harvest_family = fruit.family
+	check(harvest_family.event_id == "golden_harvest" and harvest_family.cut_value == 112.5,"packaged actual separately gated Golden Harvest captures the best eligible premium normal value once")
+	game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade(); game.knife.track(Vector2(-3,0)); game.process_blade()
+	check(game.session.cuts == 2 and game.session.golden_tomatoes == 1 and is_equal_approx(game.session.earnings,351.56),"packaged actual golden root/recut composes captured premium, event, normal price and permanent wealth without duplicate value or unique counts")
+	game.finish_round(); game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(game.progress.levels.is_empty() and game.progress.price("unlock_cherry") == 32 and game.progress.harvest.cut_value("cherry",game.progress.levels) == 3.75 and game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"standard_red":1.0} and game.progress.prestige.level("golden_harvest") == 1,"packaged prestige retains permanent harvest/event gate while resetting normal quality, unlocks and mix")
+	for i in range(3): game.purchase_permanent("reduced_variety_unlock_costs")
+	for i in range(2): game.purchase_permanent("improved_premium_value")
+	game.ui.archive("Permanent Harvest")
+	check(game.progress.price("unlock_cherry") == 20 and game.progress.price("unlock_roma") == 90 and game.progress.harvest.cut_value("cherry",game.progress.levels) == 5.25 and "50% → 50%" in game.ui.content.find_child("PermanentEffect_reduced_variety_unlock_costs",true,false).text and "×1.75 → ×1.75" in game.ui.content.find_child("PermanentEffect_improved_premium_value",true,false).text,"packaged maximum real paid harvest stays within authored limits with honest saturated previews")
+	game.progress.settings.reduced_motion = true; game.new_game()
+	check(game.progress.price("unlock_cherry") == 40 and game.progress.harvest.cut_value("cherry",game.progress.levels) == 3 and game.progress.prestige.levels.is_empty() and game.progress.settings.reduced_motion,"packaged New Game clears permanent harvest and restores original prices/value while retaining preferences")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

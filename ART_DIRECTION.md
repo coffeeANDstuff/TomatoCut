@@ -2,6 +2,13 @@
 
 Authority: GAME_DESIGN.md §§3, 6–7, 10, 14–15, 18–19, 22–23, 28.
 
+## Permanent Harvest archive (v0.19)
+Original **seed invoice with a percentage tag** and **premium tomato produce seal** plates identify Reduced Variety Unlock Costs and Improved Premium Value. `tools/build_prestige_art.py` preserves editable SVG source; both accompany real seed purchases. Cream paper, green ink, sage, muted gold and restrained tomato red extend the existing archive. No new fruit/knife/fragment Blender model, preparation or audio asset is counted.
+
+All six actually revealed archive categories fit the existing three-column/two-row native printed navigation at 16:10/16:9. Hidden nodes/categories stay absent. Plates, vine/read dwell, independent unread state, same-category scroll retention and Reduced Motion remain functional. Archive percentages/multipliers show real current/next effects. Normal variety entries show list/pay prices, actual cultivated premium value and quality reward forecasts alongside the read-only automatic mix. Nominal base values remain labeled as base values; Standard Red stays outside the premium effect.
+
+New actual captures cover invitation/orders, six-category archive, discounted Cherry action, quality forecast, cultivated mix, posed Cherry recut, captured Golden rewards and post-prestige comparisons. Input fixtures freeze/pose geometry to isolate collision/value checks; the existing moving-fragment flows separately validate presentation paths. Actual new mouse input earns two cuts from one Cherry family and two from one Golden family with the camera fixed. No new shake or intrusive audio/effect is introduced. Human feel, crowded-field readability, hand refinement, listening and hardware performance remain production work.
+
 ## Permanent Cutting archive (v0.18)
 Two original engraved studies identify real permanent orders: a **blade across a honing stone** for Starting Sharpness and a **tomato divided into a half, wedge and smaller section** for Starting Extra Cuts. `tools/build_prestige_art.py` retains their editable SVG source. Cream, ink, sage, muted gold and tomato-red specimen accents preserve the archive family. No new fruit/knife/fragment model or preparation is counted; existing Blender, GLB and audio payloads stay intact.
 

@@ -3,6 +3,23 @@ from pathlib import Path
 out = Path(__file__).resolve().parents[1]/'assets/illustrations/prestige'
 out.mkdir(parents=True, exist_ok=True)
 
+# Actual Permanent Harvest orders: a seed invoice and premium produce seal.
+(out/'reduced_variety_unlock_costs.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" width="220" height="180" viewBox="0 0 220 180"><g stroke="#213d35" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+<path d="M48 22H161L177 39V151H48Z" fill="#f4ead5"/><path d="M161 22V39H177" fill="#e9ddbf" stroke="#ba8e4e"/>
+<path d="M64 51H145M64 63H125M100 85H157M100 98H157M100 111H142M64 134H156" fill="none" stroke="#ba8e4e"/>
+<path d="M73 117V82M73 99C52 99 53 81 58 77C72 79 76 88 73 99ZM74 90C91 92 96 76 92 69C79 70 73 79 74 90Z" fill="#8a9b7a"/>
+<path d="M30 132L70 122L92 146L79 170L38 160Z" fill="#e9ddbf" stroke="#ba8e4e"/><circle cx="42" cy="144" r="3" fill="#213d35"/>
+<path d="M51 155L69 137M53 138L56 141M66 151L69 154M180 74L191 68M184 91H198M181 108L191 114" fill="none"/>
+</g></svg>''')
+(out/'improved_premium_value.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" width="220" height="180" viewBox="0 0 220 180"><g stroke="#213d35" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+<path d="M76 127L65 169L86 158L100 174L109 132M121 132L133 172L145 157L167 168L152 125" fill="#8a9b7a"/>
+<path d="M111 14L126 23L143 22L153 37L169 43L171 61L182 75L174 92L175 109L160 119L153 135L135 137L120 149L103 141L86 143L75 128L58 122L55 105L43 91L51 74L49 57L65 46L71 30L90 28Z" fill="#e9ddbf" stroke="#ba8e4e"/>
+<circle cx="112" cy="82" r="49" fill="#f4ead5" stroke="#ba8e4e"/>
+<path d="M111 64C75 51 68 95 92 110C111 124 141 111 145 89C148 68 130 55 111 64Z" fill="#c84630"/>
+<path d="M110 64L99 51L113 57L121 45L123 61L138 65L121 71Z" fill="#8a9b7a"/>
+<path d="M89 78Q80 91 92 101M158 17V33M150 25H166M34 131V143M28 137H40" fill="none" stroke="#ba8e4e"/>
+</g></svg>''')
+
 # Two original cutting-study plates, used by actual permanent investments.
 (out/'starting_sharpness.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" width="220" height="180" viewBox="0 0 220 180"><g stroke="#213d35" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
 <path d="M36 127L127 91L174 109L81 149Z" fill="#8a9b7a"/><path d="M36 127V140L81 163L174 122V109M81 149V163" fill="#e9ddbf" stroke="#ba8e4e"/>

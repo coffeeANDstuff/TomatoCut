@@ -1,0 +1,95 @@
+extends "res://tests/permanent_time_render.gd"
+
+const HARVEST := preload("res://tests/permanent_harvest_tests.gd")
+
+func run() -> void:
+	create_timer(180).timeout.connect(func(): push_error("Permanent harvest rendered checks timed out"); quit(1))
+	DirAccess.make_dir_recursive_absolute(output)
+	game = load("res://scenes/main.tscn").instantiate(); game.save_path = "user://tests/permanent-harvest-render.json"
+	for suffix: String in ["", ".bak"]:
+		if FileAccess.file_exists(game.save_path+suffix): DirAccess.remove_absolute(game.save_path+suffix)
+	root.add_child(game); await frames(); await click(archive_icon())
+	check(game.ui.content.find_child("ArchiveCategory_Permanent Harvest",true,false) == null,"fresh archive hides permanent harvest until a real predecessor reveals it")
+	game.progress = PRESTIGE.funded(200); game.ui.progress = game.progress; game.audio.progress = game.progress
+	game.ui.archive(); await frames(); await click(game.ui.content.find_child("PreviewPrestige",true,false)); game.ui.prestige_confirmation.get_ok_button().pressed.emit(); await frames()
+	await permanent("permanent_slice_value")
+	check("reduced_variety_unlock_costs" in game.progress.prestige.unseen("Permanent Harvest") and game.ui.content.find_child("ArchiveCategory_Permanent Harvest",true,false) != null,"actual value purchase reveals an independent unread harvest branch")
+	await click(game.ui.content.find_child("ArchiveCategory_Permanent Harvest",true,false)); await create_timer(.65).timeout
+	var title: Control = game.ui.content.find_child("PrestigeTitle_reduced_variety_unlock_costs",true,false)
+	check("reduced_variety_unlock_costs" in game.progress.prestige.viewed and title.get_parent().get_child(0).texture.resource_path.ends_with("reduced_variety_unlock_costs.svg") and game.ui.content.find_child("PurchasePermanent_improved_premium_value",true,false) == null,"original seed-invoice plate accompanies real persistent read dwell without exposing the premium successor")
+	await capture("135-harvest-invitation")
+	await permanent("reduced_variety_unlock_costs")
+	check(game.progress.prestige.seeds == 197 and game.progress.price("unlock_cherry") == 36 and game.progress.price("unlock_roma") == 162 and game.progress.levels.is_empty(),"printed first discount spends two seeds for actual ninety-percent normal unlock prices")
+	await permanent("reduced_variety_unlock_costs"); await permanent("improved_premium_value")
+	check(game.progress.prestige.seeds == 190 and game.progress.price("unlock_cherry") == 32 and game.progress.harvest.cut_value("cherry",game.progress.levels) == 3.75 and game.progress.harvest.cut_value("standard_red",game.progress.levels) == 1,"actual revealed premium purchase composes value without granting a variety or boosting Standard Red")
+	await capture("136-harvest-orders")
+	await click(game.ui.content.find_child("ArchiveCategory_Permanent Wealth",true,false)); await permanent("starting_cash")
+	await click(game.ui.content.find_child("ArchiveCategory_Permanent Harvest",true,false))
+	for viewport: Vector2i in [Vector2i(1280,800),Vector2i(1280,720)]:
+		root.size = viewport; await frames()
+		var tab_rects: Array[Rect2] = []; var fit := true
+		for name: String in ["Permanent Wealth","Special Events","Permanent Time","Permanent Production","Permanent Cutting","Permanent Harvest"]:
+			var tab: Control = game.ui.content.find_child("ArchiveCategory_"+name,true,false)
+			var rect := tab.get_global_rect(); fit = fit and root.get_visible_rect().encloses(rect)
+			for previous: Rect2 in tab_rects: fit = fit and not rect.intersects(previous)
+			tab_rects.append(rect)
+		var action: Control = game.ui.content.find_child("PurchasePermanent_improved_premium_value",true,false)
+		game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+		check(fit and root.get_visible_rect().encloses(action.get_global_rect()) and game.ui.content.get_node("ArchiveScroll").get_global_rect().position.y >= tab_rects[-1].end.y,"six native archive categories and actual harvest orders fit without overlap at "+str(viewport))
+	await capture("137-six-branch-archive-16x9")
+	var retained: int = game.ui.content.get_node("ArchiveScroll").scroll_vertical
+	game.ui.archive("Permanent Harvest"); await frames()
+	check(game.ui.content.get_node("ArchiveScroll").scroll_vertical == retained and "starting_sharpness" in game.progress.prestige.unseen("Permanent Cutting"),"harvest rebuild retains purchase scroll without acknowledging an unread cutting sibling")
+	game.progress.money = 100000 # Explicit normal funding; every purchase below uses actual native controls.
+	await click(catalog_icon()); await click(find_button(game.ui.content,"Money")); await cultivate("better_prices")
+	check(not "unlock_cherry" in game.progress.discovered and game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"standard_red":1.0},"paid discount and premium cannot bypass the second normal Cherry reveal prerequisite")
+	await click(find_button(game.ui.content,"Harvest")); await cultivate("faster_throwing"); await click(find_button(game.ui.content,"Varieties"))
+	check(game.ui.content.find_child("CurrentHarvest_unlock_cherry",true,false).text == "List price: $40 · Pay: $32 (80% of list)" and not game.progress.harvest.unlocked("cherry",game.progress.levels),"real normal catalog shows discounted list/pay prices while revealed Cherry remains unavailable")
+	game.ui.content.get_node("CatalogScroll").ensure_control_visible(game.ui.content.find_child("Purchase_unlock_cherry",true,false)); await frames()
+	await capture("138-discounted-cherry-order")
+	var money: float = game.progress.money; await cultivate("unlock_cherry")
+	check(game.progress.money == money-32 and game.progress.harvest.unlocked("cherry",game.progress.levels) and "premium ×1.25" in game.ui.content.find_child("HarvestValue_cherry",true,false).text,"actual Cherry unlock pays thirty-two exactly and displays its adjusted premium value")
+	money = game.progress.money; await cultivate("cherry_quality")
+	check(game.progress.money == money-35 and game.progress.harvest.cut_value("cherry",game.progress.levels) == 4.6875 and "$7.32 → $8.79" in game.ui.content.find_child("CurrentHarvest_cherry_quality",true,false).text,"actual quality order retains full price and previews combined quality/premium/normal-price/wealth rewards")
+	game.ui.content.get_node("CatalogScroll").ensure_control_visible(game.ui.content.find_child("Purchase_cherry_quality",true,false)); await frames()
+	await capture("143-normal-premium-forecast")
+	await click(find_button(game.ui.content,"Cutting")); await cultivate("sharp_edge"); await cultivate("extra_cuts"); await click(find_button(game.ui.content,"Varieties"))
+	for i in range(3): await cultivate("cherry_frequency")
+	await cultivate("cherry_quality")
+	for i in range(10): await cultivate("cherry_dominance")
+	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"cherry":1.0} and game.ui.content.find_child("SpawnShare_standard_red",true,false).text == "Current harvest: 0.0%" and game.progress.level("unlock_roma") == 0,"actual frequency/quality/dominance purchases determine the automatic Cherry-only mix without a manual loadout or Roma grant")
+	await capture("139-premium-cultivated-harvest")
+	game.set_physics_process(false); await click(find_button(game.ui.content,"Back to the cutting board")); game.clear_field(); game.fragments.set_physics_process(false); game._physics_process(0)
+	var fruit: Tomato = game.tomatoes.get_child(0); HARVEST.CUTTING.pose(fruit); var family := fruit.family
+	var camera_pose: Transform3D = game.kitchen.camera.global_transform
+	await move_blade(Vector2(-2,0)); await move_blade(Vector2(2,0)); await move_blade(Vector2(-2,0))
+	check(family.variety_id == "cherry" and family.cut_value == 5.625 and game.session.cuts == 2 and game.session.tomatoes_sliced == 1 and is_equal_approx(game.session.earnings,17.58) and game.kitchen.camera.global_transform == camera_pose,"actual automatic premium Cherry root/recut mouse input earns seventeen dollars fifty-eight with one unique family and fixed camera")
+	await capture("140-permanent-premium-recut")
+	var before: Dictionary = game.progress.snapshot(); game.purchase_permanent("improved_premium_value"); game.show_archive()
+	check(game.state == "playing" and game.progress.snapshot() == before,"live premium gameplay denies archive entry and permanent purchases")
+	game.session.advance(100); game.finish_round(); await frames()
+	var restored := Progression.new()
+	check(game.store.load_into(restored) and is_equal_approx(restored.prestige.cycle_earnings,17.58) and restored.price("unlock_roma") == 144 and restored.harvest.cut_value("cherry",restored.levels) == 5.625 and restored.prestige.paid.improved_premium_value == [3],"real premium result banks earned money and reloads actual discounted prices, quality values and seed receipts")
+	await click(archive_icon()); await click(game.ui.content.find_child("ArchiveCategory_Special Events",true,false)); await permanent("golden_harvest")
+	await click(find_button(game.ui.content,"Back to the cutting board")); game.clear_field(); game.fragments.set_physics_process(false); game.session.launch_clock = 1000
+	game.event_rng.seed = HARVEST.CUTTING.CRITICAL.seed_for(.08,true); game._physics_process(4)
+	fruit = game.tomatoes.get_child(0); HARVEST.CUTTING.pose(fruit); family = fruit.family
+	check(family.event_id == "golden_harvest" and family.cut_value == 112.5,"actual separately purchased Golden Harvest captures the best eligible premium Cherry value once")
+	await move_blade(Vector2(-3,0)); await move_blade(Vector2(3,0)); await move_blade(Vector2(-3,0))
+	check(game.session.cuts == 2 and game.session.golden_tomatoes == 1 and is_equal_approx(game.session.earnings,351.56) and not family.has_budget(),"real golden root/recut mouse input composes captured premium, event multiplier, price and wealth once without duplicate event credit")
+	await capture("141-premium-golden-capture")
+	game.session.advance(100); game.finish_round(); await frames()
+	check(game.store.load_into(restored) and is_equal_approx(restored.prestige.cycle_earnings,369.14) and restored.lifetime.golden_tomatoes == 1,"real normal/event premium results bank and reload only earned money with canonical unique counts")
+	game.progress.complete_round(float(game.progress.prestige.config.threshold),1,1)
+	await click(archive_icon()); await click(game.ui.content.find_child("PreviewPrestige",true,false)); game.ui.prestige_confirmation.get_ok_button().pressed.emit(); await frames()
+	check(game.progress.levels.is_empty() and game.progress.price("unlock_cherry") == 32 and game.progress.harvest.cut_value("cherry",game.progress.levels) == 3.75 and game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"standard_red":1.0} and game.progress.prestige.level("golden_harvest") == 1,"actual confirmed prestige keeps seed harvest effects/event gate while resetting normal quality, unlocks and automatic mix")
+	game.show_settings(); await frames()
+	for key: String in ["reduced_motion","reduced_effects"]: await click(game.ui.content.find_child("Setting_"+key,true,false))
+	await click(archive_icon()); await click(game.ui.content.find_child("ArchiveCategory_Permanent Harvest",true,false))
+	check(game.progress.settings.reduced_motion and "×1.25 → ×1.50" in game.ui.content.find_child("PermanentEffect_improved_premium_value",true,false).text,"Reduced Motion and Effects preserve readable actual permanent harvest comparisons after prestige")
+	await capture("142-harvest-after-prestige")
+	game.show_home(); await frames(); await click(find_button(game.ui.content,"New game")); game.ui.confirmation.get_ok_button().pressed.emit(); await frames()
+	check(game.progress.price("unlock_cherry") == 40 and game.progress.harvest.cut_value("cherry",game.progress.levels) == 3 and game.progress.prestige.levels.is_empty() and game.progress.settings.reduced_motion,"confirmed New Game clears permanent harvest and restores original prices/value while retaining preferences")
+	print("PERMANENT HARVEST RENDER RESULT: ",failures," failures")
+	game.queue_free(); await frames(); await create_timer(.75).timeout
+	quit(1 if failures else 0)

@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Permanent Cutting milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Permanent Harvest milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -145,7 +145,7 @@ Throws costs 2/4/8/16/32 seeds for a compounded 10% shorter interval per level.
 Additional Starting Tomatoes requires its second level and costs 3/6/12 seeds
 for +1/+2/+3 tomatoes in every ordinary launch. Normal Faster Throwing/Double
 Toss stay separate, retaining prerequisites. Both layers share the 0.55s floor
-and six-tomato launch ceiling. Current/next forecasts show saturation. Five
+and six-tomato launch ceiling. Current/next forecasts show saturation. Six
 revealed archive categories fit two native printed tab rows. Missed batches
 after a long frame are skipped, not queued into a catch-up burst. Production
 survives reload/prestige; New Game clears it while preserving preferences.
@@ -155,11 +155,23 @@ Extra Cuts requires its second level, costing 3/6/12 seeds for +1/+2/+3 shared
 rewarded cuts per original family. Normal levels remain separate. Base knife,
 ordinary Sharp Edge, permanent strength and assigned preparation compose once
 before critical damage. Normal, permanent and Giant Bonus Cuts share seven
-cuts. Normal variety/ability/event gates stay authoritative. Five revealed
+cuts. Normal variety/ability/event gates stay authoritative. Six revealed
 archive branches fit native printed rows, with original plates and actual
 current/next effects. Equipment/preparation show the same effective strength.
 Both investments survive prestige/reload; New Game clears them and keeps
 preferences. Damage alone earns nothing; descendants share one unique fruit.
+Permanent Harvest reveals after Permanent Slice Value 1. Reduced Variety Unlock
+Costs costs 2/4/8/16/32 seeds for -10 percentage points per level, down to 50%
+of authored normal unlock prices. Prices round upward, never below $1. Other
+ordinary/equipment prices, normal requirements and past spending stay intact.
+Improved Premium Value requires discount level 2, costs 3/6/12 seeds and adds
+25% premium normal quality value per level (up to x1.75), excluding Standard Red.
+Neither grants a normal variety, ability or event level. Six archive categories
+use native printed rows and original seed-invoice/premium-produce plates.
+Actual catalog prices/reward forecasts, automatic value-per-strike comparisons
+and captured event values use the same live paid effects exactly once. Real
+root/recut earnings save normally. Prestige retains seed effects but clears
+normal cultivation/mix; New Game restores prices/value and keeps preferences.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

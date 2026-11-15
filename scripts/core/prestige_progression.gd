@@ -98,6 +98,28 @@ func validate() -> PackedStringArray:
 		if id == "starting_extra_cuts" and float(coefficient) != floorf(float(coefficient)): errors.append(id+": extra cuts must be integral")
 		var key := "starting_strength" if id == "starting_sharpness" else "starting_extra_cuts"
 		if cutting is Dictionary and number(cutting.get(key)) and number(d.get("max_level")) and float(coefficient)*float(d.max_level) > float(cutting[key])+.000001: errors.append(id+": exceeds the permanent cutting budget")
+	var harvest: Variant = config.get("harvest_limits")
+	if not harvest is Dictionary:
+		errors.append("Missing permanent harvest limits")
+	else:
+		var minimum: Variant = harvest.get("minimum_unlock_multiplier")
+		var premium: Variant = harvest.get("premium_multiplier")
+		if not number(minimum) or float(minimum) <= 0 or float(minimum) > 1: errors.append("Invalid permanent unlock-price limit")
+		if not number(premium) or float(premium) < 1 or float(premium) > 10: errors.append("Invalid permanent premium-value limit")
+	for id: String in ["reduced_variety_unlock_costs","improved_premium_value"]:
+		var d := definition(id)
+		if d.is_empty(): errors.append("Missing permanent harvest investment: "+id); continue
+		if d.get("category") != "Permanent Harvest" or not d.get("illustration") is String or not ResourceLoader.exists(d.illustration): errors.append(id+": invalid permanent harvest presentation")
+		var predecessor := "permanent_slice_value" if id == "reduced_variety_unlock_costs" else "reduced_variety_unlock_costs"
+		if d.get("requires") is Dictionary and int(d.requires.get(predecessor,0)) < 1: errors.append(id+": requires its permanent predecessor")
+		var coefficients: Variant = d.get("effect_values")
+		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
+		if not number(coefficient) or float(coefficient) <= 0:
+			errors.append(id+": missing positive harvest coefficient"); continue
+		if not harvest is Dictionary or not number(d.get("max_level")): continue
+		var total := float(coefficient)*float(d.max_level)
+		if id == "reduced_variety_unlock_costs" and number(harvest.get("minimum_unlock_multiplier")) and 1-total < float(harvest.minimum_unlock_multiplier)-.000001: errors.append(id+": exceeds the permanent unlock discount budget")
+		if id == "improved_premium_value" and number(harvest.get("premium_multiplier")) and 1+total > float(harvest.premium_multiplier)+.000001: errors.append(id+": exceeds the permanent premium-value budget")
 	return errors
 
 func definition(id: String) -> Dictionary:
@@ -144,6 +166,16 @@ func starting_cut_bonus(at_level: int = -1) -> int:
 	var d := definition("starting_extra_cuts")
 	var owned := clampi(level("starting_extra_cuts") if at_level < 0 else at_level,0,int(d.get("max_level",0)))
 	return clampi(int(float(d.get("effect_values",{}).get("bonus_per_level",0))*owned),0,int(config.get("cutting_limits",{}).get("starting_extra_cuts",0)))
+
+func variety_unlock_multiplier(at_level: int = -1) -> float:
+	var d := definition("reduced_variety_unlock_costs")
+	var owned := clampi(level("reduced_variety_unlock_costs") if at_level < 0 else at_level,0,int(d.get("max_level",0)))
+	return clampf(1-float(d.get("effect_values",{}).get("bonus_per_level",0))*owned,float(config.get("harvest_limits",{}).get("minimum_unlock_multiplier",1)),1)
+
+func premium_value_multiplier(at_level: int = -1) -> float:
+	var d := definition("improved_premium_value")
+	var owned := clampi(level("improved_premium_value") if at_level < 0 else at_level,0,int(d.get("max_level",0)))
+	return clampf(1+float(d.get("effect_values",{}).get("bonus_per_level",0))*owned,1,float(config.get("harvest_limits",{}).get("premium_multiplier",1)))
 
 func price(id: String, at_level: int = -1) -> int:
 	var d := definition(id)
