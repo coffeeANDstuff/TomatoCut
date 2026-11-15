@@ -38,6 +38,9 @@ static func spawn(game, id: String) -> Tomato:
 	var collection: HeirloomWave
 	var increment := catalog.collection_increment(id,game.progress.prestige)
 	if increment > 0: collection = HeirloomWave.new(group,d.specimens,increment,float(d.collection.maximum_multiplier))
+	var combo: StampedeCombo
+	var combo_multiplier := catalog.stampede_combo_multiplier(id,game.progress.prestige)
+	if combo_multiplier > 1 and game.progress.level("combo_cash") > 0: combo = StampedeCombo.new(group,count,combo_multiplier)
 	for i in range(count):
 		var data: Dictionary
 		var value: float
@@ -54,6 +57,7 @@ static func spawn(game, id: String) -> Tomato:
 		data.mass = float(data.mass)*pow(factor,3)
 		var fruit: Tomato = game._spawn_specimen(data,value,id,group,false)
 		fruit.family.heirloom_wave = collection
+		fruit.family.stampede_combo = combo; fruit.family.stampede_index = i if combo != null else -1
 		fruit.position = Vector3(lerpf(-4.4,4.4,float(i)/float(count-1)),-4.5-.12*(i%3),0)
 		fruit.velocity = Vector2(-fruit.position.x*.16,game.event_rng.randf_range(float(data.launch_min),float(data.launch_max)))
 		if first == null: first = fruit

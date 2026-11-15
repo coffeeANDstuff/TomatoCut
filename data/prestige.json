@@ -565,6 +565,25 @@
       "effect_values": {
         "bonus_per_level": 0.5
       }
+    },
+    {
+      "id": "stampede_combo_bonuses",
+      "name": "Stampede Combo Bonuses",
+      "category": "Special Events",
+      "description": "Chain distinct roots from one Stampede within your Combo Window. Requires cultivated Combo Cash. Recuts never advance or refresh this chain.",
+      "effect": "+50% ordinary combo bonus per level on chained roots; base and recuts unchanged",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "stampede_season": 1,
+        "stampede_rewards": 1
+      },
+      "event_id": "stampede_season",
+      "illustration": "res://assets/illustrations/prestige/stampede_combo_bonuses.svg",
+      "effect_values": {
+        "bonus_per_level": 0.5
+      }
     }
   ],
   "time_limits": {

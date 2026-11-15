@@ -13,6 +13,8 @@ var split_impulse := 0.0
 var cut_value := 1.0
 var heirloom_wave: HeirloomWave
 var heirloom_multiplier := 1.0
+var stampede_combo: StampedeCombo
+var stampede_index := -1
 var accepted_strikes := 0
 var ultimate_multiplier := 1.0
 var ultimate_awarded := false

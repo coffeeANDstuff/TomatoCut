@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Ultimate Jackpot milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Stampede Combo milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -202,6 +202,15 @@ budget; the Ultimate root bonus cannot repeat. Normal price/combo/wealth apply
 once. One local clean/critical confirmation uses the original invoice plate
 and restrained existing cues. Saves, settings, prestige and New Game integrate
 through the existing paid ledger; no new saved field is required.
+Stampede Combo Bonuses requires paid Stampede Season and Stampede Rewards 1.
+Its 3/6/12 seed levels scale only ordinary Combo Cash bonus by x1.5/x2/x2.5
+on successive distinct roots of that wave, within your actual Combo Window.
+Permanence stays dormant without ordinary Combo Cash. The first root, base
+value and all recuts stay ordinary. Ordinary cuts/recuts cannot advance or
+refresh the wave-root clock; real Combo Window cultivation can extend grace.
+The same normal combo cap, captured family value and price/wealth apply once.
+One grouped root-chain/critical confirmation clears on a successful recut.
+Actual purchases, compatible saves, prestige and New Game retain their rules.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

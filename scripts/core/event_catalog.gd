@@ -62,6 +62,13 @@ func cut_value(id: String, progress) -> float:
 	for normal: String in mix: best = maxf(best,progress.harvest.cut_value(normal,progress.levels))
 	return best*multiplier(id,progress.prestige)
 
+func stampede_combo_multiplier(id: String, permanent: PrestigeProgression, at_level: int = -1) -> float:
+	var d := definition(id)
+	if not unlocked(id,permanent) or not d.has("combo_upgrade"): return 1
+	var upgrade := permanent.definition(d.combo_upgrade)
+	var level := permanent.level(upgrade.id) if at_level < 0 else clampi(at_level,0,int(upgrade.max_level))
+	return clampf(1+float(upgrade.effect_values.bonus_per_level)*level,1,float(d.combo.maximum_multiplier))
+
 func first_strike_multiplier(id: String, permanent: PrestigeProgression, at_level: int = -1) -> float:
 	var d := definition(id)
 	if not unlocked(id,permanent) or not d.has("first_strike_upgrade"): return 1
@@ -104,6 +111,8 @@ func summary(id: String, permanent: PrestigeProgression) -> String:
 		return "Aimed whole-Giant damage: ×%.2f → ×%.2f · fresh swipe through visible seam" % [weak_point_multiplier(d.id,permanent),weak_point_multiplier(d.id,permanent,mini(int(upgrade.max_level),permanent.level(id)+1))]
 	if id == d.get("first_strike_upgrade",""):
 		return "First-strike whole Jackpot: ×%.2f → ×%.2f · split on first accepted hit; recuts ×1" % [first_strike_multiplier(d.id,permanent),first_strike_multiplier(d.id,permanent,permanent.level(id)+1)]
+	if id == d.get("combo_upgrade",""):
+		return "Root combo bonus: ×%.2f → ×%.2f · cultivate Combo Cash; base/recuts unchanged" % [stampede_combo_multiplier(d.id,permanent),stampede_combo_multiplier(d.id,permanent,permanent.level(id)+1)]
 	if id == d.get("collection_upgrade",""):
 		var current := collection_increment(d.id,permanent)
 		var next := collection_increment(d.id,permanent,permanent.level(id)+1)
@@ -135,6 +144,8 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 		for key: String in ["unlock_upgrade","frequency_upgrade","value_upgrade"]:
 			if not raw.get(key) is String or permanent.definition(raw[key]).is_empty(): errors.append(id+": missing "+key)
 		var unlock := permanent.definition(str(raw.get("unlock_upgrade","")))
+		if id == "stampede_season" or raw.has("combo_upgrade") or raw.has("combo"):
+			_validate_combo(raw,permanent,errors)
 		if id == "jackpot_harvest" or raw.has("first_strike_upgrade") or raw.has("first_strike"):
 			_validate_first_strike(raw,permanent,errors)
 		if id == "heirloom_celebration" or raw.has("collection_upgrade") or raw.has("collection"):
@@ -188,6 +199,22 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 			errors.append(id+": missing specimen"); continue
 		_validate_specimen(raw.specimen,id,seen_specimens,errors)
 	return errors
+
+func _validate_combo(d: Dictionary, permanent: PrestigeProgression, errors: PackedStringArray) -> void:
+	var id: String = d.id
+	var upgrade := permanent.definition(str(d.get("combo_upgrade","")))
+	var requirements: Variant = upgrade.get("requires")
+	if id != "stampede_season" or d.get("kind") != "wave" or d.has("specimens") or upgrade.is_empty() or not requirements is Dictionary or int(requirements.get("stampede_season",0)) < 1 or int(requirements.get("stampede_rewards",0)) < 1:
+		errors.append(id+": combo bonus requires its normal-variety Stampede gate and reward predecessor")
+	var budget: Variant = d.get("combo")
+	if not budget is Dictionary or not PrestigeProgression.number(budget.get("maximum_multiplier")):
+		errors.append(id+": missing combo multiplier budget"); return
+	var cap := float(budget.maximum_multiplier)
+	if cap <= 1 or cap > 3: errors.append(id+": combo multiplier outside budget")
+	var coefficients: Variant = upgrade.get("effect_values")
+	var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
+	if not PrestigeProgression.number(coefficient) or float(coefficient) <= 0 or not PrestigeProgression.number(upgrade.get("max_level")) or 1+float(coefficient)*float(upgrade.max_level) > cap+.000001:
+		errors.append(id+": combo effect exceeds authored budget")
 
 func _validate_first_strike(d: Dictionary, permanent: PrestigeProgression, errors: PackedStringArray) -> void:
 	var id: String = d.id

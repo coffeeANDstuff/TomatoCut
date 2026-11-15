@@ -80,3 +80,11 @@ for x,y,r in [(42,69,18),(81,45,15),(120,63,19),(165,43,14),(180,96,16)]:
 <path d="M34 109L139 79L147 96L47 131Q35 129 34 109Z" fill="#d9d5c7"/><path d="M44 121L141 89" stroke="#ba8e4e"/><path d="M139 79L177 68Q184 71 183 81L147 96Z" fill="#a27c51"/><circle cx="166" cy="81" r="2" fill="#ba8e4e"/>
 <circle cx="175" cy="126" r="15" fill="#e0ca94"/><path d="M172 116L177 113V136M171 136H183"/>
 </g></svg>''')
+
+# Original timed Stampede root-chain study, with a culinary metronome and vine.
+(out/'stampede_combo_bonuses.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" width="220" height="180" viewBox="0 0 220 180"><g stroke="#213d35" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" fill="none">
+<path d="M30 153L55 39L94 35L121 151Z" fill="#d1b384"/><path d="M46 139L63 51L83 48L103 139Z" fill="#f4ead5"/><path d="M74 135L110 61" stroke-width="3"/><path d="M99 63L111 57L118 63L108 70Z" fill="#ba8e4e"/><path d="M60 145H92M68 62H80M65 79H83M62 96H88M58 113H92" stroke="#ba8e4e"/>
+<path d="M120 83Q153 47 191 70M121 110Q152 96 191 117M117 143Q157 150 193 136" stroke="#8a9b7a"/>
+<path d="M142 47C124 35 119 66 138 72C157 78 165 48 147 47Z" fill="#c84630"/><path d="M174 86C158 75 151 101 167 108C186 117 197 88 179 86Z" fill="#c84630"/><path d="M142 121C125 109 120 138 137 144C155 151 164 123 147 121Z" fill="#c84630"/>
+<path d="M141 47L132 40L134 50L125 53L139 53L143 62L147 51L155 47L147 46L150 38ZM173 86L164 80L166 89L158 92L171 92L175 101L180 91L189 87L180 85L182 78ZM142 121L132 114L135 124L126 126L140 127L144 136L148 125L157 122L148 120L151 112Z" fill="#8a9b7a"/>
+</g></svg>''')

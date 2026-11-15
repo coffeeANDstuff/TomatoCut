@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.22.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.23.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -754,6 +754,79 @@ func run() -> void:
 	check(game.progress.prestige.paid.ultimate_jackpot == [5,10,20] and game.events.catalog.first_strike_multiplier("jackpot_harvest",game.progress.prestige) == 2.5 and "×2.50 → ×2.50" in game.ui.content.find_child("PermanentEffect_ultimate_jackpot",true,false).text,"packaged actual maximum Ultimate orders retain receipts and honest saturated previews")
 	game.new_game()
 	check(game.progress.prestige.level("ultimate_jackpot") == 0 and game.events.catalog.first_strike_multiplier("jackpot_harvest",game.progress.prestige) == 1 and game.progress.settings.reduced_motion,"packaged New Game clears Ultimate ownership and gate while preserving preferences")
+	game.progress.settings.damage_indicators = true # Explicit feedback-on fixture after preserved-preference checks.
+	game.finish_round(); game.progress.complete_round(ceilf(threshold*pow(200,1.0/float(game.progress.prestige.config.exponent)))+1,1,1)
+	game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	game.purchase_permanent("permanent_slice_value"); game.purchase_permanent("starting_cash"); game.purchase_permanent("stampede_season"); game.ui.archive("Special Events")
+	check(game.ui.content.find_child("PurchasePermanent_stampede_combo_bonuses",true,false) == null,"packaged paid Stampede invitation keeps combo permanence hidden until its actual reward predecessor")
+	game.purchase_permanent("stampede_rewards"); game.ui.archive("Special Events")
+	check(game.events.catalog.validate(game.progress.prestige).is_empty() and ResourceLoader.exists("res://assets/illustrations/prestige/stampede_combo_bonuses.svg") and game.ui.content.find_child("PurchasePermanent_stampede_combo_bonuses",true,false) != null,"packaged conditional combo invitation loads original metronome/vine art and valid authored budgets")
+	game.purchase_permanent("stampede_combo_bonuses")
+	check(game.progress.prestige.seeds == 190 and game.progress.prestige.paid.stampede_combo_bonuses == [3] and game.progress.levels.is_empty() and game.progress.combo_window() == 1.35,"packaged real seed order grants no ordinary Combo Cash, grace, cutting or base-value boost")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(5); fruit = game.tomatoes.get_child(0)
+	check(fruit.family.stampede_combo == null,"packaged paid permanence stays dormant without ordinary Combo Cash cultivation")
+	game.finish_round(); game.progress.money = 10000
+	for upgrade: String in ["better_prices","better_prices","combo_cash","sharp_edge","extra_cuts"]: game.progress.purchase(upgrade)
+	game.fragments.set_physics_process(false); game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(5)
+	var combo_roots: Array[Tomato] = []; var combo_index := 0
+	for root_fruit: Tomato in game.tomatoes.get_children():
+		root_fruit.set_physics_process(false); root_fruit.position = Vector3(-3.5+1.4*combo_index,0,0); root_fruit.velocity = Vector2.ZERO; combo_roots.append(root_fruit); combo_index += 1
+	var combo_wave: StampedeCombo = combo_roots[0].family.stampede_combo; var combo_shared := true
+	for i in range(combo_roots.size()): combo_shared = combo_shared and combo_roots[i].family.stampede_combo == combo_wave and combo_roots[i].family.stampede_index == i and combo_roots[i].family.cut_value == 3
+	check(combo_roots.size() == 6 and combo_shared and combo_wave.seen.is_empty() and game.session.elapsed == 5,"packaged actual Combo Cash activates one six-root Stampede ledger with real identity, captured coefficient and unchanged family base values")
+	var combo_ability_state: int = game.ability_rng.state; var combo_event_state: int = game.event_rng.state
+	game.knife.reset(); game.knife.track(Vector2(-6,3)); game.knife.track(Vector2(6,3)); game.process_blade()
+	check(combo_wave.seen.is_empty() and game.session.earnings == 0,"packaged real mouse-path blade miss cannot enter or extend a Stampede root chain")
+	game.knife.reset(); game.knife.track(Vector2(-6,0)); game.knife.track(Vector2(6,0)); game.process_blade()
+	check(is_equal_approx(game.session.earnings,40.08) and game.session.cuts == 6 and game.session.stampede_tomatoes == 6 and combo_wave.chain == 6 and combo_wave.seen.size() == 6,"packaged actual wide root sweep boosts only ordinary Combo Cash while retaining base value and unique family accounting")
+	check(game.process_blade() == 0 and game.ability_rng.state == combo_ability_state and game.event_rng.state == combo_event_state,"packaged same-stroke descendants cannot farm root-chain credit or new event/locked-ability RNG")
+	var combo_labels := 0
+	for item: Dictionary in game.ui.moving:
+		if item.get("group","") == "stampede_season" and item.node.text == "Stampede combo bonus ×1.50 · 6 roots": combo_labels += 1
+	check(combo_labels == 1,"packaged rapid distinct roots update one accurate grouped bonus-only confirmation")
+	var combo_root_time := combo_wave.last_time; game.knife.track(Vector2(-6,0)); game.process_blade()
+	check(is_equal_approx(game.session.earnings,87.89) and game.session.cuts == 12 and game.session.stampede_tomatoes == 6 and combo_wave.chain == 6 and combo_wave.last_time == combo_root_time and game.session.last_stampede_multiplier == 1,"packaged actual fragment recuts earn ordinary global combos without advancing, refreshing or multiplying the root chain")
+	var combo_before: Dictionary = game.progress.snapshot(); game.purchase_permanent("stampede_combo_bonuses"); game.show_archive()
+	check(game.state == "playing" and game.progress.snapshot() == combo_before,"packaged live combo round denies permanent spending and archive entry")
+	game.finish_round()
+	check(game.store.load_into(restored) and is_equal_approx(restored.prestige.cycle_earnings,87.89) and restored.lifetime.stampede_tomatoes == 6 and restored.prestige.paid.stampede_combo_bonuses == [3],"packaged completed Stampede root/recut round saves actual combo money, unique history and seed receipts")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(5); combo_roots.clear()
+	for root_fruit: Tomato in game.tomatoes.get_children(): root_fruit.set_physics_process(false); root_fruit.position = Vector3(5,-4,0); root_fruit.velocity = Vector2.ZERO; combo_roots.append(root_fruit)
+	check(combo_roots[0].family.stampede_combo != combo_wave and combo_roots[0].family.stampede_combo.seen.is_empty(),"packaged new actual round creates an independent empty root-chain ledger")
+	combo_wave = combo_roots[0].family.stampede_combo; combo_roots[0].position = Vector3.ZERO; game.knife.reset(); game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0)); game.process_blade()
+	for piece: FragmentPiece in game.fragments.pieces: piece.position = Vector3(5,-4,0)
+	game.session.advance(1.35); combo_roots[1].position = Vector3.ZERO; game.knife.reset(); game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0)); game.process_blade()
+	check(combo_wave.chain == 1 and game.session.last_stampede_multiplier == 1,"packaged actual exact cultivated-window boundary expires both global and same-wave root combo credit")
+	game.finish_round(); game.progress.purchase("combo_window"); game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(5); combo_roots.clear()
+	for root_fruit: Tomato in game.tomatoes.get_children(): root_fruit.set_physics_process(false); root_fruit.position = Vector3(5,-4,0); root_fruit.velocity = Vector2.ZERO; combo_roots.append(root_fruit)
+	combo_roots[0].position = Vector3.ZERO; game.knife.reset(); game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0)); game.process_blade()
+	for piece: FragmentPiece in game.fragments.pieces: piece.position = Vector3(5,-4,0)
+	game.session.advance(1.4); combo_roots[1].position = Vector3.ZERO; game.knife.reset(); game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0)); game.process_blade()
+	check(game.progress.combo_window() == 1.5 and game.session.last_stampede_chain == 2 and game.session.last_stampede_multiplier == 1.5,"packaged real ordinary Combo Window purchase extends root grace without a free permanent timer")
+	game.finish_round()
+	for upgrade: String in ["faster_throwing","unlock_cherry","unlock_roma","critical_slice"]: game.progress.purchase(upgrade)
+	game.progress.buy_knife("steak"); game.progress.equip_knife("steak"); game.progress.buy_modification("honing_kit"); game.progress.apply_modification("honing_kit","steak")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(5); combo_roots.clear()
+	for root_fruit: Tomato in game.tomatoes.get_children(): root_fruit.set_physics_process(false); root_fruit.position = Vector3(5,-4,0); root_fruit.velocity = Vector2.ZERO; combo_roots.append(root_fruit)
+	combo_roots[0].position = Vector3.ZERO; game.knife.reset(); game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0)); game.process_blade()
+	for piece: FragmentPiece in game.fragments.pieces: piece.position = Vector3(5,-4,0)
+	combo_roots[1].position = Vector3.ZERO; game.ability_rng.seed = seam_critical.seed; ultimate_rng.state = game.ability_rng.state; ultimate_rng.randf(); var combo_earned: float = game.session.earnings; var combo_value: float = combo_roots[1].family.cut_value
+	game.knife.reset(); game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0)); game.process_blade()
+	check(game.progress.strength() == 2.5 and is_equal_approx(game.session.earnings-combo_earned,game.progress.reward(2,combo_value,1.5)) and game.ability_rng.state == ultimate_rng.state,"packaged actual prepared critical root composes selected normal/event/price/wealth/combo once with one ability roll")
+	game.finish_round(); await process_frame
+	game.progress.settings.reduced_motion = true; game.progress.settings.reduced_effects = true; game.progress.settings.damage_indicators = false
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(5); combo_roots.clear()
+	for root_fruit: Tomato in game.tomatoes.get_children(): root_fruit.set_physics_process(false); root_fruit.position = Vector3(5,-4,0); root_fruit.velocity = Vector2.ZERO; combo_roots.append(root_fruit)
+	for i in range(2):
+		for piece: FragmentPiece in game.fragments.pieces: piece.position = Vector3(5,-4,0)
+		combo_roots[i].position = Vector3.ZERO; game.knife.reset(); game.knife.track(Vector2(-2,0)); game.knife.track(Vector2(2,0)); game.process_blade()
+	check(game.session.last_stampede_multiplier == 1.5 and game.ui.root.find_child("StampedeComboIndicator",false,false) == null,"packaged Reduced Motion/Effects and disabled labels preserve actual conditional combo payouts")
+	game.finish_round(); game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(game.progress.prestige.level("stampede_combo_bonuses") == 1 and game.progress.levels.is_empty() and game.progress.combo_window() == 1.35 and game.progress.owned_modifications.is_empty() and game.progress.settings.reduced_motion,"packaged prestige retains permanent potential while resetting ordinary combo/window/preparation with preferences")
+	game.purchase_permanent("stampede_combo_bonuses"); game.purchase_permanent("stampede_combo_bonuses"); game.ui.archive("Special Events")
+	check(game.progress.prestige.paid.stampede_combo_bonuses == [3,6,12] and game.events.catalog.stampede_combo_multiplier("stampede_season",game.progress.prestige) == 2.5 and "×2.50 → ×2.50" in game.ui.content.find_child("PermanentEffect_stampede_combo_bonuses",true,false).text,"packaged capped actual seed orders retain receipts and honest maximum bonus comparisons")
+	game.new_game()
+	check(game.progress.prestige.level("stampede_combo_bonuses") == 0 and game.events.catalog.stampede_combo_multiplier("stampede_season",game.progress.prestige) == 1 and game.progress.settings.reduced_motion,"packaged New Game clears Stampede combo permanence and gate while preserving preferences")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

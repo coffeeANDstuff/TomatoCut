@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.22.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.23.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -61,6 +61,8 @@ with zipfile.ZipFile(args.archive) as z:
     assert heirloom_assets <= set(hashes), 'Missing original Heirloom collection content/source'
     ultimate_assets = {'Source/assets/illustrations/prestige/ultimate_jackpot.svg', 'Source/tests/ultimate_tests.gd', 'Source/tests/ultimate_render.gd', 'Source/tools/simulate_ultimate.gd', 'Source/ULTIMATE_BALANCE_REPORT.md'}
     assert ultimate_assets <= set(hashes), 'Missing original Ultimate Jackpot content/source'
+    stampede_combo_assets = {'Source/scripts/gameplay/stampede_combo.gd', 'Source/assets/illustrations/prestige/stampede_combo_bonuses.svg', 'Source/tests/stampede_combo_tests.gd', 'Source/tests/stampede_combo_render.gd', 'Source/tools/simulate_stampede_combos.gd', 'Source/STAMPEDE_COMBO_BALANCE_REPORT.md'}
+    assert stampede_combo_assets <= set(hashes), 'Missing original Stampede combo content/source'
     info = json.loads(z.read('BUILD_INFO.json'))
     version = re.search(r'config/version="([^"]+)"', z.read('Source/project.godot').decode()).group(1)
     assert info['version'] == version, 'Source/build version mismatch'

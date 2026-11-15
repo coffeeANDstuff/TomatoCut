@@ -65,7 +65,11 @@
     "size_scale": 0.68,
     "cue": "stampede",
     "caption": "Tomato Stampede",
-    "indicator": "StampedeIndicator"
+    "indicator": "StampedeIndicator",
+    "combo_upgrade": "stampede_combo_bonuses",
+    "combo": {
+      "maximum_multiplier": 2.5
+    }
   },
   {
     "id": "giant_harvest",

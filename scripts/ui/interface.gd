@@ -716,6 +716,10 @@ func popup_event(text: String, screen_position: Vector2, indicator_name: String)
 	node.position = screen_position-Vector2(60,45)
 	moving.append({"node":node,"life":1.0})
 
+func popup_stampede_combo(screen_position: Vector2, multiplier: float, chain: int, critical: bool) -> void:
+	var text := ("Critical stampede · bonus ×%.2f" if critical else "Stampede combo bonus ×%.2f") % multiplier
+	popup_impact(text+" · %d %s" % [chain,"root" if chain == 1 else "roots"],screen_position,critical,"stampede_season","StampedeComboIndicator")
+
 func popup_ultimate(screen_position: Vector2, multiplier: float, critical: bool) -> void:
 	popup_impact(("Critical jackpot ×%.2f" if critical else "Ultimate Jackpot ×%.2f") % multiplier,screen_position,critical,"jackpot_harvest","UltimateIndicator")
 

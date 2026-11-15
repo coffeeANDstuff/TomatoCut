@@ -159,9 +159,9 @@ func overtime_seconds() -> float:
 func round_ceiling() -> float:
 	return effect_value("overtime","ceiling")
 
-func reward(combo: int, tomato_value: float = 1.0) -> float:
+func reward(combo: int, tomato_value: float = 1.0, combo_multiplier: float = 1.0) -> float:
 	var base := 1.0 + effect_value("better_prices","value_bonus") * level("better_prices")
-	var combo_bonus := 1.0 + effect_value("combo_cash","bonus_per_step") * level("combo_cash") * mini(combo-1,int(effect_value("combo_cash","max_steps")))
+	var combo_bonus := 1.0 + effect_value("combo_cash","bonus_per_step") * level("combo_cash") * mini(combo-1,int(effect_value("combo_cash","max_steps"))) * clampf(combo_multiplier,1,3)
 	return snappedf(base * combo_bonus * tomato_value * (1.0+prestige.effect("permanent_slice_value")),0.01)
 
 func complete_round(earnings: float, cuts: int, tomatoes_sliced: int = -1, golden_tomatoes: int = 0, stampede_tomatoes: int = 0, giant_tomatoes: int = 0, rainbow_tomatoes: int = 0, jackpot_tomatoes: int = 0) -> void:

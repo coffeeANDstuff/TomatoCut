@@ -70,7 +70,7 @@ static func build(ui) -> void:
 		var title: Label = ui.label(d.name,34,true); title.name = "PrestigeTitle_"+d.id; heading.add_child(title)
 		ui.watch_discovery(d.id,title,vine,art)
 		var description: Label = ui.label(d.description,17,false,ui.MUTED); description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; entry.add_child(description)
-		entry.add_child(ui.label(d.effect,18))
+		var effect: Label = ui.label(d.effect,18); effect.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; entry.add_child(effect)
 		var level := permanent.level(d.id)
 		var next_level := mini(int(d.max_level),level+1)
 		var comparison: String

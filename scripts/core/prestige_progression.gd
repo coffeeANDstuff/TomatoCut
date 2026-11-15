@@ -147,6 +147,15 @@ func validate() -> PackedStringArray:
 		var coefficients: Variant = ultimate.get("effect_values")
 		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
 		if not number(coefficient) or float(coefficient) <= 0 or not number(ultimate.get("max_level")) or float(coefficient)*float(ultimate.max_level) > 1.5: errors.append("Invalid Ultimate Jackpot coefficient")
+	var stampede_combo := definition("stampede_combo_bonuses")
+	if stampede_combo.is_empty(): errors.append("Missing Stampede Combo Bonuses investment")
+	else:
+		if stampede_combo.get("category") != "Special Events" or stampede_combo.get("event_id") != "stampede_season" or not stampede_combo.get("illustration") is String or not ResourceLoader.exists(stampede_combo.illustration): errors.append("Invalid Stampede Combo Bonuses presentation")
+		var requirements: Variant = stampede_combo.get("requires")
+		if not requirements is Dictionary or int(requirements.get("stampede_season",0)) < 1 or int(requirements.get("stampede_rewards",0)) < 1: errors.append("Stampede Combo Bonuses requires its Stampede predecessors")
+		var coefficients: Variant = stampede_combo.get("effect_values")
+		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
+		if not number(coefficient) or float(coefficient) <= 0 or not number(stampede_combo.get("max_level")) or float(coefficient)*float(stampede_combo.max_level) > 1.5: errors.append("Invalid Stampede Combo Bonuses coefficient")
 	return errors
 
 func definition(id: String) -> Dictionary:

@@ -2,6 +2,13 @@
 
 Authority: GAME_DESIGN.md §§3, 6–7, 10, 14–15, 18–19, 22–23, 28.
 
+## Stampede root rhythm (v0.23)
+An original engraved **culinary metronome with three tomatoes on a vine** identifies the actual Stampede Combo Bonuses order. Cream, green ink, muted gold/wood and tomato red preserve the existing printed archive family. `tools/build_event_art.py` retains the editable SVG source; `assets/illustrations/prestige/stampede_combo_bonuses.svg` is used in the real paid order. Static effect labels now wrap alongside descriptions/comparisons, fixing intrinsic-width overflow exposed by this longer order and the older Stampede page. Concise complete copy, actual conditional comparisons and purchase controls fit 16:10/16:9 with existing read dwell/vines/scroll/focus/disabled states.
+
+One optional **Stampede combo bonus ×value · roots** label updates across successful same-wave roots and combines critical confirmation. It describes the bonus portion, not whole cut value. Successful recuts clear obsolete root-only text while preserving ordinary cash/critical feedback. Fixed camera, original models/Blender/interiors/audio and automatic arcs remain; no new 3D asset, knife, normal variety or audio asset is counted. Reduced Motion/Effects and disabled labels preserve rewards.
+
+Actual captures **172–179** were inspected: invitation/paid order at both aspects, six moving original specimens, first/timely root labels, banked result, expired chain despite an intervening ordinary cut and prepared critical root. Flight advances real arcs/rotation for 60 fixed steps; later frozen/parked poses isolate actual mouse collisions and value checks. The first capture exposed horizontal overflow; after wrapping/copy refinement the affected new/older flows pass. These staged software-GL paths do not establish natural player rhythm/readability, dense-field handling, fragment feel, listening quality or hardware FPS. Those remain human/production work.
+
 ## Ultimate Jackpot invoice (v0.22)
 An original engraved **single-strike invoice** identifies the paid Ultimate order: the existing garnet heart silhouette with muted gold ribs, a diagonal blade and a single seed-tally mark on a crooked cream slip. `tools/build_event_art.py` retains the original SVG source; `assets/illustrations/prestige/ultimate_jackpot.svg` is used in the live archive. Existing printed controls, six category tabs, scroll/read dwell/vines and independent unread state remain. Actual first-strike/current-next/max comparisons explicitly keep recuts ×1 at 16:10/16:9.
 

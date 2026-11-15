@@ -19,6 +19,9 @@ var bonus := 0.0
 var duration := 0.0
 var overtime_added := 0.0
 var overtime_triggers := 0
+var elapsed := 0.0
+var last_stampede_chain := 0
+var last_stampede_multiplier := 1.0
 
 func begin(progress: Progression) -> void:
 	running = true
@@ -39,10 +42,12 @@ func begin(progress: Progression) -> void:
 	best_combo = 0
 	combo_clock = 0.0
 	bonus = 0.0
+	elapsed = 0.0; last_stampede_chain = 0; last_stampede_multiplier = 1.0
 
 func advance(delta: float) -> bool:
 	if not running:
 		return false
+	elapsed += minf(maxf(0,delta),remaining)
 	remaining = maxf(0.0, remaining - delta)
 	launch_clock -= delta
 	combo_clock -= delta
@@ -53,7 +58,7 @@ func advance(delta: float) -> bool:
 		return true
 	return false
 
-func record_cut(progress: Progression, first_slice: bool = true, tomato_value: float = 1.0, event_id: String = "") -> float:
+func record_cut(progress: Progression, first_slice: bool = true, tomato_value: float = 1.0, event_id: String = "", wave: StampedeCombo = null, root_index: int = -1, event_group: int = -1) -> float:
 	if not running or remaining <= 0:
 		return 0.0
 	combo += 1
@@ -67,7 +72,11 @@ func record_cut(progress: Progression, first_slice: bool = true, tomato_value: f
 		if event_id == "giant_harvest": giant_tomatoes += 1
 		if event_id == "heirloom_celebration": rainbow_tomatoes += 1
 		if event_id == "jackpot_harvest": jackpot_tomatoes += 1
-	var value := progress.reward(combo, tomato_value)
+	last_stampede_chain = 0; last_stampede_multiplier = 1.0
+	if first_slice and wave != null and progress.level("combo_cash") > 0:
+		var result := wave.accept(root_index,event_id,event_group,elapsed,progress.combo_window())
+		last_stampede_chain = result.chain; last_stampede_multiplier = result.multiplier
+	var value := progress.reward(combo, tomato_value,last_stampede_multiplier)
 	bonus += value - progress.reward(1, tomato_value)
 	earnings += value
 	if progress.overtime_seconds() > 0 and cuts % int(progress.effect_value("overtime","milestone_cuts")) == 0 and overtime_triggers < int(progress.effect_value("overtime","max_triggers")):

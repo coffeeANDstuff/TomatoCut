@@ -179,7 +179,7 @@ func process_blade() -> int:
 		return 0
 	var count := 0
 	for hit: Dictionary in fragments.slice(knife.previous, knife.current, knife.stroke_id, progress.strength(), progress.settings.reduced_effects,roll_strike,knife.edge):
-		if hit.event_id == "jackpot_harvest": ui.dismiss_feedback("jackpot_harvest")
+		if hit.event_id in ["jackpot_harvest","stampede_season"]: ui.dismiss_feedback(hit.event_id)
 		cut_feedback(hit.position, false, hit.value)
 		count += 1
 	var direction := (knife.current.origin-knife.previous.origin).normalized()
@@ -192,7 +192,7 @@ func process_blade() -> int:
 			if weak: strike.damage *= tomato.weak_point.multiplier
 			if strike.critical:
 				if weak or (tomato.family.ultimate_ready() and tomato.durability <= float(strike.damage)): audio.play("critical")
-				elif tomato.family.heirloom_wave == null or tomato.durability > float(strike.damage): critical_feedback(tomato.position)
+				elif (tomato.family.heirloom_wave == null and tomato.family.stampede_combo == null) or tomato.durability > float(strike.damage): critical_feedback(tomato.position)
 				else: audio.play("critical")
 			tomato.durability -= float(strike.damage)
 			if tomato.durability > 0:
@@ -205,7 +205,7 @@ func process_blade() -> int:
 			tomato.sliced = true
 			tomato.family.record_split()
 			fragments.split(tomato.position,tomato.velocity,direction,progress.settings.reduced_effects,tomato.family)
-			cut_feedback(tomato.position, true, tomato.family.reward_value(true),tomato.family.event_id)
+			cut_feedback(tomato.position, true, tomato.family.reward_value(true),tomato.family.event_id,tomato.family,strike.critical)
 			if tomato.family.ultimate_awarded:
 				ui.popup_ultimate(kitchen.camera.unproject_position(tomato.position),tomato.family.ultimate_multiplier,strike.critical)
 			if tomato.family.heirloom_wave != null:
@@ -233,9 +233,11 @@ func damage_feedback(at: Vector3, remaining: float, event_id: String = "") -> vo
 	ui.popup_damage("%d more %s" % [strikes,"strike" if strikes == 1 else "strikes"], kitchen.camera.unproject_position(at),group)
 	audio.play("resist")
 
-func cut_feedback(at: Vector3, first_slice: bool, tomato_value: float = 1.0, event_id: String = "") -> void:
+func cut_feedback(at: Vector3, first_slice: bool, tomato_value: float = 1.0, event_id: String = "", family: CutFamily = null, critical: bool = false) -> void:
 	if first_slice and events.catalog.definition(event_id).get("kind","") == "specimen": ui.dismiss_feedback(event_id)
-	var reward := session.record_cut(progress, first_slice, tomato_value,event_id)
+	var wave: StampedeCombo = family.stampede_combo if first_slice and family != null else null
+	var reward := session.record_cut(progress, first_slice, tomato_value,event_id,wave,family.stampede_index if wave != null else -1,family.event_group if wave != null else -1)
+	if wave != null: ui.popup_stampede_combo(kitchen.camera.unproject_position(at),session.last_stampede_multiplier,session.last_stampede_chain,critical)
 	ui.popup_cash("+" + Progression.cash(reward), kitchen.camera.unproject_position(at))
 	audio.play(progress.equipment.definition(progress.equipped_knife).get("slice_sound","slice"))
 
