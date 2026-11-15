@@ -38,9 +38,9 @@ for script in tools/*.sh; do bash -n "$script"; done
 /tmp/tomatocut-actionlint/actionlint
 git diff --check
 python tools/package.py
-python tools/verify_package.py exports/TomatoCut-Full-v0.24.1.zip --extract-source /tmp/tomatocut-v024-preflight
-./tools/cloud.sh ./tools/ci_godot.sh --headless --path /tmp/tomatocut-v024-preflight --editor --import --quit
-./tools/cloud.sh ./tools/ci_godot.sh --headless --path /tmp/tomatocut-v024-preflight --script /tmp/tomatocut-v024-preflight/tests/run_tests.gd
+python tools/verify_package.py exports/TomatoCut-Full-v0.24.1.zip --extract-source /tmp/tomatocut-v0241-final
+./tools/cloud.sh ./tools/ci_godot.sh --headless --path /tmp/tomatocut-v0241-final --editor --import --quit
+./tools/cloud.sh ./tools/ci_godot.sh --headless --path /tmp/tomatocut-v0241-final --script /tmp/tomatocut-v0241-final/tests/run_tests.gd
 ```
 
 Clean package and public delivery proofs follow separately. Native Windows input/save/menu testing, Forward+ hardware, audible review, supported-PC 60 FPS and human balance remain unverified. Full Phase 5 and content scope remain incomplete.
@@ -48,6 +48,10 @@ Clean package and public delivery proofs follow separately. Native Windows input
 **Release correction:** immutable v0.24.0 source `2b5d5e64fc2ed91858b21544f51a573818e85906` passes clean local fresh imports and all 1,361 checks without retry. Public [run 43737221726](https://github.com/coffeeANDstuff/TomatoCut/actions/runs/43737221726) passes earlier checks but fails its five-second fresh-source step with two `ERROR: /root: The caller thread can't call the function propagate_notification()` messages. Strict error detection correctly refuses retry and skips publication. Anonymous logs expose the annotations/step status, not the complete stack trace. Godot 4.6's `EditorFileSystem::reimport_files()` reads the supported project setting `editor/import/use_multiple_threads`; v0.24.1 sets it false to serialize resource import. This addresses the worker import path without changing runtime behavior, weakening errors or retagging v0.24.0. Verification results for the correction follow after execution.
 
 Serial-import v0.24.1 fresh extracted source imports and passes **1,361/1,361**, no script/resource/runtime errors or retry. Rebuilt v0.24.1 Windows/Linux exports each pass **282/282** through the unchanged strict guard; Linux boots. Python compilation, five gate-contract tests, actionlint and whitespace checks pass again. Native gameplay flows were not repeated for this editor-only correction; the existing 429 checks verify unchanged gameplay. Clean source/package and public delivery are verified separately below.
+
+**Final clean/public verification:** source **01df1309bf2d1f7af481ea90cfc642cb0c3ae33e**, dirty=false Full package and second fresh source extraction pass **1,361/1,361**, no errors/retry. Integrity covers **495 payload files/486 source files**, safe paths, unique entries, CRC, complete SHA-256 manifest, original source-art, portable modes and version/executable/source identity. Main and annotated **v0.24.1** are pushed. [Release run 43737816814](https://github.com/coffeeANDstuff/TomatoCut/actions/runs/43737816814) succeeds in **1m 54s** with official engine/templates, five gate-contract tests, regressions, both exports/packs, Linux boot, clean archive and fresh-source validation. Public Latest redirects to **v0.24.1**; README and release notes prominently link Full, with Full/Windows/Source ZIPs and checksums published. Earlier v0.24.0 remains an immutable failed tag, with no public release.
+
+Downloaded the actual GitHub Full ZIP and external checksums. Public integrity/source-build identity and all **486 source entries** match the tested clean archive. Extracted public Windows pack passes **282/282** again from `/tmp` through the strict guard, no script/resource/runtime errors or retry. Local and CI executable/archive bytes are kept distinct; identical source does not imply identical executable bytes across hosts. Canonical `exports/TomatoCut-Full-v0.24.1.zip` is the public asset: **49,971,140 bytes**, SHA-256 `0f8fe84ca23945b3afd417f0dea98d2fde47ec92005c0f775b91d305dc04824a`. Local clean validation ZIP remains under `exports/local-validation/`; public checksums are separate from local package checksums. This documentation-only handoff does not change the immutable milestone snapshot.
 
 ## Stampede Combo Bonuses — v0.23.0 (2026-11-14, America/Los_Angeles)
 
