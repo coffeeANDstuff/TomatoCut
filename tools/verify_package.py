@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.21.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.21.1.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -57,7 +57,7 @@ with zipfile.ZipFile(args.archive) as z:
     assert harvest_assets <= set(hashes), 'Missing original permanent harvest content/source'
     weak_assets = {'Source/art/giant_weak_point.blend', 'Source/assets/models/events/giant_weak_point.glb', 'Source/assets/illustrations/prestige/giant_weak_points.svg', 'Source/scripts/gameplay/giant_weak_point.gd', 'Source/tools/build_weak_point_assets.py', 'Source/tests/weak_point_tests.gd', 'Source/tests/weak_point_render.gd', 'Source/tools/simulate_weak_points.gd', 'Source/WEAK_POINT_BALANCE_REPORT.md'}
     assert weak_assets <= set(hashes), 'Missing original Giant weak-point content/source'
-    heirloom_assets = {'Source/assets/illustrations/prestige/heirloom_multiplier.svg', 'Source/scripts/gameplay/heirloom_wave.gd', 'Source/tests/heirloom_tests.gd', 'Source/tests/heirloom_render.gd', 'Source/tools/simulate_heirlooms.gd', 'Source/HEIRLOOM_BALANCE_REPORT.md'}
+    heirloom_assets = {'Source/assets/illustrations/prestige/heirloom_multiplier.svg', 'Source/scripts/gameplay/heirloom_wave.gd', 'Source/tests/heirloom_tests.gd', 'Source/tests/heirloom_render.gd', 'Source/tools/simulate_heirlooms.gd', 'Source/HEIRLOOM_BALANCE_REPORT.md', 'Source/tools/ci_godot.sh', 'Source/tools/test_ci_godot.py'}
     assert heirloom_assets <= set(hashes), 'Missing original Heirloom collection content/source'
     info = json.loads(z.read('BUILD_INFO.json'))
     version = re.search(r'config/version="([^"]+)"', z.read('Source/project.godot').decode()).group(1)

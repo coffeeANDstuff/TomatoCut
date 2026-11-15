@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Existing milestone tag, for example v0.21.0'
+        description: 'Existing milestone tag, for example v0.21.1'
         required: true
         type: string
 
@@ -47,6 +47,9 @@ jobs:
       - name: Install verified Godot editor and export templates
         run: ./tools/ci_install_godot.sh
 
+      - name: Check release gate behavior
+        run: python3 tools/test_ci_godot.py
+
       - name: Import and run regressions
         run: ./tools/check.sh
 
@@ -69,8 +72,11 @@ jobs:
           test -z "$(git status --porcelain)"
           python3 tools/package.py
           python3 tools/verify_package.py "exports/TomatoCut-Full-${RELEASE_TAG}.zip" --extract-source "$RUNNER_TEMP/tomatocut-source-check"
-          godot --headless --path "$RUNNER_TEMP/tomatocut-source-check" --editor --import --quit
-          godot --headless --path "$RUNNER_TEMP/tomatocut-source-check" --script tests/run_tests.gd
+
+      - name: Check portable source in fresh Godot processes
+        run: |
+          ./tools/ci_godot.sh --headless --path "$RUNNER_TEMP/tomatocut-source-check" --editor --import --quit
+          ./tools/ci_godot.sh --headless --path "$RUNNER_TEMP/tomatocut-source-check" --script tests/run_tests.gd
           cd exports
           sha256sum ./*.zip > SHA256SUMS.txt
 
