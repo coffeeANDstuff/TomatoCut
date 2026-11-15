@@ -20,6 +20,7 @@ var ultimate_multiplier := 1.0
 var ultimate_awarded := false
 var golden_step := 0.0
 var golden_cap := 1.0
+var golden_jackpot := 0.0
 var fragment_durability := 1.0
 var limit: int
 var rewarded_cuts := 0
@@ -52,8 +53,14 @@ func ultimate_ready() -> bool:
 
 func reward_value(first_slice: bool = false) -> float:
 	var clean_bonus := ultimate_multiplier if first_slice and ultimate_awarded and rewarded_cuts == 1 else 1.0
-	return cut_value*heirloom_multiplier*clean_bonus*golden_multiplier()
+	var value := cut_value*heirloom_multiplier*clean_bonus*golden_multiplier()
+	return value+cut_value*golden_jackpot_bonus()
 
 func golden_multiplier() -> float:
 	if event_id != "golden_harvest" or rewarded_cuts < 2: return 1
 	return clampf(1+golden_step*(rewarded_cuts-1),1,golden_cap)
+
+func golden_jackpot_bonus() -> float:
+	# The bounty belongs to the final actual reward, never a separate payout.
+	if event_id != "golden_harvest" or limit != MAX_CUTS or rewarded_cuts != MAX_CUTS: return 0
+	return golden_jackpot

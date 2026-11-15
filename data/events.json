@@ -48,6 +48,10 @@
     "recut_upgrade": "golden_multipliers",
     "recut": {
       "maximum_multiplier": 2.5
+    },
+    "finish_upgrade": "golden_jackpot",
+    "finish": {
+      "maximum_base_bonus": 3
     }
   },
   {

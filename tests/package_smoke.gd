@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.24.1","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.25.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -889,6 +889,85 @@ func run() -> void:
 	check(game.progress.prestige.paid.golden_multipliers == [3,6,12] and game.events.catalog.golden_recut_step("golden_harvest",game.progress.prestige) == .75 and "×1.75 → ×1.75" in game.ui.content.find_child("PermanentEffect_golden_multipliers",true,false).text,"packaged actual maximum ladder orders retain receipts and honest saturated first-step previews")
 	game.new_game()
 	check(game.progress.prestige.level("golden_multipliers") == 0 and game.events.catalog.golden_recut_step("golden_harvest",game.progress.prestige) == 0 and game.progress.max_cuts() == 1 and game.progress.settings.reduced_motion,"packaged New Game clears Golden ladder/cutting ownership and gate while preserving preferences")
+	game.progress.settings.damage_indicators = true
+	game.finish_round()
+	game.progress.complete_round(ceilf(threshold*pow(200,1.0/float(game.progress.prestige.config.exponent)))+1,1,1)
+	game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	for upgrade: String in ["permanent_slice_value","starting_cash","golden_harvest","golden_value"]: game.purchase_permanent(upgrade)
+	game.ui.archive("Special Events")
+	check(game.ui.content.find_child("PurchasePermanent_golden_jackpot",true,false) == null,"packaged Golden finish stays hidden until its actual separately paid ladder predecessor")
+	game.purchase_permanent("golden_multipliers"); game.ui.archive("Special Events")
+	check(game.events.catalog.validate(game.progress.prestige).is_empty() and ResourceLoader.exists("res://assets/illustrations/prestige/golden_jackpot.svg") and game.ui.content.find_child("PurchasePermanent_golden_jackpot",true,false) != null,"packaged actual finish invitation loads original inspection-seal plate and authored capped bounty")
+	var finish_store: SaveStore = game.store; finish_store.write(game.progress); var finish_before: Dictionary = game.progress.snapshot()
+	game.store = SaveStore.new("user://tests/missing-packaged-finish-"+game.progress.prestige.lineage+"/ledger.json"); game.purchase_permanent("golden_jackpot")
+	check(game.progress.snapshot() == finish_before and finish_store.load_into(restored) and restored.snapshot() == finish_before,"packaged failed finish order preserves active potential, seed receipts and previous good disk state")
+	game.store = finish_store; game.purchase_permanent("golden_jackpot")
+	check(game.progress.prestige.seeds == 186 and game.progress.prestige.paid.golden_jackpot == [5] and game.progress.max_cuts() == 1 and game.events.catalog.cut_value("golden_harvest",game.progress) == 30,"packaged actual five-seed finish order grants no extra cuts, normal unlocks or flat base reward")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(4)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO; var finish_family: CutFamily = fruit.family
+	game.knife.reset(); game.knife.track(Vector2(-3,0))
+	for i in range(10): game.knife.track(Vector2(3 if i%2 == 0 else -3,0)); game.process_blade()
+	check(finish_family.limit == 1 and finish_family.golden_jackpot == 1 and finish_family.golden_jackpot_bonus() == 0 and game.session.earnings == 37.5,"packaged actual one-cut paid Golden remains ordinary with no free budget or finish reward")
+	game.finish_round(); game.progress.money = 10000; game.progress.purchase("sharp_edge")
+	for i in range(5): game.progress.purchase("extra_cuts")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(4)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO; finish_family = fruit.family
+	game.knife.reset(); game.knife.track(Vector2(-3,0))
+	for i in range(12): game.knife.track(Vector2(3 if i%2 == 0 else -3,0)); game.process_blade()
+	check(finish_family.limit == 6 and finish_family.rewarded_cuts == 6 and finish_family.golden_jackpot_bonus() == 0 and is_equal_approx(game.session.earnings,365.64),"packaged completed six-cut Golden family cannot claim the seventh-cut bounty")
+	game.finish_round(); game.progress.purchase("extra_cuts")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(4)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO; finish_family = fruit.family
+	var finish_event_state: int = game.event_rng.state; var finish_ability_state: int = game.ability_rng.state
+	game.knife.reset(); game.knife.track(Vector2(-3,3)); game.knife.track(Vector2(3,3)); game.process_blade()
+	check(finish_family.rewarded_cuts == 0 and finish_family.golden_jackpot_bonus() == 0 and game.session.earnings == 0,"packaged actual missed sweep cannot claim a finish bounty")
+	game.knife.reset(); game.knife.track(Vector2(-3,0))
+	for i in range(6): game.knife.track(Vector2(3 if i%2 == 0 else -3,0)); game.process_blade()
+	check(finish_family.rewarded_cuts == 6 and finish_family.golden_jackpot_bonus() == 0 and is_equal_approx(game.session.earnings,365.64),"packaged actual first six of seven cultivated cuts keep their ladder without early finish credit")
+	game.knife.track(Vector2(3,0)); game.process_blade()
+	check(finish_family.rewarded_cuts == 7 and finish_family.golden_jackpot_bonus() == 1 and finish_family.cut_value == 30 and is_equal_approx(game.session.earnings,496.89) and game.session.golden_tomatoes == 1 and game.fragments.pieces.size() == 8,"packaged actual seventh split adds one captured base bounty beside its ladder with eight terminal pieces and one unique family")
+	var finish_labels := 0
+	for item: Dictionary in game.ui.moving:
+		if item.get("group","") == "golden_harvest" and item.node.text == "Golden jackpot +1.00× base · cut 7/7": finish_labels += 1
+	check(finish_labels == 1,"packaged final split updates one accurate additive Golden finish label")
+	game.process_blade(); game.knife.track(Vector2(-3,0)); game.process_blade(); finish_before = game.progress.snapshot(); game.purchase_permanent("golden_jackpot"); game.show_archive()
+	check(game.state == "playing" and game.progress.snapshot() == finish_before and game.session.cuts == 7 and is_equal_approx(game.session.earnings,496.89) and game.event_rng.state == finish_event_state and game.ability_rng.state == finish_ability_state,"packaged original/exhausted strokes and live orders cannot repay, overdraw or reroll a completed Golden")
+	game.finish_round()
+	check(game.store.load_into(restored) and is_equal_approx(restored.prestige.cycle_earnings,900.03) and restored.lifetime.golden_tomatoes == 3 and restored.prestige.paid.golden_jackpot == [5],"packaged actual one/six/seven-cut rounds bank earned rewards, unique families and paid finish receipts")
+	game.show_archive()
+	for upgrade: String in ["golden_jackpot","golden_jackpot","golden_multipliers","golden_multipliers"]: game.purchase_permanent(upgrade)
+	game.ui.archive("Special Events")
+	check(game.progress.prestige.seeds == 138 and game.progress.prestige.paid.golden_jackpot == [5,10,20] and "+3.00× → +3.00× base" in game.ui.content.find_child("PermanentEffect_golden_jackpot",true,false).text,"packaged maximum actual finish/ladder orders conserve receipts and show saturated additive comparisons")
+	for upgrade: String in ["better_prices","faster_throwing","unlock_cherry","unlock_roma","critical_slice"]: game.progress.purchase(upgrade)
+	game.progress.buy_knife("steak"); game.progress.equip_knife("steak"); game.progress.buy_modification("honing_kit"); game.progress.apply_modification("honing_kit","steak")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(4)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO; finish_family = fruit.family
+	game.knife.reset(); game.knife.track(Vector2(-3,0))
+	for i in range(6): game.ability_rng.seed = ordinary_seed; game.knife.track(Vector2(3 if i%2 == 0 else -3,0)); game.process_blade()
+	check(finish_family.cut_value == 240 and finish_family.golden_jackpot == 3 and game.session.earnings == 4781.25 and finish_family.golden_jackpot_bonus() == 0,"packaged actual prepared Roma first six cuts capture normal/event/price/wealth once without premature finish income")
+	game.ability_rng.seed = seam_critical.seed; ultimate_rng.state = game.ability_rng.state; ultimate_rng.randf(); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(game.session.earnings == 6843.75 and finish_family.golden_jackpot_bonus() == 3 and game.ability_rng.state == ultimate_rng.state,"packaged prepared critical seventh split adds maximum base bounty and price/wealth once with one ability roll")
+	finish_labels = 0
+	for item: Dictionary in game.ui.moving:
+		if item.get("group","") == "golden_harvest" and item.node.text == "Critical golden jackpot +3.00× base · cut 7/7": finish_labels += 1
+	check(finish_labels == 1 and game.process_blade() == 0 and game.ability_rng.state == ultimate_rng.state,"packaged critical finish combines one confirmation and denies original-stroke reroll or repayment")
+	game.finish_round(); game.progress.purchase("better_prices"); game.progress.purchase("combo_cash")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(4)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	game.knife.reset(); game.knife.track(Vector2(-3,0))
+	for i in range(7): game.knife.track(Vector2(3 if i%2 == 0 else -3,0)); game.process_blade()
+	check(is_equal_approx(game.session.earnings,9781.88) and game.session.combo == 7,"packaged actual ordinary Combo Cash applies once to the final ladder plus finish bounty with individual cent rounding")
+	game.finish_round(); await process_frame; game.progress.settings.damage_indicators = false
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = harvest_seed; game._physics_process(4)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO; finish_family = fruit.family
+	game.knife.reset(); game.knife.track(Vector2(-3,0))
+	for i in range(6): game.knife.track(Vector2(3 if i%2 == 0 else -3,0)); game.process_blade()
+	finish_event_state = game.event_rng.state; game._physics_process(game.session.remaining)
+	check(game.state == "results" and finish_family.rewarded_cuts == 6 and is_equal_approx(game.session.earnings,6564.38) and game.ui.root.find_child("GoldenJackpotIndicator",false,false) == null and game.event_rng.state == finish_event_state,"packaged reduced preferences and exact deadline preserve six earned cuts without an unfinished bounty or new event roll")
+	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(game.progress.prestige.level("golden_jackpot") == 3 and game.progress.levels.is_empty() and game.progress.max_cuts() == 1 and game.progress.owned_modifications.is_empty() and game.progress.settings.reduced_motion,"packaged actual prestige retains finish potential while resetting seven-cut cultivation/preparation with preferences")
+	game.new_game()
+	check(game.progress.prestige.level("golden_jackpot") == 0 and game.events.catalog.golden_jackpot_bonus("golden_harvest",game.progress.prestige) == 0 and game.progress.settings.reduced_motion,"packaged New Game clears finish ownership and Golden gate while preserving preferences")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

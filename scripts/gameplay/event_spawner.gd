@@ -11,6 +11,7 @@ static func spawn(game, id: String) -> Tomato:
 		fruit.family.limit = catalog.cut_limit(id,game.progress)
 		fruit.family.ultimate_multiplier = catalog.first_strike_multiplier(id,game.progress.prestige)
 		fruit.family.golden_step = catalog.golden_recut_step(id,game.progress.prestige)
+		fruit.family.golden_jackpot = catalog.golden_jackpot_bonus(id,game.progress.prestige)
 		if fruit.family.golden_step > 0: fruit.family.golden_cap = float(d.recut.maximum_multiplier)
 		var weak_multiplier := catalog.weak_point_multiplier(id,game.progress.prestige)
 		if weak_multiplier > 1:

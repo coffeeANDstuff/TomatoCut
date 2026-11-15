@@ -62,6 +62,13 @@ func cut_value(id: String, progress) -> float:
 	for normal: String in mix: best = maxf(best,progress.harvest.cut_value(normal,progress.levels))
 	return best*multiplier(id,progress.prestige)
 
+func golden_jackpot_bonus(id: String, permanent: PrestigeProgression, at_level: int = -1) -> float:
+	var d := definition(id)
+	if not unlocked(id,permanent) or not d.has("finish_upgrade"): return 0
+	var upgrade := permanent.definition(d.finish_upgrade)
+	var level := permanent.level(upgrade.id) if at_level < 0 else clampi(at_level,0,int(upgrade.max_level))
+	return clampf(float(upgrade.effect_values.bonus_per_level)*level,0,float(d.finish.maximum_base_bonus))
+
 func golden_recut_step(id: String, permanent: PrestigeProgression, at_level: int = -1) -> float:
 	var d := definition(id)
 	if not unlocked(id,permanent) or not d.has("recut_upgrade"): return 0
@@ -120,6 +127,8 @@ func summary(id: String, permanent: PrestigeProgression) -> String:
 		return "First-strike whole Jackpot: ×%.2f → ×%.2f · split on first accepted hit; recuts ×1" % [first_strike_multiplier(d.id,permanent),first_strike_multiplier(d.id,permanent,permanent.level(id)+1)]
 	if id == d.get("recut_upgrade",""):
 		return "Golden recut: ×%.2f → ×%.2f · root ×1; cap ×%.2f · extra cuts required" % [1+golden_recut_step(d.id,permanent),1+golden_recut_step(d.id,permanent,permanent.level(id)+1),d.recut.maximum_multiplier]
+	if id == d.get("finish_upgrade",""):
+		return "Golden finish: +%.2f× → +%.2f× base · only cut 7/7; cultivate seven cuts" % [golden_jackpot_bonus(d.id,permanent),golden_jackpot_bonus(d.id,permanent,permanent.level(id)+1)]
 	if id == d.get("combo_upgrade",""):
 		return "Root combo bonus: ×%.2f → ×%.2f · cultivate Combo Cash; base/recuts unchanged" % [stampede_combo_multiplier(d.id,permanent),stampede_combo_multiplier(d.id,permanent,permanent.level(id)+1)]
 	if id == d.get("collection_upgrade",""):
@@ -155,6 +164,8 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 		var unlock := permanent.definition(str(raw.get("unlock_upgrade","")))
 		if id == "golden_harvest" or raw.has("recut_upgrade") or raw.has("recut"):
 			_validate_recut(raw,permanent,errors)
+		if id == "golden_harvest" or raw.has("finish_upgrade") or raw.has("finish"):
+			_validate_finish(raw,permanent,errors)
 		if id == "stampede_season" or raw.has("combo_upgrade") or raw.has("combo"):
 			_validate_combo(raw,permanent,errors)
 		if id == "jackpot_harvest" or raw.has("first_strike_upgrade") or raw.has("first_strike"):
@@ -210,6 +221,22 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 			errors.append(id+": missing specimen"); continue
 		_validate_specimen(raw.specimen,id,seen_specimens,errors)
 	return errors
+
+func _validate_finish(d: Dictionary, permanent: PrestigeProgression, errors: PackedStringArray) -> void:
+	var id: String = d.id
+	var upgrade := permanent.definition(str(d.get("finish_upgrade","")))
+	var requirements: Variant = upgrade.get("requires")
+	if id != "golden_harvest" or d.get("kind") != "specimen" or upgrade.is_empty() or not requirements is Dictionary or int(requirements.get("golden_harvest",0)) < 1 or int(requirements.get("golden_value",0)) < 1 or int(requirements.get("golden_multipliers",0)) < 1:
+		errors.append(id+": finish bounty requires its dedicated Golden gate, value and ladder predecessors")
+	var budget: Variant = d.get("finish")
+	if not budget is Dictionary or not PrestigeProgression.number(budget.get("maximum_base_bonus")):
+		errors.append(id+": missing finish bounty budget"); return
+	var cap := float(budget.maximum_base_bonus)
+	if cap <= 0 or cap > 3: errors.append(id+": finish bounty outside budget")
+	var coefficients: Variant = upgrade.get("effect_values")
+	var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
+	if not PrestigeProgression.number(coefficient) or float(coefficient) <= 0 or not PrestigeProgression.number(upgrade.get("max_level")) or float(coefficient)*float(upgrade.max_level) > cap+.000001:
+		errors.append(id+": finish bounty exceeds authored budget")
 
 func _validate_recut(d: Dictionary, permanent: PrestigeProgression, errors: PackedStringArray) -> void:
 	var id: String = d.id

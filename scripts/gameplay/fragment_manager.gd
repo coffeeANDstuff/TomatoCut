@@ -97,7 +97,7 @@ func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: f
 				child_frame *= Basis(Vector3(0,1,0), Vector3(1,0,0), Vector3(0,0,1))
 			acquire_piece().configure("wedge" if shape == "half" else "chunk", ledger, at, child_frame, motion + normal * side * 1.15, Vector3(-side * 3.0, side * 2.5, side * 1.0))
 		emit_juice(at, reduced,ledger.event_id)
-		hits.append({"position": at, "value": ledger.reward_value(), "event_id": ledger.event_id, "golden_multiplier":ledger.golden_multiplier(), "cut":ledger.rewarded_cuts, "limit":ledger.limit, "critical":strike.critical})
+		hits.append({"position": at, "value": ledger.reward_value(), "event_id": ledger.event_id, "golden_multiplier":ledger.golden_multiplier(), "golden_jackpot":ledger.golden_jackpot_bonus(), "cut":ledger.rewarded_cuts, "limit":ledger.limit, "critical":strike.critical})
 	return hits
 
 func emit_juice(at: Vector3, reduced: bool, event_id: String = "") -> void:

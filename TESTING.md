@@ -2,6 +2,51 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Golden Jackpot — v0.25.0 (2026-11-15, America/Los_Angeles)
+
+Continued clean `389e351`, fetched matching remote main and passed **1,361/1,361** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Linux x86-64, retained Xorg `:98`, llvmpipe OpenGL/Dummy audio. Tests isolate under `user://tests/`; no production save or environment configuration publication.
+
+```sh
+./tools/cloud.sh ./tools/check.sh
+python tools/build_event_art.py
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/golden_jackpot_render.gd
+./tools/cloud.sh godot --headless --path . --script tools/simulate_golden_jackpot.gd
+./tools/cloud.sh godot --headless --path . --export-release 'Windows Desktop'
+./tools/cloud.sh godot --headless --path . --export-release 'Linux Test'
+# Sequentially from /tmp; external test script, helpers excluded from packs:
+/workspace/TomatoCut/tools/cloud.sh /workspace/TomatoCut/tools/ci_godot.sh --headless --audio-driver Dummy --main-pack /workspace/TomatoCut/exports/windows/TomatoCut.exe --script /workspace/TomatoCut/tests/package_smoke.gd
+/workspace/TomatoCut/tools/cloud.sh /workspace/TomatoCut/tools/ci_godot.sh --headless --audio-driver Dummy --main-pack /workspace/TomatoCut/exports/linux/TomatoCut.x86_64 --script /workspace/TomatoCut/tests/package_smoke.gd
+./tools/cloud.sh exports/linux/TomatoCut.x86_64 --headless --quit-after 10 -- --save-path=user://tests/v025-linux-boot.json
+python -m py_compile tools/*.py
+python tools/test_ci_godot.py
+for script in tools/*.sh; do bash -n "$script"; done
+/tmp/tomatocut-actionlint/actionlint
+git diff --check
+```
+
+**1,435 logic checks pass, zero failures; 74 new.** Actual paid gate/value/ladder prerequisites, 5/10/20 seed receipts/caps/read state, compatible v5 round trips/legacy defaults, conserved-seed orphan rejection and fourteen malformed authoring cases (including both fields removed, missing any predecessor, invalid/nonfinite/oversized budgets/effects, wrong kind or cross-event ownership) pass. Sixteen actual paid finish-level × cut-budget scenarios verify only the seventh cut adds a base bounty; ordinary and four sibling event identities stay unaffected. Actual failed order preserves active and good disk state. Unpaid full seven-cut family retains **$459.39** ladder only. Paid one/three/full-seven families earn **$37.50/$140.63/$496.89**; misses, same strokes, a resistant terminal-stage hit and completed shorter/exhausted budgets cannot claim/repay the finish. One combined finish label replaces recut text, seven rewards/eight terminal pieces/one unique family preserve pools/caches, and no extra RNG is consumed. Paid levels cannot alter an older family capture. Maximum ladder + finish gives **$684.38**. Actual prepared Roma first six cuts earn **$4,781.25**, seventh critical yields **$6,843.75 total**, one ability draw, no direct critical cash multiplier. Real ordinary Combo Cash cultivation gives **$9,781.88**. Reduced settings/disabled labels, live denial, earned bank/disk receipts, exact deadline at six cuts (**$6,564.38**), failed prestige, real reset/New Game/preferences and five actual event groups with Golden-only finish potential pass. Actual paid permanent cutting survives reset as four cuts, still requiring ordinary Sharp Edge before normal Extra Cuts; three real normal cut purchases then compose one shared seven-cut finish earning $684.38. No saved schema or separate payout ledger is added.
+
+**New native flow passes 23/23**, zero failures. Actual preview/confirmed prestige, native paid gate/value/ladder/finish orders, independent read dwell, original eight-piece inspection plate, additive current-next/max/seven-cut copy, disabled cap and supported 16:10/16:9 layouts pass. Original Golden follows actual 60-step flight before explicit frozen poses isolate native mouse cuts. Real ordinary Sharp Edge/Extra Cuts purchases supply one/six/seven-cut families earning **$37.50/$365.64/$496.89**, banking **$900.03/three unique families**. First six of seven cuts have no bounty. Actual seventh split produces eight terminal pieces/one unique family and one accurate local additive confirmation; fixed camera, same/exhausted strokes, live purchase denial and no extra RNG pass. Maximum paid finish/ladder orders retain **138 seeds** and actual receipts. Native Roma/price/critical/equipment/kit purchases give **$6,843.75** prepared full family with one final critical roll/combined text, then actual Combo Cash cultivation **$9,781.88**. Reduced Motion/Effects/disabled labels preserve payouts; exact deadline at six combo cuts banks only **$6,564.38**; actual confirmed prestige resets normal cutting/preparation while keeping paid potential, and New Game clears permanence with preferences. Captures **189–198** were inspected. Confirmation callbacks follow actual preview clicks; software-GL staging establishes neither human handling/readability nor Windows/GPU/FPS.
+
+**Windows/Linux embedded packs each pass 302/302**, zero failures; **20 new**, sequentially from `/tmp` through the strict guard without errors/retry. Real prerequisites/original plate/receipts/caps/failed purchase, no free cutting, actual one/six/seven-cut scenes, missed/prefix/final/exhausted/original strokes, **$496.89** finish, **$900.03** bank/three unique families, maximum paid orders, prepared Roma final critical **$6,843.75**/one roll/combined label, real Combo Cash **$9,781.88**, reduced preferences/exact deadline/reset/New Game pass. Matching Linux executable boots. Host-engine Windows-PCK checks do not execute Windows natively.
+
+Fixture failures corrected: first new logic run could not infer a boolean from a dynamically typed scene node; explicitly typed it. A second run passed all accounting but failed two label assertions because old screen nodes were queued for deletion and source fixtures started another round in the same frame; yielding before each new fixture round releases the old labels. Native first run had four related failures because Combo Cash was sought under Money; selecting the actual Combos category fixes the purchase and dependent totals/settings/deadline checks. Initial packaged fixture attempted archive seed purchases during the round automatically started by New Game, causing two checks then a null-root error and timeout; finish that fixture round before qualifying prestige, matching established pack fixtures. Final corrected logs have no script/resource/runtime errors. No collision, payout, family, live-state or release guard was relaxed.
+
+**Diagnostic:** `GOLDEN_JACKPOT_BALANCE_REPORT.md` contains 96 actual paid normal-profile/ladder-level/finish-level/cut-budget sequences using production progression/event/family/session helpers. All gates, zero/two/five/six ordinary Extra Cuts, Roma prerequisites and Combo Cash are real purchases. Fixture funding is excluded. All budgets below seven remain unchanged; first-ladder seven-cut control/first/max finish totals **$459.39/$496.89/$571.89**, maximum ladder + finish **$684.38**. Cultivated Roma max/max **$6,843.75**, plus Combo Cash 1 **$9,781.88**. Bounty is additive beside the final cut's ladder before ordinary price/combo/wealth once; it is never a separate rewarded cut or percentage of accumulated family money. Each cut rounds separately. Prescribed accepted splits exclude actual blade/flight/fragment/timing/occupancy, event chance, player accuracy, income rate, human seed ROI and FPS. Costs/readability remain provisional; older report scopes/prices remain unchanged.
+
+**All 452 rendered checks across twenty-five flows pass**, zero failures: all twenty-four prior flows (**429**) plus Golden Jackpot (**23**). Original loop, Cherry, Roma, discovery, Critical Slice, equipment/preparation/Steak, prestige, five event flows, printed buttons, four permanent foundations and all five earlier event-successor flows pass again. Logs have no script/resource/runtime errors. Review retained the original multiplication order of existing reward components before adding captured base bounty; the final 1,435-check source run, model, both exports/packs and Linux boot pass after that change. Native finish fixtures use the same exact reward profiles validated by final source/pack checks; no collision, layout or indicator changes followed their passing run.
+
+Python compilation, all shell syntax, five release-gate contracts, actionlint 1.7.7 and whitespace checks pass. Metadata/required original source-art/report/instructions identify **0.25.0**. Preflight Full ZIP passes safe paths/unique entries/CRC/complete SHA-256 manifest/required original source-art/portable modes/version-executable-source identity (**504 payload files/495 source files**), dirty=true honestly. Independent extraction imports and passes **1,435/1,435** through guarded fresh processes without checkout caches, script/resource/runtime errors or retry.
+
+```sh
+python tools/package.py
+python tools/verify_package.py exports/TomatoCut-Full-v0.25.0.zip --extract-source /tmp/tomatocut-v025-preflight-complete
+./tools/cloud.sh ./tools/ci_godot.sh --headless --path /tmp/tomatocut-v025-preflight-complete --editor --import --quit
+./tools/cloud.sh ./tools/ci_godot.sh --headless --path /tmp/tomatocut-v025-preflight-complete --script /tmp/tomatocut-v025-preflight-complete/tests/run_tests.gd
+```
+
+Clean source/package and public delivery proofs follow after execution. Native Windows input/save/menu testing, Forward+ hardware, audible review, supported-PC 60 FPS and human balance remain unverified. Broader Phase 5 branches and full content scope remain incomplete.
+
 ## Golden Multipliers — v0.24.1 (2026-11-15, America/Los_Angeles)
 
 Continued clean `4c14ab4`, passed **1,297/1,297** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Linux x86-64, retained Xorg `:98`, llvmpipe OpenGL/Dummy audio. Isolated saves use `user://tests/`. No cloud environment configuration publication.

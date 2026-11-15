@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Golden Multipliers milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Golden Jackpot milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -220,6 +220,14 @@ Captured base value remains unchanged; ordinary price/combo/wealth apply once
 and critical damage never directly multiplies money. One local recut/critical
 label shows the actual multiplier and shared cut budget. Existing settings,
 saved receipts, prestige and New Game retain their rules.
+Golden Jackpot requires the separately paid Golden Harvest/Value/Multiplier
+orders. Its 5/10/20-seed levels add 1/2/3 captured base values only on the
+seventh rewarded cut of one Golden family. Cultivate the seven-cut budget;
+this order grants none. Whole fruit, first six cuts and completed shorter
+families keep ordinary ladder rewards. The bounty is added beside the final
+ladder value, then ordinary price/combo/wealth apply once. Misses, damage,
+same strokes, exhausted pieces and the round deadline cannot invent a finish.
+One combined critical/finish label uses the existing restrained feedback.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

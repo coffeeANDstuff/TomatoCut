@@ -603,6 +603,26 @@
       "effect_values": {
         "bonus_per_level": 0.25
       }
+    },
+    {
+      "id": "golden_jackpot",
+      "name": "Golden Jackpot",
+      "category": "Special Events",
+      "description": "Finish all seven shared Golden cuts for a one-time base-value bounty. Earlier cuts keep their ladder. Cultivate seven cuts; this order grants none.",
+      "effect": "Seventh rewarded Golden cut adds +100% base per level; maximum +300%",
+      "base_cost": 5,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "golden_harvest": 1,
+        "golden_value": 1,
+        "golden_multipliers": 1
+      },
+      "event_id": "golden_harvest",
+      "illustration": "res://assets/illustrations/prestige/golden_jackpot.svg",
+      "effect_values": {
+        "bonus_per_level": 1
+      }
     }
   ],
   "time_limits": {

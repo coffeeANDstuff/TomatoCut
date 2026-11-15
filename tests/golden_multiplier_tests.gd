@@ -20,7 +20,7 @@ static func stroke(game, y: float = 0) -> int:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new(); var catalog := EventCatalog.new(); var id := "golden_harvest"
-	check.call(p.prestige.validate().is_empty() and catalog.validate(p.prestige).is_empty() and p.prestige.definitions.size() == 34,"all thirty-four actual investments and authored Golden recut budgets validate")
+	check.call(p.prestige.validate().is_empty() and catalog.validate(p.prestige).is_empty() and p.prestige.definitions.size() == 35,"all thirty-five actual investments and authored Golden recut budgets validate")
 	check.call(not "golden_multipliers" in p.prestige.discovered and not p.prestige.purchase("golden_multipliers") and not p.purchase("golden_multipliers") and catalog.golden_recut_step(id,p.prestige) == 0,"fresh normal progression cannot reveal, buy or activate Golden Multipliers")
 	p = PRESTIGE.funded(200); p.claim_prestige(p.prestige_preview().token)
 	for upgrade: String in ["permanent_slice_value","starting_cash","golden_harvest"]: p.prestige.purchase(upgrade)

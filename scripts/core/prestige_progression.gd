@@ -165,6 +165,15 @@ func validate() -> PackedStringArray:
 		var coefficients: Variant = golden.get("effect_values")
 		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
 		if not number(coefficient) or float(coefficient) <= 0 or not number(golden.get("max_level")) or float(coefficient)*float(golden.max_level) > 1.5: errors.append("Invalid Golden Multipliers coefficient")
+	var finish := definition("golden_jackpot")
+	if finish.is_empty(): errors.append("Missing Golden Jackpot investment")
+	else:
+		if finish.get("category") != "Special Events" or finish.get("event_id") != "golden_harvest" or not finish.get("illustration") is String or not ResourceLoader.exists(finish.illustration): errors.append("Invalid Golden Jackpot presentation")
+		var requirements: Variant = finish.get("requires")
+		if not requirements is Dictionary or int(requirements.get("golden_harvest",0)) < 1 or int(requirements.get("golden_value",0)) < 1 or int(requirements.get("golden_multipliers",0)) < 1: errors.append("Golden Jackpot requires its Golden predecessors")
+		var coefficients: Variant = finish.get("effect_values")
+		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
+		if not number(coefficient) or float(coefficient) <= 0 or not number(finish.get("max_level")) or float(coefficient)*float(finish.max_level) > 3: errors.append("Invalid Golden Jackpot coefficient")
 	return errors
 
 func definition(id: String) -> Dictionary:

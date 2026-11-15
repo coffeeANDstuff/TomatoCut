@@ -2,6 +2,11 @@
 
 Authority: GAME_DESIGN.md §§3, 6–7, 10, 14–15, 18–19, 22–23, 28.
 
+## Golden completion seal (v0.25)
+An original engraved **eight-piece Golden inspection receipt with seven ledger marks and an approved seed seal** identifies Golden Jackpot. Editable SVG `assets/illustrations/prestige/golden_jackpot.svg` and `tools/build_event_art.py` retain the authored source, matching cream paper, green ink, sage and muted gold. Real paid controls, additive current/next/max text, explicit seven-cut requirement, scroll/read dwell and disabled state fit 16:10/16:9; captures 189–190/195 were inspected. No generic casino graphic, glow burst or unrelated asset is introduced.
+
+One optional **Golden jackpot +value× base · cut 7/7** indicator replaces the prior recut confirmation on the actual terminal split and combines critical confirmation. Existing restrained audio and fixed camera remain. Actual captures 191–194/196–198 show original Golden flight, ordinary one-cut root, completed six-cut family without bounty, legitimate finish, prepared critical/combo finishes and earned results. Explicit frozen poses isolate native collision/input checks; these software-GL captures do not establish natural fragment handling, crowded-field readability, audible quality, final art or GPU/FPS. Reduced Motion/Effects and disabled labels preserve rewards. Existing original Blender/GLB/interior/fragment/knife/audio sources remain unchanged; no new normal variety, knife, model or sound is counted.
+
 ## Golden recut ledger (v0.24)
 An original engraved **knife beside a stepped whole/half/wedge/chunk Golden ledger** identifies Golden Multipliers. The editable SVG and generator (`assets/illustrations/prestige/golden_multipliers.svg`, `tools/build_event_art.py`) use muted gold, green ink and restrained seed marks within the existing printed archive. Actual paid controls, conditional extra-cut copy, current/next/max comparisons, read dwell and scroll retention fit 16:10/16:9. Captures 180–181 were inspected.
 

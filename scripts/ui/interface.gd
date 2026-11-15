@@ -716,6 +716,10 @@ func popup_event(text: String, screen_position: Vector2, indicator_name: String)
 	node.position = screen_position-Vector2(60,45)
 	moving.append({"node":node,"life":1.0})
 
+func popup_golden_jackpot(screen_position: Vector2, bonus: float, critical: bool) -> void:
+	var text := ("Critical golden jackpot +%.2f× base" if critical else "Golden jackpot +%.2f× base") % bonus
+	popup_impact(text+" · cut 7/7",screen_position,critical,"golden_harvest","GoldenJackpotIndicator")
+
 func popup_golden_recut(screen_position: Vector2, multiplier: float, cut: int, limit: int, critical: bool) -> void:
 	var text := ("Critical golden recut ×%.2f" if critical else "Golden recut ×%.2f") % multiplier
 	popup_impact(text+" · cut %d/%d" % [cut,limit],screen_position,critical,"golden_harvest","GoldenRecutIndicator")

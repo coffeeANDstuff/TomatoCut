@@ -20,7 +20,7 @@ static func stroke(game, y: float = 0) -> int:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new(); var catalog := EventCatalog.new(); var id := "jackpot_harvest"
-	check.call(p.prestige.validate().is_empty() and catalog.validate(p.prestige).is_empty() and p.prestige.definitions.size() == 34,"all thirty-four real investments and authored first-strike Jackpot budgets validate")
+	check.call(p.prestige.validate().is_empty() and catalog.validate(p.prestige).is_empty() and p.prestige.definitions.size() == 35,"all thirty-five real investments and authored first-strike Jackpot budgets validate")
 	check.call(not "ultimate_jackpot" in p.prestige.discovered and not p.prestige.purchase("ultimate_jackpot") and not p.purchase("ultimate_jackpot") and catalog.first_strike_multiplier(id,p.prestige) == 1,"fresh normal progression cannot reveal, buy or activate Ultimate Jackpot")
 	p = JACKPOT.prepared()
 	check.call(not "ultimate_jackpot" in p.prestige.discovered and not p.prestige.purchase("ultimate_jackpot"),"separately paid Jackpot gate still requires its paid value predecessor before Ultimate Jackpot")
