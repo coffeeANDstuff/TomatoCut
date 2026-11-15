@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.21.1","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.22.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -697,6 +697,63 @@ func run() -> void:
 	check(game.progress.prestige.paid.heirloom_multiplier == [4,8,16] and game.events.catalog.collection_increment("heirloom_celebration",game.progress.prestige) == .75 and "×2.50 → ×2.50" in game.ui.content.find_child("PermanentEffect_heirloom_multiplier",true,false).text,"packaged real maximum collection orders retain receipts and honest saturated peak comparisons")
 	game.new_game()
 	check(game.progress.prestige.level("heirloom_multiplier") == 0 and game.events.catalog.collection_increment("heirloom_celebration",game.progress.prestige) == 0 and game.progress.settings.reduced_motion,"packaged New Game clears collection and gate while retaining preferences")
+	game.progress.settings.damage_indicators = true # Explicit feedback-on fixture after preserved-preference checks.
+	game.finish_round(); game.progress.complete_round(ceilf(threshold*pow(200,1.0/float(game.progress.prestige.config.exponent)))+1,1,1)
+	game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	game.purchase_permanent("permanent_slice_value"); game.purchase_permanent("starting_cash"); game.purchase_permanent("jackpot_harvest"); game.ui.archive("Special Events")
+	check(game.ui.content.find_child("PurchasePermanent_ultimate_jackpot",true,false) == null and game.events.catalog.first_strike_multiplier("jackpot_harvest",game.progress.prestige) == 1,"packaged paid Jackpot gate keeps Ultimate hidden until its actual value predecessor")
+	game.purchase_permanent("jackpot_multiplier"); game.ui.archive("Special Events")
+	check(game.events.catalog.validate(game.progress.prestige).is_empty() and ResourceLoader.exists("res://assets/illustrations/prestige/ultimate_jackpot.svg") and game.ui.content.find_child("PurchasePermanent_ultimate_jackpot",true,false) != null,"packaged Ultimate invitation loads original single-strike invoice art and validated authored budgets")
+	var ultimate_rng := RandomNumberGenerator.new(); var ultimate_seed := -1
+	for candidate in range(1,10000):
+		ultimate_rng.seed = candidate
+		if ultimate_rng.randf() < .025: ultimate_seed = candidate; break
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = ultimate_seed; game._physics_process(8); fruit = game.tomatoes.get_child(0)
+	check(fruit.family.ultimate_multiplier == 1 and fruit.family.accepted_strikes == 0,"packaged actual scheduled Jackpot without Ultimate purchase captures no hidden clean-root bonus")
+	game.finish_round(); game.show_archive(); game.purchase_permanent("ultimate_jackpot")
+	check(game.progress.prestige.seeds == 183 and game.progress.prestige.paid.ultimate_jackpot == [5] and game.progress.strength() == 1 and game.events.catalog.cut_value("jackpot_harvest",game.progress) == 375,"packaged real Ultimate order pays five seeds without normal cutting or flat base-value grants")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = ultimate_seed; game._physics_process(8)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO; var ultimate_family: CutFamily = fruit.family
+	game.knife.reset(); game.knife.track(Vector2(-3,3)); game.knife.track(Vector2(3,3)); game.process_blade()
+	check(ultimate_family.accepted_strikes == 0 and game.session.earnings == 0,"packaged actual blade miss preserves the clean Jackpot attempt")
+	game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(fruit.durability == 1 and ultimate_family.accepted_strikes == 1 and not ultimate_family.ultimate_awarded and game.session.earnings == 0 and game.process_blade() == 0 and ultimate_family.accepted_strikes == 1,"packaged actual resistant first stroke counts once without early Ultimate credit or money")
+	game.knife.track(Vector2(-3,0)); game.process_blade()
+	check(not ultimate_family.ultimate_awarded and ultimate_family.accepted_strikes == 2 and game.session.earnings == 468.75 and game.session.jackpot_tomatoes == 1,"packaged later whole-root split cannot repair a spoiled Ultimate attempt")
+	game.finish_round(); game.progress.money = 10000; game.progress.purchase("sharp_edge"); game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts"); game.fragments.set_physics_process(false)
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = ultimate_seed; game._physics_process(8)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO; ultimate_family = fruit.family
+	var ultimate_ability_state: int = game.ability_rng.state; var ultimate_event_state: int = game.event_rng.state
+	game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(game.progress.strength() == 2 and ultimate_family.ultimate_awarded and ultimate_family.accepted_strikes == 1 and ultimate_family.cut_value == 375 and is_equal_approx(game.session.earnings,703.13),"packaged actual cultivated first-strike split earns one rounded Ultimate root bonus with unchanged captured base value")
+	check(game.process_blade() == 0 and game.ability_rng.state == ultimate_ability_state and game.event_rng.state == ultimate_event_state,"packaged same clean stroke cannot reward new descendants or consume extra locked-ability/event RNG")
+	game.knife.track(Vector2(-3,0)); game.process_blade()
+	check(is_equal_approx(game.session.earnings,1171.88) and game.session.cuts == 2 and game.session.jackpot_tomatoes == 1 and ultimate_family.reward_value() == 375 and not ultimate_family.has_budget(),"packaged actual Jackpot recut receives ordinary captured value without repeating the root-only Ultimate bonus")
+	var ultimate_before: Dictionary = game.progress.snapshot(); game.purchase_permanent("ultimate_jackpot"); game.show_archive()
+	check(game.state == "playing" and game.progress.snapshot() == ultimate_before,"packaged live Ultimate gameplay denies seed spending and archive access")
+	game.finish_round()
+	check(game.store.load_into(restored) and is_equal_approx(restored.prestige.cycle_earnings,1640.63) and restored.prestige.paid.ultimate_jackpot == [5],"packaged completed ordinary/Ultimate rounds save correct earned money and permanent receipts")
+	for upgrade: String in ["better_prices","faster_throwing","unlock_cherry","unlock_roma","critical_slice"]: game.progress.purchase(upgrade)
+	game.progress.buy_knife("steak"); game.progress.equip_knife("steak"); game.progress.buy_modification("honing_kit"); game.progress.apply_modification("honing_kit","steak")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = ultimate_seed; game._physics_process(8)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO; ultimate_family = fruit.family
+	game.ability_rng.seed = seam_critical.seed; ultimate_rng.state = game.ability_rng.state; ultimate_rng.randf()
+	game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(ultimate_family.ultimate_awarded and ultimate_family.cut_value == 3000 and game.session.earnings == 7031.25 and game.ability_rng.state == ultimate_rng.state,"packaged actual prepared critical clean Jackpot composes Roma/event/Ultimate/normal price/wealth once with one ability roll")
+	game.knife.track(Vector2(-3,0)); game.process_blade()
+	check(game.session.earnings == 11718.75 and game.session.cuts == 2 and game.session.jackpot_tomatoes == 1,"packaged prepared critical Jackpot recut retains ordinary captured payout and one unique count")
+	game.finish_round(); await process_frame
+	game.progress.settings.reduced_motion = true; game.progress.settings.reduced_effects = true; game.progress.settings.damage_indicators = false
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = ultimate_seed; game._physics_process(8)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(game.session.earnings == 7031.25 and game.ui.root.find_child("UltimateIndicator",false,false) == null,"packaged Reduced Motion/Effects and disabled labels preserve clean Jackpot money")
+	game.finish_round(); game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(game.progress.prestige.level("ultimate_jackpot") == 1 and game.progress.levels.is_empty() and game.progress.owned_modifications.is_empty() and game.progress.strength() == 1 and game.progress.settings.reduced_motion,"packaged prestige retains Ultimate while resetting normal strength/equipment/preparation and preserving settings")
+	game.purchase_permanent("ultimate_jackpot"); game.purchase_permanent("ultimate_jackpot"); game.ui.archive("Special Events")
+	check(game.progress.prestige.paid.ultimate_jackpot == [5,10,20] and game.events.catalog.first_strike_multiplier("jackpot_harvest",game.progress.prestige) == 2.5 and "×2.50 → ×2.50" in game.ui.content.find_child("PermanentEffect_ultimate_jackpot",true,false).text,"packaged actual maximum Ultimate orders retain receipts and honest saturated previews")
+	game.new_game()
+	check(game.progress.prestige.level("ultimate_jackpot") == 0 and game.events.catalog.first_strike_multiplier("jackpot_harvest",game.progress.prestige) == 1 and game.progress.settings.reduced_motion,"packaged New Game clears Ultimate ownership and gate while preserving preferences")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

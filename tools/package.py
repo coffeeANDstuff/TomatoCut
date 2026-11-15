@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Heirloom Collection milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Ultimate Jackpot milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -192,6 +192,16 @@ prerequisites remain. The original three-specimen tally plate and one grouped
 local collection label explain real paid effects. Settings preserve rewards;
 prestige retains paid levels, New Game clears them and preserves preferences.
 Results label the existing combo-only statistic as Combo bonus.
+Ultimate Jackpot requires its own paid Jackpot Harvest and Jackpot Multiplier 1.
+Its 5/10/20-seed levels grant x1.5/x2/x2.5 whole-Jackpot value only if the first
+accepted strike splits it. A miss does not count; earlier resistance damage
+spoils the bonus. Prepared/cultivated/permanent strength and critical damage
+may cross that threshold, without free normal purchases or new random rolls.
+Every fragment recut keeps ordinary captured value and the same shared cut
+budget; the Ultimate root bonus cannot repeat. Normal price/combo/wealth apply
+once. One local clean/critical confirmation uses the original invoice plate
+and restrained existing cues. Saves, settings, prestige and New Game integrate
+through the existing paid ledger; no new saved field is required.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

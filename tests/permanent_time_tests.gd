@@ -20,7 +20,7 @@ static func cultivate(p: Progression, seconds: int = 2, overtime: int = 1) -> vo
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
-	check.call(p.prestige.validate().is_empty() and p.prestige.definitions.size() == 31 and p.round_duration() == 10 and p.overtime_seconds() == 0,"fresh permanent-time content validates without changing the ten-second start or granting Overtime")
+	check.call(p.prestige.validate().is_empty() and p.prestige.definitions.size() == 32 and p.round_duration() == 10 and p.overtime_seconds() == 0,"fresh permanent-time content validates without changing the ten-second start or granting Overtime")
 	check.call(not p.prestige.purchase("starting_round_time") and not p.prestige.purchase("overtime_bonus") and not p.purchase("starting_round_time"),"normal cultivation and fresh unearned seeds cannot bypass permanent-time reveals")
 	p.levels.extra_seconds = 20; p.refresh_discovery()
 	check.call(not "starting_round_time" in p.prestige.discovered and p.round_duration() == 50,"ordinary time investments neither reveal nor grant a permanent time level")

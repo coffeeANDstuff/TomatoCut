@@ -716,6 +716,9 @@ func popup_event(text: String, screen_position: Vector2, indicator_name: String)
 	node.position = screen_position-Vector2(60,45)
 	moving.append({"node":node,"life":1.0})
 
+func popup_ultimate(screen_position: Vector2, multiplier: float, critical: bool) -> void:
+	popup_impact(("Critical jackpot ×%.2f" if critical else "Ultimate Jackpot ×%.2f") % multiplier,screen_position,critical,"jackpot_harvest","UltimateIndicator")
+
 func popup_heirloom(screen_position: Vector2, multiplier: float, collected: int, total: int, critical: bool = false) -> void:
 	var text := ("Critical heirloom ×%.2f" if critical else "Heirloom ×%.2f") % multiplier
 	popup_impact(text+" · %d/%d varieties" % [collected,total],screen_position,critical,"heirloom_celebration","HeirloomIndicator")

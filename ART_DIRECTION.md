@@ -2,6 +2,13 @@
 
 Authority: GAME_DESIGN.md §§3, 6–7, 10, 14–15, 18–19, 22–23, 28.
 
+## Ultimate Jackpot invoice (v0.22)
+An original engraved **single-strike invoice** identifies the paid Ultimate order: the existing garnet heart silhouette with muted gold ribs, a diagonal blade and a single seed-tally mark on a crooked cream slip. `tools/build_event_art.py` retains the original SVG source; `assets/illustrations/prestige/ultimate_jackpot.svg` is used in the live archive. Existing printed controls, six category tabs, scroll/read dwell/vines and independent unread state remain. Actual first-strike/current-next/max comparisons explicitly keep recuts ×1 at 16:10/16:9.
+
+No new 3D fruit/knife/fragment or audio asset is counted. Original Blender/GLB Jackpot forms, interiors and automatic arcs remain intact. One local **Ultimate Jackpot ×value** or combined **Critical jackpot ×value** confirms an actual first-strike root reward using existing restrained cues. A successful descendant recut dismisses that historical root message; its cash popup shows ordinary captured value. Fixed camera, Reduced Motion/Effects and disabled damage labels retain gameplay and correct rewards.
+
+Actual captures **163–171** were inspected: invitation/paid order, original moving garnet specimen, spoiled resistance, ordinary split, clean root, ordinary recut, prepared critical root and critical descendant. Real flight/rotation advances 60 fixed steps; later explicit frozen poses isolate actual mouse collision/value checks. Original root confirmation initially lingered into the recut capture; the affected flow was rerun after recut dismissal was integrated. Software-GL captures do not establish natural aim/readability, fragment feel, audio listening or hardware performance. Those remain human/production work.
+
 ## Heirloom collection (v0.21)
 An original engraved **three-specimen collection tally** identifies the real paid Heirloom Multiplier order: amber lobed, sage striped and violet elongated silhouettes on a slightly crooked cream ledger slip, with three checked seed circles and a muted gold rule. `tools/build_event_art.py` retains the editable SVG source and `assets/illustrations/prestige/heirloom_multiplier.svg` is used in the live archive. Existing printed actions, six revealed category tabs, title dwell, vines and independent unread/read state remain. Actual order/current-next peak comparisons fit 16:10/16:9.
 

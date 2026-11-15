@@ -36,7 +36,7 @@ static func meshes(node: Node) -> Array[MeshInstance3D]:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new(); var catalog := EventCatalog.new()
-	check.call(p.prestige.validate().is_empty() and catalog.validate(p.prestige).is_empty() and p.prestige.definitions.size() == 31,"Giant Weak Points content, geometry budget and all thirty-one real investments validate")
+	check.call(p.prestige.validate().is_empty() and catalog.validate(p.prestige).is_empty() and p.prestige.definitions.size() == 32,"Giant Weak Points content, geometry budget and all thirty-two real investments validate")
 	check.call(not "giant_weak_points" in p.prestige.discovered and not p.prestige.purchase("giant_weak_points") and not p.purchase("giant_weak_points") and catalog.weak_point_multiplier("giant_harvest",p.prestige) == 1,"fresh progress and normal purchases cannot activate a hidden Giant weak point")
 	p = PRESTIGE.funded(200); p.claim_prestige(p.prestige_preview().token); p.prestige.purchase("permanent_slice_value"); p.prestige.purchase("starting_cash")
 	check.call(not "giant_weak_points" in p.prestige.discovered and not p.prestige.purchase("giant_weak_points"),"starting cash reveals only the Giant invitation before its separately paid gate")

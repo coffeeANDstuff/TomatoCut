@@ -296,6 +296,10 @@
         "wedge": "res://assets/models/fragments/event_jackpot_wedge.glb",
         "chunk": "res://assets/models/fragments/event_jackpot_chunk.glb"
       }
+    },
+    "first_strike_upgrade": "ultimate_jackpot",
+    "first_strike": {
+      "maximum_multiplier": 2.5
     }
   }
 ]

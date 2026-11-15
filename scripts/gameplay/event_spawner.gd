@@ -9,6 +9,7 @@ static func spawn(game, id: String) -> Tomato:
 	if d.kind == "specimen":
 		var fruit: Tomato = game._spawn_specimen(d.specimen,catalog.cut_value(id,game.progress),id,group)
 		fruit.family.limit = catalog.cut_limit(id,game.progress)
+		fruit.family.ultimate_multiplier = catalog.first_strike_multiplier(id,game.progress.prestige)
 		var weak_multiplier := catalog.weak_point_multiplier(id,game.progress.prestige)
 		if weak_multiplier > 1:
 			fruit.weak_point = GiantWeakPoint.new()

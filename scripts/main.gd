@@ -179,6 +179,7 @@ func process_blade() -> int:
 		return 0
 	var count := 0
 	for hit: Dictionary in fragments.slice(knife.previous, knife.current, knife.stroke_id, progress.strength(), progress.settings.reduced_effects,roll_strike,knife.edge):
+		if hit.event_id == "jackpot_harvest": ui.dismiss_feedback("jackpot_harvest")
 		cut_feedback(hit.position, false, hit.value)
 		count += 1
 	var direction := (knife.current.origin-knife.previous.origin).normalized()
@@ -190,7 +191,7 @@ func process_blade() -> int:
 			var weak := tomato.weak_point != null and tomato.weak_point.hit(knife.previous,knife.current,knife.edge)
 			if weak: strike.damage *= tomato.weak_point.multiplier
 			if strike.critical:
-				if weak: audio.play("critical")
+				if weak or (tomato.family.ultimate_ready() and tomato.durability <= float(strike.damage)): audio.play("critical")
 				elif tomato.family.heirloom_wave == null or tomato.durability > float(strike.damage): critical_feedback(tomato.position)
 				else: audio.play("critical")
 			tomato.durability -= float(strike.damage)
@@ -204,7 +205,9 @@ func process_blade() -> int:
 			tomato.sliced = true
 			tomato.family.record_split()
 			fragments.split(tomato.position,tomato.velocity,direction,progress.settings.reduced_effects,tomato.family)
-			cut_feedback(tomato.position, true, tomato.family.reward_value(),tomato.family.event_id)
+			cut_feedback(tomato.position, true, tomato.family.reward_value(true),tomato.family.event_id)
+			if tomato.family.ultimate_awarded:
+				ui.popup_ultimate(kitchen.camera.unproject_position(tomato.position),tomato.family.ultimate_multiplier,strike.critical)
 			if tomato.family.heirloom_wave != null:
 				ui.popup_heirloom(kitchen.camera.unproject_position(tomato.position),tomato.family.heirloom_multiplier,tomato.family.heirloom_wave.varieties.size(),tomato.family.heirloom_wave.allowed.size(),strike.critical)
 			if weak: ui.popup_weak_point(kitchen.camera.unproject_position(tomato.weak_point.center_world()),tomato.weak_point.multiplier,0,strike.critical,tomato.family.event_id)

@@ -2,6 +2,42 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Ultimate Jackpot — v0.22.0 (2026-11-14, America/Los_Angeles)
+
+Continued clean `278c0ea`, fetched matching remote main and passed **1,173/1,173** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Linux x86-64, retained user-owned Xorg `:98`, software OpenGL llvmpipe/Dummy audio. Test saves isolate under `user://tests/`. No cloud environment configuration publication.
+
+```sh
+./tools/cloud.sh ./tools/check.sh
+python tools/build_event_art.py
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/ultimate_render.gd
+./tools/cloud.sh godot --headless --path . --script tools/simulate_ultimate.gd
+./tools/cloud.sh godot --headless --path . --export-release 'Windows Desktop'
+./tools/cloud.sh godot --headless --path . --export-release 'Linux Test'
+# Sequentially from /tmp (shared isolated pack fixture; helpers excluded):
+/workspace/TomatoCut/tools/cloud.sh godot --headless --audio-driver Dummy --main-pack /workspace/TomatoCut/exports/windows/TomatoCut.exe --script /workspace/TomatoCut/tests/package_smoke.gd
+/workspace/TomatoCut/tools/cloud.sh godot --headless --audio-driver Dummy --main-pack /workspace/TomatoCut/exports/linux/TomatoCut.x86_64 --script /workspace/TomatoCut/tests/package_smoke.gd
+./tools/cloud.sh exports/linux/TomatoCut.x86_64 --headless --quit-after 10 -- --save-path=user://tests/v022-linux-boot.json
+python tools/test_ci_godot.py
+python -m py_compile tools/*.py
+for script in tools/*.sh; do bash -n "$script"; done
+/tmp/tomatocut-actionlint/actionlint
+git diff --check
+```
+
+**1,234 logic checks pass, zero failures; 61 new.** Actual paid dedicated Jackpot gate/value predecessor, costs/receipts/caps/current-next/ordinary-recut comparisons, no normal strength/cut/ability/variety/sibling-event grants; compatible old v5 state without free ownership, paid/read round trips and atomic orphan rejection. Missing/both-removed/malformed/nonfinite/oversized budget/effect/gate/predecessor/kind/cross-event data rejects. Real family acceptance excludes other events, direct splits without accepted hits, same strokes and later repairs; root-only value never reaches descendants. Actual scene unpaid Jackpot has no bonus, failed purchase preserves active/disk state, saved purchase records receipts. Actual misses preserve eligibility; first resistance hit grants no money; repeated stroke cannot increment; second successful hit pays ordinary **$468.75**. Cultivated first-strike root **$703.13**, ordinary recut **$468.75**, total **$1,171.88/one unique Jackpot**. Actual normal ability prerequisites/1.5 strength cannot defeat the two-resistance root ordinarily; later critical cannot repair it, while first critical crosses the threshold with one roll. Actual paid permanent sharpness composes to a noncritical clean hit. Prepared critical captures eligible Roma/event/Ultimate/price/wealth once for **$7,031.25**, ordinary recut **$4,687.50**, total **$11,718.75**, no critical money doubling or extra RNG. Live denial, canonical earned banking/disk receipts, Reduced settings/labels, failed prestige, actual reset/New Game/preferences, all five seeded events with one Jackpot-only opportunity and exact deadline cleanup pass. Existing harvest/cutting/weak-point/collection/timer/event/pool checks remain green.
+
+**New rendered flow passes 21/21**, zero failures. Actual preview/confirmed prestige/native seed purchases, hidden predecessor, original invoice plate/read dwell, six-category navigation/current-next/recut labels at 16:10/16:9. Original Jackpot arc/rotation advances 60 fixed steps; frozen poses isolate actual mouse miss/resistance/same-stroke/spoiled-root/ordinary-recut and clean-root/rewarded-recut comparisons. Actual ordinary spoiled root+recut **$937.50**, clean pair **$1,171.88**, earned banking **$2,109.38/two unique families**. Actual normal cultivation/equipment/Honing Kit purchases, seeded prepared critical root **$7,031.25**, ordinary descendant total **$11,718.75**, one roll and combined root label pass. Successful recut clears obsolete root-bonus text; fixed camera, live denial, saved receipts/results, actual settings toggles, confirmed prestige and New Game pass. Captures **163–171** were visually inspected. Native confirmations invoke production callbacks after actual preview clicks, not OS-dialog automation. These staged software-GL checks do not establish natural human handling, Windows-native/GPU or FPS.
+
+**Final exported packs each pass 243/243**, zero failures; **18 new**, sequentially from `/tmp`. Real predecessor/plate/budget, no unpaid bonus, paid seeds/base-value separation, actual miss/resistance/duplicate/spoiled payout, clean-root/ordinary-recut rounded totals, no new RNG, live denial/banking/disk receipts, prepared critical/root/recut values, Reduced preferences/labels, actual prestige/New Game and saturated cap pass. Final re-exported checks after feedback dismissal pass at the same count, and matching Linux executable boots. Host Godot opens embedded resources; this does not execute the Windows PE natively.
+
+Initial harness correction: a synchronous critical-label check encountered a prior page's queued popup node. Awaited one frame after retiring that page; no gameplay guard was relaxed. Currency comparisons use approximate checks for non-binary-exact cent totals, retaining production cent rounding. Visual review then found the brief clean-root message lingering over the actual ordinary recut. Fragment hits now return their event identity and a successful Jackpot recut dismisses that historical group. Affected source/rendered/export checks were rerun; this changes feedback only. Final result/error-log checks are recorded below.
+
+**Diagnostic:** `ULTIMATE_BALANCE_REPORT.md` uses 48 actual paid profile/level/prescribed-ability sequences, production progression/cutting/event/family/session helpers, excluded fixture income and real normal/equipment/preparation purchases. Starter locked abilities cannot produce an assumed proc. Sharp Edge 2 + recuts control/first level **$937.50/$1,171.88**; eligible Roma/Critical first/max **$11,718.75/$16,406.25**, spoiled **$9,375**. Prepared strength qualifies without a critical; later criticals never repair the first-hit condition. This does not model proc/player accuracy probabilities, geometry/flight/fragment/timer constraints, event chance, round income rate, seed ROI or FPS. Costs remain provisional; old reports/prices retain their scopes.
+
+Versions/instructions and required original source/art/report identify **0.22.0**. Python compilation, syntax for every shell script, five release-gate contract tests, actionlint 1.7.7 and whitespace checks pass. **All 383 rendered checks across twenty-two flows pass**, zero failures: original loop 13, Cherry 13, Roma 12, discovery 14, Critical Slice 15, equipment 16, modifications 18, Steak 10, prestige 19, Golden 17, Stampede 17, printed buttons 18, Giant 21, Rainbow 17, Jackpot 19, Permanent Time 17, Permanent Production 18, Permanent Cutting 24, Permanent Harvest 22, Giant Weak Points 21, Heirloom collection 21 and new Ultimate 21. Final logs have no script/resource/runtime errors.
+
+Preflight `python tools/package.py` and `python tools/verify_package.py exports/TomatoCut-Full-v0.22.0.zip --extract-source /tmp/tomatocut-v022-preflight` pass safe paths, unique entries, CRC, complete hashes, required original source/art, portable modes and version/executable/source identity (**475 payload files/466 source files**). That independent extraction imports and passes **1,234/1,234** through the guarded fresh-process path without checkout caches, errors or a retry. Preflight metadata truthfully records dirty=true. Final clean/public delivery proofs follow separately. Native Windows/Forward+/audible quality/supported-PC 60 FPS and human balance remain unverified.
+
 ## Heirloom collection — v0.21.1 (2026-11-14, America/Los_Angeles)
 
 Continued clean `8c09613`, fetched matching remote main and passed **1,110/1,110** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Linux x86-64, retained user-owned Xorg `:98`, software OpenGL llvmpipe/Dummy audio. Test ledgers isolate under `user://tests/`. No cloud environment configuration publication.

@@ -70,3 +70,13 @@ for x,y,r in [(42,69,18),(81,45,15),(120,63,19),(165,43,14),(180,96,16)]:
 <path d="M57 56Q53 45 59 42M111 54Q108 41 116 39M162 57Q163 43 170 41M43 82Q54 90 66 83M103 76Q99 91 110 94M150 81Q163 93 180 77"/>
 <circle cx="56" cy="122" r="10"/><circle cx="111" cy="122" r="10"/><circle cx="165" cy="122" r="10"/><path d="M50 122L55 127L64 116M105 122L110 127L119 116M159 122L164 127L173 116M68 122H98M123 122H152" stroke="#ba8e4e"/>
 </g></svg>''')
+
+# Original single-strike Jackpot invoice: garnet heart, blade and one seed mark.
+(out/'ultimate_jackpot.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" width="220" height="180" viewBox="0 0 220 180"><g stroke="#213d35" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" fill="none">
+<path d="M28 25L189 18L198 157L24 165Z" fill="#f4ead5"/><path d="M38 37H178M40 149H181" stroke="#ba8e4e"/>
+<path d="M111 60C93 37 62 51 66 78C62 102 87 121 111 136C138 116 159 103 157 77C160 51 128 38 111 60Z" fill="#94394e"/>
+<path d="M111 61C87 78 89 106 111 135M94 52C73 79 80 104 98 125M128 52C148 81 142 107 124 125M111 62C130 82 128 110 111 135" stroke="#ba8e4e"/>
+<path d="M111 60L95 49L100 63L88 68L106 67L112 80L117 65L134 65L123 57L128 45L115 54Z" fill="#8a9b7a"/><path d="M111 56Q108 40 117 37" stroke-width="4"/>
+<path d="M34 109L139 79L147 96L47 131Q35 129 34 109Z" fill="#d9d5c7"/><path d="M44 121L141 89" stroke="#ba8e4e"/><path d="M139 79L177 68Q184 71 183 81L147 96Z" fill="#a27c51"/><circle cx="166" cy="81" r="2" fill="#ba8e4e"/>
+<circle cx="175" cy="126" r="15" fill="#e0ca94"/><path d="M172 116L177 113V136M171 136H183"/>
+</g></svg>''')

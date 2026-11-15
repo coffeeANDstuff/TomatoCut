@@ -13,6 +13,9 @@ var split_impulse := 0.0
 var cut_value := 1.0
 var heirloom_wave: HeirloomWave
 var heirloom_multiplier := 1.0
+var accepted_strikes := 0
+var ultimate_multiplier := 1.0
+var ultimate_awarded := false
 var fragment_durability := 1.0
 var limit: int
 var rewarded_cuts := 0
@@ -28,6 +31,7 @@ func try_strike(stroke: int) -> bool:
 	if not has_budget() or stroke == last_stroke:
 		return false
 	last_stroke = stroke
+	accepted_strikes += 1
 	return true
 
 func record_split() -> bool:
@@ -35,8 +39,13 @@ func record_split() -> bool:
 		return false
 	if rewarded_cuts == 0 and heirloom_wave != null:
 		heirloom_multiplier = heirloom_wave.capture(variety_id,event_id,event_group)
+	if rewarded_cuts == 0: ultimate_awarded = ultimate_ready()
 	rewarded_cuts += 1
 	return true
 
-func reward_value() -> float:
-	return cut_value*heirloom_multiplier
+func ultimate_ready() -> bool:
+	return event_id == "jackpot_harvest" and ultimate_multiplier > 1 and rewarded_cuts == 0 and accepted_strikes == 1
+
+func reward_value(first_slice: bool = false) -> float:
+	var clean_bonus := ultimate_multiplier if first_slice and ultimate_awarded and rewarded_cuts == 1 else 1.0
+	return cut_value*heirloom_multiplier*clean_bonus

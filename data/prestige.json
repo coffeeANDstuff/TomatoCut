@@ -546,6 +546,25 @@
       "effect_values": {
         "bonus_per_level": 0.25
       }
+    },
+    {
+      "id": "ultimate_jackpot",
+      "name": "Ultimate Jackpot",
+      "category": "Special Events",
+      "description": "Split the whole Jackpot on its first accepted strike for a finer invoice. Misses do not count; any prior resistance hit spoils the bonus. Recuts keep their ordinary captured value.",
+      "effect": "+50% whole-Jackpot value per level when its first accepted strike splits it; recuts receive no bonus",
+      "base_cost": 5,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "jackpot_harvest": 1,
+        "jackpot_multiplier": 1
+      },
+      "event_id": "jackpot_harvest",
+      "illustration": "res://assets/illustrations/prestige/ultimate_jackpot.svg",
+      "effect_values": {
+        "bonus_per_level": 0.5
+      }
     }
   ],
   "time_limits": {
