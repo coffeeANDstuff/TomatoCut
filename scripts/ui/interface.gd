@@ -716,6 +716,10 @@ func popup_event(text: String, screen_position: Vector2, indicator_name: String)
 	node.position = screen_position-Vector2(60,45)
 	moving.append({"node":node,"life":1.0})
 
+func popup_golden_recut(screen_position: Vector2, multiplier: float, cut: int, limit: int, critical: bool) -> void:
+	var text := ("Critical golden recut ×%.2f" if critical else "Golden recut ×%.2f") % multiplier
+	popup_impact(text+" · cut %d/%d" % [cut,limit],screen_position,critical,"golden_harvest","GoldenRecutIndicator")
+
 func popup_stampede_combo(screen_position: Vector2, multiplier: float, chain: int, critical: bool) -> void:
 	var text := ("Critical stampede · bonus ×%.2f" if critical else "Stampede combo bonus ×%.2f") % multiplier
 	popup_impact(text+" · %d %s" % [chain,"root" if chain == 1 else "roots"],screen_position,critical,"stampede_season","StampedeComboIndicator")

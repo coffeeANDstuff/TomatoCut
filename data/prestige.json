@@ -584,6 +584,25 @@
       "effect_values": {
         "bonus_per_level": 0.5
       }
+    },
+    {
+      "id": "golden_multipliers",
+      "name": "Golden Multipliers",
+      "category": "Special Events",
+      "description": "Each rewarded Golden recut raises that family\u2019s value ladder. Whole fruit stays ordinary. Cultivate extra cuts; damage and repeated strokes never climb.",
+      "effect": "+25 percentage points per level per Golden recut; root unchanged; cap \u00d72.5",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "golden_harvest": 1,
+        "golden_value": 1
+      },
+      "event_id": "golden_harvest",
+      "illustration": "res://assets/illustrations/prestige/golden_multipliers.svg",
+      "effect_values": {
+        "bonus_per_level": 0.25
+      }
     }
   ],
   "time_limits": {

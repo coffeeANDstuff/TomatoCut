@@ -156,6 +156,15 @@ func validate() -> PackedStringArray:
 		var coefficients: Variant = stampede_combo.get("effect_values")
 		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
 		if not number(coefficient) or float(coefficient) <= 0 or not number(stampede_combo.get("max_level")) or float(coefficient)*float(stampede_combo.max_level) > 1.5: errors.append("Invalid Stampede Combo Bonuses coefficient")
+	var golden := definition("golden_multipliers")
+	if golden.is_empty(): errors.append("Missing Golden Multipliers investment")
+	else:
+		if golden.get("category") != "Special Events" or golden.get("event_id") != "golden_harvest" or not golden.get("illustration") is String or not ResourceLoader.exists(golden.illustration): errors.append("Invalid Golden Multipliers presentation")
+		var requirements: Variant = golden.get("requires")
+		if not requirements is Dictionary or int(requirements.get("golden_harvest",0)) < 1 or int(requirements.get("golden_value",0)) < 1: errors.append("Golden Multipliers requires its Golden predecessors")
+		var coefficients: Variant = golden.get("effect_values")
+		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
+		if not number(coefficient) or float(coefficient) <= 0 or not number(golden.get("max_level")) or float(coefficient)*float(golden.max_level) > 1.5: errors.append("Invalid Golden Multipliers coefficient")
 	return errors
 
 func definition(id: String) -> Dictionary:

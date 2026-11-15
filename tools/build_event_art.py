@@ -88,3 +88,13 @@ for x,y,r in [(42,69,18),(81,45,15),(120,63,19),(165,43,14),(180,96,16)]:
 <path d="M142 47C124 35 119 66 138 72C157 78 165 48 147 47Z" fill="#c84630"/><path d="M174 86C158 75 151 101 167 108C186 117 197 88 179 86Z" fill="#c84630"/><path d="M142 121C125 109 120 138 137 144C155 151 164 123 147 121Z" fill="#c84630"/>
 <path d="M141 47L132 40L134 50L125 53L139 53L143 62L147 51L155 47L147 46L150 38ZM173 86L164 80L166 89L158 92L171 92L175 101L180 91L189 87L180 85L182 78ZM142 121L132 114L135 124L126 126L140 127L144 136L148 125L157 122L148 120L151 112Z" fill="#8a9b7a"/>
 </g></svg>''')
+
+# Original Golden recut study: a stepped knife ledger with prepared sections.
+(out/'golden_multipliers.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" width="220" height="180" viewBox="0 0 220 180"><g stroke="#213d35" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" fill="none">
+<path d="M22 150H68V120H114V89H160V59H198" stroke="#ba8e4e" stroke-width="4"/><path d="M25 31L195 23M25 160H197" stroke="#ba8e4e"/>
+<path d="M46 84C21 63 8 107 26 124C44 143 68 119 70 102C73 84 58 77 46 84Z" fill="#d6ac53"/><path d="M41 86L30 77L35 89L27 94L42 93L48 105L52 90L64 85L53 83L57 74Z" fill="#8a9b7a"/><path d="M40 88Q32 70 43 65" stroke-width="4"/>
+<path d="M82 63C54 66 66 108 94 106L82 63Z" fill="#d6ac53"/><path d="M82 63Q107 65 94 106Q77 98 82 63Z" fill="#df9c83"/><path d="M85 75Q97 80 89 94" stroke="#f4ead5" stroke-width="3"/>
+<path d="M127 46C108 56 107 78 129 80L127 46Z" fill="#d6ac53"/><path d="M127 46L149 66L129 80Z" fill="#df9c83"/><path d="M130 54L139 65L131 73" stroke="#f4ead5" stroke-width="3"/>
+<path d="M172 35L194 48L175 58Z" fill="#df9c83"/><path d="M172 35Q159 46 175 58" fill="#d6ac53"/><path d="M175 42L182 48L176 53" stroke="#f4ead5"/>
+<path d="M44 143L187 119L192 132L49 155Z" fill="#d9d5c7"/><path d="M188 119L204 114L209 127L192 132Z" fill="#a27c51"/>
+</g></svg>''')

@@ -32,7 +32,7 @@ static func split(game, fruit: Tomato) -> CutFamily:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new(); var catalog := EventCatalog.new(); var id := "stampede_season"
-	check.call(p.prestige.validate().is_empty() and catalog.validate(p.prestige).is_empty() and p.prestige.definitions.size() == 33,"all thirty-three actual paid investments and Stampede combo budgets validate")
+	check.call(p.prestige.validate().is_empty() and catalog.validate(p.prestige).is_empty() and p.prestige.definitions.size() == 34,"all thirty-four actual paid investments and Stampede combo budgets validate")
 	check.call(not "stampede_combo_bonuses" in p.prestige.discovered and not p.purchase("stampede_combo_bonuses") and not p.prestige.purchase("stampede_combo_bonuses") and catalog.stampede_combo_multiplier(id,p.prestige) == 1,"fresh normal progression cannot reveal or activate permanent Stampede combos")
 	p = prepared(0); p.prestige.levels.erase("stampede_rewards"); p.prestige.paid.erase("stampede_rewards"); p.prestige.seeds += 2; p.prestige.discovered.erase("stampede_combo_bonuses")
 	check.call(not p.prestige.purchase("stampede_combo_bonuses"),"owned Stampede gate still requires the real paid reward predecessor")

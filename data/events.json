@@ -44,7 +44,11 @@
     "kind": "specimen",
     "cue": "golden",
     "caption": "Golden Harvest",
-    "indicator": "GoldenIndicator"
+    "indicator": "GoldenIndicator",
+    "recut_upgrade": "golden_multipliers",
+    "recut": {
+      "maximum_multiplier": 2.5
+    }
   },
   {
     "id": "stampede_season",

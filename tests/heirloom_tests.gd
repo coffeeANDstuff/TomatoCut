@@ -28,7 +28,7 @@ static func split(game, fruit: Tomato) -> CutFamily:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new(); var catalog := EventCatalog.new(); var id := "heirloom_celebration"
-	check.call(p.prestige.validate().is_empty() and catalog.validate(p.prestige).is_empty() and p.prestige.definitions.size() == 33,"all thirty-three paid investments and authored Rainbow collection budgets validate")
+	check.call(p.prestige.validate().is_empty() and catalog.validate(p.prestige).is_empty() and p.prestige.definitions.size() == 34,"all thirty-four paid investments and authored Rainbow collection budgets validate")
 	check.call(not "heirloom_multiplier" in p.prestige.discovered and not p.prestige.purchase("heirloom_multiplier") and not p.purchase("heirloom_multiplier") and catalog.collection_increment(id,p.prestige) == 0,"fresh normal progression cannot reveal or activate Rainbow collection")
 	p = prepared(0); p.prestige.levels.erase("rainbow_rewards"); p.prestige.paid.erase("rainbow_rewards"); p.prestige.seeds += 3; p.prestige.discovered.erase("heirloom_multiplier")
 	check.call(not p.prestige.purchase("heirloom_multiplier") and not "heirloom_multiplier" in p.prestige.discovered,"actual Rainbow gate still requires its paid reward predecessor before collection purchase")

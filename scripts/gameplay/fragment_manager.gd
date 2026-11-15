@@ -75,7 +75,8 @@ func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: f
 		if piece.revision != candidate.revision or not piece.cuttable() or not piece.family.try_strike(stroke):
 			continue
 		var strike: Dictionary = damage_roll.call() if damage_roll.is_valid() else {"damage":strength,"critical":false}
-		if strike.critical: critical_strike.emit(piece.position)
+		var golden := piece.family.event_id == "golden_harvest" and piece.family.golden_step > 0
+		if strike.critical and (not golden or piece.durability > float(strike.damage)): critical_strike.emit(piece.position)
 		piece.durability -= float(strike.damage)
 		if piece.durability > 0:
 			resisted.emit(piece.position,piece.durability)
@@ -96,7 +97,7 @@ func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: f
 				child_frame *= Basis(Vector3(0,1,0), Vector3(1,0,0), Vector3(0,0,1))
 			acquire_piece().configure("wedge" if shape == "half" else "chunk", ledger, at, child_frame, motion + normal * side * 1.15, Vector3(-side * 3.0, side * 2.5, side * 1.0))
 		emit_juice(at, reduced,ledger.event_id)
-		hits.append({"position": at, "value": ledger.reward_value(), "event_id": ledger.event_id})
+		hits.append({"position": at, "value": ledger.reward_value(), "event_id": ledger.event_id, "golden_multiplier":ledger.golden_multiplier(), "cut":ledger.rewarded_cuts, "limit":ledger.limit, "critical":strike.critical})
 	return hits
 
 func emit_juice(at: Vector3, reduced: bool, event_id: String = "") -> void:

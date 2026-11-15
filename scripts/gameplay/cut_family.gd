@@ -18,6 +18,8 @@ var stampede_index := -1
 var accepted_strikes := 0
 var ultimate_multiplier := 1.0
 var ultimate_awarded := false
+var golden_step := 0.0
+var golden_cap := 1.0
 var fragment_durability := 1.0
 var limit: int
 var rewarded_cuts := 0
@@ -50,4 +52,8 @@ func ultimate_ready() -> bool:
 
 func reward_value(first_slice: bool = false) -> float:
 	var clean_bonus := ultimate_multiplier if first_slice and ultimate_awarded and rewarded_cuts == 1 else 1.0
-	return cut_value*heirloom_multiplier*clean_bonus
+	return cut_value*heirloom_multiplier*clean_bonus*golden_multiplier()
+
+func golden_multiplier() -> float:
+	if event_id != "golden_harvest" or rewarded_cuts < 2: return 1
+	return clampf(1+golden_step*(rewarded_cuts-1),1,golden_cap)

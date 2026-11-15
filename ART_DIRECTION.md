@@ -2,6 +2,11 @@
 
 Authority: GAME_DESIGN.md §§3, 6–7, 10, 14–15, 18–19, 22–23, 28.
 
+## Golden recut ledger (v0.24)
+An original engraved **knife beside a stepped whole/half/wedge/chunk Golden ledger** identifies Golden Multipliers. The editable SVG and generator (`assets/illustrations/prestige/golden_multipliers.svg`, `tools/build_event_art.py`) use muted gold, green ink and restrained seed marks within the existing printed archive. Actual paid controls, conditional extra-cut copy, current/next/max comparisons, read dwell and scroll retention fit 16:10/16:9. Captures 180–181 were inspected.
+
+One optional grouped **Golden recut ×value · cut current/budget** indicator updates on genuine rewarded recuts and combines critical confirmation. Whole-root and ordinary money feedback remain unchanged; no camera motion or new audio cue is added. Reduced Motion/Effects and disabled labels preserve rewards. Captures 182–188 show the original moving Golden model, ordinary root, two actual recuts, complete seven-cut family, prepared critical recut and earned result. Explicit frozen poses isolate native collision/input checks; these software-GL captures do not establish human readability/feel, GPU performance or final production art. Existing original Blender/GLB/interior/fragment/knife/audio sources remain; no new model, variety or sound is counted.
+
 ## Stampede root rhythm (v0.23)
 An original engraved **culinary metronome with three tomatoes on a vine** identifies the actual Stampede Combo Bonuses order. Cream, green ink, muted gold/wood and tomato red preserve the existing printed archive family. `tools/build_event_art.py` retains the editable SVG source; `assets/illustrations/prestige/stampede_combo_bonuses.svg` is used in the real paid order. Static effect labels now wrap alongside descriptions/comparisons, fixing intrinsic-width overflow exposed by this longer order and the older Stampede page. Concise complete copy, actual conditional comparisons and purchase controls fit 16:10/16:9 with existing read dwell/vines/scroll/focus/disabled states.
 

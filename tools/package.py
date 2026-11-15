@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Stampede Combo milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Golden Multipliers milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -211,6 +211,15 @@ refresh the wave-root clock; real Combo Window cultivation can extend grace.
 The same normal combo cap, captured family value and price/wealth apply once.
 One grouped root-chain/critical confirmation clears on a successful recut.
 Actual purchases, compatible saves, prestige and New Game retain their rules.
+Golden Multipliers requires paid Golden Harvest and Golden Value 1. Its
+3/6/12-seed levels add +25/+50/+75 percentage points per rewarded recut of
+one Golden family, capped at x2.5. Whole fruit stays ordinary; cultivate
+normal or permanent extra cuts, because this order grants no cut budget.
+Damage, misses, same strokes and exhausted families cannot climb the ladder.
+Captured base value remains unchanged; ordinary price/combo/wealth apply once
+and critical damage never directly multiplies money. One local recut/critical
+label shows the actual multiplier and shared cut budget. Existing settings,
+saved receipts, prestige and New Game retain their rules.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

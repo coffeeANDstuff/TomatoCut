@@ -181,6 +181,9 @@ func process_blade() -> int:
 	for hit: Dictionary in fragments.slice(knife.previous, knife.current, knife.stroke_id, progress.strength(), progress.settings.reduced_effects,roll_strike,knife.edge):
 		if hit.event_id in ["jackpot_harvest","stampede_season"]: ui.dismiss_feedback(hit.event_id)
 		cut_feedback(hit.position, false, hit.value)
+		if hit.golden_multiplier > 1:
+			if hit.critical: audio.play("critical")
+			ui.popup_golden_recut(kitchen.camera.unproject_position(hit.position),hit.golden_multiplier,hit.cut,hit.limit,hit.critical)
 		count += 1
 	var direction := (knife.current.origin-knife.previous.origin).normalized()
 	for tomato: Tomato in tomatoes.get_children():

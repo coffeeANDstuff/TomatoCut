@@ -22,7 +22,7 @@ static func pose(fruit: Tomato) -> void:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
-	check.call(p.prestige.validate().is_empty() and p.prestige.definitions.size() == 33 and p.strength() == 1 and p.max_cuts() == 1,"fresh cutting content validates while preserving starter strength and one rewarded cut")
+	check.call(p.prestige.validate().is_empty() and p.prestige.definitions.size() == 34 and p.strength() == 1 and p.max_cuts() == 1,"fresh cutting content validates while preserving starter strength and one rewarded cut")
 	check.call(not p.prestige.purchase("starting_sharpness") and not p.prestige.purchase("starting_extra_cuts") and not p.purchase("starting_sharpness"),"fresh seeds and ordinary purchases cannot bypass permanent cutting gates")
 	p.money = 1e9
 	for i in range(20): p.purchase("sharp_edge")
