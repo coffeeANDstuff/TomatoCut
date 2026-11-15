@@ -2,6 +2,42 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Giant Weak Points — v0.20.0 (2026-11-14, America/Los_Angeles)
+
+Continued clean `5e94c34`; **1,041/1,041** baseline passed. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64, retained user-owned Xorg `:98`, software OpenGL llvmpipe/Dummy audio. Test saves isolate under `user://tests/`. No cloud configuration publication.
+
+```sh
+./tools/cloud.sh ./tools/check.sh
+blender --background --python tools/build_weak_point_assets.py
+python tools/build_event_art.py
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/weak_point_render.gd
+./tools/cloud.sh godot --headless --path . --script tools/simulate_weak_points.gd
+./tools/cloud.sh godot --headless --path . --export-release 'Windows Desktop'
+./tools/cloud.sh godot --headless --path . --export-release 'Linux Test'
+# Sequentially from /tmp, using embedded resources (test helpers excluded):
+/workspace/TomatoCut/tools/cloud.sh godot --headless --audio-driver Dummy --main-pack /workspace/TomatoCut/exports/windows/TomatoCut.exe --script /workspace/TomatoCut/tests/package_smoke.gd
+/workspace/TomatoCut/tools/cloud.sh godot --headless --audio-driver Dummy --main-pack /workspace/TomatoCut/exports/linux/TomatoCut.x86_64 --script /workspace/TomatoCut/tests/package_smoke.gd
+./tools/cloud.sh exports/linux/TomatoCut.x86_64 --headless --quit-after 10 -- --save-path=user://tests/v020-linux-boot.json
+python -m py_compile tools/*.py
+for script in tools/*.sh; do bash -n "$script"; done
+/tmp/tomatocut-actionlint/actionlint
+git diff --check
+```
+
+**1,110 logic checks pass, zero failures; 69 new.** Actual paid Giant gate/successor/seed receipts/caps/read state, no normal strength/cut/value/ability/variety/sibling-event bypass; old schema-five ownership without free weak points, saved paid round trip, atomic orphan/receipt rejection, malformed region/effect/gate/model budgets including both fields removed. Actual exported two-mesh Blender guide boundary matches runtime vertices within 0.0001. Real front/side/back/tiny/transformed/squashed region eligibility, actual tip versus handle geometry, empty/stationary/miss, reverse/fast/vertical sweeps and all three knife polylines are covered. Actual scene scheduled Giant without purchase has no marker; paid aimed resistance, grouped accurate label, ordinary body/back damage, same-stroke denial/no locked critical RNG, four aimed starter hits for $50, separately paid ordinary two-hit recut for $100/one unique Giant, live denial, earned-money banking and disk state pass. Actual normal cultivation, prepared Steak, critical and permanent strength compose once; one critical draw captures Roma/price/wealth payout $500. Explicit ten-resistance fixture takes nine damage; it is not a new variant. Reduced settings/disabled labels preserve the marker. Failed purchase/prestige writes preserve active/disk state; actual reset/New Game/preferences and all five seeded event groups with exactly one Giant guide pass. Exact deadline removes roots/guide before any new event roll. Prior knife/family/harvest/critical/timer/event/pool checks remain green.
+
+**New rendered flow passes 21/21**, zero failures. Actual confirmed prestige and paid native seed actions, hidden successor before its gate, original plate/current-next labels and six category layout at 16:10/16:9. The actual scheduled Giant carries the guide within eight mesh nodes. An explicit spin fixture advances 60 real 1/60-second physics steps along the existing moving arc; later frozen poses isolate actual mouse collisions including hit squash. Mouse ordinary/aimed/hidden-back hits, same-stroke denial, aimed split $50, ordinary two-hit fragment recut $100/one unique event, fixed camera, live denial/banking, prepared critical $500 and one combined split label pass. Confirmed prestige, actual preference toggles and New Game pass. Captures **144–153** were visually inspected. Native confirmations use production callbacks after actual preview clicks, not OS-dialog automation. Marker/input/software-GL checks do not establish natural human aim or crowded-field readability.
+
+Initial harness corrections: the source test referenced the permanent ledger's nonexistent `equipment.definitions` instead of actual `equipment.knives`; corrected the lookup and reran the complete suite, checking for script errors as well as the failure count. The labels-off check awaited one frame for prior queued popup nodes to retire. The diagnostic report row was initially appended inside each trial loop, causing excessive output/work; stopped that diagnostic, dedented the report append and regenerated all 36 rows. The first new pack run failed three expectations because its setup attempted to buy permanent sharpness from Results; the actual archive-only purchase guard correctly denied it. The corrected harness opens the real archive before the paid order. No gameplay guard was relaxed. Code review also tightened Giant authoring validation to reject removal of both region/upgrade fields, with a new regression and final re-export.
+
+**Damage diagnostic:** `WEAK_POINT_BALANCE_REPORT.md` uses 36 actual paid profiles/scenarios, 5,000 six-resistance root trials each, critical seed 431 and independent prescribed aim-conversion seed 912. Starter ordinary/all-aimed strikes are six at zero, four at level one and three at levels two/three. Prescribed 50% means are 5.113/4.214/3.840. Threshold saturation explains no extra saved strike at some levels/profiles. Rewards stay constant within actual cultivation; prepared Roma/Better Prices explains $500 versus starter $50. This does not simulate geometry, visibility, input, scheduling, clocks, earnings, FPS, human accuracy or seed ROI. Aiming adds no gameplay random roll. Older report scopes/prices remain unchanged; costs/target readability need human play.
+
+**All 341 rendered checks across twenty flows pass**, zero failures. Previous flows retain their exact counts: original loop 13, Cherry 13, Roma 12, discovery 14, Critical Slice 15, equipment 16, modifications 18, Steak 10, prestige 19, Golden 17, Stampede 17, printed buttons 18, Giant 21, Rainbow 17, Jackpot 19, Permanent Time 17, Permanent Production 18, Permanent Cutting 24 and Permanent Harvest 22; new weak-point flow 21. Final logs have no script/resource/runtime errors.
+
+**Both final re-exported embedded packs pass 207/207**, zero failures; **18 new**. Sequential host-engine checks from `/tmp` validate original seam/plate, authored budget, real separate gate/purchase/receipts/max comparisons, no marker without payment, actual scheduled whole Giant and real edge sweeps, ordinary/back damage, aimed damage/duplicate/RNG behavior, root split and ordinary recut for $100/one unique Giant, live denial and earned-money banking. Actual equipped/ordinary/permanent/prepared critical aim composes once with one draw and Roma captured payout $500. Reduced preferences/labels, disk ownership, prestige/New Game and saturated paid cap pass. Matching Linux executable boots headlessly. This does not execute the Windows PE natively.
+
+Version/build instructions/required original source/art/report identify **0.20.0**. Python compilation, syntax for every shell script, actionlint 1.7.7 and whitespace checks pass. Preflight `python tools/package.py` and `python tools/verify_package.py exports/TomatoCut-Full-v0.20.0.zip --extract-source /tmp/tomatocut-v020-preflight` pass safe paths, unique entries, CRC, complete payload hashes, required original content, portable modes and version/executable/source identity (**453 payload files/444 source files**). That independent extraction imports without the checkout cache and passes **1,110/1,110**, no errors. Preflight metadata truthfully records dirty=true. Final clean archive/GitHub delivery proofs follow separately. Native Windows/Forward+/audible quality/supported-PC 60 FPS and human balance remain unverified.
+
 ## Permanent Harvest — v0.19.0 (2026-11-14, America/Los_Angeles)
 
 Continued clean `6dbd7e7`, fetched matching remote main and passed **980/980** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Linux x86-64, retained user-owned Xorg `:98`, software OpenGL llvmpipe/Dummy audio. Ledgers isolate under `user://tests/`. No cloud environment configuration publication.

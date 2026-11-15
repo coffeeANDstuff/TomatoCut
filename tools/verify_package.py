@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.19.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.20.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -55,6 +55,8 @@ with zipfile.ZipFile(args.archive) as z:
     assert cutting_assets <= set(hashes), 'Missing original permanent cutting content/source'
     harvest_assets = {'Source/assets/illustrations/prestige/reduced_variety_unlock_costs.svg', 'Source/assets/illustrations/prestige/improved_premium_value.svg', 'Source/tests/permanent_harvest_tests.gd', 'Source/tests/permanent_harvest_render.gd', 'Source/tools/simulate_permanent_harvest.gd', 'Source/HARVEST_BALANCE_REPORT.md'}
     assert harvest_assets <= set(hashes), 'Missing original permanent harvest content/source'
+    weak_assets = {'Source/art/giant_weak_point.blend', 'Source/assets/models/events/giant_weak_point.glb', 'Source/assets/illustrations/prestige/giant_weak_points.svg', 'Source/scripts/gameplay/giant_weak_point.gd', 'Source/tools/build_weak_point_assets.py', 'Source/tests/weak_point_tests.gd', 'Source/tests/weak_point_render.gd', 'Source/tools/simulate_weak_points.gd', 'Source/WEAK_POINT_BALANCE_REPORT.md'}
+    assert weak_assets <= set(hashes), 'Missing original Giant weak-point content/source'
     info = json.loads(z.read('BUILD_INFO.json'))
     version = re.search(r'config/version="([^"]+)"', z.read('Source/project.godot').decode()).group(1)
     assert info['version'] == version, 'Source/build version mismatch'

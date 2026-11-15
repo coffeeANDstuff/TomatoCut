@@ -9,6 +9,12 @@ static func spawn(game, id: String) -> Tomato:
 	if d.kind == "specimen":
 		var fruit: Tomato = game._spawn_specimen(d.specimen,catalog.cut_value(id,game.progress),id,group)
 		fruit.family.limit = catalog.cut_limit(id,game.progress)
+		var weak_multiplier := catalog.weak_point_multiplier(id,game.progress.prestige)
+		if weak_multiplier > 1:
+			fruit.weak_point = GiantWeakPoint.new()
+			fruit.weak_point.configure(d.specimen,d.weak_point,weak_multiplier)
+			fruit.visual.add_child(fruit.weak_point)
+			fruit.weak_point.projected_region()
 		if d.has("spawn_half_width"):
 			fruit.position.x = game.event_rng.randf_range(-float(d.spawn_half_width),float(d.spawn_half_width))
 			fruit.position.y = float(d.spawn_y)

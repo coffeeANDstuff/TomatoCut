@@ -120,6 +120,15 @@ func validate() -> PackedStringArray:
 		var total := float(coefficient)*float(d.max_level)
 		if id == "reduced_variety_unlock_costs" and number(harvest.get("minimum_unlock_multiplier")) and 1-total < float(harvest.minimum_unlock_multiplier)-.000001: errors.append(id+": exceeds the permanent unlock discount budget")
 		if id == "improved_premium_value" and number(harvest.get("premium_multiplier")) and 1+total > float(harvest.premium_multiplier)+.000001: errors.append(id+": exceeds the permanent premium-value budget")
+	var weak := definition("giant_weak_points")
+	if weak.is_empty(): errors.append("Missing Giant Weak Points investment")
+	else:
+		if weak.get("category") != "Special Events" or weak.get("event_id") != "giant_harvest" or not weak.get("illustration") is String or not ResourceLoader.exists(weak.illustration): errors.append("Invalid Giant Weak Points presentation")
+		var requirements: Variant = weak.get("requires")
+		if not requirements is Dictionary or int(requirements.get("giant_harvest",0)) < 1: errors.append("Giant Weak Points requires Giant Harvest")
+		var coefficients: Variant = weak.get("effect_values")
+		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
+		if not number(coefficient) or float(coefficient) <= 0 or float(coefficient)*int(weak.get("max_level",0)) > 2: errors.append("Invalid Giant Weak Points damage coefficient")
 	return errors
 
 func definition(id: String) -> Dictionary:

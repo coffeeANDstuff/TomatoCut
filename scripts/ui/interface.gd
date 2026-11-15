@@ -716,20 +716,26 @@ func popup_event(text: String, screen_position: Vector2, indicator_name: String)
 	node.position = screen_position-Vector2(60,45)
 	moving.append({"node":node,"life":1.0})
 
-func popup_impact(text: String, screen_position: Vector2, critical: bool, group: String = "") -> void:
+func popup_weak_point(screen_position: Vector2, multiplier: float, remaining: float, critical: bool, group: String) -> void:
+	var text := ("Critical seam ×%.2f" if critical else "Weak point ×%.2f") % multiplier
+	text += " · %.1f resistance" % remaining if remaining > 0 else " · split"
+	popup_impact(text,screen_position,critical,group,"WeakPointIndicator")
+
+func popup_impact(text: String, screen_position: Vector2, critical: bool, group: String = "", indicator_name: String = "") -> void:
 	if not progress.settings.damage_indicators:
 		return
 	if not group.is_empty():
 		for item: Dictionary in moving:
 			if item.get("group","") == group:
 				item.node.text = text; item.node.position = screen_position-Vector2(30,50)
+				item.node.name = indicator_name if not indicator_name.is_empty() else ("CriticalIndicator" if critical else "DamageIndicator")
 				item.node.modulate.a = 1; item.life = .75
 				return
 	var node := label(text,22,true,CREAM)
 	node.add_theme_color_override("font_shadow_color",INK)
 	node.add_theme_constant_override("shadow_offset_x",1)
 	node.add_theme_constant_override("shadow_offset_y",1)
-	node.name = "CriticalIndicator" if critical else "DamageIndicator"
+	node.name = indicator_name if not indicator_name.is_empty() else ("CriticalIndicator" if critical else "DamageIndicator")
 	root.add_child(node)
 	node.position = screen_position-Vector2(30,78 if critical else 50)
 	moving.append({"node":node,"life":0.75,"group":group})

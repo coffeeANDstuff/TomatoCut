@@ -509,6 +509,24 @@
       "effect_values": {
         "bonus_per_level": 0.25
       }
+    },
+    {
+      "id": "giant_weak_points",
+      "name": "Giant Weak Points",
+      "category": "Special Events",
+      "description": "Aim a fresh swipe through the stitched seam on a whole Giant. The mark turns with the skin and disappears when facing away; separated pieces keep their usual resistance.",
+      "effect": "+50% aimed whole-Giant damage per level; no extra cut value",
+      "base_cost": 3,
+      "growth": 2,
+      "max_level": 3,
+      "requires": {
+        "giant_harvest": 1
+      },
+      "event_id": "giant_harvest",
+      "illustration": "res://assets/illustrations/prestige/giant_weak_points.svg",
+      "effect_values": {
+        "bonus_per_level": 0.5
+      }
     }
   ],
   "time_limits": {

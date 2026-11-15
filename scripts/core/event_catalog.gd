@@ -48,6 +48,13 @@ func cut_limit(id: String, progress) -> int:
 func flight_multiplier(id: String, permanent: PrestigeProgression) -> float:
 	return 1.0+permanent.effect(str(definition(id).get("duration_upgrade","")))
 
+func weak_point_multiplier(id: String, permanent: PrestigeProgression, at_level: int = -1) -> float:
+	var d := definition(id)
+	if not unlocked(id,permanent) or not d.has("weak_point_upgrade"): return 1
+	var upgrade := permanent.definition(d.weak_point_upgrade)
+	var level := permanent.level(upgrade.id) if at_level < 0 else clampi(at_level,0,int(upgrade.max_level))
+	return clampf(1+float(upgrade.effect_values.bonus_per_level)*level,1,float(d.weak_point.maximum_multiplier))
+
 func cut_value(id: String, progress) -> float:
 	if not unlocked(id,progress.prestige): return 0
 	var best := 1.0
@@ -79,6 +86,8 @@ func summary(id: String, permanent: PrestigeProgression) -> String:
 		var current := flight_multiplier(d.id,permanent)
 		var next := current if permanent.level(id) >= int(upgrade.max_level) else current+float(upgrade.effect_values.bonus_per_level)
 		return "Whole-specimen airtime: ×%.2f → ×%.2f · same arc height" % [current,next]
+	if id == d.get("weak_point_upgrade",""):
+		return "Aimed whole-Giant damage: ×%.2f → ×%.2f · fresh swipe through visible seam" % [weak_point_multiplier(d.id,permanent),weak_point_multiplier(d.id,permanent,mini(int(upgrade.max_level),permanent.level(id)+1))]
 	var current := multiplier(d.id,permanent)
 	var next := current if permanent.level(id) >= int(permanent.definition(id).max_level) else current+float(d.reward_multiplier)*float(permanent.definition(id).effect_values.bonus_per_level)
 	return ("Best eligible cut value: ×%.0f → ×%.0f" if d.kind == "specimen" or d.has("specimens") else "Selected variety cut value: ×%.0f → ×%.0f") % [current,next]
@@ -105,6 +114,8 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 		for key: String in ["unlock_upgrade","frequency_upgrade","value_upgrade"]:
 			if not raw.get(key) is String or permanent.definition(raw[key]).is_empty(): errors.append(id+": missing "+key)
 		var unlock := permanent.definition(str(raw.get("unlock_upgrade","")))
+		if id == "giant_harvest" or raw.has("weak_point_upgrade") or raw.has("weak_point"):
+			_validate_weak_point(raw,permanent,errors)
 		if raw.has("duration_upgrade"):
 			var duration := permanent.definition(str(raw.duration_upgrade))
 			if raw.get("kind") != "specimen" or duration.is_empty() or unlock.is_empty() or int(duration.get("requires",{}).get(unlock.get("id",""),0)) < 1:
@@ -152,6 +163,33 @@ func validate(permanent: PrestigeProgression) -> PackedStringArray:
 			errors.append(id+": missing specimen"); continue
 		_validate_specimen(raw.specimen,id,seen_specimens,errors)
 	return errors
+
+func _validate_weak_point(d: Dictionary, permanent: PrestigeProgression, errors: PackedStringArray) -> void:
+	var id: String = d.id
+	var upgrade := permanent.definition(str(d.get("weak_point_upgrade","")))
+	var requirements: Variant = upgrade.get("requires")
+	if id != "giant_harvest" or d.get("kind") != "specimen" or upgrade.is_empty() or not requirements is Dictionary or int(requirements.get("giant_harvest",0)) < 1:
+		errors.append(id+": weak points require their dedicated Giant gate")
+	if not d.get("weak_point") is Dictionary:
+		errors.append(id+": missing weak-point region"); return
+	var region: Dictionary = d.weak_point
+	for key: String in ["polar","azimuth","surface_offset","minimum_facing","minimum_size","maximum_multiplier","segments"]:
+		if not PrestigeProgression.number(region.get(key)): errors.append(id+": invalid weak-point "+key)
+	if PrestigeProgression.number(region.get("polar")) and (float(region.polar) < .4 or float(region.polar) > PI-.4): errors.append(id+": weak-point latitude outside the shell")
+	if PrestigeProgression.number(region.get("azimuth")) and absf(float(region.azimuth)) > PI: errors.append(id+": invalid weak-point longitude")
+	if not region.get("angular_radii") is Array or region.angular_radii.size() != 2:
+		errors.append(id+": missing weak-point radii")
+	else:
+		for radius: Variant in region.angular_radii:
+			if not PrestigeProgression.number(radius) or float(radius) < .03 or float(radius) > .3: errors.append(id+": invalid weak-point radius")
+	for bounds: Array in [["surface_offset",.005,.03],["minimum_facing",.1,.9],["minimum_size",.05,.5],["maximum_multiplier",1.01,3.0],["segments",16,64]]:
+		if PrestigeProgression.number(region.get(bounds[0])) and (float(region[bounds[0]]) < float(bounds[1]) or float(region[bounds[0]]) > float(bounds[2])): errors.append(id+": weak-point "+str(bounds[0])+" outside budget")
+	if PrestigeProgression.number(region.get("segments")) and float(region.segments) != floorf(float(region.segments)): errors.append(id+": fractional weak-point segments")
+	if not region.get("model") is String or not ResourceLoader.exists(region.model): errors.append(id+": missing weak-point marker")
+	if not upgrade.is_empty():
+		var coefficients: Variant = upgrade.get("effect_values")
+		var coefficient: Variant = coefficients.get("bonus_per_level") if coefficients is Dictionary else null
+		if not PrestigeProgression.number(coefficient) or float(coefficient) <= 0 or not PrestigeProgression.number(region.get("maximum_multiplier")) or 1+float(coefficient)*int(upgrade.max_level) > float(region.maximum_multiplier)+.000001: errors.append(id+": weak-point damage exceeds budget")
 
 func _validate_specimen(fruit: Dictionary, id: String, seen_specimens: Dictionary, errors: PackedStringArray) -> void:
 	if not fruit.get("id") is String or not fruit.id.begins_with("event_"): errors.append(id+": invalid event specimen ID")

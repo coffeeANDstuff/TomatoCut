@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.19.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.20.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -572,6 +572,71 @@ func run() -> void:
 	check(game.progress.price("unlock_cherry") == 20 and game.progress.price("unlock_roma") == 90 and game.progress.harvest.cut_value("cherry",game.progress.levels) == 5.25 and "50% → 50%" in game.ui.content.find_child("PermanentEffect_reduced_variety_unlock_costs",true,false).text and "×1.75 → ×1.75" in game.ui.content.find_child("PermanentEffect_improved_premium_value",true,false).text,"packaged maximum real paid harvest stays within authored limits with honest saturated previews")
 	game.progress.settings.reduced_motion = true; game.new_game()
 	check(game.progress.price("unlock_cherry") == 40 and game.progress.harvest.cut_value("cherry",game.progress.levels) == 3 and game.progress.prestige.levels.is_empty() and game.progress.settings.reduced_motion,"packaged New Game clears permanent harvest and restores original prices/value while retaining preferences")
+	game.finish_round()
+	game.progress.complete_round(ceilf(threshold*pow(200,1.0/float(game.progress.prestige.config.exponent)))+1,1,1)
+	game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	game.purchase_permanent("permanent_slice_value"); game.purchase_permanent("starting_cash")
+	check(not "giant_weak_points" in game.progress.prestige.discovered and game.events.catalog.weak_point_multiplier("giant_harvest",game.progress.prestige) == 1,"packaged Giant seam stays hidden and inactive before its dedicated event gate")
+	game.purchase_permanent("giant_harvest"); game.ui.archive("Special Events")
+	check(game.events.catalog.validate(game.progress.prestige).is_empty() and game.ui.content.find_child("PurchasePermanent_giant_weak_points",true,false) != null and ResourceLoader.exists("res://assets/models/events/giant_weak_point.glb") and ResourceLoader.exists("res://assets/illustrations/prestige/giant_weak_points.svg"),"packaged original seam mesh and archive plate resolve alongside a validated actual paid successor")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = cutting_seed; game._physics_process(6)
+	fruit = game.tomatoes.get_child(0)
+	check(fruit.weak_point == null,"packaged owned Giant gate without paid weak points creates no aiming marker")
+	game.finish_round(); game.show_archive(); game.purchase_permanent("giant_weak_points"); game.purchase_permanent("giant_bonus_cuts")
+	check(game.progress.prestige.seeds == 188 and game.progress.prestige.paid.giant_weak_points == [3] and game.progress.strength() == 1 and game.progress.reward(1,40) == 50,"packaged real weak-point purchase pays seeds without general strength or extra reward")
+	game.fragments.set_physics_process(false)
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = cutting_seed; game._physics_process(6)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	var seam_family: CutFamily = fruit.family
+	check(fruit.weak_point != null and fruit.weak_point.marker.visible and not fruit.weak_point.projected_region().is_empty(),"packaged actual scheduled Giant carries a visible surface-aligned seam")
+	var seam_rng: int = game.ability_rng.state
+	game.knife.reset(); game.knife.track(Vector2(-3,-.5)); game.knife.track(Vector2(3,-.5)); game.process_blade()
+	check(fruit.durability == 5 and game.session.earnings == 0,"packaged off-seam body hit deals only ordinary resistance damage")
+	var seam_y: float = fruit.weak_point.center_world().y
+	game.knife.reset(); game.knife.track(Vector2(-3,seam_y)); game.knife.track(Vector2(3,seam_y)); game.process_blade()
+	check(fruit.durability == 3.5 and game.process_blade() == 0 and game.ability_rng.state == seam_rng and game.session.cuts == 0,"packaged actual fresh blade sweep adds paid seam damage once without locked critical RNG or early money")
+	fruit.rotation.y = PI; seam_y = fruit.weak_point.center_world().y
+	game.knife.reset(); game.knife.track(Vector2(-3,seam_y)); game.knife.track(Vector2(3,seam_y)); game.process_blade()
+	check(fruit.durability == 2.5 and not fruit.weak_point.marker.visible,"packaged back-facing seam grants only ordinary body damage")
+	fruit.rotation = Vector3.ZERO
+	for i in range(2):
+		seam_y = fruit.weak_point.center_world().y
+		game.knife.reset(); game.knife.track(Vector2(-3,seam_y)); game.knife.track(Vector2(3,seam_y)); game.process_blade()
+	check(game.session.cuts == 1 and game.session.giant_tomatoes == 1 and game.session.earnings == 50 and seam_family.rewarded_cuts == 1,"packaged aimed Giant split retains original captured payout and unique family accounting")
+	var seam_piece: FragmentPiece = game.fragments.pieces[0]
+	game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(seam_piece.durability == 1 and game.session.cuts == 1,"packaged descendants retain ordinary two-hit resistance without a root-only aiming bonus")
+	game.knife.reset(); game.knife.track(Vector2(3,0)); game.knife.track(Vector2(-3,0)); game.process_blade()
+	check(game.session.cuts == 2 and game.session.giant_tomatoes == 1 and game.session.earnings == 100 and not seam_family.has_budget(),"packaged ordinary Giant recut spends the shared budget without duplicate unique credit")
+	var seam_before: Dictionary = game.progress.snapshot(); game.purchase_permanent("giant_weak_points"); game.show_archive()
+	check(game.state == "playing" and game.progress.snapshot() == seam_before,"packaged live aiming denies archive navigation and permanent spending")
+	game.finish_round()
+	check(game.store.load_into(restored) and restored.prestige.paid.giant_weak_points == [3] and restored.prestige.cycle_earnings == 100,"packaged completed aimed/recut round banks real earnings and weak-point receipts")
+	game.progress.money = 10000
+	for id: String in ["better_prices","faster_throwing","unlock_cherry","sharp_edge","extra_cuts","unlock_roma","critical_slice"]: game.progress.purchase(id)
+	game.progress.buy_knife("steak"); game.progress.equip_knife("steak"); game.progress.buy_modification("honing_kit"); game.progress.apply_modification("honing_kit","steak"); game.show_archive(); game.purchase_permanent("starting_sharpness")
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = cutting_seed; game._physics_process(6)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	var seam_critical := RandomNumberGenerator.new()
+	for candidate in range(1,10000):
+		seam_critical.seed = candidate
+		if seam_critical.randf() < .08: game.ability_rng.seed = candidate; break
+	seam_critical.state = game.ability_rng.state; seam_critical.randf(); seam_y = fruit.weak_point.center_world().y
+	game.knife.reset(); game.knife.track(Vector2(-3,seam_y)); game.knife.track(Vector2(3,seam_y)); game.process_blade()
+	check(game.progress.strength() == 3 and game.session.cuts == 1 and game.session.giant_tomatoes == 1 and game.session.earnings == 500 and game.ability_rng.state == seam_critical.state,"packaged permanent/ordinary/equipped/prepared strength and one critical roll compose with aimed damage once while preserving Roma captured value")
+	game.finish_round(); await process_frame
+	game.progress.settings.reduced_motion = true; game.progress.settings.reduced_effects = true; game.progress.settings.damage_indicators = false
+	game.start_round(); game.session.launch_clock = 1000; game.event_rng.seed = cutting_seed; game._physics_process(6)
+	fruit = game.tomatoes.get_child(0); fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	game.ability_rng.seed = ordinary_seed; seam_y = fruit.weak_point.center_world().y
+	game.knife.reset(); game.knife.track(Vector2(-3,seam_y)); game.knife.track(Vector2(3,seam_y)); game.process_blade()
+	check(fruit.durability == 1.5 and fruit.weak_point.marker.visible and game.ui.root.find_child("WeakPointIndicator",false,false) == null,"packaged reduced motion/effects and disabled labels preserve the visible gameplay seam and correct composed damage")
+	game.finish_round(); game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(game.progress.prestige.level("giant_weak_points") == 1 and game.progress.strength() == 1.5 and game.progress.levels.is_empty() and game.progress.owned_modifications.is_empty() and game.progress.settings.reduced_effects,"packaged prestige keeps weak points/permanent strength/preferences and clears normal cultivation and preparation")
+	game.purchase_permanent("giant_weak_points"); game.purchase_permanent("giant_weak_points"); game.ui.archive("Special Events")
+	check(game.progress.prestige.paid.giant_weak_points == [3,6,12] and game.events.catalog.weak_point_multiplier("giant_harvest",game.progress.prestige) == 2.5 and "×2.50 → ×2.50" in game.ui.content.find_child("PermanentEffect_giant_weak_points",true,false).text,"packaged maximum real paid weak points saturate at an honest aimed multiplier")
+	game.new_game()
+	check(game.progress.prestige.level("giant_weak_points") == 0 and game.events.catalog.weak_point_multiplier("giant_harvest",game.progress.prestige) == 1 and game.progress.settings.reduced_effects,"packaged New Game clears paid weak points and its event gate while preserving preferences")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

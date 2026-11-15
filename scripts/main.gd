@@ -187,16 +187,24 @@ func process_blade() -> int:
 			continue
 		if tomato.intersects(knife.previous,knife.current,knife.edge) and tomato.family.try_strike(knife.stroke_id):
 			var strike := roll_strike()
-			if strike.critical: critical_feedback(tomato.position)
+			var weak := tomato.weak_point != null and tomato.weak_point.hit(knife.previous,knife.current,knife.edge)
+			if weak: strike.damage *= tomato.weak_point.multiplier
+			if strike.critical:
+				if weak: audio.play("critical")
+				else: critical_feedback(tomato.position)
 			tomato.durability -= float(strike.damage)
 			if tomato.durability > 0:
 				tomato.damage_time = 0.08
-				damage_feedback(tomato.position,tomato.durability,tomato.family.event_id)
+				if weak:
+					ui.popup_weak_point(kitchen.camera.unproject_position(tomato.weak_point.center_world()),tomato.weak_point.multiplier,tomato.durability,strike.critical,tomato.family.event_id)
+					audio.play("resist")
+				else: damage_feedback(tomato.position,tomato.durability,tomato.family.event_id)
 				continue
 			tomato.sliced = true
 			tomato.family.record_split()
 			fragments.split(tomato.position,tomato.velocity,direction,progress.settings.reduced_effects,tomato.family)
 			cut_feedback(tomato.position, true, tomato.family.cut_value,tomato.family.event_id)
+			if weak: ui.popup_weak_point(kitchen.camera.unproject_position(tomato.weak_point.center_world()),tomato.weak_point.multiplier,0,strike.critical,tomato.family.event_id)
 			tomato.hide()
 			tomato.queue_free()
 			count += 1

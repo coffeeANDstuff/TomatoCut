@@ -117,6 +117,21 @@
         "chunk": "res://assets/models/fragments/event_giant_chunk.glb"
       },
       "split_impulse": 2.8
+    },
+    "weak_point_upgrade": "giant_weak_points",
+    "weak_point": {
+      "polar": 1.1,
+      "azimuth": 1.35,
+      "angular_radii": [
+        0.17,
+        0.2
+      ],
+      "surface_offset": 0.012,
+      "segments": 32,
+      "minimum_facing": 0.25,
+      "minimum_size": 0.12,
+      "maximum_multiplier": 2.5,
+      "model": "res://assets/models/events/giant_weak_point.glb"
     }
   },
   {

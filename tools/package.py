@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Permanent Harvest milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Giant Weak Points milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -172,6 +172,14 @@ Actual catalog prices/reward forecasts, automatic value-per-strike comparisons
 and captured event values use the same live paid effects exactly once. Real
 root/recut earnings save normally. Prestige retains seed effects but clears
 normal cultivation/mix; New Game restores prices/value and keeps preferences.
+Giant Weak Points is a separate successor of the actual paid Giant Harvest gate.
+Its 3/6/12 seed levels grant x1.5/x2/x2.5 damage only when a fresh blade sweep
+crosses the visible stitched seam on the whole Giant. The mark follows its
+ribbed skin, turns away with it and disappears at the back or thin edge.
+Ordinary body strikes keep ordinary damage. Equipped, cultivated, permanent,
+prepared and critical strength compose once. No extra cut value is granted;
+separated pieces retain their usual two-hit resistance and no seam bonus.
+Reduced Motion/Effects and disabled damage labels preserve the gameplay mark.
 Settings include separate damage indicators and earnings popups.
 
 This is an incomplete development build. See Source/README.md,

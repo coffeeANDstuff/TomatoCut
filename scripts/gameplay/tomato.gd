@@ -16,6 +16,7 @@ var damage_time := 0.0
 var collision := "circle"
 var proxy := PackedVector3Array()
 var launch_delay := 0.0
+var weak_point: GiantWeakPoint
 
 func _init() -> void:
 	visual = MODEL.instantiate()
