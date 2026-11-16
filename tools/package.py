@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Golden Jackpot milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Organic Roots and Grape milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -65,6 +65,14 @@ Dotted ink focus supports keyboard controls; checkmark slips save preferences.
 Hover navigation icons for one second to see their labels.
 Move the mouse through airborne tomatoes; no click is needed.
 Ten-second starting rounds; cultivation and progress save automatically.
+Drag blank catalog/archive paper to pan the organic roots; wheel to zoom.
+Root recenters the seed; Fit opens the widest readable view. Hover an order
+illustration for one second for its full costs, effects and requirements.
+Grape reveals after Cherry Unlock + Cherry Frequency 1, costs $110 and uses
+its own narrow oval model with seeded cuts. Quality/frequency/dominance
+are real paid cultivation. Automatic harvest chooses all normal varieties.
+The $100 Paring Knife has a fine pointed edge and 1.25 base sharpness;
+purchase and equip separately. All original Blender sources are included.
 Roma reveals after Cherry Unlock + Sharp Edge 1 and costs $180 to unlock.
 Reverse the swipe or pause briefly to strike a resistant fruit again.
 Red seed dots mark unseen catalog discoveries. View their titles to acknowledge
@@ -254,7 +262,7 @@ Source history: https://github.com/coffeeANDstuff/TomatoCut
 Milestone tag: v{VERSION}
 
 STATUS
-Three of 25 normal varieties and three of 25 knives are integrated.
+Four of 25 normal varieties and four of 25 knives are integrated.
 This is a development milestone, not the final game. Windows-native,
 Forward+ hardware, audio listening and target-PC 60 FPS remain unverified.
 '''

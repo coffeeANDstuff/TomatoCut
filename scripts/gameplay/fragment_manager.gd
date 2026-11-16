@@ -63,12 +63,14 @@ func split(at: Vector3, velocity: Vector2, direction: Vector2, reduced: bool = f
 
 func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: float, reduced: bool, damage_roll: Callable = Callable(), edge: Array[Vector2] = SliceSystem.DEFAULT_EDGE) -> Array[Dictionary]:
 	var hits: Array[Dictionary] = []
+	var sweep := SliceSystem.prepare_sweep(previous,current,edge)
+	if not sweep.valid: return hits
 	var direction := (current.origin - previous.origin).normalized()
 	# Snapshot eligibility before creating descendants. Neither pool reuse nor
 	# newly created wedges can turn one input sample into multiple cuts.
 	var candidates: Array[Dictionary] = []
 	for piece: FragmentPiece in pieces:
-		if piece.cuttable() and piece.family.last_stroke != stroke and SliceSystem.swept_polygon_hit(piece.world_hull(), previous, current,edge):
+		if piece.eligible() and piece.family.last_stroke != stroke and sweep.bounds.intersects(piece.conservative_bounds(),true) and piece.cuttable() and SliceSystem.prepared_polygon_hit(piece.world_hull(),sweep):
 			candidates.append({"piece": piece, "revision": piece.revision})
 	for candidate: Dictionary in candidates:
 		var piece: FragmentPiece = candidate.piece

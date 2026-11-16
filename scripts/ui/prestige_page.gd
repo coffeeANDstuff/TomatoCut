@@ -9,10 +9,6 @@ static func build(ui) -> void:
 		if d.id in permanent.discovered and not d.category in categories: categories.append(d.category)
 	if not ui.selected_archive_category in categories: ui.selected_archive_category = categories[0]
 	var category: String = ui.selected_archive_category
-	var previous_scroll := 0
-	if ui.screen == "archive":
-		var old_scroll: ScrollContainer = ui.content.get_node_or_null("ArchiveScroll")
-		if old_scroll != null and old_scroll.get_meta("category","") == category: previous_scroll = old_scroll.scroll_vertical
 	ui.clear("archive")
 	ui.paper(ui.content)
 	ui.header("The rare-seed archive","PERMANENT CULTIVATION  /  WHAT A GOOD SEASON LEAVES BEHIND","%d Tomato %s" % [permanent.seeds,"Seed" if permanent.seeds == 1 else "Seeds"])
@@ -46,27 +42,30 @@ static func build(ui) -> void:
 		if name == category: tab.theme_type_variation = "PrintSelected"
 		tabs.add_child(tab)
 		var badge := DiscoveryBadge.new(); badge.visible = not permanent.unseen(name).is_empty(); tab.add_child(badge); ui.category_badges[name] = badge
-	var scroll := ScrollContainer.new()
+	var scroll := RootMap.new()
+	scroll.view_key = "archive/"+category; scroll.reduced_motion = p.settings.reduced_motion
+	scroll.discoveries = ui.catalog_entries
 	scroll.name = "ArchiveScroll"
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui.content.add_child(scroll)
 	scroll.offset_left = 350; scroll.offset_top = 195+tab_height+20; scroll.offset_right = -55; scroll.offset_bottom = -195
 	scroll.set_meta("category",category)
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	var list := VBoxContainer.new()
 	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	list.add_theme_constant_override("separation",22)
-	scroll.add_child(list)
+	scroll.canvas.add_child(list)
 	var number := 0
 	for d: Dictionary in permanent.definitions:
 		if not d.id in permanent.discovered or d.category != category: continue
 		number += 1
 		var entry := VBoxContainer.new(); entry.add_theme_constant_override("separation",9); list.add_child(entry)
+		entry.set_meta("root_id",d.id); entry.set_meta("root_requires",d.requires); entry.set_meta("root_level",permanent.level(d.id))
 		entry.add_child(ui.label("%02d  /  %s" % [number,category.to_upper()],13,false,Color("9b7740")))
 		var vine := CatalogVine.new(); entry.add_child(vine)
 		var heading := HBoxContainer.new(); heading.add_theme_constant_override("separation",12); entry.add_child(heading)
 		var art := TextureRect.new(); art.texture = load(d.illustration) if d.has("illustration") else envelope.texture; art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED; art.custom_minimum_size = Vector2(50,40); heading.add_child(art)
+		art.mouse_filter = Control.MOUSE_FILTER_PASS; ui.tips.bind(art,ui.root_tooltip(d,true))
 		var title: Label = ui.label(d.name,34,true); title.name = "PrestigeTitle_"+d.id; heading.add_child(title)
 		ui.watch_discovery(d.id,title,vine,art)
 		var description: Label = ui.label(d.description,17,false,ui.MUTED); description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; entry.add_child(description)
@@ -91,10 +90,11 @@ static func build(ui) -> void:
 		action.name = "PurchasePermanent_"+id
 		action.disabled = level >= int(d.max_level) or permanent.seeds < permanent.price(id)
 		entry.add_child(action)
-	scroll.set_deferred("scroll_vertical",previous_scroll)
-	var reset: Label = ui.label("RESTARTS  Money, normal upgrades, cultivation, discoveries, knives and modifications.\nKEEPS  Seeds, permanent cultivation/discoveries, lifetime statistics and preferences.\nStarting cash on your next reset: "+Progression.cash(permanent.effect("starting_cash")),16,false,ui.MUTED)
+	scroll.arrange(list,ui.root_views.get(scroll.view_key,{}))
+	ui.place(scroll.toolbar(ui),Vector2(350,608),Vector2(870,32))
+	var reset: Label = ui.label("RESTARTS  Money, normal upgrades, cultivation, discoveries, knives and modifications.\nKEEPS  Seeds, permanent cultivation/discoveries, lifetime statistics and preferences.\nStarting cash on your next reset: "+Progression.cash(permanent.effect("starting_cash")),14,false,ui.MUTED)
 	reset.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	ui.place(reset,Vector2(350,622),Vector2(870,80))
+	ui.place(reset,Vector2(350,645),Vector2(870,60))
 	var prestige: Button = ui.button("Preview prestige  ·  +%d %s" % [permanent.reward(),"seed" if permanent.reward() == 1 else "seeds"],func(): ui.prestige_requested.emit())
 	prestige.name = "PreviewPrestige"; prestige.disabled = permanent.reward() <= 0
 	ui.place(prestige,Vector2(48,704),Vector2(270,48))

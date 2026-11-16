@@ -24,7 +24,7 @@ func run() -> void:
 	await capture("73-paid-stampede-investments")
 	root.size = Vector2i(1280,720); await frames()
 	var action: Control = game.ui.content.find_child("PurchasePermanent_stampede_rewards",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+	await game.ui.focus_control(action); await frames()
 	check(root.get_visible_rect().encloses(action.get_global_rect()) and root.get_visible_rect().encloses(game.ui.content.find_child("ArchiveCategory_Special Events",true,false).get_global_rect()),"stampede reward action and category stay readable at 16:9")
 	await capture("74-stampede-archive-16x9")
 	# Explicit normal-investment fixture. Wave activation and slicing use the

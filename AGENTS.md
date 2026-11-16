@@ -1,6 +1,6 @@
 # Tomato Cut — session continuity
 
-- Read GAME_DESIGN.md, ART_DIRECTION.md, ROADMAP.md, PROGRESS.md and TESTING.md before modifying the game. GAME_DESIGN.md preserves the complete authoritative specification; DEVELOPMENT_INSTRUCTIONS.md preserves the continuity brief.
+- Read GAME_DESIGN.md, ART_DIRECTION.md, ROADMAP.md, PROGRESS.md and TESTING.md before modifying the game. GAME_DESIGN.md preserves the complete authoritative specification; DEVELOPMENT_INSTRUCTIONS.md preserves the continuity brief. Read PRODUCTION_POLISH.md for the latest user production priorities; it advances the collections, performance and organic root UI before the previously queued permanent critical successor.
 - Inspect actual files and Git state first. Continue existing work; preserve working systems and user changes. Use the existing isolated checkout; do not create a worktree unless requested.
 - Use Godot 4.x, GDScript, fixed-plane 3D and the established modular architecture. Build integrated functionality, not visual mockups. Avoid unrelated dependencies.
 - Follow ART_DIRECTION.md before making assets. Keep Blender sources, GLB exports and their generation scripts together. Document production art limitations honestly.

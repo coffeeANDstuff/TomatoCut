@@ -2,6 +2,36 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Organic roots, Grape/Paring and performance — v0.26.0 (2026-11-16, UTC)
+
+Existing clean main **0dc308d** passed **1,435/1,435** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64, retained nonroot Xorg `:98`, Mesa llvmpipe OpenGL/Dummy audio. The resumed environment needed Xorg restarted; no cloud draft was published. Test saves isolate under user://tests/.
+
+**Source: 1,464/1,464, zero failures, 29 new.** Actual Grape paid predecessor/receipts/automatic mix/quality/frequency, independent Roma lock, separate Paring buy/equip/model/strength/edge, compatible save round trip, all normal model node budgets and retained original sources. Actual resistant starter/Paring root and paid recuts earn **$7.81/$15.62**, preserving shared budget/one unique family/no farming. A seeded 240-case oracle retains exact old narrow-phase results and no broad-phase false negative over ten transformed/scaled normal/event identities and four real blades. Actual miss avoids cached-hull construction and stationary sweeps do nothing. Actual catalog/archive root layouts, hidden successors, purchase widget ownership, zoom caps/root reset, rebuild view retention, live requirement/cost detail, stable Grape position when earlier Roma reveals, freed obsolete canvas, prestige/New Game/preferences pass.
+
+**Native: 476/476 checks across 26 flows, zero failures/errors/leaks.** All **452** previous native assertions pass; the new Grape/Paring/root flow adds **24**. Actual paid prerequisites/reveals, wheel zoom and drag without spending, category view retention, Root reset, one-second detailed tooltip timing/clamp/dismissal, separate Paring buy/equip, automatic Grape flight, actual native root/recut/disk totals, prestige/archive gates, keyboard framing, Reduced Motion and New Game pass. The real two halves separate/tumble with twelve actual fixed physics steps. Captures **199–207** inspected at native sizes, including actual exposed two-locule interiors. Immediate input poses freeze physics to isolate collision/accounting; capture 207 separately advances real fragment physics. Confirmations use real preview then production confirmation callbacks, not OS-dialog automation. Full native runs explicitly choose Compatibility and pass the strict error guard. `tools/check_native.sh` reproduces all 26 sequential flows on a working display; shell syntax passes. Native software GL is not native Windows or human feel validation.
+
+**Exports/package:** Windows/Linux exports each pass **320/320 embedded-pack checks**, **18 new**, sequentially from /tmp through the strict guard. Actual new assets, automatic Grape, real buy/equip, $7.81/$15.62 one-family recuts, disk reload, native root contents/limits/view/detail, confirmed prestige and New Game/preferences pass from the embedded packs. Linux executable boots headlessly. Initial Full ZIP safe paths/CRC/complete payload hashes/original sources/portable modes/version-build-source identity pass. Its independent fresh extraction imports and passes **1,464/1,464** without checkout cache, script/resource/runtime errors or retry; preflight dirty=true metadata is honest. Final clean and public identities follow below. Python compilation, all shell syntax, five gate contracts, actionlint 1.7.7 and whitespace checks pass. These host-engine checks do not execute Windows natively.
+
+**Performance:** PERFORMANCE_REPORT.md and reports/v026 retain raw before/after render/collision/clock data and the sixteen-model geometry audit. Fixed identical occupancy, 12 warmup/60 render frames, 120 zero-damage actual collision probes per path. At capacity **2,678 → 1,140 draw calls**, crossing median **20.621 → 6.261ms**, miss **19.928 → 0.069ms**; no triangle/object/effect/lifetime reductions. Software-rendered FPS remains inconsistent, capacity **4.52 → 4.65** and middle **6.84 → 6.54**. Actual 5-FPS clock test **15.12975 → 9.947304 wall seconds** for a ten-second round/three launches with fixed physics rules unchanged. Not a hardware 60-FPS, extended soak or human economy claim.
+
+```sh
+./tools/cloud.sh ./tools/ci_godot.sh --headless --path . --editor --import --quit
+./tools/cloud.sh ./tools/ci_godot.sh --headless --path . --script tests/run_tests.gd
+blender --background --python tools/build_assets.py -- --grape
+blender --background --python tools/build_paring_assets.py
+python3 tools/build_grape_art.py
+# Repeat batching build for Standard (no variety flag), --cherry, --roma, --golden:
+blender --background --python tools/build_assets.py -- --batch-normals
+DISPLAY=:98 ./tools/cloud.sh ./tools/check_native.sh # all 26 native flows; per-flow logs in artifacts/native
+DISPLAY=:98 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/production_polish_render.gd
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_dense.gd -- --label=after
+DISPLAY=:98 ./tools/cloud.sh godot --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_clock.gd -- --label=after
+./tools/cloud.sh godot --headless --path . --script tools/audit_models.gd -- --label=batched
+python3 tools/compare_model_audits.py artifacts/model-audit-original.json artifacts/model-audit-batched.json
+```
+
+**Corrections and retained failures:** Early catalog cardinality edits accidentally touched three-specimen Rainbow/owned-inventory fixtures; unrelated expectations were restored. New native tests exposed a real invisible-first-layout container size failure, zoom-unaware focus, asynchronous framing and obsolete root-position movement; fixed actual UI and await/layout behavior. Native view snapshots now wait for inertia to settle; keyboard fixture awaits actual Tab dispatch before choosing focus. Discovery native fixture now pans both axes because wheel intentionally zooms. New float reward checks use cent-safe approximate comparisons. Explicit dynamic types resolve strict GDScript compile failures (including WeakRef in the new retirement regression). An incorrectly formed local guard command attempted X11 without headless; corrected invocation, unchanged guard. One native exploratory launch omitted Compatibility, causing Vulkan extension errors before fallback; final native runs explicitly select GL and pass the strict error guard. Earlier logs are retained under /tmp/tc-v026-*. No production guard, price or assertion was weakened to obtain a pass.
+
 ## Golden Jackpot — v0.25.0 (2026-11-15, America/Los_Angeles)
 
 Continued clean `389e351`, fetched matching remote main and passed **1,361/1,361** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Linux x86-64, retained Xorg `:98`, llvmpipe OpenGL/Dummy audio. Tests isolate under `user://tests/`; no production save or environment configuration publication.

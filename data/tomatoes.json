@@ -101,7 +101,7 @@
     "proxy_lobe": 0.012,
     "proxy_taper": 0.15,
     "collision": "hull",
-    "flight_description": "firm oval · end-over-end tumble",
+    "flight_description": "firm oval \u00b7 end-over-end tumble",
     "model": "res://assets/models/tomatoes/roma.glb",
     "illustration": "res://assets/illustrations/catalog/roma.svg",
     "fragments": {
@@ -113,5 +113,45 @@
     "frequency_upgrade": "roma_frequency",
     "quality_upgrade": "roma_quality",
     "dominance_upgrade": "roma_dominance"
+  },
+  {
+    "id": "grape",
+    "name": "Grape",
+    "catalog_number": "004",
+    "description": "A quick, slender ruby oval, with two neat seed chambers and very little patience for a wandering blade.",
+    "tier": 2,
+    "base_value": 5,
+    "durability": 1.25,
+    "fragment_durability": 1,
+    "base_weight": 0.7,
+    "mass": 0.36,
+    "model_scale": 0.62,
+    "radius": 0.43,
+    "gravity": 7.1,
+    "launch_min": 9.5,
+    "launch_max": 10.3,
+    "spin": 1.4,
+    "spin_z": 2.2,
+    "proxy_axes": [
+      0.35,
+      0.64,
+      0.34
+    ],
+    "proxy_lobe": 0.018,
+    "proxy_lobe_count": 5,
+    "proxy_taper": 0.08,
+    "collision": "hull",
+    "flight_description": "slender oval \u00b7 quick lively tumble",
+    "model": "res://assets/models/tomatoes/grape.glb",
+    "illustration": "res://assets/illustrations/catalog/grape.svg",
+    "fragments": {
+      "half": "res://assets/models/fragments/grape_half.glb",
+      "wedge": "res://assets/models/fragments/grape_wedge.glb",
+      "chunk": "res://assets/models/fragments/grape_chunk.glb"
+    },
+    "unlock_upgrade": "unlock_grape",
+    "frequency_upgrade": "grape_frequency",
+    "quality_upgrade": "grape_quality",
+    "dominance_upgrade": "grape_dominance"
   }
 ]

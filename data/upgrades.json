@@ -18,7 +18,7 @@
     "name": "Faster Throwing",
     "category": "Harvest",
     "description": "A steady hand at the produce basket.",
-    "effect": "Launch interval ×0.90 per level (minimum 0.55s)",
+    "effect": "Launch interval \u00d70.90 per level (minimum 0.55s)",
     "base_cost": 8,
     "growth": 1.2,
     "max_level": 20,
@@ -143,7 +143,7 @@
   },
   {
     "id": "unlock_cherry",
-    "name": "Cherry · Variety Unlock",
+    "name": "Cherry \u00b7 Variety Unlock",
     "category": "Varieties",
     "description": "A small, spirited specimen. Unlocks automatic Cherry harvests.",
     "effect": "Adds Cherry to the calculated harvest: $3 base value, small and fast.",
@@ -161,7 +161,7 @@
   },
   {
     "id": "cherry_frequency",
-    "name": "Cherry · Harvest Frequency",
+    "name": "Cherry \u00b7 Harvest Frequency",
     "category": "Varieties",
     "description": "Cultivate a greater share of this energetic variety.",
     "effect": "+50% relative Cherry spawn weight per level. Percentages are calculated automatically.",
@@ -178,7 +178,7 @@
   },
   {
     "id": "cherry_quality",
-    "name": "Cherry · Premium Quality",
+    "name": "Cherry \u00b7 Premium Quality",
     "category": "Varieties",
     "description": "Better-grown fruit commands a better price.",
     "effect": "+25% Cherry cut value per level. Applies to its separated pieces too.",
@@ -195,7 +195,7 @@
   },
   {
     "id": "cherry_dominance",
-    "name": "Cherry · Harvest Dominance",
+    "name": "Cherry \u00b7 Harvest Dominance",
     "category": "Varieties",
     "description": "A fine harvest gradually replaces less profitable lower tiers.",
     "effect": "Reduces lower-tier weight by 10% per level, reaching zero at level 10.",
@@ -213,7 +213,7 @@
   },
   {
     "id": "unlock_roma",
-    "name": "Roma · Variety Unlock",
+    "name": "Roma \u00b7 Variety Unlock",
     "category": "Varieties",
     "description": "Firm, oval produce for a more capable blade.",
     "effect": "Adds durable Roma to the calculated harvest: $8 base value, 2.5 resistance.",
@@ -231,7 +231,7 @@
   },
   {
     "id": "roma_frequency",
-    "name": "Roma · Harvest Frequency",
+    "name": "Roma \u00b7 Harvest Frequency",
     "category": "Varieties",
     "description": "Cultivate a greater share of this firm specimen.",
     "effect": "+50% relative Roma spawn weight per level.",
@@ -248,7 +248,7 @@
   },
   {
     "id": "roma_quality",
-    "name": "Roma · Premium Quality",
+    "name": "Roma \u00b7 Premium Quality",
     "category": "Varieties",
     "description": "Careful cultivation rewards the patient slicer.",
     "effect": "+25% Roma cut value per level, including separated pieces.",
@@ -265,7 +265,7 @@
   },
   {
     "id": "roma_dominance",
-    "name": "Roma · Harvest Dominance",
+    "name": "Roma \u00b7 Harvest Dominance",
     "category": "Varieties",
     "description": "Replace lower tiers when Roma earns more per required strike.",
     "effect": "Suppresses less profitable lower-tier weight by 10% per level. Quality and sharpness affect eligibility.",
@@ -298,5 +298,75 @@
       "chance_per_level": 0.08,
       "damage_multiplier": 2
     }
+  },
+  {
+    "id": "unlock_grape",
+    "name": "Grape \u00b7 Variety Unlock",
+    "category": "Varieties",
+    "description": "A nimble oval side branch of the Cherry harvest.",
+    "effect": "Adds quick Grape tomatoes to the automatic mix: $5 base value, 1.25 resistance.",
+    "base_cost": 110,
+    "growth": 1,
+    "max_level": 1,
+    "requires": {
+      "unlock_cherry": 1,
+      "cherry_frequency": 1
+    },
+    "effect_values": {
+      "unlock": 1
+    },
+    "tomato_id": "grape"
+  },
+  {
+    "id": "grape_frequency",
+    "name": "Grape \u00b7 Harvest Frequency",
+    "category": "Varieties",
+    "description": "More of the slender little specimens in the next basket.",
+    "effect": "+50% relative Grape spawn weight per level.",
+    "base_cost": 70,
+    "growth": 1.25,
+    "max_level": 10,
+    "requires": {
+      "unlock_grape": 1
+    },
+    "effect_values": {
+      "weight_bonus": 0.5
+    },
+    "tomato_id": "grape"
+  },
+  {
+    "id": "grape_quality",
+    "name": "Grape \u00b7 Premium Quality",
+    "category": "Varieties",
+    "description": "A careful cultivation of ruby skin, sweet flesh and tidy seed chambers.",
+    "effect": "+25% Grape cut value per level, including separated pieces.",
+    "base_cost": 80,
+    "growth": 1.26,
+    "max_level": 10,
+    "requires": {
+      "unlock_grape": 1
+    },
+    "effect_values": {
+      "value_bonus": 0.25
+    },
+    "tomato_id": "grape"
+  },
+  {
+    "id": "grape_dominance",
+    "name": "Grape \u00b7 Harvest Dominance",
+    "category": "Varieties",
+    "description": "An increasingly slender harvest when the blade can handle it profitably.",
+    "effect": "Suppresses less profitable lower-tier weight by 10% per level; quality and actual cutting strength determine eligibility.",
+    "base_cost": 220,
+    "growth": 1.32,
+    "max_level": 10,
+    "requires": {
+      "grape_frequency": 3,
+      "grape_quality": 2
+    },
+    "effect_values": {
+      "suppression": 0.1
+    },
+    "tomato_id": "grape"
   }
 ]

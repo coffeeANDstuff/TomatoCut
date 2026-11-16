@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.25.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.26.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -180,7 +180,7 @@ func run() -> void:
 	for id: String in ["permanent_slice_value","starting_cash","golden_harvest","golden_frequency","golden_value"]: game.purchase_permanent(id)
 	game.ui.archive("Special Events")
 	check(game.events.catalog.validate(game.progress.prestige).is_empty() and game.ui.content.find_child("PrestigeTitle_golden_harvest",true,false) != null,"packaged event JSON, all four original golden models and illustrated event archive validate")
-	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 3,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
+	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 4,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
 	game.progress.money = 100; game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts")
 	game.start_round(); game.session.launch_clock = 1000
 	for candidate in range(1,10000):
@@ -968,6 +968,50 @@ func run() -> void:
 	check(game.progress.prestige.level("golden_jackpot") == 3 and game.progress.levels.is_empty() and game.progress.max_cuts() == 1 and game.progress.owned_modifications.is_empty() and game.progress.settings.reduced_motion,"packaged actual prestige retains finish potential while resetting seven-cut cultivation/preparation with preferences")
 	game.new_game()
 	check(game.progress.prestige.level("golden_jackpot") == 0 and game.events.catalog.golden_jackpot_bonus("golden_harvest",game.progress.prestige) == 0 and game.progress.settings.reduced_motion,"packaged New Game clears finish ownership and Golden gate while preserving preferences")
+	game.finish_round(); await process_frame
+	check(game.progress.harvest.varieties.size() == 4 and game.progress.equipment.knives.size() == 4,"packaged production collection contains four original normal varieties and four actual knives")
+	game.progress.money = 10000
+	for polish_id: String in ["better_prices","faster_throwing","unlock_cherry"]: game.progress.purchase(polish_id)
+	check(not game.progress.purchase("unlock_grape") and not "unlock_grape" in game.progress.discovered,"packaged Grape retains its actual frequency predecessor and cannot be bought early")
+	game.progress.purchase("cherry_frequency"); var polish_money: float = game.progress.money
+	check(game.progress.purchase("unlock_grape") and game.progress.money == polish_money-110 and game.progress.harvest.unlocked("grape",game.progress.levels),"packaged Grape unlock charges its real 110-dollar order")
+	game.progress.purchase("grape_quality"); game.progress.purchase("grape_frequency")
+	check(game.progress.harvest.cut_value("grape",game.progress.levels) == 6.25 and game.progress.harvest.distribution(game.progress.levels,game.progress.strength()).has("grape"),"packaged Grape quality and frequency feed the actual automatic harvest")
+	check(game.progress.buy_knife("paring") and game.progress.equip_knife("paring") and game.progress.strength() == 1.25,"packaged original Paring model uses separate paid ownership/equip and real strength")
+	var polish_model: Node = load("res://assets/models/knives/paring.glb").instantiate()
+	check(load("res://assets/illustrations/catalog/grape.svg").get_width() > 0 and polish_model.get_child_count() > 0,"packaged new original illustration and knife resources resolve")
+	polish_model.free()
+	game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts")
+	game.start_round(); game.clear_field(); game.session.launch_clock = 1000; game.fragments.set_physics_process(false)
+	for polish_attempt in range(200):
+		game.clear_field(); fruit = game.spawn_tomato()
+		if fruit.variety_id == "grape": break
+	fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.velocity = Vector2.ZERO; fruit.rotation = Vector3.ZERO
+	check(fruit.variety_id == "grape" and fruit.collision == "hull" and fruit.family.cut_value == 6.25 and game.knife.edge.size() == 4,"packaged automatic Grape uses its authored oval hull and actual pointed Paring blade")
+	game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0))
+	check(game.process_blade() == 1 and is_equal_approx(game.session.earnings,7.81) and game.fragments.pieces[0].models.has("grape/half"),"packaged actual Paring split uses matching seeded Grape halves and captured value once")
+	game.knife.track(Vector2(-3,0))
+	check(game.process_blade() == 1 and is_equal_approx(game.session.earnings,15.62) and game.session.tomatoes_sliced == 1,"packaged Grape recut preserves the shared budget and one unique normal family")
+	game.process_blade(); check(game.session.cuts == 2 and is_equal_approx(game.session.earnings,15.62),"packaged stationary/repeated Grape recut cannot farm rewards")
+	game.finish_round(); await process_frame
+	var polish_saved := Progression.new()
+	check(game.store.load_into(polish_saved) and polish_saved.harvest.unlocked("grape",polish_saved.levels) and polish_saved.equipped_knife == "paring","packaged new cultivation and knife survive actual disk banking/reload")
+	game.show_catalog(); game.ui.catalog("Varieties")
+	for polish_frame in range(6): await process_frame
+	var polish_map: RootMap = game.ui.content.get_node("CatalogScroll")
+	check(polish_map.ready_for_read and polish_map.nodes.has("specimen:grape") and not polish_map.nodes.has("roma_quality") and not polish_map.links.is_empty(),"packaged original root canvas contains real revealed orders and hides locked descendants")
+	polish_map.change_zoom(99); check(polish_map.zoom == RootMap.MAX_ZOOM,"packaged root zoom respects its actual upper limit with Reduced Motion")
+	polish_map.change_zoom(.01); check(polish_map.zoom == RootMap.MIN_ZOOM,"packaged root zoom retains the readable lower limit")
+	await game.ui.focus_control(game.ui.content.find_child("Purchase_grape_quality",true,false))
+	var polish_view := polish_map.view_state(); game.ui.catalog("Varieties")
+	for polish_frame in range(6): await process_frame
+	polish_map = game.ui.content.get_node("CatalogScroll")
+	check(absf(polish_map.zoom-polish_view.zoom) < .001 and absi(polish_map.scroll_horizontal-int(polish_view.x)) <= 1 and absi(polish_map.scroll_vertical-int(polish_view.y)) <= 1,"packaged catalog rebuild preserves its real zoom and pan")
+	check("Requires:" in game.ui.root_tooltip(game.progress.definition("grape_quality")) and "Grape" in game.ui.root_tooltip(game.progress.definition("grape_quality")),"packaged delayed root detail copy contains real benefit and requirements")
+	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	for polish_frame in range(6): await process_frame
+	check(game.ui.content.get_node("ArchiveScroll") is RootMap and not game.progress.harvest.unlocked("grape",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"],"packaged confirmed prestige retains the organic archive while resetting ordinary Grape and Paring")
+	game.new_game(); check(game.ui.root_views.is_empty() and game.progress.settings.reduced_motion,"packaged New Game clears obsolete root views and retains accessibility preferences")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

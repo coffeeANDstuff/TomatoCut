@@ -2,19 +2,18 @@ extends "res://tests/harvest_render.gd"
 
 func expose_title(title: Control) -> void:
 	var scroll := game.ui.content.get_node("CatalogScroll") as ScrollContainer
+	await game.ui.focus_control(title)
 	# Place the title at the bottom edge; entries below remain clipped.
 	scroll.scroll_vertical += int(title.get_global_rect().end.y-scroll.get_global_rect().end.y)
 	await frames()
 
-func wheel(button: MouseButton, count: int) -> void:
-	var scroll: Control = game.ui.content.get_node("CatalogScroll")
-	var at := root.get_final_transform()*scroll.get_global_rect().get_center()
-	for i in range(count):
-		for down: bool in [true,false]:
-			var event := InputEventMouseButton.new()
-			event.position = at; event.button_index = button; event.pressed = down
-			Input.parse_input_event(event)
-		await frames(1)
+func pan_past_entries() -> void:
+	var scroll: RootMap = game.ui.content.get_node("CatalogScroll")
+	await frames(6)
+	# Wheel now zooms. Move to the far corner of the real two-axis root canvas.
+	scroll.scroll_horizontal = int(scroll.get_h_scroll_bar().max_value)
+	scroll.scroll_vertical = int(scroll.get_v_scroll_bar().max_value)
+	await frames()
 
 func run() -> void:
 	create_timer(180).timeout.connect(func(): push_error("Discovery rendered checks timed out"); quit(1))
@@ -35,12 +34,12 @@ func run() -> void:
 	# Freeze only observation while scrolling past the new title to the bottom.
 	game.ui.set_process(false)
 	await click(find_button(game.ui.content,"Varieties"))
-	await wheel(MOUSE_BUTTON_WHEEL_DOWN,14)
+	await pan_past_entries()
 	game.ui.set_process(true)
 	await create_timer(.35).timeout
 	check("unlock_cherry" in game.progress.unseen(),"off-screen entry is not marked read by opening or scrolling a category")
 	var title: Control = game.ui.content.find_child("SpecimenTitle_cherry",true,false)
-	game.ui.content.get_node("CatalogScroll").ensure_control_visible(title)
+	await game.ui.focus_control(title)
 	await create_timer(.65).timeout
 	check("unlock_cherry" in game.progress.viewed and not game.ui.content.find_child("DiscoveryBadge_Varieties",true,false).visible,"visible specimen dwell clears the real category badge")
 	check(is_equal_approx(title.modulate.a,1),"botanical label fade finishes at full readability")
@@ -63,7 +62,7 @@ func run() -> void:
 	game.show_catalog(); await frames(); await click(find_button(game.ui.content,"Varieties"))
 	root.size = Vector2i(1280,720); await frames()
 	var quality: Control = game.ui.content.find_child("EntryTitle_cherry_quality",true,false)
-	game.ui.content.get_node("CatalogScroll").ensure_control_visible(quality)
+	await game.ui.focus_control(quality)
 	await create_timer(.4).timeout
 	check("cherry_quality" in game.progress.viewed and quality.modulate.a == 1,"reduced motion exposes the new label without a fade")
 	check(not game.ui.content.find_child("DiscoveryBadge_Varieties",true,false).visible,"last actual exposure clears the category indicator at 16:9")

@@ -24,12 +24,12 @@ func run() -> void:
 	await permanent("permanent_slice_value"); await permanent("starting_cash"); await click(game.ui.content.find_child("ArchiveCategory_Special Events",true,false)); await permanent("golden_harvest")
 	check(game.ui.content.find_child("PurchasePermanent_golden_value",true,false) != null and game.ui.content.find_child("PurchasePermanent_golden_multipliers",true,false) == null,"actual Golden invitation still requires its paid value predecessor before recut orders")
 	await permanent("golden_value"); var action: Control = game.ui.content.find_child("PurchasePermanent_golden_multipliers",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames(); await create_timer(.65).timeout
+	await game.ui.focus_control(action); await frames(); await create_timer(.65).timeout
 	var title: Control = game.ui.content.find_child("PrestigeTitle_golden_multipliers",true,false)
 	check("golden_multipliers" in game.progress.prestige.viewed and title.get_parent().get_child(0).texture.resource_path.ends_with("golden_multipliers.svg") and "×1.00 → ×1.25" in game.ui.content.find_child("PermanentEffect_golden_multipliers",true,false).text,"actual recut invitation displays original stepped-fragment artwork, persistent dwell and honest first-step comparison")
 	await capture("180-golden-recut-order"); await permanent("golden_multipliers")
 	check(game.progress.prestige.seeds == 191 and game.progress.prestige.paid.golden_multipliers == [3] and game.progress.max_cuts() == 1 and game.progress.levels.is_empty(),"actual native Golden Multiplier order pays three seeds without granting ordinary cutting or variety levels")
-	root.size = Vector2i(1280,720); await frames(); action = game.ui.content.find_child("PurchasePermanent_golden_multipliers",true,false); game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+	root.size = Vector2i(1280,720); await frames(); action = game.ui.content.find_child("PurchasePermanent_golden_multipliers",true,false); await game.ui.focus_control(action); await frames()
 	check(root.get_visible_rect().encloses(action.get_global_rect()) and "×1.25 → ×1.50" in game.ui.content.find_child("PermanentEffect_golden_multipliers",true,false).text and "extra cuts required" in game.ui.content.find_child("PermanentEffect_golden_multipliers",true,false).text,"real paid recut order and required cutting budget stay readable at 16:9")
 	await capture("181-paid-golden-ladder"); game.set_physics_process(false)
 	var fruit := await start_golden(); var family := fruit.family; var start := fruit.position

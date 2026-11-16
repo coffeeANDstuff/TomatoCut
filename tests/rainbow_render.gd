@@ -14,7 +14,7 @@ func run() -> void:
 	game.ui.archive(); await frames(); await click(game.ui.content.find_child("PreviewPrestige",true,false)); game.ui.prestige_confirmation.get_ok_button().pressed.emit(); await frames()
 	await permanent("permanent_slice_value"); await permanent("starting_cash"); await click(game.ui.content.find_child("ArchiveCategory_Special Events",true,false))
 	var unlock: Control = game.ui.content.find_child("PurchasePermanent_heirloom_celebration",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(unlock); await frames()
+	await game.ui.focus_control(unlock); await frames()
 	check(unlock != null and game.ui.content.find_child("PurchasePermanent_rainbow_frequency",true,false) == null,"real wealth purchases reveal the illustrated heirloom invitation without free successors")
 	await capture("95-heirloom-invitation")
 	await permanent("heirloom_celebration")
@@ -22,7 +22,7 @@ func run() -> void:
 	check(game.progress.prestige.seeds == 84 and game.progress.prestige.level("golden_harvest") == 0 and game.progress.prestige.level("stampede_season") == 0 and game.progress.prestige.level("giant_harvest") == 0 and game.events.catalog.spawn_count("heirloom_celebration",game.progress.prestige) == 7,"actual printed purchases apply all three rainbow effects independently of sibling events")
 	root.size = Vector2i(1280,720); await frames()
 	var action: Control = game.ui.content.find_child("PurchasePermanent_extended_harvest",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+	await game.ui.focus_control(action); await frames()
 	check(root.get_visible_rect().encloses(action.get_global_rect()) and root.get_visible_rect().encloses(game.ui.content.find_child("ArchiveCategory_Special Events",true,false).get_global_rect()),"extended-harvest order and event category fit the actual 16:9 archive")
 	await capture("96-paid-rainbow-improvements")
 	game.progress.money = 10000 # Explicit normal-time/cut fixture; event purchases above use real GUI input.

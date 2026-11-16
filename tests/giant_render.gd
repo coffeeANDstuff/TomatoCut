@@ -14,7 +14,7 @@ func run() -> void:
 	game.ui.archive(); await frames(); await click(game.ui.content.find_child("PreviewPrestige",true,false)); game.ui.prestige_confirmation.get_ok_button().pressed.emit(); await frames()
 	await permanent("permanent_slice_value"); await permanent("starting_cash"); await click(game.ui.content.find_child("ArchiveCategory_Special Events",true,false))
 	var unlock: Control = game.ui.content.find_child("PurchasePermanent_giant_harvest",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(unlock); await frames()
+	await game.ui.focus_control(unlock); await frames()
 	check(unlock != null and game.ui.content.find_child("PurchasePermanent_giant_frequency",true,false) == null,"real wealth purchases reveal the printed Giant Harvest invitation without free improvements")
 	await capture("86-giant-invitation")
 	await permanent("giant_harvest")
@@ -22,7 +22,7 @@ func run() -> void:
 	check(game.progress.prestige.seeds == 85 and game.progress.prestige.level("golden_harvest") == 0 and game.progress.prestige.level("stampede_season") == 0 and is_equal_approx(game.events.catalog.probability("giant_harvest",game.progress.prestige),.1) and game.events.catalog.cut_limit("giant_harvest",game.progress) == 2,"actual printed purchases apply all three giant effects while sibling events remain locked")
 	root.size = Vector2i(1280,720); await frames()
 	var action: Control = game.ui.content.find_child("PurchasePermanent_giant_bonus_cuts",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+	await game.ui.focus_control(action); await frames()
 	check(root.get_visible_rect().encloses(action.get_global_rect()) and root.get_visible_rect().encloses(game.ui.content.find_child("ArchiveCategory_Special Events",true,false).get_global_rect()),"giant bonus-cut order and event category remain readable at 16:9")
 	await capture("87-paid-giant-improvements")
 	game.progress.money = 1000 # Explicit time fixture; no normal power/cut upgrades.

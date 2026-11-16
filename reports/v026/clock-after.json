@@ -1,0 +1,7 @@
+{
+  "launches": 3,
+  "physics_step_budget": 32,
+  "render_cap_fps": 5,
+  "simulation_seconds": 10.0,
+  "wall_seconds": 9.947304
+}

@@ -48,6 +48,7 @@ var moving: Array[Dictionary] = []
 var catalog_entries: Dictionary = {}
 var category_badges: Dictionary = {}
 const VIEW_DWELL := 0.25
+var root_views: Dictionary = {}
 
 func _ready() -> void:
 	root = Control.new()
@@ -89,6 +90,9 @@ func style(fill: Color, border: Color = Color.TRANSPARENT) -> StyleBoxFlat:
 	return s
 
 func clear(next: String) -> void:
+	if is_instance_valid(content):
+		for scroll: Node in content.find_children("*","ScrollContainer",true,false):
+			if scroll is RootMap and scroll.ready_for_read: root_views[scroll.view_key] = scroll.view_state()
 	if is_instance_valid(prestige_confirmation): prestige_confirmation.hide()
 	if not pending_prestige.is_empty(): prestige_canceled.emit()
 	pending_prestige = ""
@@ -368,11 +372,6 @@ func results(session: RoundSession) -> void:
 	place(icon("home","Home",func(): home_requested.emit()),Vector2(532,546),Vector2(48,48),panel)
 
 func catalog(category: String = selected_category) -> void:
-	var previous_scroll := 0
-	if screen == "catalog" and category == selected_category:
-		var old_scroll := content.get_node_or_null("CatalogScroll") as ScrollContainer
-		if old_scroll != null:
-			previous_scroll = old_scroll.scroll_vertical
 	selected_category = category
 	clear("catalog")
 	paper(content)
@@ -410,19 +409,20 @@ func catalog(category: String = selected_category) -> void:
 	var summary_label := label(summary,16,true,MUTED)
 	summary_label.name = "HarvestSummary"
 	place(summary_label,Vector2(48,615 if abilities_revealed else 605),Vector2(240,175))
-	var scroll := ScrollContainer.new()
+	var scroll := RootMap.new()
 	scroll.name = "CatalogScroll"
+	scroll.view_key = "catalog/"+category; scroll.reduced_motion = progress.settings.reduced_motion
+	scroll.discoveries = catalog_entries
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	content.add_child(scroll)
 	scroll.offset_left = 330
 	scroll.offset_top = 205
 	scroll.offset_right = -55
-	scroll.offset_bottom = -110
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.offset_bottom = -145
 	var list := VBoxContainer.new()
 	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	list.add_theme_constant_override("separation",22)
-	scroll.add_child(list)
+	scroll.canvas.add_child(list)
 	var count := 0
 	if category == "Varieties":
 		render_varieties(list)
@@ -434,11 +434,14 @@ func catalog(category: String = selected_category) -> void:
 			upgrade_entry(d,count,list,category)
 		if count == 0:
 			list.add_child(label("A new branch will reveal itself\nas your cultivation progresses.",27,true,MUTED))
-	scroll.set_deferred("scroll_vertical", previous_scroll)
+	scroll.arrange(list,root_views.get(scroll.view_key,{}))
+	place(scroll.toolbar(self),Vector2(330,672),Vector2(870,32))
 	place(button("Back to the cutting board",func(): play_requested.emit(),true),Vector2(330,716),Vector2(370,48))
 
 func upgrade_entry(d: Dictionary, count: int, list: VBoxContainer, category: String) -> void:
 	var entry := VBoxContainer.new()
+	entry.set_meta("root_id",d.id); entry.set_meta("root_read_id",d.id); entry.set_meta("root_requires",d.requires); entry.set_meta("root_level",progress.level(d.id))
+	if d.has("tomato_id"): entry.set_meta("root_specimen","specimen:"+str(d.tomato_id))
 	entry.add_theme_constant_override("separation",9)
 	list.add_child(entry)
 	entry.add_child(label("%02d  /  %s" % [count,category.to_upper()],13,false,MUTED))
@@ -452,6 +455,8 @@ func upgrade_entry(d: Dictionary, count: int, list: VBoxContainer, category: Str
 	artwork.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	artwork.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	artwork.custom_minimum_size = Vector2(34,34)
+	artwork.mouse_filter = Control.MOUSE_FILTER_PASS
+	tips.bind(artwork,root_tooltip(d))
 	heading.add_child(artwork)
 	var title := label(d.name,36,true)
 	title.name = "EntryTitle_"+d.id
@@ -522,6 +527,8 @@ func render_varieties(list: VBoxContainer) -> void:
 		if not available and not data.unlock_upgrade in progress.discovered:
 			continue
 		var specimen := HBoxContainer.new()
+		specimen.set_meta("root_id","specimen:"+str(data.id)); specimen.set_meta("root_level",1 if available else 0)
+		specimen.set_meta("root_read_id",str(data.unlock_upgrade))
 		specimen.name = "Specimen_" + data.id
 		specimen.add_theme_constant_override("separation",26)
 		list.add_child(specimen)
@@ -567,6 +574,7 @@ func render_varieties(list: VBoxContainer) -> void:
 				notes.add_child(forecast)
 			notes.add_child(label("Expected value per strike: " + Progression.cash(payout/expected),16,false,MUTED))
 		var branch := CatalogVine.new()
+		branch.set_meta("root_owner","specimen:"+str(data.id))
 		list.add_child(branch)
 		if not data.unlock_upgrade.is_empty():
 			watch_discovery(data.unlock_upgrade,title,branch,artwork)
@@ -575,6 +583,23 @@ func render_varieties(list: VBoxContainer) -> void:
 			if d.get("tomato_id","") == data.id and d.id in progress.discovered:
 				number += 1
 				upgrade_entry(d,number,list,"Cultivation")
+
+func focus_control(control: Control) -> void:
+	if not is_instance_valid(control): return
+	var parent: Node = control.get_parent()
+	while parent != null:
+		if parent is RootMap: await parent.focus_control(control); return
+		if parent is ScrollContainer: parent.ensure_control_visible(control); return
+		parent = parent.get_parent()
+
+func root_tooltip(d: Dictionary, permanent: bool = false) -> String:
+	var level: int = progress.prestige.level(d.id) if permanent else progress.level(d.id)
+	var cost := "%d seeds" % progress.prestige.price(d.id) if permanent else Progression.cash(progress.price(d.id))
+	var requirements := PackedStringArray()
+	for id: String in d.requires:
+		var prerequisite: Dictionary = progress.prestige.definition(id) if permanent else progress.definition(id)
+		requirements.append("%s %d" % [prerequisite.get("name",id),int(d.requires[id])])
+	return "%s\nLevel %d / %d · %s\n%s\n%s" % [d.name,level,int(d.max_level),"Fully cultivated" if level >= int(d.max_level) else cost,d.effect,"Requires: "+", ".join(requirements) if not requirements.is_empty() else "Starting root · no prerequisites"]
 
 func watch_discovery(id: String, title: Control, vine: CatalogVine, artwork: Control) -> void:
 	var read: Array = progress.prestige.viewed if screen == "archive" else progress.viewed
@@ -590,6 +615,7 @@ func update_discoveries(delta: float) -> void:
 	if not screen in ["catalog","archive"] or catalog_entries.is_empty() or confirmation.visible or prestige_confirmation.visible: return
 	var archive_page := screen == "archive"
 	var scroll := content.get_node("ArchiveScroll" if archive_page else "CatalogScroll") as ScrollContainer
+	if scroll is RootMap and not scroll.ready_for_read: return
 	var bounds := scroll.get_global_rect().intersection(root.get_global_rect())
 	var exposed: Array[String] = []
 	var presented := false

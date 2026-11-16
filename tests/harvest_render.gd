@@ -5,14 +5,14 @@ func cultivate(id: String) -> void:
 	if control == null:
 		check(false,"missing cultivation control: "+id)
 		return
-	game.ui.content.get_node("CatalogScroll").ensure_control_visible(control)
+	await game.ui.focus_control(control)
 	await frames()
 	await click(control)
 	await frames()
 
 func focus_specimen(id: String) -> void:
 	var control := game.ui.content.find_child("Specimen_"+id,true,false) as Control
-	game.ui.content.get_node("CatalogScroll").ensure_control_visible(control)
+	await game.ui.focus_control(control)
 	await frames()
 
 func move_blade(point: Vector2) -> void:

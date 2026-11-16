@@ -30,13 +30,13 @@ func run() -> void:
 	await permanent("permanent_slice_value"); await permanent("starting_cash"); await click(game.ui.content.find_child("ArchiveCategory_Special Events",true,false)); await permanent("stampede_season")
 	check(game.ui.content.find_child("PurchasePermanent_stampede_rewards",true,false) != null and game.ui.content.find_child("PurchasePermanent_stampede_combo_bonuses",true,false) == null,"actual Stampede invitation still requires its real reward predecessor before the combo successor")
 	await permanent("stampede_rewards"); var action: Control = game.ui.content.find_child("PurchasePermanent_stampede_combo_bonuses",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames(); await create_timer(.65).timeout
+	await game.ui.focus_control(action); await frames(); await create_timer(.65).timeout
 	var title: Control = game.ui.content.find_child("PrestigeTitle_stampede_combo_bonuses",true,false)
 	check("stampede_combo_bonuses" in game.progress.prestige.viewed and title.get_parent().get_child(0).texture.resource_path.ends_with("stampede_combo_bonuses.svg") and "×1.00 → ×1.50" in game.ui.content.find_child("PermanentEffect_stampede_combo_bonuses",true,false).text,"actual combo invitation shows original metronome/root-vine art, real read dwell and honest bonus-only comparisons")
 	await capture("172-stampede-combo-order")
 	await permanent("stampede_combo_bonuses")
 	check(game.progress.prestige.seeds == 190 and game.progress.prestige.paid.stampede_combo_bonuses == [3] and game.progress.levels.is_empty() and game.progress.combo_window() == 1.35,"actual native seed order pays three without granting ordinary Combo Cash, grace or cutting")
-	root.size = Vector2i(1280,720); await frames(); action = game.ui.content.find_child("PurchasePermanent_stampede_combo_bonuses",true,false); game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+	root.size = Vector2i(1280,720); await frames(); action = game.ui.content.find_child("PurchasePermanent_stampede_combo_bonuses",true,false); await game.ui.focus_control(action); await frames()
 	check(root.get_visible_rect().encloses(action.get_global_rect()) and "×1.50 → ×2.00" in game.ui.content.find_child("PermanentEffect_stampede_combo_bonuses",true,false).text and "base/recuts unchanged" in game.ui.content.find_child("PermanentEffect_stampede_combo_bonuses",true,false).text,"actual paid conditional Stampede combo controls and ordinary-recut labels fit 16:9")
 	await capture("173-paid-stampede-combo")
 	game.set_physics_process(false); var roots := await start_wave()

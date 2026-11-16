@@ -35,14 +35,14 @@ func run() -> void:
 	check(game.ui.content.find_child("PurchasePermanent_rainbow_rewards",true,false) != null and game.ui.content.find_child("PurchasePermanent_heirloom_multiplier",true,false) == null,"actual Rainbow invitation alone keeps the collection successor hidden until Rainbow Rewards")
 	await permanent("rainbow_rewards")
 	var action: Control = game.ui.content.find_child("PurchasePermanent_heirloom_multiplier",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames(); await create_timer(.65).timeout
+	await game.ui.focus_control(action); await frames(); await create_timer(.65).timeout
 	var title: Control = game.ui.content.find_child("PrestigeTitle_heirloom_multiplier",true,false)
 	check("heirloom_multiplier" in game.progress.prestige.viewed and title.get_parent().get_child(0).texture.resource_path.ends_with("heirloom_multiplier.svg") and "×1.00 → ×1.50" in game.ui.content.find_child("PermanentEffect_heirloom_multiplier",true,false).text,"actual collection invitation displays original three-specimen tally art, persistent dwell and current-next peak bonus")
 	await capture("154-heirloom-collection-order")
 	await permanent("heirloom_multiplier")
 	check(game.progress.prestige.seeds == 186 and game.progress.prestige.paid.heirloom_multiplier == [4] and game.progress.levels.is_empty() and game.progress.strength() == 1,"real native collection order pays four seeds without granting ordinary progression")
 	root.size = Vector2i(1280,720); await frames()
-	action = game.ui.content.find_child("PurchasePermanent_heirloom_multiplier",true,false); game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+	action = game.ui.content.find_child("PurchasePermanent_heirloom_multiplier",true,false); await game.ui.focus_control(action); await frames()
 	check(root.get_visible_rect().encloses(action.get_global_rect()) and "×1.50 → ×2.00" in game.ui.content.find_child("PermanentEffect_heirloom_multiplier",true,false).text,"collection purchase and accurate next value remain readable at 16:9")
 	await capture("155-paid-heirloom-collection")
 	game.progress.money = 1000

@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Existing milestone tag, for example v0.25.0'
+        description: 'Existing milestone tag, for example v0.26.0'
         required: true
         type: string
 

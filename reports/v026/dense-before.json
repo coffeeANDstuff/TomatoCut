@@ -1,0 +1,63 @@
+{
+  "label": "before",
+  "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+  "scenarios": [
+    {
+      "collision": {
+        "cross": {
+          "median_ms": 3.151,
+          "p95_ms": 3.399
+        },
+        "miss": {
+          "median_ms": 2.583,
+          "p95_ms": 2.996
+        }
+      },
+      "draw_calls_median": 464.0,
+      "drops": 12,
+      "pieces": 8,
+      "render_mean_fps": 10.126937789546,
+      "render_median_ms": 99.511,
+      "render_p95_ms": 115.559,
+      "roots": 4
+    },
+    {
+      "collision": {
+        "cross": {
+          "median_ms": 9.333,
+          "p95_ms": 10.025
+        },
+        "miss": {
+          "median_ms": 10.293,
+          "p95_ms": 11.387
+        }
+      },
+      "draw_calls_median": 1438.0,
+      "drops": 64,
+      "pieces": 32,
+      "render_mean_fps": 6.8350036943195,
+      "render_median_ms": 147.466,
+      "render_p95_ms": 170.979,
+      "roots": 12
+    },
+    {
+      "collision": {
+        "cross": {
+          "median_ms": 20.621,
+          "p95_ms": 22.647
+        },
+        "miss": {
+          "median_ms": 19.928,
+          "p95_ms": 22.749
+        }
+      },
+      "draw_calls_median": 2678.0,
+      "drops": 96,
+      "pieces": 64,
+      "render_mean_fps": 4.51640516429854,
+      "render_median_ms": 214.782,
+      "render_p95_ms": 275.708,
+      "roots": 24
+    }
+  ]
+}

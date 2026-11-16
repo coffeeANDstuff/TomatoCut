@@ -32,7 +32,7 @@ func run() -> void:
 			for previous: Rect2 in tab_rects: fit = fit and not rect.intersects(previous)
 			tab_rects.append(rect)
 		var action: Control = game.ui.content.find_child("PurchasePermanent_additional_starting_tomatoes",true,false)
-		game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+		await game.ui.focus_control(action); await frames()
 		check(fit and root.get_visible_rect().encloses(action.get_global_rect()) and game.ui.content.get_node("ArchiveScroll").get_global_rect().position.y >= tab_rects[-1].end.y,"four native archive categories stay readable without overlap and leave purchase space at "+str(viewport))
 	await capture("120-four-branch-archive-16x9")
 	# Category changes and rebuilds preserve scroll and independent read state.

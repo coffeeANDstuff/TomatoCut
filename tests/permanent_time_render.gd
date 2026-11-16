@@ -31,7 +31,7 @@ func run() -> void:
 	await click(game.ui.content.find_child("ArchiveCategory_Permanent Wealth",true,false)); await permanent("starting_cash")
 	await click(game.ui.content.find_child("ArchiveCategory_Permanent Time",true,false)); root.size = Vector2i(1280,720); await frames()
 	var action: Control = game.ui.content.find_child("PurchasePermanent_overtime_bonus",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+	await game.ui.focus_control(action); await frames()
 	var tabs_fit := true
 	for name: String in ["Permanent Wealth","Special Events","Permanent Time"]: tabs_fit = tabs_fit and root.get_visible_rect().encloses(game.ui.content.find_child("ArchiveCategory_"+name,true,false).get_global_rect())
 	check(tabs_fit and root.get_visible_rect().encloses(action.get_global_rect()) and "×1.20 → ×1.40" in game.ui.content.find_child("PermanentEffect_overtime_bonus",true,false).text,"all three real archive tabs and accurate time orders fit the 16:9 page")

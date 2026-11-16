@@ -347,6 +347,7 @@ func new_game() -> void:
 	save_progress()
 	apply_settings()
 	start_round()
+	ui.root_views.clear()
 
 func show_archive() -> void:
 	if state == "playing": return
@@ -371,6 +372,8 @@ func confirm_prestige(token: String) -> void:
 		ui.show_notice("The ledger changed. Review a fresh prestige preview.")
 		return
 	if not commit_permanent(candidate): return
+	for key: String in ui.root_views.keys():
+		if key.begins_with("catalog/"): ui.root_views.erase(key)
 	ui.selected_knife = ""; ui.selected_modification = ""; ui.modification_target = ""
 	ui.selected_category = "Time"
 	ui.archive()

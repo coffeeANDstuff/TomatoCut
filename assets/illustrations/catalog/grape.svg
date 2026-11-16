@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="420" viewBox="0 0 360 420"><defs><pattern id="h" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(22)"><path d="M0 0v7" stroke="#632d39" stroke-width=".65" opacity=".45"/></pattern></defs><g stroke="#334e3b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+<path d="M169 365Q151 201 191 53M179 145Q121 96 87 114Q98 169 178 162M180 146Q222 82 274 104Q258 157 181 159M174 199Q113 172 97 208M178 218Q236 168 260 204"/>
+<path d="M180 144Q132 121 102 124M187 143Q235 112 260 112" stroke-width="1"/>
+<path d="M125 241C101 219 78 238 79 274L86 312Q95 339 117 320L131 281Q141 253 125 241Z" fill="#a9474d"/><path d="M125 241C101 219 78 238 79 274L86 312Q95 339 117 320L131 281Q141 253 125 241Z" fill="url(#h)"/>
+<path d="M234 229C215 200 245 181 265 205Q286 234 282 264Q271 292 250 268Z" fill="#b44b50"/><path d="M234 229C215 200 245 181 265 205Q286 234 282 264Q271 292 250 268Z" fill="url(#h)"/>
+<path d="M162 272C138 244 115 272 124 313Q132 357 158 370Q184 371 184 337Q183 294 162 272Z" fill="#b44b50"/><path d="M162 272C138 244 115 272 124 313Q132 357 158 370Q184 371 184 337Q183 294 162 272Z" fill="url(#h)"/>
+<path d="M107 244L88 236L105 237L112 222L117 239L133 236L123 247L130 258L114 251L101 259ZM252 204L233 198L247 197L249 182L256 199L270 195L263 208ZM147 275L130 266L144 267L149 251L156 269L171 264L161 278L167 288L152 281L139 287Z" fill="#8a9b7a"/>
+<path d="M92 265Q83 295 98 316M248 214Q268 238 268 258M138 285Q133 324 155 352" stroke="#f0b99a" stroke-width="3"/>
+<ellipse cx="249" cy="333" rx="35" ry="52" fill="#d68174" transform="rotate(22 249 333)"/>
+<ellipse cx="241" cy="312" rx="13" ry="17" fill="#a9474d" transform="rotate(22 241 312)"/><ellipse cx="257" cy="353" rx="13" ry="17" fill="#a9474d" transform="rotate(22 257 353)"/>
+<path d="M235 304L240 311M246 312L242 320M252 345L257 352M263 351L259 360" stroke="#f4d9a5" stroke-width="4"/>
+<path d="M50 393H310M180 388v10M150 390v6M210 390v6" stroke-width="1"/>
+</g></svg>

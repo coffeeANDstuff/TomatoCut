@@ -1,0 +1,103 @@
+{
+  "models": [
+    {
+      "model": "res://assets/models/events/golden.glb",
+      "meshes_before": 17,
+      "meshes_after": 2,
+      "triangles": 4404
+    },
+    {
+      "model": "res://assets/models/fragments/cherry_chunk.glb",
+      "meshes_before": 5,
+      "meshes_after": 4,
+      "triangles": 1514
+    },
+    {
+      "model": "res://assets/models/fragments/cherry_half.glb",
+      "meshes_before": 18,
+      "meshes_after": 5,
+      "triangles": 5936
+    },
+    {
+      "model": "res://assets/models/fragments/cherry_wedge.glb",
+      "meshes_before": 8,
+      "meshes_after": 5,
+      "triangles": 2445
+    },
+    {
+      "model": "res://assets/models/fragments/event_golden_chunk.glb",
+      "meshes_before": 5,
+      "meshes_after": 4,
+      "triangles": 1482
+    },
+    {
+      "model": "res://assets/models/fragments/event_golden_half.glb",
+      "meshes_before": 38,
+      "meshes_after": 5,
+      "triangles": 10416
+    },
+    {
+      "model": "res://assets/models/fragments/event_golden_wedge.glb",
+      "meshes_before": 22,
+      "meshes_after": 6,
+      "triangles": 5255
+    },
+    {
+      "model": "res://assets/models/fragments/roma_chunk.glb",
+      "meshes_before": 5,
+      "meshes_after": 4,
+      "triangles": 1352
+    },
+    {
+      "model": "res://assets/models/fragments/roma_half.glb",
+      "meshes_before": 13,
+      "meshes_after": 5,
+      "triangles": 4816
+    },
+    {
+      "model": "res://assets/models/fragments/roma_wedge.glb",
+      "meshes_before": 8,
+      "meshes_after": 5,
+      "triangles": 2445
+    },
+    {
+      "model": "res://assets/models/fragments/standard_chunk.glb",
+      "meshes_before": 5,
+      "meshes_after": 4,
+      "triangles": 1574
+    },
+    {
+      "model": "res://assets/models/fragments/standard_half.glb",
+      "meshes_before": 28,
+      "meshes_after": 5,
+      "triangles": 8176
+    },
+    {
+      "model": "res://assets/models/fragments/standard_wedge.glb",
+      "meshes_before": 16,
+      "meshes_after": 5,
+      "triangles": 4229
+    },
+    {
+      "model": "res://assets/models/tomatoes/cherry.glb",
+      "meshes_before": 6,
+      "meshes_after": 2,
+      "triangles": 2576
+    },
+    {
+      "model": "res://assets/models/tomatoes/roma.glb",
+      "meshes_before": 5,
+      "meshes_after": 2,
+      "triangles": 2564
+    },
+    {
+      "model": "res://assets/models/tomatoes/standard_red.glb",
+      "meshes_before": 7,
+      "meshes_after": 2,
+      "triangles": 2588
+    }
+  ],
+  "triangles_unchanged": true,
+  "world_position_quantization": 0.0001,
+  "maximum_neighbor_cell_offset": 1
+}

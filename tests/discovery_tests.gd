@@ -42,10 +42,11 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	var title: Control = game.ui.content.find_child("SpecimenTitle_cherry",true,false)
 	check.call(title != null and game.ui.content.find_child("SpecimenTitle_roma",true,false) == null, "hidden variety details never leak through discovery tracking")
 	scroll.scroll_vertical = int(scroll.get_v_scroll_bar().max_value)
+	scroll.scroll_horizontal = int(scroll.get_h_scroll_bar().max_value) # Move the root node outside both axes of the new canvas.
 	await tree.process_frame; await tree.process_frame
 	game.ui.update_discoveries(1)
 	check.call("unlock_cherry" in p.unseen(), "off-screen specimen remains unread after catalog opens")
-	scroll.ensure_control_visible(title); await tree.process_frame; await tree.process_frame
+	await game.ui.focus_control(title); await tree.process_frame; await tree.process_frame
 	game.ui.update_discoveries(.1)
 	check.call("unlock_cherry" in p.unseen(), "brief scroll exposure does not consume a discovery")
 	check.call(cues[0] == 1, "newly visible discovery emits one quiet presentation cue")
@@ -70,7 +71,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	p.settings.reduced_motion = true
 	scroll = game.ui.content.get_node("CatalogScroll")
 	title = game.ui.content.find_child("EntryTitle_cherry_frequency",true,false)
-	scroll.ensure_control_visible(title); await tree.process_frame; await tree.process_frame
+	await game.ui.focus_control(title); await tree.process_frame; await tree.process_frame
 	var vine: CatalogVine = game.ui.catalog_entries.cherry_frequency.vine
 	game.ui.update_discoveries(.3)
 	check.call("cherry_frequency" in p.viewed and title.modulate.a == 1 and vine.growth == 1, "reduced motion presents discovery instantly without hiding content")
@@ -78,7 +79,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	# A transition mid-tween must free its presentation safely.
 	p.settings.reduced_motion = false
 	title = game.ui.content.find_child("EntryTitle_cherry_quality",true,false)
-	scroll.ensure_control_visible(title); await tree.process_frame; await tree.process_frame
+	await game.ui.focus_control(title); await tree.process_frame; await tree.process_frame
 	game.ui.update_discoveries(.3)
 	game.show_home(); await tree.create_timer(.6).timeout
 	check.call(game.state == "home" and game.ui.catalog_entries.is_empty(), "leaving during reveal cancels the presentation without stale targets")

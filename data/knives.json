@@ -75,5 +75,36 @@
       ]
     ],
     "slice_sound": "steak_slice"
+  },
+  {
+    "id": "paring",
+    "name": "Paring Knife",
+    "catalog_number": "004",
+    "description": "A fine satin point, a sculpted green grip, and a very precise opinion about which tomato was intended. Its narrow edge trades broad coverage for a smaller cutting footprint.",
+    "price": 100,
+    "model": "res://assets/models/knives/paring.glb",
+    "base_strength": 1.25,
+    "precision": "Fine pointed geometry",
+    "special": "None",
+    "reach_label": "Narrow pointed edge",
+    "edge": [
+      [
+        -0.08,
+        -0.055
+      ],
+      [
+        0.47,
+        -0.055
+      ],
+      [
+        0.72,
+        -0.005
+      ],
+      [
+        0.83,
+        0.055
+      ]
+    ],
+    "slice_sound": "steak_slice"
   }
 ]

@@ -27,14 +27,14 @@ func run() -> void:
 	check(game.ui.content.find_child("PurchasePermanent_jackpot_multiplier",true,false) != null and game.ui.content.find_child("PurchasePermanent_ultimate_jackpot",true,false) == null,"actual paid Jackpot invitation still hides Ultimate until its real value predecessor")
 	await permanent("jackpot_multiplier")
 	var action: Control = game.ui.content.find_child("PurchasePermanent_ultimate_jackpot",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames(); await create_timer(.65).timeout
+	await game.ui.focus_control(action); await frames(); await create_timer(.65).timeout
 	var title: Control = game.ui.content.find_child("PrestigeTitle_ultimate_jackpot",true,false)
 	check("ultimate_jackpot" in game.progress.prestige.viewed and title.get_parent().get_child(0).texture.resource_path.ends_with("ultimate_jackpot.svg") and "×1.00 → ×1.50" in game.ui.content.find_child("PermanentEffect_ultimate_jackpot",true,false).text,"actual Ultimate invitation displays original single-strike invoice artwork, read dwell and honest first-strike preview")
 	await capture("163-ultimate-jackpot-order")
 	await permanent("ultimate_jackpot")
 	check(game.progress.prestige.seeds == 183 and game.progress.prestige.paid.ultimate_jackpot == [5] and game.progress.strength() == 1 and game.progress.levels.is_empty(),"actual native Ultimate order pays five seeds without granting ordinary strength, cuts or abilities")
 	root.size = Vector2i(1280,720); await frames(); action = game.ui.content.find_child("PurchasePermanent_ultimate_jackpot",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+	await game.ui.focus_control(action); await frames()
 	check(root.get_visible_rect().encloses(action.get_global_rect()) and "×1.50 → ×2.00" in game.ui.content.find_child("PermanentEffect_ultimate_jackpot",true,false).text and "recuts ×1" in game.ui.content.find_child("PermanentEffect_ultimate_jackpot",true,false).text,"actual paid first-strike and ordinary-recut comparisons remain readable at 16:9")
 	await capture("164-paid-ultimate-order")
 	game.progress.money = 1000

@@ -2,6 +2,8 @@
 ## Complete Game Design, Art Direction & Development Specification
 ### Master Development Prompt for ChatGPT Codex
 
+Current production directive: [PRODUCTION_POLISH.md](PRODUCTION_POLISH.md) supplements this complete specification. It prioritizes individually crafted collections, measured performance work, organic pan/zoom upgrade roots and menu/gameplay polish. Preserve every requirement below, including all 25 normal varieties/knives and automatic harvest. ROADMAP.md and PROGRESS.md record actual implementation and the next task.
+
 ---
 
 # 1. PROJECT OVERVIEW

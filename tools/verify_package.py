@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.25.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.26.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -27,6 +27,18 @@ with zipfile.ZipFile(args.archive) as z:
     assert not any(set(PurePosixPath(n).parts) & {'.git', '.godot', 'exports', 'artifacts', '__pycache__'} for n in names), 'Local/generated files in payload'
     assert z.testzip() is None, 'ZIP CRC failure'
     hashes = json.loads(z.read('SHA256SUMS.json'))
+    polish_assets = {'Source/PRODUCTION_POLISH.md', 'Source/PERFORMANCE_REPORT.md',
+                     'Source/art/grape.blend', 'Source/art/paring_knife.blend',
+                     'Source/assets/models/tomatoes/grape.glb', 'Source/assets/models/knives/paring.glb',
+                     'Source/assets/illustrations/catalog/grape.svg', 'Source/scripts/ui/root_map.gd',
+                     'Source/tests/production_polish_tests.gd', 'Source/tests/production_polish_render.gd',
+                     'Source/tools/build_grape_art.py', 'Source/tools/build_paring_assets.py',
+                     'Source/tools/benchmark_dense.gd', 'Source/tools/benchmark_clock.gd',
+                     'Source/tools/audit_models.gd', 'Source/tools/compare_model_audits.py',
+                     'Source/tools/check_native.sh'}
+    polish_assets |= {'Source/assets/models/fragments/grape_'+shape+'.glb' for shape in ['half','wedge','chunk']}
+    polish_assets |= {'Source/reports/v026/'+name+'.json' for name in ['dense-before','dense-after','clock-before','clock-after','model-audit']}
+    assert polish_assets <= set(hashes), 'Missing original production-polish content, source or performance evidence'
     assert set(hashes) == set(names)-{'SHA256SUMS.json'}, 'Manifest coverage mismatch'
     assert all(digest(z.read(name)) == value for name, value in hashes.items()), 'Payload SHA-256 mismatch'
     assert all((z.getinfo(n).external_attr >> 16) & 0o111 for n in names if n.startswith('Source/') and n.endswith('.sh')), 'Source scripts lost executable permissions'

@@ -37,8 +37,13 @@ static func swept_hit(center: Vector2, radius: float, previous: Transform2D, cur
 	return false
 
 static func swept_polygon_hit(polygon: PackedVector2Array, previous: Transform2D, current: Transform2D, edge: Array[Vector2] = DEFAULT_EDGE) -> bool:
-	if edge.size() < 2 or polygon.size() < 3 or previous.origin.distance_to(current.origin) < 0.025:
-		return false
+	return prepared_polygon_hit(polygon,prepare_sweep(previous,current,edge))
+
+static func prepare_sweep(previous: Transform2D, current: Transform2D, edge: Array[Vector2] = DEFAULT_EDGE) -> Dictionary:
+	var triangles: Array[PackedVector2Array] = []
+	if edge.size() < 2 or previous.origin.distance_to(current.origin) < 0.025:
+		return {"triangles":triangles,"bounds":Rect2(),"valid":false}
+	var bounds := Rect2(previous*edge[0],Vector2.ZERO)
 	var steps := maxi(1, int(ceil(absf(angle_difference(previous.get_rotation(), current.get_rotation())) / 0.12)))
 	var old_frame := previous
 	for i in range(1, steps+1):
@@ -49,8 +54,15 @@ static func swept_polygon_hit(polygon: PackedVector2Array, previous: Transform2D
 			var old_b := old_frame*edge[segment+1]
 			var a := frame*edge[segment]
 			var b := frame*edge[segment+1]
-			if triangle_polygon_hit(PackedVector2Array([old_a,old_b,b]),polygon) or triangle_polygon_hit(PackedVector2Array([old_a,b,a]),polygon): return true
+			triangles.append(PackedVector2Array([old_a,old_b,b])); triangles.append(PackedVector2Array([old_a,b,a]))
+			for point: Vector2 in [old_a,old_b,a,b]: bounds = bounds.expand(point)
 		old_frame = frame
+	return {"triangles":triangles,"bounds":bounds.grow(.00001),"valid":true}
+
+static func prepared_polygon_hit(polygon: PackedVector2Array, sweep: Dictionary) -> bool:
+	if polygon.size() < 3 or not sweep.valid: return false
+	for triangle: PackedVector2Array in sweep.triangles:
+		if triangle_polygon_hit(triangle,polygon): return true
 	return false
 
 static func triangle_polygon_hit(triangle: PackedVector2Array, polygon: PackedVector2Array) -> bool:

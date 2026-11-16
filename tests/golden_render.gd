@@ -24,7 +24,7 @@ func run() -> void:
 	await capture("66-golden-improvements")
 	root.size = Vector2i(1280,720); await frames()
 	var action: Control = game.ui.content.find_child("PurchasePermanent_golden_value",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+	await game.ui.focus_control(action); await frames()
 	check(root.get_visible_rect().encloses(action.get_global_rect()) and root.get_visible_rect().encloses(game.ui.content.find_child("ArchiveCategory_Special Events",true,false).get_global_rect()),"event category and paid value action remain visible at 16:9")
 	await capture("67-golden-archive-16x9")
 	game.progress.money = 1000 # Isolated normal-investment fixture for one recut.

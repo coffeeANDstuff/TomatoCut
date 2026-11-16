@@ -117,7 +117,7 @@ func run() -> void:
 		check(false,"Extra Cuts did not reveal")
 		quit(1)
 		return
-	game.ui.content.get_node("CatalogScroll").ensure_control_visible(extra)
+	await game.ui.focus_control(extra)
 	await frames()
 	check(root.get_visible_rect().encloses(extra.get_global_rect()),"newly revealed Extra Cuts is visible at 16:9")
 	await click(extra)

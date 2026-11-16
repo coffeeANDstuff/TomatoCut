@@ -16,7 +16,9 @@ var consumed := false
 var geometry_basis := Basis.IDENTITY
 var models: Dictionary = {}
 static var proxy_cache: Dictionary = {}
+static var bounds_cache: Dictionary = {}
 var proxy: PackedVector3Array
+var proxy_bounds := AABB()
 var cached_transform := Transform3D.IDENTITY
 var cached_hull := PackedVector2Array()
 
@@ -46,11 +48,21 @@ func configure(shape: String, ledger: CutFamily, at: Vector3, frame: Basis, moti
 	models[model_key].basis = geometry_basis
 	models[model_key].show()
 	proxy = shape_proxy(kind, family.variety_id)
+	proxy_bounds = bounds_cache[family.variety_id+"/"+kind]
 	cached_hull.clear()
 	show()
 
+func eligible() -> bool:
+	return not consumed and visible and life > 0.4 and kind != "chunk" and family != null and family.has_budget()
+
 func cuttable() -> bool:
-	return not consumed and visible and life > 0.4 and kind != "chunk" and family != null and family.has_budget() and projected_size() >= MIN_CUT_SIZE
+	return eligible() and projected_size() >= MIN_CUT_SIZE
+
+func conservative_bounds() -> Rect2:
+	# Transform the cached local box, rather than projecting hundreds of shell
+	# samples and constructing their convex hull for an obviously distant blade.
+	var box: AABB = (global_transform*Transform3D(geometry_basis,Vector3.ZERO))*proxy_bounds
+	return Rect2(Vector2(box.position.x,box.position.y),Vector2(box.size.x,box.size.y)).grow(.00001)
 
 func world_hull() -> PackedVector2Array:
 	var transform := global_transform * Transform3D(geometry_basis, Vector3.ZERO)
@@ -105,6 +117,9 @@ static func shape_proxy(shape: String, variety_id: String = "standard_red") -> P
 	# Include the center of the cut faces.
 	points.append(Vector3.ZERO)
 	proxy_cache[key] = points
+	var bounds := AABB(points[0],Vector3.ZERO)
+	for vertex: Vector3 in points: bounds = bounds.expand(vertex)
+	bounds_cache[key] = bounds
 	return points
 
 static func specimen_data(id: String) -> Dictionary:

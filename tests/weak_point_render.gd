@@ -32,14 +32,14 @@ func run() -> void:
 	check(game.ui.content.find_child("PurchasePermanent_giant_harvest",true,false) != null and game.ui.content.find_child("PurchasePermanent_giant_weak_points",true,false) == null,"real starting-cash purchase reveals only the actual Giant invitation before its weak-point successor")
 	await permanent("giant_harvest")
 	var order: Control = game.ui.content.find_child("PurchasePermanent_giant_weak_points",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(order); await frames(); await create_timer(.65).timeout
+	await game.ui.focus_control(order); await frames(); await create_timer(.65).timeout
 	var title: Control = game.ui.content.find_child("PrestigeTitle_giant_weak_points",true,false)
 	check("giant_weak_points" in game.progress.prestige.viewed and title.get_parent().get_child(0).texture.resource_path.ends_with("giant_weak_points.svg") and "×1.00 → ×1.50" in game.ui.content.find_child("PermanentEffect_giant_weak_points",true,false).text,"revealed weak-point order uses original engraved art, real read dwell and honest aimed current/next effects")
 	await capture("144-weak-point-invitation")
 	await permanent("giant_weak_points"); await permanent("giant_bonus_cuts")
 	check(game.progress.prestige.seeds == 188 and game.progress.prestige.paid.giant_weak_points == [3] and game.progress.strength() == 1 and game.progress.levels.is_empty(),"actual native weak-point order spends three seeds without granting general power or ordinary levels")
 	root.size = Vector2i(1280,720); await frames()
-	order = game.ui.content.find_child("PurchasePermanent_giant_weak_points",true,false); game.ui.content.get_node("ArchiveScroll").ensure_control_visible(order); await frames()
+	order = game.ui.content.find_child("PurchasePermanent_giant_weak_points",true,false); await game.ui.focus_control(order); await frames()
 	check(root.get_visible_rect().encloses(order.get_global_rect()) and "×1.50 → ×2.00" in game.ui.content.find_child("PermanentEffect_giant_weak_points",true,false).text,"actual paid weak-point action and next multiplier stay readable at 16:9")
 	await capture("145-paid-weak-point-order")
 	game.set_physics_process(false)

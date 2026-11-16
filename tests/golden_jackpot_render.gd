@@ -20,12 +20,12 @@ func run() -> void:
 	await permanent("permanent_slice_value"); await permanent("starting_cash"); await click(game.ui.content.find_child("ArchiveCategory_Special Events",true,false)); await permanent("golden_harvest"); await permanent("golden_value")
 	check(game.ui.content.find_child("PurchasePermanent_golden_multipliers",true,false) != null and game.ui.content.find_child("PurchasePermanent_golden_jackpot",true,false) == null,"actual native Golden Value still requires buying the distinct ladder before finish orders")
 	await permanent("golden_multipliers"); var action: Control = game.ui.content.find_child("PurchasePermanent_golden_jackpot",true,false)
-	game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames(); await create_timer(.65).timeout
+	await game.ui.focus_control(action); await frames(); await create_timer(.65).timeout
 	var title: Control = game.ui.content.find_child("PrestigeTitle_golden_jackpot",true,false)
 	check("golden_jackpot" in game.progress.prestige.viewed and title.get_parent().get_child(0).texture.resource_path.ends_with("golden_jackpot.svg") and "+0.00× → +1.00× base" in game.ui.content.find_child("PermanentEffect_golden_jackpot",true,false).text,"actual finish invitation displays original eight-piece inspection seal, read dwell and additive current-next comparison")
 	await capture("189-golden-finish-order"); await permanent("golden_jackpot")
 	check(game.progress.prestige.seeds == 186 and game.progress.prestige.paid.golden_jackpot == [5] and game.progress.max_cuts() == 1 and game.progress.levels.is_empty(),"actual native five-seed finish order grants no ordinary cutting, cultivation or base reward")
-	root.size = Vector2i(1280,720); await frames(); action = game.ui.content.find_child("PurchasePermanent_golden_jackpot",true,false); game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+	root.size = Vector2i(1280,720); await frames(); action = game.ui.content.find_child("PurchasePermanent_golden_jackpot",true,false); await game.ui.focus_control(action); await frames()
 	check(root.get_visible_rect().encloses(action.get_global_rect()) and "+1.00× → +2.00× base" in game.ui.content.find_child("PermanentEffect_golden_jackpot",true,false).text and "only cut 7/7" in game.ui.content.find_child("PermanentEffect_golden_jackpot",true,false).text,"actual paid bounty control and seven-cut requirement remain readable at 16:9")
 	await capture("190-paid-golden-finish"); game.set_physics_process(false)
 	var fruit: Tomato = await start_golden(); var family: CutFamily = fruit.family; var start: Vector3 = fruit.position
@@ -53,7 +53,7 @@ func run() -> void:
 	game.session.advance(100); game.finish_round(); await frames(); var restored := Progression.new()
 	check(game.store.load_into(restored) and is_equal_approx(restored.prestige.cycle_earnings,900.03) and restored.lifetime.golden_tomatoes == 3 and restored.prestige.paid.golden_jackpot == [5],"actual one/six/seven-cut results bank earned income, three unique families and paid finish receipts")
 	await click(archive_icon()); await permanent("golden_jackpot"); await permanent("golden_jackpot"); await permanent("golden_multipliers"); await permanent("golden_multipliers")
-	action = game.ui.content.find_child("PurchasePermanent_golden_jackpot",true,false); game.ui.content.get_node("ArchiveScroll").ensure_control_visible(action); await frames()
+	action = game.ui.content.find_child("PurchasePermanent_golden_jackpot",true,false); await game.ui.focus_control(action); await frames()
 	check(game.progress.prestige.seeds == 138 and game.progress.prestige.paid.golden_jackpot == [5,10,20] and action.disabled and "+3.00× → +3.00× base" in game.ui.content.find_child("PermanentEffect_golden_jackpot",true,false).text,"actual maximum finish/ladder orders retain receipts and honest capped additive comparisons")
 	await capture("195-maximum-golden-finish")
 	# Cultivate and prepare through native controls; the permanent order grants none.

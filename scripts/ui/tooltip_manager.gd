@@ -49,8 +49,13 @@ func _process(delta: float) -> void:
 	if elapsed < 1.0:
 		return
 	label.text = pending
-	label.size = label.get_minimum_size()
-	var at := target.get_global_rect().get_center() + Vector2(-label.size.x / 2, 34)
-	var bounds := get_viewport_rect().size
+	if "\n" in pending:
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		label.custom_minimum_size.x = minf(360,size.x-16)
+		label.size = Vector2(label.custom_minimum_size.x,label.get_minimum_size().y)
+	else:
+		label.autowrap_mode = TextServer.AUTOWRAP_OFF; label.custom_minimum_size = Vector2.ZERO; label.size = label.get_minimum_size()
+	var at := get_global_transform().affine_inverse()*target.get_global_rect().get_center() + Vector2(-label.size.x / 2, 34)
+	var bounds := size
 	label.position = Vector2(clampf(at.x, 8, bounds.x-label.size.x-8),clampf(at.y,8,bounds.y-label.size.y-8))
 	label.show()
