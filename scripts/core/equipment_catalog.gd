@@ -2,6 +2,7 @@ class_name EquipmentCatalog
 extends RefCounted
 
 const STARTER := "rusty_butter"
+const MAX_COMBO_MULTIPLIER := 2.0
 var knives: Array = []
 var by_id: Dictionary = {}
 var modifications: Array = []
@@ -22,6 +23,9 @@ func definition(id: String) -> Dictionary:
 
 func modification(id: String) -> Dictionary:
 	return modifications_by_id.get(id,{})
+
+func combo_multiplier(id: String) -> float:
+	return float(definition(id).get("combo_bonus_multiplier",1.0))
 
 static func edge_points(data: Dictionary) -> Array[Vector2]:
 	var points: Array[Vector2] = []
@@ -74,6 +78,10 @@ func validate() -> PackedStringArray:
 		for key: String in ["price","base_strength"]:
 			var value: Variant = raw.get(key)
 			if not (value is float or value is int) or not is_finite(float(value)) or float(value) < 0 or (key == "base_strength" and float(value) <= 0): errors.append(id+": invalid "+key)
+		if raw.has("combo_bonus_multiplier"):
+			var multiplier: Variant = raw.combo_bonus_multiplier
+			if not (multiplier is float or multiplier is int) or not is_finite(float(multiplier)) or float(multiplier) < 1 or float(multiplier) > MAX_COMBO_MULTIPLIER:
+				errors.append(id+": invalid combo bonus multiplier")
 		if id != STARTER and (raw.get("price") is float or raw.get("price") is int) and float(raw.price) <= 0: errors.append(id+": nonstarter knife requires a price")
 		if not raw.get("model") is String or not raw.model.ends_with(".glb") or not ResourceLoader.exists(raw.model): errors.append(id+": missing knife model")
 		var sound: Variant = raw.get("slice_sound","slice")

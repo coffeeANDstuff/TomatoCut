@@ -153,6 +153,20 @@ func cutting_profile() -> CuttingProfile:
 func combo_window() -> float:
 	return 1.35 + effect_value("combo_window","seconds") * level("combo_window")
 
+func knife_combo_multiplier(id: String) -> float:
+	return equipment.combo_multiplier(id) if level("combo_cash") > 0 else 1.0
+
+func equipped_combo_multiplier() -> float:
+	return knife_combo_multiplier(equipped_knife) if equipped_knife in owned_knives else 1.0
+
+func knife_special(id: String) -> String:
+	var potential := equipment.combo_multiplier(id)
+	if potential == 1: return str(equipment.definition(id).get("special","None"))
+	var status := "Dormant · cultivate Combo Cash"
+	if level("combo_cash") > 0:
+		status = "Active with Combo Cash" if id == equipped_knife and id in owned_knives else "With Combo Cash when equipped"
+	return "Combo bonus ×%.2f\n%s" % [potential,status]
+
 func overtime_seconds() -> float:
 	return effect_value("overtime","seconds")*level("overtime")*prestige.overtime_multiplier()
 
@@ -161,7 +175,10 @@ func round_ceiling() -> float:
 
 func reward(combo: int, tomato_value: float = 1.0, combo_multiplier: float = 1.0) -> float:
 	var base := 1.0 + effect_value("better_prices","value_bonus") * level("better_prices")
-	var combo_bonus := 1.0 + effect_value("combo_cash","bonus_per_step") * level("combo_cash") * mini(combo-1,int(effect_value("combo_cash","max_steps"))) * clampf(combo_multiplier,1,3)
+	# The knife scales only the actually earned ordinary combo contribution.
+	# Keep the existing event clamp/order, then compose the independent knife
+	# coefficient; clamping their product would silently truncate event benefits.
+	var combo_bonus := 1.0 + effect_value("combo_cash","bonus_per_step") * level("combo_cash") * mini(maxi(combo-1,0),int(effect_value("combo_cash","max_steps"))) * clampf(combo_multiplier,1,3) * equipped_combo_multiplier()
 	return snappedf(base * combo_bonus * tomato_value * (1.0+prestige.effect("permanent_slice_value")),0.01)
 
 func complete_round(earnings: float, cuts: int, tomatoes_sliced: int = -1, golden_tomatoes: int = 0, stampede_tomatoes: int = 0, giant_tomatoes: int = 0, rainbow_tomatoes: int = 0, jackpot_tomatoes: int = 0) -> void:

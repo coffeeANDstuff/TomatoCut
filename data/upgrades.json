@@ -438,5 +438,75 @@
       "suppression": 0.1
     },
     "tomato_id": "campari"
+  },
+  {
+    "id": "unlock_cocktail",
+    "name": "Cocktail \u00b7 Variety Unlock",
+    "category": "Varieties",
+    "description": "A lively side branch where a steady basket meets sweet Cherry cultivation.",
+    "effect": "Adds lively Cocktail tomatoes to the automatic mix: $18 base value, 1.75 resistance.",
+    "base_cost": 480,
+    "growth": 1,
+    "max_level": 1,
+    "requires": {
+      "campari_frequency": 1,
+      "cherry_quality": 2
+    },
+    "effect_values": {
+      "unlock": 1
+    },
+    "tomato_id": "cocktail"
+  },
+  {
+    "id": "cocktail_frequency",
+    "name": "Cocktail \u00b7 Harvest Frequency",
+    "category": "Varieties",
+    "description": "A few more little arrivals in an increasingly animated harvest.",
+    "effect": "+50% relative Cocktail spawn weight per level.",
+    "base_cost": 210,
+    "growth": 1.25,
+    "max_level": 10,
+    "requires": {
+      "unlock_cocktail": 1
+    },
+    "effect_values": {
+      "weight_bonus": 0.5
+    },
+    "tomato_id": "cocktail"
+  },
+  {
+    "id": "cocktail_quality",
+    "name": "Cocktail \u00b7 Premium Quality",
+    "category": "Varieties",
+    "description": "Small fruit can still be the subject of a very serious inspection.",
+    "effect": "+25% Cocktail cut value per level, including separated pieces.",
+    "base_cost": 230,
+    "growth": 1.26,
+    "max_level": 10,
+    "requires": {
+      "unlock_cocktail": 1
+    },
+    "effect_values": {
+      "value_bonus": 0.25
+    },
+    "tomato_id": "cocktail"
+  },
+  {
+    "id": "cocktail_dominance",
+    "name": "Cocktail \u00b7 Harvest Dominance",
+    "category": "Varieties",
+    "description": "A brisk harvest takes precedence only when the blade can handle it profitably.",
+    "effect": "Suppresses less profitable lower-tier weight by 10% per level; actual value per strike governs eligibility.",
+    "base_cost": 650,
+    "growth": 1.32,
+    "max_level": 10,
+    "requires": {
+      "cocktail_frequency": 3,
+      "cocktail_quality": 2
+    },
+    "effect_values": {
+      "suppression": 0.1
+    },
+    "tomato_id": "cocktail"
   }
 ]

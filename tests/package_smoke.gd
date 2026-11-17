@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.27.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.28.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -180,7 +180,7 @@ func run() -> void:
 	for id: String in ["permanent_slice_value","starting_cash","golden_harvest","golden_frequency","golden_value"]: game.purchase_permanent(id)
 	game.ui.archive("Special Events")
 	check(game.events.catalog.validate(game.progress.prestige).is_empty() and game.ui.content.find_child("PrestigeTitle_golden_harvest",true,false) != null,"packaged event JSON, all four original golden models and illustrated event archive validate")
-	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 5,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
+	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 6,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
 	game.progress.money = 100; game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts")
 	game.start_round(); game.session.launch_clock = 1000
 	for candidate in range(1,10000):
@@ -969,7 +969,7 @@ func run() -> void:
 	game.new_game()
 	check(game.progress.prestige.level("golden_jackpot") == 0 and game.events.catalog.golden_jackpot_bonus("golden_harvest",game.progress.prestige) == 0 and game.progress.settings.reduced_motion,"packaged New Game clears finish ownership and Golden gate while preserving preferences")
 	game.finish_round(); await process_frame
-	check(game.progress.harvest.varieties.size() == 5 and game.progress.equipment.knives.size() == 5,"packaged production collection contains five original normal varieties and five actual knives")
+	check(game.progress.harvest.varieties.size() == 6 and game.progress.equipment.knives.size() == 6,"packaged production collection contains six original normal varieties and six actual knives")
 	game.progress.money = 10000
 	for polish_id: String in ["better_prices","faster_throwing","unlock_cherry"]: game.progress.purchase(polish_id)
 	check(not game.progress.purchase("unlock_grape") and not "unlock_grape" in game.progress.discovered,"packaged Grape retains its actual frequency predecessor and cannot be bought early")
@@ -1051,6 +1051,54 @@ func run() -> void:
 	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
 	check(not game.progress.harvest.unlocked("campari",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"] and game.progress.owned_modifications.is_empty() and game.ui.list_views.is_empty(),"packaged confirmed prestige resets new normal ownership, preparation and obsolete collection views")
 	game.new_game(); check(game.ui.list_views.is_empty() and game.ui.root_views.is_empty() and game.progress.settings.reduced_motion,"packaged New Game clears both view caches while retaining preferences")
+	game.finish_round(); await process_frame; game.progress.money = 100000
+	for santoku_order: String in ["better_prices","faster_throwing","unlock_cherry","sharp_edge","unlock_roma","roma_quality","cherry_frequency","unlock_grape","grape_frequency","unlock_campari","campari_frequency","cherry_quality"]: game.progress.purchase(santoku_order)
+	check(not game.progress.purchase("unlock_cocktail") and not "unlock_cocktail" in game.progress.discovered,"packaged Cocktail retains both real cultivation predecessors")
+	game.progress.purchase("cherry_quality"); var santoku_cash: float = game.progress.money
+	check(game.progress.purchase("unlock_cocktail") and game.progress.money == santoku_cash-480,"packaged Cocktail unlock charges the actual 480-dollar order")
+	game.progress.purchase("cocktail_quality"); game.progress.purchase("extra_cuts")
+	check(game.progress.harvest.cut_value("cocktail",game.progress.levels) == 22.5 and game.progress.harvest.distribution(game.progress.levels,game.progress.strength()).has("cocktail"),"packaged new quality feeds actual automatic Cocktail eligibility")
+	santoku_cash = game.progress.money
+	check(game.progress.buy_knife("santoku") and game.progress.money == santoku_cash-300 and game.progress.equipped_knife == "rusty_butter" and game.progress.equip_knife("santoku") and game.progress.strength() == 2.5,"packaged Santoku uses paid ownership, separate equip and actual composed strength")
+	check(game.progress.equipped_combo_multiplier() == 1 and game.progress.reward(100,22.5) == 28.13 and game.progress.knife_special("santoku").contains("Dormant"),"packaged equipped Santoku grants no combo ability or benefit before actual cultivation")
+	check(load("res://assets/illustrations/catalog/cocktail.svg").get_width() > 0 and ResourceLoader.exists("res://assets/models/knives/santoku.glb"),"packaged original Cocktail botanical and fluted Santoku resources resolve")
+	game.start_round(); game.clear_field(); game.session.launch_clock = 1000; game.fragments.set_physics_process(false)
+	for santoku_attempt in range(300):
+		game.clear_field(); fruit = game.spawn_tomato()
+		if fruit.variety_id == "cocktail": break
+	fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	check(fruit.variety_id == "cocktail" and fruit.collision == "hull" and game.knife.edge.size() == 4,"packaged automatic Cocktail has its own hull and actual Santoku cutting edge")
+	game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade(); game.knife.track(Vector2(-3,0)); game.process_blade()
+	check(game.session.cuts == 2 and game.session.tomatoes_sliced == 1 and is_equal_approx(game.session.earnings,56.26) and game.session.bonus == 0,"packaged actual dormant root/recut pays ordinary 56.26 with one family and no free combo")
+	game.finish_round(); game.show_catalog(); game.purchase("better_prices"); game.ui.catalog("Combos"); game.purchase("combo_cash")
+	for santoku_frame in range(6): await process_frame
+	check(game.progress.equipped_combo_multiplier() == 1.5 and game.ui.content.find_child("CurrentCombo",true,false).text.contains("7.5%"),"packaged actually saved Combo Cash activates the composed bonus and honest catalog quote")
+	game.start_round(); game.clear_field(); game.session.launch_clock = 1000
+	for santoku_attempt in range(300):
+		game.clear_field(); fruit = game.spawn_tomato()
+		if fruit.variety_id == "cocktail": break
+	fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO; game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(is_equal_approx(game.session.earnings,33.75) and game.session.bonus == 0,"packaged actual first active Santoku cut preserves the base Cocktail payout")
+	game.knife.track(Vector2(-3,0)); game.process_blade(); game.process_blade()
+	check(game.session.cuts == 2 and game.session.tomatoes_sliced == 1 and is_equal_approx(game.session.earnings,70.03) and is_equal_approx(game.session.bonus,2.53),"packaged actual active recut pays only its earned combo contribution with no duplicate farming")
+	game.finish_round(); var santoku_saved := Progression.new()
+	check(game.store.load_into(santoku_saved) and santoku_saved.equipped_combo_multiplier() == 1.5 and is_equal_approx(santoku_saved.prestige.cycle_earnings,126.29),"packaged dormant/active earnings bank 126.29 and reload new paid ownership and ability")
+	game.show_equipment(); game.ui.equipment_shop("santoku")
+	for santoku_frame in range(6): await process_frame
+	check(game.ui.content.find_child("EquipmentSpecial",true,false).text.contains("Active") and game.ui.content.get_node("KnifeCollectionScroll").get_global_rect().encloses(game.ui.content.find_child("Product_santoku",true,false).get_global_rect()),"packaged sixth instrument and actual active special fit the native viewport")
+	game.ui.equipment_shop("rusty_butter"); await game.ui.focus_control(game.ui.content.find_child("Product_santoku",true,false))
+	check(game.ui.content.get_node("KnifeCollectionScroll").get_global_rect().encloses(game.ui.content.find_child("Product_santoku",true,false).get_global_rect()),"packaged early sixth-item focus survives first-layout restoration")
+	var santoku_store: SaveStore = game.store; var santoku_before: Dictionary = game.progress.snapshot()
+	var santoku_disk_before := FileAccess.get_file_as_string(santoku_store.path)
+	game.store = SaveStore.new("user://tests/missing-pack-santoku-"+game.progress.prestige.lineage+"/ledger.json"); game.equip_knife("rusty_butter"); game.buy_knife("utility"); game.buy_modification("honing_kit")
+	check(game.progress.snapshot() == santoku_before and game.knife.knife_id == "santoku" and game.progress.equipped_combo_multiplier() == 1.5,"packaged failed normal writes retain old currency, ownership, physical equipment and passive")
+	var santoku_loaded := santoku_store.load_into(santoku_saved)
+	check(santoku_loaded and FileAccess.get_file_as_string(santoku_store.path) == santoku_disk_before and santoku_saved.equipped_knife == "santoku" and is_equal_approx(santoku_saved.prestige.cycle_earnings,126.29),"packaged failed transaction leaves the previous good disk ledger byte-for-byte unchanged")
+	game.store = santoku_store; game.buy_modification("honing_kit"); game.apply_modification("honing_kit","santoku")
+	check(game.progress.strength() == 3 and game.progress.equipped_combo_multiplier() == 1.5 and game.progress.reward(2,22.5) == 36.28 and not is_instance_valid(game.ui.notice_label),"packaged successful saved preparation changes strength only and clears obsolete failure notice")
+	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(not game.progress.harvest.unlocked("cocktail",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"] and game.progress.equipped_combo_multiplier() == 1 and game.progress.level("combo_cash") == 0,"packaged confirmed prestige resets new normal variety, passive ownership and ordinary combo ability")
+	game.new_game(); check(game.ui.root_views.is_empty() and game.ui.list_views.is_empty() and game.progress.settings.reduced_motion,"packaged final New Game clears gates/views and retains preferences")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.27.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.28.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -27,6 +27,12 @@ with zipfile.ZipFile(args.archive) as z:
     assert not any(set(PurePosixPath(n).parts) & {'.git', '.godot', 'exports', 'artifacts', '__pycache__'} for n in names), 'Local/generated files in payload'
     assert z.testzip() is None, 'ZIP CRC failure'
     hashes = json.loads(z.read('SHA256SUMS.json'))
+    santoku_assets = {'Source/art/cocktail.blend', 'Source/art/santoku.blend',
+                     'Source/assets/models/tomatoes/cocktail.glb', 'Source/assets/models/knives/santoku.glb',
+                     'Source/assets/illustrations/catalog/cocktail.svg', 'Source/tools/build_cocktail_art.py',
+                     'Source/tools/build_santoku_assets.py', 'Source/tests/santoku_tests.gd', 'Source/tests/santoku_render.gd'}
+    santoku_assets |= {'Source/assets/models/fragments/cocktail_'+shape+'.glb' for shape in ['half','wedge','chunk']}
+    assert santoku_assets <= set(hashes), 'Missing original Cocktail/Santoku models, art, sources or tests'
     campari_assets = {'Source/art/campari.blend', 'Source/art/utility_knife.blend',
                      'Source/assets/models/tomatoes/campari.glb', 'Source/assets/models/knives/utility.glb',
                      'Source/assets/illustrations/catalog/campari.svg', 'Source/tools/build_campari_art.py',

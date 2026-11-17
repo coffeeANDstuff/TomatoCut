@@ -137,5 +137,37 @@
       ]
     ],
     "slice_sound": "steak_slice"
+  },
+  {
+    "id": "santoku",
+    "name": "Santoku",
+    "catalog_number": "006",
+    "description": "A tall fluted blade, an octagonal walnut grip, and three virtues which the accounts department has elected to call rhythm. Improves earned Combo Cash when actually cultivated and equipped.",
+    "price": 300,
+    "model": "res://assets/models/knives/santoku.glb",
+    "base_strength": 2,
+    "precision": "Broad fluted edge",
+    "special": "+50% earned Combo Cash bonus",
+    "combo_bonus_multiplier": 1.5,
+    "reach_label": "Broad rising edge",
+    "edge": [
+      [
+        -0.08,
+        -0.11
+      ],
+      [
+        0.66,
+        -0.11
+      ],
+      [
+        0.91,
+        -0.04
+      ],
+      [
+        1,
+        0.06
+      ]
+    ],
+    "slice_sound": "steak_slice"
   }
 ]

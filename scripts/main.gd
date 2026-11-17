@@ -291,15 +291,13 @@ func show_equipment() -> void:
 	audio.play("paper")
 
 func buy_knife(id: String) -> void:
-	if state != "equipment" or not progress.buy_knife(id): return
-	save_progress()
+	if state != "equipment" or not commit_normal(func(candidate: Progression): return candidate.buy_knife(id)): return
 	audio.play("purchase")
 	ui.equipment_shop(id)
 
 func equip_knife(id: String) -> void:
-	if state != "equipment" or not progress.equip_knife(id): return
+	if state != "equipment" or not commit_normal(func(candidate: Progression): return candidate.equip_knife(id)): return
 	sync_equipment()
-	save_progress()
 	audio.play("paper")
 	ui.equipment_shop(id)
 
@@ -309,30 +307,40 @@ func sync_equipment() -> void:
 	kitchen.equip_display(data)
 
 func buy_modification(id: String) -> void:
-	if state != "equipment" or not progress.buy_modification(id): return
-	save_progress()
+	if state != "equipment" or not commit_normal(func(candidate: Progression): return candidate.buy_modification(id)): return
 	audio.play("purchase")
 	ui.modification_shop(id)
 
 func apply_modification(id: String, knife_id: String) -> void:
-	if state != "equipment" or not progress.apply_modification(id,knife_id): return
-	save_progress()
+	if state != "equipment" or not commit_normal(func(candidate: Progression): return candidate.apply_modification(id,knife_id)): return
 	audio.play("paper")
 	ui.modification_shop(id,knife_id)
 
 func remove_modification(id: String) -> void:
-	if state != "equipment" or not progress.remove_modification(id): return
-	save_progress()
+	if state != "equipment" or not commit_normal(func(candidate: Progression): return candidate.remove_modification(id)): return
 	audio.play("paper")
 	ui.modification_shop(id)
 
 func purchase(id: String) -> void:
 	if state != "catalog":
 		return
-	if progress.purchase(id):
-		save_progress()
+	if commit_normal(func(candidate: Progression): return candidate.purchase(id)):
 		audio.play("purchase")
 		ui.catalog()
+
+func commit_normal(action: Callable) -> bool:
+	var candidate := Progression.new()
+	if not candidate.restore(progress.snapshot()) or not action.call(candidate): return false
+	if not store.write(candidate):
+		ui.show_notice(store.warning)
+		return false
+	# Retain the existing normal progression object's identity for all consumers.
+	# No effect or spending becomes active before the atomic save replacement.
+	if not progress.restore(candidate.snapshot()):
+		push_error("Committed normal transaction could not be adopted")
+		return false
+	ui.dismiss_notice()
+	return true
 
 func new_game() -> void:
 	var preferences := progress.settings.duplicate(true)
@@ -397,6 +405,7 @@ func commit_permanent(candidate: Progression) -> bool:
 	progress = candidate
 	ui.progress = progress
 	audio.progress = progress
+	ui.dismiss_notice()
 	sync_equipment()
 	return true
 
@@ -413,3 +422,5 @@ func apply_settings() -> void:
 func save_progress() -> void:
 	if not store.write(progress):
 		ui.show_notice(store.warning)
+	else:
+		ui.dismiss_notice()

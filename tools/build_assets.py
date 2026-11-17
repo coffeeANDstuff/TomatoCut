@@ -8,6 +8,7 @@ CHERRY = "--cherry" in sys.argv
 ROMA = "--roma" in sys.argv
 GRAPE = "--grape" in sys.argv
 CAMPARI = "--campari" in sys.argv
+COCKTAIL = "--cocktail" in sys.argv
 BATCH_NORMALS = "--batch-normals" in sys.argv
 GOLDEN = "--golden" in sys.argv
 GIANT = "--giant" in sys.argv
@@ -31,6 +32,8 @@ if GRAPE:
  AXES,LOBE,LOBES,TAPER = (.35,.64,.34),.018,5,.08
 if CAMPARI:
  AXES,LOBE,LOBES,TAPER = (.58,.51,.56),.027,6,-.06
+if COCKTAIL:
+ AXES,LOBE,LOBES,TAPER = (.49,.45,.52),.045,7,-.10
 random.seed(431)
 bpy.ops.object.select_all(action='SELECT'); bpy.ops.object.delete(use_global=False)
 
@@ -101,6 +104,15 @@ if CAMPARI:
  seed=mat('Campari small cream seeds',(.91,.73,.40),.38)
  green=mat('Campari reflexed sage crown',(.105,.205,.07),.66)
 
+if COCKTAIL:
+ skin=mat('Cocktail rose-red satin skin',(.39,.025,.027),.35)
+ blush=mat('Cocktail subtle sunward blush',(.48,.047,.048),.37)
+ flesh=mat('Cocktail sweet rose-coral flesh',(.49,.105,.095),.32)
+ core=mat('Cocktail three-way pale pith',(.74,.43,.26),.45)
+ chamber=mat('Cocktail three deep gel locules',(.21,.025,.025),.24)
+ seed=mat('Cocktail small ivory seeds',(.88,.71,.43),.38)
+ green=mat('Cocktail forked vine green',(.075,.18,.065),.65)
+
 def mesh(name,verts,faces,material):
  me=bpy.data.meshes.new(name); me.from_pydata(verts,[],faces); me.update(); ob=bpy.data.objects.new(name,me); bpy.context.collection.objects.link(ob); ob.data.materials.append(material)
  for f in me.polygons: f.use_smooth=True
@@ -126,7 +138,12 @@ def fruit_surface(half=False):
   for j in range(segs):
    a=i*segs+j; b=i*segs+(j+1)%segs
    fs.append((a,b,b+segs,a+segs))
- ob=mesh('Prepared right half' if half else ('Campari six-shouldered specimen' if CAMPARI else 'Grape oval specimen' if GRAPE else 'Jackpot ten-rib heart' if JACKPOT else RAINBOW+' archive specimen' if RAINBOW else 'Giant nine-rib specimen' if GIANT else 'Golden seven-lobe specimen' if GOLDEN else ('Roma' if ROMA else ('Cherry' if CHERRY else 'Standard Red'))),vs,[tuple(reversed(f)) for f in fs] if half else fs,skin)
+ ob=mesh('Prepared right half' if half else ('Cocktail seven-rib small specimen' if COCKTAIL else 'Campari six-shouldered specimen' if CAMPARI else 'Grape oval specimen' if GRAPE else 'Jackpot ten-rib heart' if JACKPOT else RAINBOW+' archive specimen' if RAINBOW else 'Giant nine-rib specimen' if GIANT else 'Golden seven-lobe specimen' if GOLDEN else ('Roma' if ROMA else ('Cherry' if CHERRY else 'Standard Red'))),vs,[tuple(reversed(f)) for f in fs] if half else fs,skin)
+ if COCKTAIL:
+  ob.data.materials.append(blush)
+  for face in ob.data.polygons:
+   center=sum((ob.data.vertices[i].co for i in face.vertices),Vector())/len(face.vertices)
+   if center.y > .07 and center.x > .04: face.material_index=1
  if RAINBOW=='sage' or JACKPOT:
   ob.data.materials.append(stripe)
   for face in ob.data.polygons:
@@ -137,14 +154,14 @@ def fruit_surface(half=False):
  return ob
 
 def crown():
- count=6 if CAMPARI else 10 if JACKPOT else profile['leaves'] if RAINBOW else 9 if GIANT else 7 if GOLDEN else (4 if CHERRY else (3 if ROMA else 5))
+ count=7 if COCKTAIL else 6 if CAMPARI else 10 if JACKPOT else profile['leaves'] if RAINBOW else 9 if GIANT else 7 if GOLDEN else (4 if CHERRY else (3 if ROMA else 5))
  for j in range(count):
   t=math.tau*j/count
   top=AXES[1]
-  length=.43 if CAMPARI else .24 if GRAPE else (.30 if RAINBOW=='violet' else .40) if RAINBOW else .52 if GIANT else .26 if ROMA else (.30 if CHERRY else .39)
+  length=.32 if COCKTAIL else .43 if CAMPARI else .24 if GRAPE else (.30 if RAINBOW=='violet' else .40) if RAINBOW else .52 if GIANT else .26 if ROMA else (.30 if CHERRY else .39)
   vs=[(0,top-.015,0),(.10*math.cos(t-.6),top+.01,.10*math.sin(t-.6)),(length*math.cos(t),top-.10,length*math.sin(t)),(.10*math.cos(t+.6),top+.01,.10*math.sin(t+.6))]
   ob=mesh('Calyx leaf',vs,[(0,1,2,3)],green); so=ob.modifiers.new('Leaf thickness','SOLIDIFY'); so.thickness=.018
-  if CAMPARI:
+  if CAMPARI or COCKTAIL:
    # Separate lifted tips make a broad reflexed star, rather than the starter crown.
    ob.data.vertices[2].co.y=top+.065
  if JACKPOT:
@@ -163,6 +180,11 @@ def crown():
   for i in range(12):
    t=i/11
    sphere("Thick curled giant stem",(.14*t*t,AXES[1]+.025+.28*t,.045*math.sin(t*math.pi)),(.055,.048,.055),green)
+ elif COCKTAIL:
+  for side in [-1,1]:
+   for i in range(8):
+    t=i/7
+    sphere('Forked Cocktail vine stem',(.15*side*t*t,AXES[1]+.04+.19*t,.02*t),(.028,.032,.028),green)
  elif CAMPARI:
   for i in range(10):
    t=i/9
@@ -188,13 +210,13 @@ def export(name):
   name=name.replace("assets/models/tomatoes/standard_red.glb","assets/models/events/giant.glb").replace("standard_","event_giant_")
  if GOLDEN:
   name=name.replace('assets/models/tomatoes/standard_red.glb','assets/models/events/golden.glb').replace('standard_','event_golden_')
- if CHERRY or ROMA or GRAPE or CAMPARI:
-  prefix='campari' if CAMPARI else 'grape' if GRAPE else 'roma' if ROMA else 'cherry'
+ if CHERRY or ROMA or GRAPE or CAMPARI or COCKTAIL:
+  prefix='cocktail' if COCKTAIL else 'campari' if CAMPARI else 'grape' if GRAPE else 'roma' if ROMA else 'cherry'
   name=name.replace('standard_red.glb',prefix+'.glb').replace('standard_',prefix+'_')
  bpy.context.view_layer.update()
  for ob in list(bpy.context.scene.objects):
   ob.matrix_world = Matrix.Rotation(math.pi / 2, 4, 'X') @ ob.matrix_world
- if GIANT or RAINBOW or JACKPOT or GRAPE or CAMPARI or BATCH_NORMALS:
+ if GIANT or RAINBOW or JACKPOT or GRAPE or CAMPARI or COCKTAIL or BATCH_NORMALS:
   # Batch the many seeds/septa by material. Preserve the actual geometry while
   # avoiding dozens of scene nodes in each cached giant fragment instance.
   for ob in list(bpy.context.scene.objects):
@@ -209,7 +231,7 @@ def export(name):
    for ob in objects: ob.select_set(True)
    bpy.context.view_layer.objects.active=objects[0]
    if len(objects)>1: bpy.ops.object.join()
-   bpy.context.object.name=('Campari ' if CAMPARI else 'Grape ' if GRAPE else 'Jackpot ' if JACKPOT else RAINBOW+' archive ' if RAINBOW else 'Giant ' if GIANT else 'Batched normal ')+ ' / '.join(materials)
+   bpy.context.object.name=('Cocktail ' if COCKTAIL else 'Campari ' if CAMPARI else 'Grape ' if GRAPE else 'Jackpot ' if JACKPOT else RAINBOW+' archive ' if RAINBOW else 'Giant ' if GIANT else 'Batched normal ')+ ' / '.join(materials)
   assert sum(len(ob.data.vertices) for ob in bpy.context.scene.objects if ob.type=='MESH') == count_before, 'Batching changed event geometry'
   assert len(bpy.context.scene.objects)<=8, 'Event material batching exceeded node budget'
  bpy.ops.object.select_all(action='SELECT')
@@ -221,26 +243,26 @@ fruit_surface(); crown(); export('assets/models/tomatoes/standard_red.glb')
 def prepared_half():
  fruit_surface(True)
  # The cap is a seed-filled flesh disk on the x=0 plane. The prepared half exposes it during tumble.
- vs=[(-.003,0,0)]+[(-.003,AXES[1]*math.cos(i*math.tau/48),AXES[2]*math.sin(i*math.tau/48)*(1-TAPER*math.cos(i*math.tau/48))*(1+LOBE*math.cos(LOBES*math.pi/2)*math.sin(i*math.tau/48)**2 if JACKPOT or CAMPARI else 1)) for i in range(48)]
+ vs=[(-.003,0,0)]+[(-.003,AXES[1]*math.cos(i*math.tau/48),AXES[2]*math.sin(i*math.tau/48)*(1-TAPER*math.cos(i*math.tau/48))*(1+LOBE*math.cos(LOBES*math.pi/2)*math.sin(i*math.tau/48)**2 if JACKPOT or CAMPARI or COCKTAIL else 1)) for i in range(48)]
  mesh('Cut flesh',vs,[(0,(i+1)%48+1,i+1) for i in range(48)],flesh)
  sphere('Pale central core',(-.014,0,0),(.012,.11,.10) if GRAPE else ((.015,.24,.12) if RAINBOW=='violet' else (.015,.15,.17)) if RAINBOW else (.018,.22,.22) if GIANT else (.015,.19,.19),core)
- count=4 if CAMPARI else 2 if GRAPE else 4 if JACKPOT else profile['chambers'] if RAINBOW else 9 if GIANT else 7 if GOLDEN else (2 if ROMA else (3 if CHERRY else 5))
+ count=3 if COCKTAIL else 4 if CAMPARI else 2 if GRAPE else 4 if JACKPOT else profile['chambers'] if RAINBOW else 9 if GIANT else 7 if GOLDEN else (2 if ROMA else (3 if CHERRY else 5))
  for j in range(count):
   t=math.tau*j/count
-  chamber_y=.32 if GRAPE else .40 if JACKPOT else AXES[1]*.59 if RAINBOW else .37 if GIANT else .40 if ROMA else .30
-  chamber_z=.18 if GRAPE else .32 if JACKPOT else AXES[2]*.58 if RAINBOW else .43 if GIANT else .22 if ROMA else .30
+  chamber_y=.26 if COCKTAIL else .32 if GRAPE else .40 if JACKPOT else AXES[1]*.59 if RAINBOW else .37 if GIANT else .40 if ROMA else .30
+  chamber_z=.28 if COCKTAIL else .18 if GRAPE else .32 if JACKPOT else AXES[2]*.58 if RAINBOW else .43 if GIANT else .22 if ROMA else .30
   y=chamber_y*math.cos(t); z=chamber_z*math.sin(t)
   ob=sphere('Seed chamber',(-.012,y,z),(.012,.14,.075) if GRAPE else (.013,.13,.09) if GIANT else (.013,.18,.09) if ROMA else (.013,.12,.085),chamber); ob.rotation_euler.x=t
   for k in range(4):
    a=t+(k-1.5)*.25
    ob=sphere('Seed',(-.029,chamber_y*math.cos(a),chamber_z*math.sin(a)),(.012,.033,.018),seed); ob.rotation_euler.x=a
 
- if GIANT or JACKPOT or CAMPARI:
-  for j in range(4 if JACKPOT or CAMPARI else 9):
-   t=math.tau*(j+.5)/(4 if JACKPOT or CAMPARI else 9)
-   radial=[(.13,-.045),(.43,-.018),(.43,.018),(.13,.045)] if CAMPARI else [(.21,-.045),(.58,-.018),(.58,.018),(.21,.045)]
+ if GIANT or JACKPOT or CAMPARI or COCKTAIL:
+  for j in range(3 if COCKTAIL else 4 if JACKPOT or CAMPARI else 9):
+   t=math.tau*(j+.5)/(3 if COCKTAIL else 4 if JACKPOT or CAMPARI else 9)
+   radial=[(.11,-.045),(.36,-.018),(.36,.018),(.11,.045)] if COCKTAIL else [(.13,-.045),(.43,-.018),(.43,.018),(.13,.045)] if CAMPARI else [(.21,-.045),(.58,-.018),(.58,.018),(.21,.045)]
    verts=[(-.016,r*.90*math.cos(t+a),r*math.sin(t+a)) for r,a in radial]
-   mesh('Campari four radial septa' if CAMPARI else 'Giant radial pith' if GIANT else 'Jackpot radial pith',verts,[(0,1,2,3)],core)
+   mesh('Cocktail three radial septa' if COCKTAIL else 'Campari four radial septa' if CAMPARI else 'Giant radial pith' if GIANT else 'Jackpot radial pith',verts,[(0,1,2,3)],core)
 
 def clip_fragment(normal):
  # Apply object transforms before clipping, keeping the pre-export Godot axes.
@@ -284,7 +306,7 @@ ob=sphere('Eighth seed chamber',(.174,.186,0),(.009,.09,.17),chamber); ob.rotati
 for z in [-.095,.095]:
  ob=sphere('Eighth seed',(.164,.196,z),(.012,.032,.018),seed); ob.rotation_euler.z=-math.pi/4
 export('assets/models/fragments/standard_chunk.glb')
-if not CHERRY and not ROMA and not GRAPE and not CAMPARI and not GOLDEN and not GIANT and not RAINBOW and not JACKPOT:
+if not CHERRY and not ROMA and not GRAPE and not CAMPARI and not COCKTAIL and not GOLDEN and not GIANT and not RAINBOW and not JACKPOT:
  # Blunt butter blade: actual prism, matching local edge endpoints used by KnifeController.
  outline=[(-.08,-.10),(.70,-.10),(.85,-.035),(.87,.035),(.79,.115),(.59,.15),(-.08,.12)]
  vs=[(x,y,z) for z in [-.025,.025] for x,y in outline]; n=len(outline)
@@ -297,8 +319,8 @@ if not CHERRY and not ROMA and not GRAPE and not CAMPARI and not GOLDEN and not 
  export('assets/models/knives/rusty_butter.glb')
 # Save all five integrated models together for source inspection.
 paths=['assets/models/tomatoes/standard_red.glb','assets/models/fragments/standard_half.glb','assets/models/fragments/standard_wedge.glb','assets/models/fragments/standard_chunk.glb','assets/models/knives/rusty_butter.glb']
-if CHERRY or ROMA or GRAPE or CAMPARI:
- prefix='campari' if CAMPARI else 'grape' if GRAPE else 'roma' if ROMA else 'cherry'
+if CHERRY or ROMA or GRAPE or CAMPARI or COCKTAIL:
+ prefix='cocktail' if COCKTAIL else 'campari' if CAMPARI else 'grape' if GRAPE else 'roma' if ROMA else 'cherry'
  paths=[path.replace('standard_red.glb',prefix+'.glb').replace('standard_',prefix+'_') for path in paths if '/knives/' not in path]
 if GOLDEN:
  paths=[path.replace('assets/models/tomatoes/standard_red.glb','assets/models/events/golden.glb').replace('standard_','event_golden_') for path in paths if '/knives/' not in path]
@@ -310,4 +332,4 @@ if JACKPOT:
  paths=[path.replace('assets/models/tomatoes/standard_red.glb','assets/models/events/jackpot.glb').replace('standard_','event_jackpot_') for path in paths if '/knives/' not in path]
 for path in paths:
  bpy.ops.import_scene.gltf(filepath=str(ROOT/path))
-bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/('art/campari.blend' if CAMPARI else 'art/grape.blend' if GRAPE else 'art/jackpot_harvest.blend' if JACKPOT else 'art/rainbow_'+RAINBOW+'.blend' if RAINBOW else 'art/giant_harvest.blend' if GIANT else 'art/golden_harvest.blend' if GOLDEN else ('art/roma.blend' if ROMA else ('art/cherry.blend' if CHERRY else 'art/vertical_slice.blend')))))
+bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/('art/cocktail.blend' if COCKTAIL else 'art/campari.blend' if CAMPARI else 'art/grape.blend' if GRAPE else 'art/jackpot_harvest.blend' if JACKPOT else 'art/rainbow_'+RAINBOW+'.blend' if RAINBOW else 'art/giant_harvest.blend' if GIANT else 'art/golden_harvest.blend' if GOLDEN else ('art/roma.blend' if ROMA else ('art/cherry.blend' if CHERRY else 'art/vertical_slice.blend')))))

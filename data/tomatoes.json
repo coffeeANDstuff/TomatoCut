@@ -193,5 +193,45 @@
     "frequency_upgrade": "campari_frequency",
     "quality_upgrade": "campari_quality",
     "dominance_upgrade": "campari_dominance"
+  },
+  {
+    "id": "cocktail",
+    "name": "Cocktail",
+    "catalog_number": "006",
+    "description": "Small, round-shouldered and irrepressibly lively. Seven fine ribs, a forked vine stem and three sweet seed chambers make an entrance at considerable speed.",
+    "tier": 4,
+    "base_value": 18,
+    "durability": 1.75,
+    "fragment_durability": 1,
+    "base_weight": 0.45,
+    "mass": 0.42,
+    "model_scale": 0.67,
+    "radius": 0.37,
+    "gravity": 7.4,
+    "launch_min": 9.7,
+    "launch_max": 10.4,
+    "spin": 2.2,
+    "spin_z": 2.6,
+    "proxy_axes": [
+      0.49,
+      0.45,
+      0.52
+    ],
+    "proxy_lobe": 0.045,
+    "proxy_lobe_count": 7,
+    "proxy_taper": -0.1,
+    "collision": "hull",
+    "flight_description": "small & lively \u00b7 quick spinning arcs",
+    "model": "res://assets/models/tomatoes/cocktail.glb",
+    "illustration": "res://assets/illustrations/catalog/cocktail.svg",
+    "fragments": {
+      "half": "res://assets/models/fragments/cocktail_half.glb",
+      "wedge": "res://assets/models/fragments/cocktail_wedge.glb",
+      "chunk": "res://assets/models/fragments/cocktail_chunk.glb"
+    },
+    "unlock_upgrade": "unlock_cocktail",
+    "frequency_upgrade": "cocktail_frequency",
+    "quality_upgrade": "cocktail_quality",
+    "dominance_upgrade": "cocktail_dominance"
   }
 ]

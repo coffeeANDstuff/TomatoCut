@@ -248,14 +248,16 @@ func equipment_shop(id: String = "") -> void:
 	place(preview,Vector2(330,373),Vector2(505,255))
 	place(label("PLATE %s  /  A STUDY IN CULINARY AMBITION" % data.catalog_number,11,false,MUTED),Vector2(340,635),Vector2(505,25))
 	var stats := VBoxContainer.new()
-	stats.add_theme_constant_override("separation",16)
+	var has_combo_bonus := progress.equipment.combo_multiplier(id) > 1
+	stats.add_theme_constant_override("separation",10 if has_combo_bonus else 16)
 	place(stats,Vector2(870,375),Vector2(340,250))
 	stats.add_child(label("THE PARTICULARS",13,false,Color("9b7740")))
 	var sharpness := label("Sharpness  ·  %.2f" % progress.knife_strength(id),22,true); sharpness.name = "EquipmentSharpness"; stats.add_child(sharpness)
 	var reach := progress.equipment.edge_length(id)/progress.equipment.edge_length(EquipmentCatalog.STARTER)
 	stats.add_child(label("Reach  ·  %.0f%% of starter" % (reach*100),20,true))
 	stats.add_child(label("Precision  ·  "+data.precision,20,true))
-	stats.add_child(label("Special  ·  "+data.special,20,true))
+	var special := label("Special  ·  "+progress.knife_special(id),18 if has_combo_bonus else 20,true)
+	special.name = "EquipmentSpecial"; special.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; stats.add_child(special)
 	var preparation := progress.equipment.modification(progress.knife_modification(id))
 	stats.add_child(label((preparation.name+" applied." if not preparation.is_empty() else "No preparation applied.")+"\nCultivated and permanent sharpness apply.",15,false,MUTED))
 	var owned := id in progress.owned_knives
@@ -287,6 +289,8 @@ func restore_list(list: VBoxContainer, selected: Control = null) -> void:
 	scroll.scroll_vertical = int(list_views.get(str(scroll.get_meta("list_view")),0))
 	await get_tree().process_frame
 	if not is_instance_valid(scroll) or not scroll.is_inside_tree(): return
+	var focused := get_viewport().gui_get_focus_owner()
+	if is_instance_valid(focused) and list.is_ancestor_of(focused): selected = focused
 	if is_instance_valid(selected) and not scroll.get_global_rect().encloses(selected.get_global_rect()): scroll.ensure_control_visible(selected)
 	scroll.set_meta("list_ready",true)
 
@@ -499,6 +503,12 @@ func upgrade_entry(d: Dictionary, count: int, list: VBoxContainer, category: Str
 			var next_level := mini(int(d.max_level),progress.level(d.id)+1)
 			var current := label("Cut reward: %s → %s · premium ×%.2f" % [Progression.cash(progress.reward(1,progress.harvest.cut_value(data.id,progress.levels))),Progression.cash(progress.reward(1,progress.harvest.cut_value(data.id,progress.levels,next_level))),progress.harvest.premium_multiplier(data.id)],16,true)
 			current.name = "CurrentHarvest_"+d.id; entry.add_child(current)
+	if d.id == "combo_cash":
+		var next_level := mini(int(d.max_level),progress.level(d.id)+1)
+		var potential := progress.equipment.combo_multiplier(progress.equipped_knife) if progress.equipped_knife in progress.owned_knives else 1.0
+		var per_step := progress.effect_value(d.id,"bonus_per_step")*100*potential
+		var current := label("Equipped bonus per step: %.1f%% → %.1f%% · maximum %d steps" % [per_step*progress.level(d.id),per_step*next_level,int(progress.effect_value(d.id,"max_steps"))],16,true)
+		current.name = "CurrentCombo"; current.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; entry.add_child(current)
 	if d.id in ["sharp_edge","extra_cuts"]:
 		var next_level := mini(int(d.max_level),progress.level(d.id)+1)
 		var comparison := "Equipped sharpness: %.2f → %.2f" % [progress.strength(),progress.strength(next_level)] if d.id == "sharp_edge" else "Rewarded cuts per family: %d → %d · maximum %d" % [progress.max_cuts(),progress.max_cuts(next_level),CutFamily.MAX_CUTS]
@@ -611,7 +621,14 @@ func focus_control(control: Control) -> void:
 	var parent: Node = control.get_parent()
 	while parent != null:
 		if parent is RootMap: await parent.focus_control(control); return
-		if parent is ScrollContainer: parent.ensure_control_visible(control); return
+		if parent is ScrollContainer:
+			while is_instance_valid(parent) and parent.is_inside_tree() and parent.has_meta("list_view") and not parent.get_meta("list_ready",false): await get_tree().process_frame
+			# Container ranges finish sorting after process_frame callbacks. Frame
+			# only after that restoration pass, as RootMap's focus path also does.
+			await get_tree().process_frame
+			if is_instance_valid(parent) and parent.is_inside_tree() and is_instance_valid(control): parent.ensure_control_visible(control)
+			await get_tree().process_frame
+			return
 		parent = parent.get_parent()
 
 func root_tooltip(d: Dictionary, permanent: bool = false) -> String:
@@ -621,7 +638,10 @@ func root_tooltip(d: Dictionary, permanent: bool = false) -> String:
 	for id: String in d.requires:
 		var prerequisite: Dictionary = progress.prestige.definition(id) if permanent else progress.definition(id)
 		requirements.append("%s %d" % [prerequisite.get("name",id),int(d.requires[id])])
-	return "%s\nLevel %d / %d · %s\n%s\n%s" % [d.name,level,int(d.max_level),"Fully cultivated" if level >= int(d.max_level) else cost,d.effect,"Requires: "+", ".join(requirements) if not requirements.is_empty() else "Starting root · no prerequisites"]
+	var effect: String = d.effect
+	if not permanent and d.id == "combo_cash" and progress.equipment.combo_multiplier(progress.equipped_knife) > 1:
+		effect += "\nEquipped knife: ×%.2f of earned combo bonus; requires Combo Cash." % progress.equipment.combo_multiplier(progress.equipped_knife)
+	return "%s\nLevel %d / %d · %s\n%s\n%s" % [d.name,level,int(d.max_level),"Fully cultivated" if level >= int(d.max_level) else cost,effect,"Requires: "+", ".join(requirements) if not requirements.is_empty() else "Starting root · no prerequisites"]
 
 func watch_discovery(id: String, title: Control, vine: CatalogVine, artwork: Control) -> void:
 	var read: Array = progress.prestige.viewed if screen == "archive" else progress.viewed
@@ -732,6 +752,10 @@ func show_notice(text: String) -> void:
 	notice_label.offset_left = 40
 	notice_label.offset_top = -35
 	notice_label.offset_bottom = -10
+
+func dismiss_notice() -> void:
+	if is_instance_valid(notice_label): notice_label.queue_free()
+	notice_label = null
 
 func popup_cash(text: String, screen_position: Vector2) -> void:
 	if not progress.settings.popups:
