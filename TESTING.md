@@ -31,6 +31,16 @@ DISPLAY=:98 ./tools/cloud.sh ./tools/check_native.sh # 28 sequential native flow
 
 **Static/content/package preflight:** Python compilation, all tool shell syntax, five strict release-guard contracts, actionlint and whitespace checks pass. Semantic comparison against baseline confirms all **5 old tomato definitions, 5 old knives and 26 old normal orders** remain unchanged as decoded data; prior authored assets are unchanged. Full ZIP preflight passes safe paths/unique entries/CRC/complete payload hashes/required original sources/portable modes/version/executable/source identity (**581 payload files/572 source files**). Its dirty=true metadata honestly identifies the precommit checkout; final clean/public delivery is recorded separately.
 
+### Verified clean/public delivery — v0.28.0
+
+Clean source **b4faceb50786b143f47fb1904f755cc93effb6af** produces dirty=false metadata. Full ZIP integrity/required original assets/portable modes/version-build-source identity pass (**581 payload files/572 source files**). An independent extraction imports without checkout caches and passes **1,548/1,548**, zero guard errors or retries. Main and annotated **v0.28.0** are pushed.
+
+**[GitHub release run 44007689031](https://github.com/coffeeANDstuff/TomatoCut/actions/runs/44007689031)** succeeds in **2m 26s**: verified official engine/templates, five guard contracts, source regressions, both exports/embedded packs, Linux boot, complete ZIP and guarded fresh-source checks. **[v0.28.0](https://github.com/coffeeANDstuff/TomatoCut/releases/tag/v0.28.0)** is Latest through the public redirect. Public README and release prominently link Full; Full/Windows/Source ZIPs and external checksums are available.
+
+Downloaded the actual public Full ZIP: its external SHA-256, internal integrity/manifest/required original content/source-build identity pass. All **572 source files** match the tested clean archive byte-for-byte; metadata identifies the immutable clean milestone. Its contained Windows pack passes **356/356** from /tmp through the strict guard, with no errors or retry. This does not execute Windows natively.
+
+Canonical chat ZIP is exactly that public asset: **54,745,750 bytes**, SHA-256 **`882f2df9ed3a0ab5f17c24c2471101ea622772a718224978d1f8c303f93121a7`**. Local clean Full stays separately in `exports/local-validation/`. Actual public sums are `exports/GITHUB-SHA256SUMS-v0.28.0.txt`; the canonical public Full plus local Windows/Source hashes are separately recorded in `exports/SHA256SUMS-v0.28.0.txt` and current local SHA256SUMS.txt. Public/local executable bytes differ; lists remain distinct. This later documentation-only main commit records delivery without changing the immutable milestone tag or its packaged source. Exports remain outside source Git.
+
 ## Campari, Utility and growing collection navigation — v0.27.0 (2026-11-16, America/Los_Angeles)
 
 Clean main **5200ab8**, matching remote, baseline **1,464/1,464**. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64, retained nonroot Xorg :98, Mesa llvmpipe Compatibility/Dummy audio. Test saves isolate under user://tests/; no production save/configuration publication.
