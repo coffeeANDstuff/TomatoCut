@@ -30,6 +30,16 @@ DISPLAY=:98 ./tools/cloud.sh ./tools/check_native.sh
 
 **Rapid-navigation correction:** A real twelve-rebuild regression reproduced the new collection view being overwritten by an unfinished zero-scroll layout. Regular lists now save only after settled restoration/framing, matching RootMap’s existing readiness guard. Corrected source passes **1,496/1,496**; affected native flows, latest exports/packs and Linux boot pass as recorded above. Python compilation, all shell syntax, five release-gate contracts, actionlint 1.7.7 and whitespace checks pass. Earlier reproducible failure is retained in /tmp/tc-v027-rapid-repro.log.
 
+### Final clean/public delivery — v0.27.0
+
+Clean source **423dda7b415207cf7271eb8a3b96786bd9cba996** produces dirty=false metadata. Complete ZIP integrity/required original assets/portable modes/version-build-source identity pass (**561 payload files/552 source files**); independent clean extraction imports and passes **1,496/1,496** through the strict guard, without local errors or retry. Main and annotated **v0.27.0** are pushed.
+
+**[GitHub release run 43991982818](https://github.com/coffeeANDstuff/TomatoCut/actions/runs/43991982818)** succeeds in **2m 12s**: official engine/templates verified, five guard contracts, source regressions, both exports/embedded packs, Linux boot, complete ZIP and guarded fresh-source checks. **[v0.27.0](https://github.com/coffeeANDstuff/TomatoCut/releases/tag/v0.27.0)** is Latest through the public redirect; public README/release prominently link Full, with Full/Windows/Source ZIPs and external checksums available.
+
+Downloaded the actual public Full ZIP. External SHA-256, internal integrity/manifest/original content/source-build identity pass; all **552 source files** match the tested clean archive byte-for-byte and metadata identifies the immutable clean milestone. Its contained Windows pack passes **337/337** from /tmp through the strict guard, no errors/retry. This does not execute Windows natively.
+
+Canonical chat ZIP is exactly the public asset: **53,315,507 bytes**, SHA-256 **`9e84d39dfb61be74bbf703397b0d106fb069702d9911febfb21532857e93c05f`**. Local clean Full remains separately under `exports/local-validation/`; actual public sums are `exports/GITHUB-SHA256SUMS-v0.27.0.txt`. Canonical public Full plus local Windows/Source hashes are separately recorded in `exports/SHA256SUMS-v0.27.0.txt` (also current local SHA256SUMS.txt). Public/local executable bytes can differ; checksum lists remain distinct. This later documentation-only main commit records delivery and clarifies future combo accounting without changing immutable release/source tags. Exports remain outside source Git.
+
 ## Organic roots, Grape/Paring and performance — v0.26.0 (2026-11-16, UTC)
 
 Existing clean main **0dc308d** passed **1,435/1,435** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64, retained nonroot Xorg `:98`, Mesa llvmpipe OpenGL/Dummy audio. The resumed environment needed Xorg restarted; no cloud draft was published. Test saves isolate under user://tests/.
