@@ -2,6 +2,34 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Campari, Utility and growing collection navigation — v0.27.0 (2026-11-16, America/Los_Angeles)
+
+Clean main **5200ab8**, matching remote, baseline **1,464/1,464**. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64, retained nonroot Xorg :98, Mesa llvmpipe Compatibility/Dummy audio. Test saves isolate under user://tests/; no production save/configuration publication.
+
+**Source: 1,496/1,496, 32 new, zero failures.** Actual two-predecessor reveal without free spawning, exact 320/180-dollar purchases, real quality/frequency/capped dominance and normalized automatic mix, separate Utility buy/equip/edge, compatible legacy/new snapshots and atomic out-of-cap rejection. Five original new model resources fit the existing eight-node material budget and editable sources remain. Actual starter + paid Sharp Edge first damages Campari without reward, second splits; actual Utility + cultivation splits once for **$18.75**. Real shared-budget recuts total **$37.50/one unique family**, and same-sample/exhausted pieces cannot farm. Actual tip reaches the hull where an identical starter sweep misses. Disk banking/reload, paid preparation, bounded fifth product/owned target/read-only harvest summary, actual root prerequisites/nonoverlap, twelve rapid product rebuilds with released preview/stable node count pass. Actual separately purchased Golden event captures Campari quality once and pays **$937.50/two cuts/one Golden** with price/permanent wealth once. Confirmed prestige/New Game retain/reset the correct layers. Existing 240-case exact collision oracle now covers eleven identities and all five real blades.
+
+**New native: 22/22, zero errors/failures.** Actual paid UI gates/orders, five-variety reference, real mouse wheel exposing the fifth instrument, separate preview/buy/equip, list retention, all five real owned knives, separate kit buy/apply, move to fifth target and back without changing equipment/duplicating strength. Native automatic Campari flight, real Utility sweep, twelve actual fragment steps expose four-locule interiors; root/recut **$18.75/$37.50**, one unique family, fixed camera, bank **$56.25** and disk reload. Confirmed prestige, real seed order, Reduced Motion and New Game/preferences pass. Captures **208–216** inspected at 16:10/16:9. Input poses freeze physics to isolate collisions; actual flight/fragment steps separately exercise movement. Confirmation uses actual preview followed by production callback, not OS-dialog automation. All **26 earlier native flows / 476 assertions** pass, zero errors/failures/leaks. Combined with the new **22**, total is **498 across 27 flows**. After the rapid-view fix, affected Equipment (16), Modifications (18) and final Campari (22) flows pass again. Four real Tab presses move focus through the native product list and expose the fifth item. Final Windows/Linux packs remain **337/337**; Linux boots.
+
+**Exports: 337/337 per Windows/Linux pack, 17 new, zero failures/errors**, sequentially from /tmp through the strict guard. Actual new data/assets, paid gates/prices, automatic spawn/hull/knife edge, quality root/recut/anti-farming/disk, two root predecessors, hidden successors, bounded native list/automatic summary/preparation, actual prestige/New Game/preferences pass. Linux executable boots headlessly. Host-engine pack checks do not execute Windows natively.
+
+```sh
+./tools/cloud.sh ./tools/ci_godot.sh --headless --path . --editor --import --quit
+./tools/cloud.sh ./tools/ci_godot.sh --headless --path . --script tests/run_tests.gd
+blender --background --python tools/build_assets.py -- --campari
+blender --background --python tools/build_utility_assets.py
+python3 tools/build_campari_art.py
+DISPLAY=:98 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/campari_render.gd
+# All native suites on a working display; logs under artifacts/native:
+DISPLAY=:98 ./tools/cloud.sh ./tools/check_native.sh
+# Exports, then sequential external scripts from /tmp:
+./tools/cloud.sh ./tools/ci_godot.sh --headless --path . --export-release 'Windows Desktop'
+./tools/cloud.sh ./tools/ci_godot.sh --headless --path . --export-release 'Linux Test'
+```
+
+**Fixture correction:** Initial normal-save test assumed orphaned prerequisite graphs reject; normal legacy restore has never promised that and compatible old ledgers must remain loadable. Current purchase gates remain enforced. Replaced that unsupported assumption with actual out-of-cap corruption/atomic active-state validation. No production restore guard, current purchase rule or price was weakened. First integration kept all old 1,464 checks passing; corrected full source is green. Earlier failing log /tmp/tc-v027-campari-tests.log is retained. Root entries, fixed physics timing/lifetimes/capacity and previous performance fixes are preserved. No new FPS/human timing/ROI or long-soak claim; new prices/art remain provisional until human/hardware review.
+
+**Rapid-navigation correction:** A real twelve-rebuild regression reproduced the new collection view being overwritten by an unfinished zero-scroll layout. Regular lists now save only after settled restoration/framing, matching RootMap’s existing readiness guard. Corrected source passes **1,496/1,496**; affected native flows, latest exports/packs and Linux boot pass as recorded above. Python compilation, all shell syntax, five release-gate contracts, actionlint 1.7.7 and whitespace checks pass. Earlier reproducible failure is retained in /tmp/tc-v027-rapid-repro.log.
+
 ## Organic roots, Grape/Paring and performance — v0.26.0 (2026-11-16, UTC)
 
 Existing clean main **0dc308d** passed **1,435/1,435** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64, retained nonroot Xorg `:98`, Mesa llvmpipe OpenGL/Dummy audio. The resumed environment needed Xorg restarted; no cloud draft was published. Test saves isolate under user://tests/.

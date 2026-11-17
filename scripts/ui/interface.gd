@@ -49,6 +49,7 @@ var catalog_entries: Dictionary = {}
 var category_badges: Dictionary = {}
 const VIEW_DWELL := 0.25
 var root_views: Dictionary = {}
+var list_views: Dictionary = {}
 
 func _ready() -> void:
 	root = Control.new()
@@ -93,6 +94,7 @@ func clear(next: String) -> void:
 	if is_instance_valid(content):
 		for scroll: Node in content.find_children("*","ScrollContainer",true,false):
 			if scroll is RootMap and scroll.ready_for_read: root_views[scroll.view_key] = scroll.view_state()
+			elif scroll.has_meta("list_view") and scroll.get_meta("list_ready",false): list_views[str(scroll.get_meta("list_view"))] = scroll.scroll_vertical
 	if is_instance_valid(prestige_confirmation): prestige_confirmation.hide()
 	if not pending_prestige.is_empty(): prestige_canceled.emit()
 	pending_prestige = ""
@@ -224,18 +226,18 @@ func equipment_shop(id: String = "") -> void:
 	header("The equipment catalog","CULINARY INSTRUMENTS  /  SELECTED WITH UNREASONABLE CARE")
 	place(label("THE KNIFE COLLECTION",13,false,MUTED),Vector2(48,208),Vector2(245,24))
 	equipment_categories()
-	var products := VBoxContainer.new()
-	products.add_theme_constant_override("separation",12)
-	place(products,Vector2(48,310),Vector2(245,320))
+	var products := catalog_list("KnifeCollection",Vector2(48,310),Vector2(260,375))
+	var selected: Button
 	for item: Dictionary in progress.equipment.knives:
 		var product_id: String = item.id
 		var select := button(item.name,func(): equipment_shop(product_id))
 		select.name = "Product_"+item.id
 		select.custom_minimum_size.x = 245
-		if item.id == id: select.theme_type_variation = "PrintSelected"
+		if item.id == id: select.theme_type_variation = "PrintSelected"; selected = select
 		products.add_child(select)
 		var status := "Equipped" if item.id == progress.equipped_knife else ("Owned" if item.id in progress.owned_knives else Progression.cash(item.price))
 		products.add_child(label("No. %s  ·  %s" % [item.catalog_number,status],15,false,MUTED))
+	restore_list(products,selected)
 	place(label("CATALOG No. "+data.catalog_number,13,false,Color("9b7740")),Vector2(330,208),Vector2(820,24))
 	place(label(data.name,38,true),Vector2(330,238),Vector2(880,52))
 	var description := label(data.description,18,true,MUTED)
@@ -269,6 +271,24 @@ func equipment_shop(id: String = "") -> void:
 	prepare.disabled = not owned
 	place(prepare,Vector2(870,665),Vector2(340,44))
 	place(button("Back to the cutting board",func(): play_requested.emit(),true),Vector2(330,724),Vector2(370,44))
+
+func catalog_list(key: String, at: Vector2, bounds: Vector2) -> VBoxContainer:
+	var scroll := ScrollContainer.new(); scroll.name = key+"Scroll"
+	scroll.set_meta("list_view",key); scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED; scroll.follow_focus = true
+	place(scroll,at,bounds)
+	var list := VBoxContainer.new(); list.name = key+"Items"
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL; list.add_theme_constant_override("separation",12); scroll.add_child(list)
+	return list
+
+func restore_list(list: VBoxContainer, selected: Control = null) -> void:
+	var scroll := list.get_parent() as ScrollContainer
+	await get_tree().process_frame
+	if not is_instance_valid(scroll) or not scroll.is_inside_tree(): return
+	scroll.scroll_vertical = int(list_views.get(str(scroll.get_meta("list_view")),0))
+	await get_tree().process_frame
+	if not is_instance_valid(scroll) or not scroll.is_inside_tree(): return
+	if is_instance_valid(selected) and not scroll.get_global_rect().encloses(selected.get_global_rect()): scroll.ensure_control_visible(selected)
+	scroll.set_meta("list_ready",true)
 
 func equipment_categories(active: String = "knife") -> void:
 	var knives := icon("knife","Knives",func(): equipment_shop())
@@ -408,7 +428,9 @@ func catalog(category: String = selected_category) -> void:
 	summary += "\nCalculated automatically.\nCultivation shapes the mix."
 	var summary_label := label(summary,16,true,MUTED)
 	summary_label.name = "HarvestSummary"
-	place(summary_label,Vector2(48,615 if abilities_revealed else 605),Vector2(240,175))
+	summary_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var summary_list := catalog_list("HarvestMix",Vector2(48,615 if abilities_revealed else 605),Vector2(250,175))
+	summary_list.add_child(summary_label); restore_list(summary_list)
 	var scroll := RootMap.new()
 	scroll.name = "CatalogScroll"
 	scroll.view_key = "catalog/"+category; scroll.reduced_motion = progress.settings.reduced_motion

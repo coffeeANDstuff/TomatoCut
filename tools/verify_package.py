@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.26.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.27.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -27,6 +27,12 @@ with zipfile.ZipFile(args.archive) as z:
     assert not any(set(PurePosixPath(n).parts) & {'.git', '.godot', 'exports', 'artifacts', '__pycache__'} for n in names), 'Local/generated files in payload'
     assert z.testzip() is None, 'ZIP CRC failure'
     hashes = json.loads(z.read('SHA256SUMS.json'))
+    campari_assets = {'Source/art/campari.blend', 'Source/art/utility_knife.blend',
+                     'Source/assets/models/tomatoes/campari.glb', 'Source/assets/models/knives/utility.glb',
+                     'Source/assets/illustrations/catalog/campari.svg', 'Source/tools/build_campari_art.py',
+                     'Source/tools/build_utility_assets.py', 'Source/tests/campari_tests.gd', 'Source/tests/campari_render.gd'}
+    campari_assets |= {'Source/assets/models/fragments/campari_'+shape+'.glb' for shape in ['half','wedge','chunk']}
+    assert campari_assets <= set(hashes), 'Missing original Campari/Utility content, sources or integration tests'
     polish_assets = {'Source/PRODUCTION_POLISH.md', 'Source/PERFORMANCE_REPORT.md',
                      'Source/art/grape.blend', 'Source/art/paring_knife.blend',
                      'Source/assets/models/tomatoes/grape.glb', 'Source/assets/models/knives/paring.glb',

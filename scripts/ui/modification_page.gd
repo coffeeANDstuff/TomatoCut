@@ -11,27 +11,27 @@ static func build(ui, id: String, knife: String) -> void:
 	ui.header("The equipment catalog","THE PREPARATION DEPARTMENT  /  SMALL TOOLS, LARGE EXPECTATIONS")
 	ui.place(ui.label("KITS & PREPARATION",13,false,ui.MUTED),Vector2(48,208),Vector2(245,24))
 	ui.equipment_categories("stone")
-	var products := VBoxContainer.new()
-	products.add_theme_constant_override("separation",12)
-	ui.place(products,Vector2(48,310),Vector2(245,115))
+	var products: VBoxContainer = ui.catalog_list("PreparationKits",Vector2(48,310),Vector2(260,115))
+	var selected_product: Button
 	for item: Dictionary in p.equipment.modifications:
 		var product_id: String = item.id
 		var product: Button = ui.button(item.name,func(): ui.modification_shop(product_id,knife))
 		product.name = "ModProduct_"+product_id
 		product.custom_minimum_size.x = 245
-		if product_id == id: product.theme_type_variation = "PrintSelected"
+		if product_id == id: product.theme_type_variation = "PrintSelected"; selected_product = product
 		products.add_child(product)
 		products.add_child(ui.label("No. %s  ·  %s" % [item.catalog_number,"Owned" if product_id in p.owned_modifications else Progression.cash(item.price)],15,false,ui.MUTED))
+	ui.restore_list(products,selected_product)
 	ui.place(ui.label("PREPARE AN OWNED KNIFE",13,false,ui.MUTED),Vector2(48,445),Vector2(245,26))
-	var targets := VBoxContainer.new()
-	targets.add_theme_constant_override("separation",12)
-	ui.place(targets,Vector2(48,484),Vector2(245,140))
+	var targets: VBoxContainer = ui.catalog_list("PreparationTargets",Vector2(48,484),Vector2(260,201))
+	var selected_target: Button
 	for owned: String in p.owned_knives:
 		var target_id: String = owned
 		var target: Button = ui.button(p.equipment.definition(owned).name,func(): ui.modification_shop(id,target_id))
 		target.name = "Target_"+owned
-		if owned == knife: target.theme_type_variation = "PrintSelected"
+		if owned == knife: target.theme_type_variation = "PrintSelected"; selected_target = target
 		targets.add_child(target)
+	ui.restore_list(targets,selected_target)
 	ui.place(ui.label("CATALOG No. "+data.catalog_number,13,false,Color("9b7740")),Vector2(330,208),Vector2(820,24))
 	ui.place(ui.label(data.name,38,true),Vector2(330,238),Vector2(880,52))
 	var description: Label = ui.label(data.description,18,true,ui.MUTED)

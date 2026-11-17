@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Organic Roots and Grape milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Campari and Utility milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -65,6 +65,12 @@ Dotted ink focus supports keyboard controls; checkmark slips save preferences.
 Hover navigation icons for one second to see their labels.
 Move the mouse through airborne tomatoes; no click is needed.
 Ten-second starting rounds; cultivation and progress save automatically.
+Campari reveals after Roma Quality 1 + Grape Frequency 1. Its $320 unlock
+adds a steady medium specimen; its own quality/frequency/dominance orders
+shape the automatic harvest. The $180 Utility Knife has a longer rising edge
+and 1.75 base strength. Buy then equip separately; preparation remains separate.
+The growing knife collection, preparation targets and read-only harvest mix
+now scroll inside bounded viewports with native keyboard focus and retention.
 Drag blank catalog/archive paper to pan the organic roots; wheel to zoom.
 Root recenters the seed; Fit opens the widest readable view. Hover an order
 illustration for one second for its full costs, effects and requirements.
@@ -262,7 +268,7 @@ Source history: https://github.com/coffeeANDstuff/TomatoCut
 Milestone tag: v{VERSION}
 
 STATUS
-Four of 25 normal varieties and four of 25 knives are integrated.
+Five of 25 normal varieties and five of 25 knives are integrated.
 This is a development milestone, not the final game. Windows-native,
 Forward+ hardware, audio listening and target-PC 60 FPS remain unverified.
 '''

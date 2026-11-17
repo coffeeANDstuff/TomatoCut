@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.26.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.27.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -180,7 +180,7 @@ func run() -> void:
 	for id: String in ["permanent_slice_value","starting_cash","golden_harvest","golden_frequency","golden_value"]: game.purchase_permanent(id)
 	game.ui.archive("Special Events")
 	check(game.events.catalog.validate(game.progress.prestige).is_empty() and game.ui.content.find_child("PrestigeTitle_golden_harvest",true,false) != null,"packaged event JSON, all four original golden models and illustrated event archive validate")
-	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 4,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
+	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 5,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
 	game.progress.money = 100; game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts")
 	game.start_round(); game.session.launch_clock = 1000
 	for candidate in range(1,10000):
@@ -969,7 +969,7 @@ func run() -> void:
 	game.new_game()
 	check(game.progress.prestige.level("golden_jackpot") == 0 and game.events.catalog.golden_jackpot_bonus("golden_harvest",game.progress.prestige) == 0 and game.progress.settings.reduced_motion,"packaged New Game clears finish ownership and Golden gate while preserving preferences")
 	game.finish_round(); await process_frame
-	check(game.progress.harvest.varieties.size() == 4 and game.progress.equipment.knives.size() == 4,"packaged production collection contains four original normal varieties and four actual knives")
+	check(game.progress.harvest.varieties.size() == 5 and game.progress.equipment.knives.size() == 5,"packaged production collection contains five original normal varieties and five actual knives")
 	game.progress.money = 10000
 	for polish_id: String in ["better_prices","faster_throwing","unlock_cherry"]: game.progress.purchase(polish_id)
 	check(not game.progress.purchase("unlock_grape") and not "unlock_grape" in game.progress.discovered,"packaged Grape retains its actual frequency predecessor and cannot be bought early")
@@ -1012,6 +1012,45 @@ func run() -> void:
 	for polish_frame in range(6): await process_frame
 	check(game.ui.content.get_node("ArchiveScroll") is RootMap and not game.progress.harvest.unlocked("grape",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"],"packaged confirmed prestige retains the organic archive while resetting ordinary Grape and Paring")
 	game.new_game(); check(game.ui.root_views.is_empty() and game.progress.settings.reduced_motion,"packaged New Game clears obsolete root views and retains accessibility preferences")
+	game.finish_round(); await process_frame; game.progress.money = 100000
+	for campari_order: String in ["better_prices","faster_throwing","unlock_cherry","sharp_edge","unlock_roma","roma_quality","cherry_frequency","unlock_grape"]: game.progress.purchase(campari_order)
+	check(not game.progress.purchase("unlock_campari") and not "unlock_campari" in game.progress.discovered,"packaged Campari retains its real two-branch prerequisite without free ownership")
+	game.progress.purchase("grape_frequency"); var campari_cash: float = game.progress.money
+	check(game.progress.purchase("unlock_campari") and game.progress.money == campari_cash-320,"packaged fifth specimen charges its actual 320-dollar unlock")
+	game.progress.purchase("campari_quality"); game.progress.purchase("campari_frequency")
+	check(game.progress.harvest.cut_value("campari",game.progress.levels) == 15 and game.progress.harvest.distribution(game.progress.levels,game.progress.strength()).has("campari"),"packaged Campari cultivation feeds actual quality and automatic harvest")
+	check(game.progress.buy_knife("utility") and game.progress.equipped_knife == "rusty_butter" and game.progress.equip_knife("utility") and game.progress.strength() == 2.25,"packaged Utility uses separate purchase/equip and its real strength plus paid Sharp Edge")
+	check(game.progress.equipment.edge_length("utility") > game.progress.equipment.edge_length("plastic_picnic") and load("res://assets/illustrations/catalog/campari.svg").get_width() > 0,"packaged Utility rising edge and original Campari botanical artwork resolve")
+	game.progress.purchase("extra_cuts"); game.start_round(); game.clear_field(); game.session.launch_clock = 1000; game.fragments.set_physics_process(false)
+	for campari_attempt in range(300):
+		game.clear_field(); fruit = game.spawn_tomato()
+		if fruit.variety_id == "campari": break
+	fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	check(fruit.variety_id == "campari" and fruit.collision == "hull" and fruit.family.cut_value == 15 and game.knife.edge.size() == 4,"packaged automatic Campari uses its authored medium hull and actual Utility model/edge")
+	game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0))
+	check(game.process_blade() == 1 and is_equal_approx(game.session.earnings,18.75) and game.fragments.pieces[0].models.has("campari/half"),"packaged actual Utility split loads seeded Campari halves and pays captured quality once")
+	game.knife.track(Vector2(-3,0))
+	check(game.process_blade() == 1 and is_equal_approx(game.session.earnings,37.5) and game.session.tomatoes_sliced == 1,"packaged actual Campari recut keeps one unique family and normal captured rewards")
+	game.process_blade(); check(game.session.cuts == 2 and is_equal_approx(game.session.earnings,37.5),"packaged exhausted/stationary Campari pieces cannot farm rewards")
+	game.finish_round(); await process_frame
+	var campari_saved := Progression.new()
+	check(game.store.load_into(campari_saved) and campari_saved.harvest.unlocked("campari",campari_saved.levels) and campari_saved.equipped_knife == "utility","packaged new actual orders and earned cuts survive disk banking/reload")
+	game.show_catalog(); game.ui.catalog("Varieties")
+	for campari_frame in range(6): await process_frame
+	var campari_map: RootMap = game.ui.content.get_node("CatalogScroll")
+	check(campari_map.nodes.has("specimen:campari") and campari_map.parents_for("unlock_campari").size() == 2 and not campari_map.nodes.has("campari_dominance"),"packaged Campari joins the real two-predecessor roots while hidden successors remain absent")
+	check(game.ui.content.get_node("HarvestMixScroll") is ScrollContainer and game.ui.content.find_child("HarvestSummary",true,false).text.contains("Campari"),"packaged five-variety reference uses a bounded read-only automatic-harvest viewport")
+	game.ui.equipment_shop("utility")
+	for campari_frame in range(6): await process_frame
+	var campari_list: ScrollContainer = game.ui.content.get_node("KnifeCollectionScroll")
+	check(campari_list.scroll_vertical > 0 and campari_list.get_global_rect().encloses(game.ui.content.find_child("Product_utility",true,false).get_global_rect()),"packaged fifth instrument is visible inside its bounded native collection")
+	check(game.progress.buy_modification("honing_kit") and game.progress.apply_modification("honing_kit","utility") and game.progress.strength() == 2.75,"packaged actual paid preparation composes once with Utility strength")
+	game.ui.modification_shop("honing_kit","utility")
+	for campari_frame in range(6): await process_frame
+	check(game.ui.content.get_node("PreparationTargetsScroll").get_global_rect().encloses(game.ui.content.find_child("Target_utility",true,false).get_global_rect()),"packaged actual preparation target stays inside its bounded viewport")
+	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(not game.progress.harvest.unlocked("campari",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"] and game.progress.owned_modifications.is_empty() and game.ui.list_views.is_empty(),"packaged confirmed prestige resets new normal ownership, preparation and obsolete collection views")
+	game.new_game(); check(game.ui.list_views.is_empty() and game.ui.root_views.is_empty() and game.progress.settings.reduced_motion,"packaged New Game clears both view caches while retaining preferences")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

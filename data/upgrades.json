@@ -368,5 +368,75 @@
       "suppression": 0.1
     },
     "tomato_id": "grape"
+  },
+  {
+    "id": "unlock_campari",
+    "name": "Campari \u00b7 Variety Unlock",
+    "category": "Varieties",
+    "description": "Two cultivated branches meet in a reliably round harvest.",
+    "effect": "Adds steady Campari tomatoes to the automatic mix: $12 base value, 2 resistance.",
+    "base_cost": 320,
+    "growth": 1,
+    "max_level": 1,
+    "requires": {
+      "roma_quality": 1,
+      "grape_frequency": 1
+    },
+    "effect_values": {
+      "unlock": 1
+    },
+    "tomato_id": "campari"
+  },
+  {
+    "id": "campari_frequency",
+    "name": "Campari \u00b7 Harvest Frequency",
+    "category": "Varieties",
+    "description": "A dependable specimen deserves a little more room in the basket.",
+    "effect": "+50% relative Campari spawn weight per level.",
+    "base_cost": 150,
+    "growth": 1.25,
+    "max_level": 10,
+    "requires": {
+      "unlock_campari": 1
+    },
+    "effect_values": {
+      "weight_bonus": 0.5
+    },
+    "tomato_id": "campari"
+  },
+  {
+    "id": "campari_quality",
+    "name": "Campari \u00b7 Premium Quality",
+    "category": "Varieties",
+    "description": "Four carefully tended seed chambers, and an equally careful inspection.",
+    "effect": "+25% Campari cut value per level, including separated pieces.",
+    "base_cost": 160,
+    "growth": 1.26,
+    "max_level": 10,
+    "requires": {
+      "unlock_campari": 1
+    },
+    "effect_values": {
+      "value_bonus": 0.25
+    },
+    "tomato_id": "campari"
+  },
+  {
+    "id": "campari_dominance",
+    "name": "Campari \u00b7 Harvest Dominance",
+    "category": "Varieties",
+    "description": "Reliable returns gradually take precedence over less profitable produce.",
+    "effect": "Suppresses less profitable lower-tier weight by 10% per level; actual value per strike governs eligibility.",
+    "base_cost": 420,
+    "growth": 1.32,
+    "max_level": 10,
+    "requires": {
+      "campari_frequency": 3,
+      "campari_quality": 2
+    },
+    "effect_values": {
+      "suppression": 0.1
+    },
+    "tomato_id": "campari"
   }
 ]

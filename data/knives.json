@@ -106,5 +106,36 @@
       ]
     ],
     "slice_sound": "steak_slice"
+  },
+  {
+    "id": "utility",
+    "name": "Utility Knife",
+    "catalog_number": "005",
+    "description": "A broad satin blade, a winewood grip, and a very level opinion of its own usefulness. Balanced strength and a gently rising edge for everyday culinary ambition.",
+    "price": 180,
+    "model": "res://assets/models/knives/utility.glb",
+    "base_strength": 1.75,
+    "precision": "Balanced rising edge",
+    "special": "None",
+    "reach_label": "Balanced longer edge",
+    "edge": [
+      [
+        -0.08,
+        -0.085
+      ],
+      [
+        0.68,
+        -0.085
+      ],
+      [
+        0.96,
+        -0.04
+      ],
+      [
+        1.1,
+        0.035
+      ]
+    ],
+    "slice_sound": "steak_slice"
   }
 ]

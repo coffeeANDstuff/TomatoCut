@@ -33,7 +33,7 @@ static func grape(game) -> Tomato:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
-	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 4 and p.equipment.knives.size() == 4,"four authored normal varieties and four real knives validate without free ownership")
+	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 5 and p.equipment.knives.size() == 5,"five authored normal varieties and five real knives validate without free ownership")
 	check.call(not "unlock_grape" in p.discovered and not p.harvest.unlocked("grape",p.levels) and p.harvest.distribution(p.levels,p.strength()) == {"standard_red":1.0},"fresh root system preserves locked Grape and automatic starter-only harvest")
 	p.money = 10000
 	for id: String in ["better_prices","faster_throwing","unlock_cherry"]: p.purchase(id)
@@ -55,17 +55,17 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	var manager := FragmentManager.new(); tree.root.add_child(manager); manager.set_physics_process(false)
 	var family := CutFamily.new(7); family.variety_id = "grape"; var piece := manager.acquire_piece()
 	for i in range(240):
-		var id: String = ["standard_red","cherry","roma","grape","event_golden","event_giant","event_rainbow_amber","event_rainbow_sage","event_rainbow_violet","event_jackpot"][i%10]
+		var id: String = ["standard_red","cherry","roma","grape","campari","event_golden","event_giant","event_rainbow_amber","event_rainbow_sage","event_rainbow_violet","event_jackpot"][i%11]
 		family = CutFamily.new(7); family.variety_id = id
 		var basis := Basis.from_euler(Vector3(random.randf_range(-1,1),random.randf_range(-2,2),random.randf_range(-3,3))).scaled(Vector3(random.randf_range(.4,1.5),random.randf_range(.4,1.5),random.randf_range(.4,1.5)))
 		piece.configure("half" if i%2 == 0 else "wedge",family,Vector3(random.randf_range(-5,5),random.randf_range(-3,3),0),basis,Vector3.ZERO,Vector3.ZERO)
 		var old := Transform2D(random.randf_range(-PI,PI),Vector2(random.randf_range(-6,6),random.randf_range(-4,4))); var current := Transform2D(random.randf_range(-PI,PI),Vector2(random.randf_range(-6,6),random.randf_range(-4,4)))
-		var edge: Array[Vector2] = EquipmentCatalog.edge_points(p.equipment.knives[i%4]); var hull := piece.world_hull(); var sweep := SliceSystem.prepare_sweep(old,current,edge)
+		var edge: Array[Vector2] = EquipmentCatalog.edge_points(p.equipment.knives[i%5]); var hull := piece.world_hull(); var sweep := SliceSystem.prepare_sweep(old,current,edge)
 		var expected := legacy_polygon_hit(hull,old,current,edge)
 		collision_ok = collision_ok and expected == SliceSystem.prepared_polygon_hit(hull,sweep)
 		bounds_ok = bounds_ok and (not expected or sweep.bounds.intersects(piece.conservative_bounds(),true))
-	check.call(collision_ok,"240 seeded rotating/scaled targets and four real blades preserve the original exact swept-polygon outcomes")
-	check.call(bounds_ok,"conservative broad phase rejects no original hit across all ten normal/event specimen identities")
+	check.call(collision_ok,"240 seeded rotating/scaled targets and five real blades preserve the original exact swept-polygon outcomes")
+	check.call(bounds_ok,"conservative broad phase rejects no original hit across all eleven normal/event specimen identities")
 	piece.configure("half",family,Vector3.ZERO,Basis.IDENTITY,Vector3.ZERO,Vector3.ZERO)
 	manager.slice(Transform2D(0,Vector2(-6,5)),Transform2D(0,Vector2(6,5)),1,0,true)
 	check.call(piece.cached_hull.is_empty() and family.accepted_strikes == 0,"actual distant blade sample avoids hull construction and accepted-strike side effects")

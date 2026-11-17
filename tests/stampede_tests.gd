@@ -23,7 +23,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	var seeds := p.prestige.seeds
 	check.call(p.prestige.purchase("stampede_season") and p.prestige.seeds == seeds-2 and not p.prestige.purchase("stampede_season"),"dedicated stampede purchase charges two seeds exactly once")
 	check.call(catalog.probability("golden_harvest",p.prestige) == 0 and is_equal_approx(catalog.probability("stampede_season",p.prestige),.1) and catalog.spawn_count("stampede_season",p.prestige) == 6,"Stampede Season works without Golden Harvest and starts with six specimens")
-	check.call(p.harvest.distribution(p.levels,p.strength()) == {"standard_red":1.0} and p.harvest.varieties.size() == 4,"event ownership grants no normal varieties or manual spawn mix")
+	check.call(p.harvest.distribution(p.levels,p.strength()) == {"standard_red":1.0} and p.harvest.varieties.size() == 5,"event ownership grants no normal varieties or manual spawn mix")
 	for id: String in ["stampede_frequency","larger_stampedes","stampede_rewards"]:
 		check.call(id in p.prestige.unseen() and p.prestige.purchase(id),"dedicated unlock reveals and permits actual paid improvement: "+id)
 	check.call(is_equal_approx(catalog.probability("stampede_season",p.prestige),.15) and catalog.spawn_count("stampede_season",p.prestige) == 8 and catalog.multiplier("stampede_season",p.prestige) == 3,"all three paid improvements change their production coefficients")
