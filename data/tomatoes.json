@@ -233,5 +233,45 @@
     "frequency_upgrade": "cocktail_frequency",
     "quality_upgrade": "cocktail_quality",
     "dominance_upgrade": "cocktail_dominance"
+  },
+  {
+    "id": "plum",
+    "name": "Plum",
+    "catalog_number": "007",
+    "description": "Compact, thick-fleshed and politely resistant. A blunt tapered end, a folded crown and two narrow seed galleries leave very little room for negotiation.",
+    "tier": 5,
+    "base_value": 28,
+    "durability": 3.5,
+    "fragment_durability": 1.75,
+    "base_weight": 0.4,
+    "mass": 1.1,
+    "model_scale": 0.78,
+    "radius": 0.5,
+    "gravity": 6.2,
+    "launch_min": 8.6,
+    "launch_max": 9.0,
+    "spin": 0.45,
+    "spin_z": 1.0,
+    "proxy_axes": [
+      0.47,
+      0.62,
+      0.44
+    ],
+    "proxy_lobe": 0.022,
+    "proxy_lobe_count": 5,
+    "proxy_taper": -0.2,
+    "collision": "hull",
+    "flight_description": "compact & resistant \u00b7 measured weighted tumble",
+    "model": "res://assets/models/tomatoes/plum.glb",
+    "illustration": "res://assets/illustrations/catalog/plum.svg",
+    "fragments": {
+      "half": "res://assets/models/fragments/plum_half.glb",
+      "wedge": "res://assets/models/fragments/plum_wedge.glb",
+      "chunk": "res://assets/models/fragments/plum_chunk.glb"
+    },
+    "unlock_upgrade": "unlock_plum",
+    "frequency_upgrade": "plum_frequency",
+    "quality_upgrade": "plum_quality",
+    "dominance_upgrade": "plum_dominance"
   }
 ]

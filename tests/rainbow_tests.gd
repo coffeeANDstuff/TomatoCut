@@ -24,7 +24,7 @@ static func swipe(game, x: float) -> int:
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
 	var catalog := EventCatalog.new()
-	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 5 and p.harvest.varieties.size() == 6,"five real independently gated events validate without extending the normal variety collection")
+	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 5 and p.harvest.varieties.size() == 7,"five real independently gated events validate without extending the normal variety collection")
 	var forms: Dictionary = {}; var paths: Dictionary = {}; var batched := true
 	for fruit: Dictionary in catalog.definition("heirloom_celebration").specimens:
 		forms[str(fruit.proxy_axes)+str(fruit.proxy_taper)] = true

@@ -768,10 +768,10 @@ func popup_cash(text: String, screen_position: Vector2) -> void:
 func popup_damage(text: String, screen_position: Vector2, group: String = "") -> void:
 	popup_impact(text,screen_position,false,group)
 
-func dismiss_feedback(group: String) -> void:
+func dismiss_feedback(group: String, damage_only: bool = false) -> void:
 	if group.is_empty(): return
 	for i in range(moving.size()-1,-1,-1):
-		if moving[i].get("group","") == group:
+		if moving[i].get("group","") == group and (not damage_only or moving[i].get("damage",false)):
 			moving[i].node.hide(); moving[i].node.queue_free(); moving.remove_at(i)
 
 func popup_critical(screen_position: Vector2) -> void:
@@ -815,12 +815,14 @@ func popup_weak_point(screen_position: Vector2, multiplier: float, remaining: fl
 func popup_impact(text: String, screen_position: Vector2, critical: bool, group: String = "", indicator_name: String = "") -> void:
 	if not progress.settings.damage_indicators:
 		return
+	var damage := not critical and indicator_name.is_empty()
 	if not group.is_empty():
 		for item: Dictionary in moving:
 			if item.get("group","") == group:
 				item.node.text = text; item.node.position = screen_position-Vector2(30,50)
 				item.node.name = indicator_name if not indicator_name.is_empty() else ("CriticalIndicator" if critical else "DamageIndicator")
 				item.node.modulate.a = 1; item.life = .75
+				item.damage = damage
 				return
 	var node := label(text,22,true,CREAM)
 	node.add_theme_color_override("font_shadow_color",INK)
@@ -829,7 +831,7 @@ func popup_impact(text: String, screen_position: Vector2, critical: bool, group:
 	node.name = indicator_name if not indicator_name.is_empty() else ("CriticalIndicator" if critical else "DamageIndicator")
 	root.add_child(node)
 	node.position = screen_position-Vector2(30,78 if critical else 50)
-	moving.append({"node":node,"life":0.75,"group":group})
+	moving.append({"node":node,"life":0.75,"group":group,"damage":damage})
 
 func _process(delta: float) -> void:
 	update_discoveries(delta)

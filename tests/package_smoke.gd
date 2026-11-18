@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.28.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.29.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -180,7 +180,7 @@ func run() -> void:
 	for id: String in ["permanent_slice_value","starting_cash","golden_harvest","golden_frequency","golden_value"]: game.purchase_permanent(id)
 	game.ui.archive("Special Events")
 	check(game.events.catalog.validate(game.progress.prestige).is_empty() and game.ui.content.find_child("PrestigeTitle_golden_harvest",true,false) != null,"packaged event JSON, all four original golden models and illustrated event archive validate")
-	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 6,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
+	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 7,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
 	game.progress.money = 100; game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts")
 	game.start_round(); game.session.launch_clock = 1000
 	for candidate in range(1,10000):
@@ -969,7 +969,7 @@ func run() -> void:
 	game.new_game()
 	check(game.progress.prestige.level("golden_jackpot") == 0 and game.events.catalog.golden_jackpot_bonus("golden_harvest",game.progress.prestige) == 0 and game.progress.settings.reduced_motion,"packaged New Game clears finish ownership and Golden gate while preserving preferences")
 	game.finish_round(); await process_frame
-	check(game.progress.harvest.varieties.size() == 6 and game.progress.equipment.knives.size() == 6,"packaged production collection contains six original normal varieties and six actual knives")
+	check(game.progress.harvest.varieties.size() == 7 and game.progress.equipment.knives.size() == 7,"packaged production collection contains seven original normal varieties and seven actual knives")
 	game.progress.money = 10000
 	for polish_id: String in ["better_prices","faster_throwing","unlock_cherry"]: game.progress.purchase(polish_id)
 	check(not game.progress.purchase("unlock_grape") and not "unlock_grape" in game.progress.discovered,"packaged Grape retains its actual frequency predecessor and cannot be bought early")
@@ -1099,6 +1099,59 @@ func run() -> void:
 	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
 	check(not game.progress.harvest.unlocked("cocktail",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"] and game.progress.equipped_combo_multiplier() == 1 and game.progress.level("combo_cash") == 0,"packaged confirmed prestige resets new normal variety, passive ownership and ordinary combo ability")
 	game.new_game(); check(game.ui.root_views.is_empty() and game.ui.list_views.is_empty() and game.progress.settings.reduced_motion,"packaged final New Game clears gates/views and retains preferences")
+	game.progress.settings.damage_indicators = true # Explicit feedback-on fixture after preserved disabled preferences.
+	game.finish_round(); await process_frame; game.progress.money = 100000
+	for chef_order: String in ["better_prices","faster_throwing","unlock_cherry","sharp_edge","unlock_roma","roma_quality","cherry_frequency","unlock_grape","grape_frequency","unlock_campari","campari_frequency","cherry_quality","cherry_quality","unlock_cocktail","cocktail_quality"]: game.progress.purchase(chef_order)
+	check(not game.progress.purchase("unlock_plum") and not "unlock_plum" in game.progress.discovered,"packaged Plum retains both actual paid cultivation predecessors")
+	game.progress.purchase("roma_quality"); var chef_cash: float = game.progress.money
+	check(game.progress.purchase("unlock_plum") and game.progress.money == chef_cash-780,"packaged new Plum unlock spends the actual 780-dollar order")
+	game.progress.purchase("plum_quality"); game.progress.purchase("extra_cuts")
+	check(game.progress.harvest.cut_value("plum",game.progress.levels) == 35 and game.progress.harvest.distribution(game.progress.levels,game.progress.strength()).has("plum"),"packaged Plum quality feeds actual normalized automatic harvest under its three-strike safety")
+	chef_cash = game.progress.money
+	check(game.progress.buy_knife("chef") and game.progress.money == chef_cash-500 and game.progress.equipped_knife == "rusty_butter","packaged Chef order buys actual ownership for 500 dollars without equipping it")
+	check(ResourceLoader.exists("res://assets/models/knives/chef.glb") and load("res://assets/illustrations/catalog/plum.svg").get_width() > 0 and game.audio.sounds.has("chef_slice"),"packaged original forged Chef, Plum botanical and crisp slice resources resolve")
+	game.start_round(); game.clear_field(); game.session.launch_clock = 1000; game.fragments.set_physics_process(false)
+	for chef_attempt in range(300):
+		game.clear_field(); fruit = game.spawn_tomato()
+		if fruit.variety_id == "plum": break
+	fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	check(fruit.variety_id == "plum" and fruit.collision == "hull" and fruit.durability == 3.5 and fruit.family.fragment_durability == 1.75,"packaged actual automatic Plum retains its compact hull and authored root/fragment resistance")
+	var chef_family: CutFamily = fruit.family
+	game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade(); game.process_blade()
+	check(fruit.durability == 2 and game.session.cuts == 0 and game.session.earnings == 0 and fruit.family.accepted_strikes == 1,"packaged actual resistant Plum hit grants no premature payout or repeated-sample damage")
+	game.knife.track(Vector2(-3,0)); game.process_blade()
+	var chef_damage: Array = game.ui.moving.filter(func(item): return item.get("group","") == game.resistance_group(chef_family))
+	check(chef_damage.size() == 1 and chef_damage[0].node.text == "1 more strike" and chef_damage[0].node.visible,"packaged rapid ordinary damage updates one visible family-local label instead of accumulating obsolete strike counts")
+	game.knife.track(Vector2(3,0)); game.process_blade()
+	check(game.session.cuts == 1 and is_equal_approx(game.session.earnings,43.75) and game.ui.moving.filter(func(item): return item.get("group","") == game.resistance_group(chef_family)).is_empty(),"packaged third actual starter hit pays 43.75 and clears the split root's stale resistance label")
+	game.knife.track(Vector2(-3,0)); game.process_blade()
+	check(game.session.cuts == 1 and game.fragments.pieces[0].durability == .25,"packaged actual thick Plum fragment resists its first ordinary starter strike")
+	game.knife.track(Vector2(3,0)); game.process_blade(); game.process_blade()
+	check(game.session.cuts == 2 and game.session.tomatoes_sliced == 1 and is_equal_approx(game.session.earnings,87.5),"packaged actual resistant root and recut preserve the shared budget, one unique family and 87.50 income")
+	game.finish_round(); game.show_equipment(); game.equip_knife("chef"); game.buy_modification("honing_kit"); game.apply_modification("honing_kit","chef")
+	check(game.progress.strength() == 3.5 and game.progress.equipped_combo_multiplier() == 1 and game.knife.edge.size() == 5,"packaged saved Chef equip and separate kit application compose strength once with actual five-point geometry")
+	game.start_round(); game.clear_field(); game.session.launch_clock = 1000
+	for chef_attempt in range(300):
+		game.clear_field(); fruit = game.spawn_tomato()
+		if fruit.variety_id == "plum": break
+	fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO; game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(game.session.cuts == 1 and is_equal_approx(game.session.earnings,43.75) and game.audio.players[(game.audio.cursor-1)%8].stream == game.audio.sounds.chef_slice,"packaged actual prepared Chef makes a clean Plum root split and dispatches the original crisp cue without a reward multiplier")
+	game.knife.track(Vector2(-3,0)); game.process_blade(); game.finish_round(); var chef_saved := Progression.new()
+	check(game.store.load_into(chef_saved) and chef_saved.equipped_knife == "chef" and chef_saved.strength() == 3.5 and is_equal_approx(chef_saved.prestige.cycle_earnings,175),"packaged actual resistant/prepared rounds bank 175.00 and reload paid Plum/Chef/preparation")
+	game.show_equipment(); game.ui.equipment_shop("rusty_butter"); await game.ui.focus_control(game.ui.content.find_child("Product_chef",true,false))
+	check(game.ui.content.get_node("KnifeCollectionScroll").get_global_rect().encloses(game.ui.content.find_child("Product_chef",true,false).get_global_rect()),"packaged seventh-instrument focus remains reachable inside the bounded native collection")
+	var chef_before: Dictionary = game.progress.snapshot(); var chef_store: SaveStore = game.store; var chef_disk := FileAccess.get_file_as_string(chef_store.path)
+	game.store = SaveStore.new("user://tests/missing-pack-chef-"+game.progress.prestige.lineage+"/ledger.json"); game.equip_knife("rusty_butter"); game.remove_modification("honing_kit")
+	check(game.progress.snapshot() == chef_before and game.knife.knife_id == "chef" and FileAccess.get_file_as_string(chef_store.path) == chef_disk,"packaged failed Chef equip/preparation writes retain active effects and exact prior disk bytes")
+	game.store = chef_store; game.remove_modification("honing_kit")
+	check(game.progress.strength() == 3 and not is_instance_valid(game.ui.notice_label),"packaged successful new preparation recovery applies once and clears stale failure notice")
+	game.show_catalog(); game.purchase("better_prices"); game.ui.catalog("Combos"); game.purchase("combo_cash"); game.show_equipment(); game.buy_knife("santoku"); game.equip_knife("santoku")
+	check(game.progress.reward(2,35) == 56.44 and game.progress.equipped_combo_multiplier() == 1.5,"packaged actually cultivated and equipped Santoku retains its preceding earned combo benefit")
+	game.equip_knife("chef")
+	check(game.progress.reward(2,35) == 55.13 and game.progress.equipped_combo_multiplier() == 1,"packaged actual return to Chef removes the other instrument's passive without changing ordinary Combo Cash")
+	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(not game.progress.harvest.unlocked("plum",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"] and game.progress.owned_modifications.is_empty() and game.ui.list_views.is_empty(),"packaged confirmed prestige resets new Plum/Chef/preparation and obsolete collection views")
+	game.new_game(); check(game.progress.prestige.levels.is_empty() and game.ui.root_views.is_empty() and game.progress.settings.reduced_motion,"packaged final New Game retains accessibility preferences and clears new normal/permanent state")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

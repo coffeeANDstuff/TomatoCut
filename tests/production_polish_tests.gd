@@ -33,7 +33,7 @@ static func grape(game) -> Tomato:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
-	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 6 and p.equipment.knives.size() == 6,"six authored normal varieties and six real knives validate without free ownership")
+	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 7 and p.equipment.knives.size() == 7,"seven authored normal varieties and seven real knives validate without free ownership")
 	check.call(not "unlock_grape" in p.discovered and not p.harvest.unlocked("grape",p.levels) and p.harvest.distribution(p.levels,p.strength()) == {"standard_red":1.0},"fresh root system preserves locked Grape and automatic starter-only harvest")
 	p.money = 10000
 	for id: String in ["better_prices","faster_throwing","unlock_cherry"]: p.purchase(id)
@@ -54,18 +54,31 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	var random := RandomNumberGenerator.new(); random.seed = 26431; var collision_ok := true; var bounds_ok := true
 	var manager := FragmentManager.new(); tree.root.add_child(manager); manager.set_physics_process(false)
 	var family := CutFamily.new(7); family.variety_id = "grape"; var piece := manager.acquire_piece()
-	for i in range(240):
-		var id: String = ["standard_red","cherry","roma","grape","campari","cocktail","event_golden","event_giant","event_rainbow_amber","event_rainbow_sage","event_rainbow_violet","event_jackpot"][i%12]
+	for i in range(364):
+		var id: String = ["standard_red","cherry","roma","grape","campari","cocktail","plum","event_golden","event_giant","event_rainbow_amber","event_rainbow_sage","event_rainbow_violet","event_jackpot"][i%13]
 		family = CutFamily.new(7); family.variety_id = id
 		var basis := Basis.from_euler(Vector3(random.randf_range(-1,1),random.randf_range(-2,2),random.randf_range(-3,3))).scaled(Vector3(random.randf_range(.4,1.5),random.randf_range(.4,1.5),random.randf_range(.4,1.5)))
-		piece.configure("half" if int(i/72)%2 == 0 else "wedge",family,Vector3(random.randf_range(-5,5),random.randf_range(-3,3),0),basis,Vector3.ZERO,Vector3.ZERO)
+		piece.configure("half" if int(i/91)%2 == 0 else "wedge",family,Vector3(random.randf_range(-5,5),random.randf_range(-3,3),0),basis,Vector3.ZERO,Vector3.ZERO)
 		var old := Transform2D(random.randf_range(-PI,PI),Vector2(random.randf_range(-6,6),random.randf_range(-4,4))); var current := Transform2D(random.randf_range(-PI,PI),Vector2(random.randf_range(-6,6),random.randf_range(-4,4)))
-		var edge: Array[Vector2] = EquipmentCatalog.edge_points(p.equipment.knives[(i%12+int(i/12))%6]); var hull := piece.world_hull(); var sweep := SliceSystem.prepare_sweep(old,current,edge)
+		var edge: Array[Vector2] = EquipmentCatalog.edge_points(p.equipment.knives[int(i/13)%7]); var hull := piece.world_hull(); var sweep := SliceSystem.prepare_sweep(old,current,edge)
 		var expected := legacy_polygon_hit(hull,old,current,edge)
 		collision_ok = collision_ok and expected == SliceSystem.prepared_polygon_hit(hull,sweep)
 		bounds_ok = bounds_ok and (not expected or sweep.bounds.intersects(piece.conservative_bounds(),true))
-	check.call(collision_ok,"240 seeded rotating/scaled targets and six real blades preserve the original exact swept-polygon outcomes")
-	check.call(bounds_ok,"conservative broad phase rejects no original hit across all twelve normal/event specimen identities")
+	check.call(collision_ok,"364 seeded rotating/scaled targets and seven real blades preserve the original exact swept-polygon outcomes")
+	check.call(bounds_ok,"conservative broad phase rejects no original hit across all thirteen normal/event specimen identities")
+	var contact_ok := true; var contacts := 0
+	for knife: Dictionary in p.equipment.knives:
+		var edge := EquipmentCatalog.edge_points(knife)
+		for angle: float in [0.0,.6,-.6]:
+			var previous := Transform2D(angle,Vector2(-2,0)); var current := Transform2D(angle+.3,Vector2(2,0))
+			var sweep := SliceSystem.prepare_sweep(previous,current,edge)
+			for triangle: PackedVector2Array in sweep.triangles:
+				for point: Vector2 in triangle:
+					var tiny := PackedVector2Array([point,point+Vector2(.0001,0),point+Vector2(.0001,.0001),point+Vector2(0,.0001)])
+					var expected := legacy_polygon_hit(tiny,previous,current,edge)
+					contacts += int(expected)
+					contact_ok = contact_ok and SliceSystem.prepared_polygon_hit(tiny,sweep) == expected
+	check.call(contact_ok and contacts > 0,"fine sweep bounds preserve original edge-touching and thin-target contacts across all seven actual blades")
 	piece.configure("half",family,Vector3.ZERO,Basis.IDENTITY,Vector3.ZERO,Vector3.ZERO)
 	manager.slice(Transform2D(0,Vector2(-6,5)),Transform2D(0,Vector2(6,5)),1,0,true)
 	check.call(piece.cached_hull.is_empty() and family.accepted_strikes == 0,"actual distant blade sample avoids hull construction and accepted-strike side effects")

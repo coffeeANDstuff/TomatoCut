@@ -41,3 +41,27 @@ python3 tools/compare_model_audits.py artifacts/model-audit-original.json artifa
 ```
 
 For the original model audit, copy the same 16 baseline GLBs to `artifacts/model-before/`, import them, and run `audit_models.gd -- --label=original` before comparing. Baseline scripts must be supplied from this milestone for instrumentation, without the optimized gameplay/assets/physics setting. The report does not establish extended-session memory behavior, native Windows input, human feel, audible quality or commercial release readiness. Root-map canvas retirement has a focused lifecycle regression; long soak and full-content profiling remain necessary as collections grow.
+
+## Seven-variety long-blade profiling — v0.29 (2026-11-17, America/Los_Angeles)
+
+A new controlled profile cycles **all seven actual normal varieties** and uses the real **five-point Chef edge**. Godot 4.6.3, Mesa 25.0.7, llvmpipe (LLVM 19.1.7, 256 bits), separate Xorg :97. Runs are sequential without another Godot/render workload. Both use the existing 12 warmup/60 measured render frames, 120 miss/120 crossing zero-damage fragment probes, identical transforms/rotation increments and full occupancy tiers. Every object, model, triangle, material, fragment/drop limit, effect setting and lifetime is unchanged between this pair. The older three-variety/starter profile remains the default for historical reproduction.
+
+Profiling exposed long curved blades paying for exact triangle/polygon checks against every swept triangle even when that triangle is far from the target. The v0.29 fix computes conservative bounds **once for each swept triangle**, then filters against the actual target hull bounds before invoking the **unchanged exact narrow-phase test**. Padding and inclusive borders preserve touching contacts; no geometry, blade segment or angular substep is dropped. The original 364-case transformed/scaled oracle and explicit thin/edge-contact checks across all seven blades pass.
+
+| Roots / pieces / drops | Crossing median ms, before → after | Crossing p95 ms, before → after | Render-only mean FPS, before / after | Unchanged draw calls |
+|---|---:|---:|---:|---:|
+| 4 / 8 / 12 | 2.051 → 0.063 | 2.431 → 0.148 | 8.14 / 8.57 | 224 |
+| 12 / 32 / 64 | 21.398 → 1.047 | 31.264 → 1.133 | 5.22 / 5.78 | 680 |
+| 24 / 64 / 96 | **34.825 → 1.915** | **41.054 → 2.277** | **3.64 / 3.94** | **1,220** |
+
+At capacity this reduces the measured crossing-probe median by **94.5%**. The distant-miss median remains about unchanged, **0.083 → 0.086ms**, including setup. This comparison uses the same new content/knife on the same resumed machine; do not compare its times directly with the older v0.26 three-variety/starter run.
+
+**The render-only phase does not run collision probes. Its FPS differences are run variation, not demonstrated FPS gains from this change.** Software rasterization and 1,220 draw calls remain the visible bottleneck: the after run's capacity render median is **254.869ms**, p95 **289.276ms**. Hardware 60 FPS, actual live-game FPS improvement, native Windows/Forward+, extended soak and human play remain unverified. Further geometry-preserving render batching/instancing deserves profiling; reducing populations, cut visibility, detail or lifetimes is not an accepted substitute.
+
+Raw results: [before](reports/v029/dense-before.json) and [after](reports/v029/dense-after.json). For the before case, use a separate source copy with the **v0.28.0 SliceSystem**, keeping all v0.29 assets/data/benchmark instrumentation unchanged. The after case uses this milestone's fine bounds. Run the matching command below with distinct labels, separately from native suites:
+
+```sh
+DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_dense.gd -- --label=v029-all-chef --all-varieties --knife=chef
+# After replacing only SliceSystem with the v0.29 implementation:
+DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_dense.gd -- --label=v029-fine-bounds --all-varieties --knife=chef
+```

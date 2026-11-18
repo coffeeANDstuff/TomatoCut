@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.28.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.29.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -33,6 +33,15 @@ with zipfile.ZipFile(args.archive) as z:
                      'Source/tools/build_santoku_assets.py', 'Source/tests/santoku_tests.gd', 'Source/tests/santoku_render.gd'}
     santoku_assets |= {'Source/assets/models/fragments/cocktail_'+shape+'.glb' for shape in ['half','wedge','chunk']}
     assert santoku_assets <= set(hashes), 'Missing original Cocktail/Santoku models, art, sources or tests'
+    chef_assets = {'Source/art/plum.blend', 'Source/art/chef_knife.blend',
+                   'Source/assets/models/tomatoes/plum.glb', 'Source/assets/models/knives/chef.glb',
+                   'Source/assets/illustrations/catalog/plum.svg', 'Source/assets/audio/chef_slice.wav',
+                   'Source/tools/build_plum_assets.py', 'Source/tools/build_chef_assets.py',
+                   'Source/tools/build_plum_art.py', 'Source/tests/chef_tests.gd', 'Source/tests/chef_render.gd',
+                   'Source/tools/benchmark_dense.gd', 'Source/PERFORMANCE_REPORT.md',
+                   'Source/reports/v029/dense-before.json', 'Source/reports/v029/dense-after.json'}
+    chef_assets |= {'Source/assets/models/fragments/plum_'+shape+'.glb' for shape in ['half','wedge','chunk']}
+    assert chef_assets <= set(hashes), 'Missing original Plum/Chef models, audio, art, sources or tests'
     campari_assets = {'Source/art/campari.blend', 'Source/art/utility_knife.blend',
                      'Source/assets/models/tomatoes/campari.glb', 'Source/assets/models/knives/utility.glb',
                      'Source/assets/illustrations/catalog/campari.svg', 'Source/tools/build_campari_art.py',

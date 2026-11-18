@@ -1,0 +1,73 @@
+{
+  "knife": "chef",
+  "label": "v029-all-chef",
+  "normal_varieties": [
+    "standard_red",
+    "cherry",
+    "roma",
+    "grape",
+    "campari",
+    "cocktail",
+    "plum"
+  ],
+  "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+  "scenarios": [
+    {
+      "collision": {
+        "cross": {
+          "median_ms": 2.051,
+          "p95_ms": 2.431
+        },
+        "miss": {
+          "median_ms": 0.031,
+          "p95_ms": 0.254
+        }
+      },
+      "draw_calls_median": 224.0,
+      "drops": 12,
+      "pieces": 8,
+      "render_mean_fps": 8.13925284914546,
+      "render_median_ms": 116.642,
+      "render_p95_ms": 175.608,
+      "roots": 4
+    },
+    {
+      "collision": {
+        "cross": {
+          "median_ms": 21.398,
+          "p95_ms": 31.264
+        },
+        "miss": {
+          "median_ms": 0.049,
+          "p95_ms": 0.099
+        }
+      },
+      "draw_calls_median": 680.0,
+      "drops": 64,
+      "pieces": 32,
+      "render_mean_fps": 5.22103422422741,
+      "render_median_ms": 192.143,
+      "render_p95_ms": 225.834,
+      "roots": 12
+    },
+    {
+      "collision": {
+        "cross": {
+          "median_ms": 34.825,
+          "p95_ms": 41.054
+        },
+        "miss": {
+          "median_ms": 0.083,
+          "p95_ms": 0.123
+        }
+      },
+      "draw_calls_median": 1220.0,
+      "drops": 96,
+      "pieces": 64,
+      "render_mean_fps": 3.63589295349402,
+      "render_median_ms": 280.896,
+      "render_p95_ms": 305.441,
+      "roots": 24
+    }
+  ]
+}

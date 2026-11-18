@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Cocktail and Santoku milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Plum and Chef milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -65,6 +65,12 @@ Dotted ink focus supports keyboard controls; checkmark slips save preferences.
 Hover navigation icons for one second to see their labels.
 Move the mouse through airborne tomatoes; no click is needed.
 Ten-second starting rounds; cultivation and progress save automatically.
+Plum reveals after Roma Quality 2 + Cocktail Quality 1. Its $780 unlock
+adds a compact resistant specimen with thick twin-gallery cuts and paid
+cultivation. The $500 Chef's Knife has 2.50 base strength and a longer curved
+edge. Buy and equip separately; a separately assigned Honing Kit adds strength
+once. Actual resistance determines strikes, never a per-cut value multiplier.
+Chef's Knife uses an original crisp slice cue.
 Cocktail reveals after Campari Frequency 1 + Cherry Quality 2. Its $480
 unlock adds a small lively specimen, with separate paid cultivation.
 Santoku costs $300 and has an actual fluted blade and 2 base strength.
@@ -274,7 +280,7 @@ Source history: https://github.com/coffeeANDstuff/TomatoCut
 Milestone tag: v{VERSION}
 
 STATUS
-Six of 25 normal varieties and six of 25 knives are integrated.
+Seven of 25 normal varieties and seven of 25 knives are integrated.
 This is a development milestone, not the final game. Windows-native,
 Forward+ hardware, audio listening and target-PC 60 FPS remain unverified.
 '''

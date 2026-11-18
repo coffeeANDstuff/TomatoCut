@@ -508,5 +508,75 @@
       "suppression": 0.1
     },
     "tomato_id": "cocktail"
+  },
+  {
+    "id": "unlock_plum",
+    "name": "Plum \u00b7 Variety Unlock",
+    "category": "Varieties",
+    "description": "A firm side branch where enduring Roma cultivation meets the lively Cocktail basket.",
+    "effect": "Adds compact Plum tomatoes to the automatic mix: $28 base value, 3.5 resistance.",
+    "base_cost": 780,
+    "growth": 1,
+    "max_level": 1,
+    "requires": {
+      "roma_quality": 2,
+      "cocktail_quality": 1
+    },
+    "effect_values": {
+      "unlock": 1
+    },
+    "tomato_id": "plum"
+  },
+  {
+    "id": "plum_frequency",
+    "name": "Plum \u00b7 Harvest Frequency",
+    "category": "Varieties",
+    "description": "A dependable supply of compact fruit with decidedly substantial opinions.",
+    "effect": "+50% relative Plum spawn weight per level.",
+    "base_cost": 320,
+    "growth": 1.25,
+    "max_level": 10,
+    "requires": {
+      "unlock_plum": 1
+    },
+    "effect_values": {
+      "weight_bonus": 0.5
+    },
+    "tomato_id": "plum"
+  },
+  {
+    "id": "plum_quality",
+    "name": "Plum \u00b7 Premium Quality",
+    "category": "Varieties",
+    "description": "Two narrow seed galleries, thick flesh, and a rather exacting inspection.",
+    "effect": "+25% Plum cut value per level, including separated pieces.",
+    "base_cost": 360,
+    "growth": 1.26,
+    "max_level": 10,
+    "requires": {
+      "unlock_plum": 1
+    },
+    "effect_values": {
+      "value_bonus": 0.25
+    },
+    "tomato_id": "plum"
+  },
+  {
+    "id": "plum_dominance",
+    "name": "Plum \u00b7 Harvest Dominance",
+    "category": "Varieties",
+    "description": "Firm produce takes precedence only when the cutting board can handle it profitably.",
+    "effect": "Suppresses less profitable lower-tier weight by 10% per level; actual value per strike governs eligibility.",
+    "base_cost": 1000,
+    "growth": 1.32,
+    "max_level": 10,
+    "requires": {
+      "plum_frequency": 3,
+      "plum_quality": 2
+    },
+    "effect_values": {
+      "suppression": 0.1
+    },
+    "tomato_id": "plum"
   }
 ]

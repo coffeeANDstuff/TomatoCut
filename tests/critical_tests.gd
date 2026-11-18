@@ -71,7 +71,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	p.harvest.definition("roma").durability = 20
 	check.call(not p.harvest.distribution(p.levels,p.strength()).has("roma"), "critical luck never admits a variety beyond the normal three-strike safety gate")
 	p.harvest.definition("roma").durability = durability
-	check.call(not p.harvest.unlocked("golden",p.levels) and p.harvest.varieties.size() == 6, "normal ability does not grant a prestige event or invent new harvest candidates")
+	check.call(not p.harvest.unlocked("golden",p.levels) and p.harvest.varieties.size() == 7, "normal ability does not grant a prestige event or invent new harvest candidates")
 
 	var game: Node = load("res://scenes/main.tscn").instantiate()
 	game.save_path = "user://tests/critical.json"

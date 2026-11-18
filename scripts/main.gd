@@ -180,7 +180,7 @@ func process_blade() -> int:
 	var count := 0
 	for hit: Dictionary in fragments.slice(knife.previous, knife.current, knife.stroke_id, progress.strength(), progress.settings.reduced_effects,roll_strike,knife.edge):
 		if hit.event_id in ["jackpot_harvest","stampede_season"]: ui.dismiss_feedback(hit.event_id)
-		cut_feedback(hit.position, false, hit.value)
+		cut_feedback(hit.position, false, hit.value,"",hit.family)
 		if hit.golden_multiplier > 1 or hit.golden_jackpot > 0:
 			if hit.critical: audio.play("critical")
 			if hit.golden_jackpot > 0: ui.popup_golden_jackpot(kitchen.camera.unproject_position(hit.position),hit.golden_jackpot,hit.critical)
@@ -204,7 +204,7 @@ func process_blade() -> int:
 				if weak:
 					ui.popup_weak_point(kitchen.camera.unproject_position(tomato.weak_point.center_world()),tomato.weak_point.multiplier,tomato.durability,strike.critical,tomato.family.event_id)
 					audio.play("resist")
-				else: damage_feedback(tomato.position,tomato.durability,tomato.family.event_id)
+				else: damage_feedback(tomato.position,tomato.durability,tomato.family)
 				continue
 			tomato.sliced = true
 			tomato.family.record_split()
@@ -230,14 +230,21 @@ func critical_feedback(at: Vector3) -> void:
 	ui.popup_critical(kitchen.camera.unproject_position(at))
 	audio.play("critical")
 
-func damage_feedback(at: Vector3, remaining: float, event_id: String = "") -> void:
+func resistance_group(family: CutFamily) -> String:
+	if family == null: return ""
+	var event := events.catalog.definition(family.event_id)
+	# Preserve the existing single-specimen event feedback groups. Ordinary
+	# roots and their descendants share one transient, independent family label.
+	if event.get("kind","") == "specimen" and int(event.get("active_limit",0)) == 1: return family.event_id
+	return "resistance:%d" % family.get_instance_id()
+
+func damage_feedback(at: Vector3, remaining: float, family: CutFamily = null) -> void:
 	var strikes := int(ceilf(remaining/progress.strength()))
-	var event := events.catalog.definition(event_id)
-	var group := event_id if event.get("kind","") == "specimen" and int(event.get("active_limit",0)) == 1 else ""
-	ui.popup_damage("%d more %s" % [strikes,"strike" if strikes == 1 else "strikes"], kitchen.camera.unproject_position(at),group)
+	ui.popup_damage("%d more %s" % [strikes,"strike" if strikes == 1 else "strikes"], kitchen.camera.unproject_position(at),resistance_group(family))
 	audio.play("resist")
 
 func cut_feedback(at: Vector3, first_slice: bool, tomato_value: float = 1.0, event_id: String = "", family: CutFamily = null, critical: bool = false) -> void:
+	ui.dismiss_feedback(resistance_group(family),true)
 	if first_slice and events.catalog.definition(event_id).get("kind","") == "specimen": ui.dismiss_feedback(event_id)
 	var wave: StampedeCombo = family.stampede_combo if first_slice and family != null else null
 	var reward := session.record_cut(progress, first_slice, tomato_value,event_id,wave,family.stampede_index if wave != null else -1,family.event_group if wave != null else -1)

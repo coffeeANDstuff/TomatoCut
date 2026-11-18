@@ -24,7 +24,7 @@ static func swipe(game, x: float) -> int:
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
 	var catalog := EventCatalog.new()
-	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 5 and p.harvest.varieties.size() == 6,"all five separately gated events validate without inventing ordinary varieties")
+	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 5 and p.harvest.varieties.size() == 7,"all five separately gated events validate without inventing ordinary varieties")
 	var specimen := catalog.specimen("event_jackpot"); var batched := true
 	for path: String in [specimen.model]+specimen.fragments.values():
 		var model: Node = load(path).instantiate()
