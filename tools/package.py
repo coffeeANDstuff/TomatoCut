@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Plum and Chef milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Beefsteak and Cleaver milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -65,6 +65,12 @@ Dotted ink focus supports keyboard controls; checkmark slips save preferences.
 Hover navigation icons for one second to see their labels.
 Move the mouse through airborne tomatoes; no click is needed.
 Ten-second starting rounds; cultivation and progress save automatically.
+Beefsteak reveals after Plum Quality 1 + Campari Frequency 2. Its $1320
+unlock buys ownership; automatic throws still require enough sharpness for
+three normal strikes or fewer. The catalog explains blocked readiness and
+dominance phase-out. Quality/frequency/dominance remain separate investments.
+The $850 Cleaver has 4.00 base strength, a short heavy edge, a real hanging
+eye and an original heavy chop cue. Buy/equip/preparation stay separate.
 Plum reveals after Roma Quality 2 + Cocktail Quality 1. Its $780 unlock
 adds a compact resistant specimen with thick twin-gallery cuts and paid
 cultivation. The $500 Chef's Knife has 2.50 base strength and a longer curved
@@ -280,7 +286,7 @@ Source history: https://github.com/coffeeANDstuff/TomatoCut
 Milestone tag: v{VERSION}
 
 STATUS
-Seven of 25 normal varieties and seven of 25 knives are integrated.
+Eight of 25 normal varieties and eight of 25 knives are integrated.
 This is a development milestone, not the final game. Windows-native,
 Forward+ hardware, audio listening and target-PC 60 FPS remain unverified.
 '''

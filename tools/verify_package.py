@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.29.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.30.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -42,6 +42,15 @@ with zipfile.ZipFile(args.archive) as z:
                    'Source/reports/v029/dense-before.json', 'Source/reports/v029/dense-after.json'}
     chef_assets |= {'Source/assets/models/fragments/plum_'+shape+'.glb' for shape in ['half','wedge','chunk']}
     assert chef_assets <= set(hashes), 'Missing original Plum/Chef models, audio, art, sources or tests'
+    cleaver_assets = {'Source/art/beefsteak.blend', 'Source/art/cleaver.blend',
+                      'Source/assets/models/tomatoes/beefsteak.glb', 'Source/assets/models/knives/cleaver.glb',
+                      'Source/assets/illustrations/catalog/beefsteak.svg', 'Source/assets/audio/cleaver_slice.wav',
+                      'Source/tools/build_beefsteak_assets.py', 'Source/tools/build_cleaver_assets.py',
+                      'Source/tools/blender_meshes.py', 'Source/tools/build_beefsteak_art.py',
+                      'Source/tests/cleaver_tests.gd', 'Source/tests/cleaver_render.gd',
+                      'Source/reports/v030/dense-all-cleaver.json'}
+    cleaver_assets |= {'Source/assets/models/fragments/beefsteak_'+shape+'.glb' for shape in ['half','wedge','chunk']}
+    assert cleaver_assets <= set(hashes), 'Missing original Beefsteak/Cleaver models, audio, art, sources or tests'
     campari_assets = {'Source/art/campari.blend', 'Source/art/utility_knife.blend',
                      'Source/assets/models/tomatoes/campari.glb', 'Source/assets/models/knives/utility.glb',
                      'Source/assets/illustrations/catalog/campari.svg', 'Source/tools/build_campari_art.py',

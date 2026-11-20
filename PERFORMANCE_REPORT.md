@@ -65,3 +65,24 @@ DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_
 # After replacing only SliceSystem with the v0.29 implementation:
 DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_dense.gd -- --label=v029-fine-bounds --all-varieties --knife=chef
 ```
+
+
+## Eight-variety heavy-blade diagnostic — v0.30 (2026-11-19, America/Los_Angeles)
+
+The current-content fixture cycles all **eight actual normal varieties**, including Beefsteak, and uses the real **three-point Cleaver edge**. Godot 4.6.3 Compatibility, Mesa llvmpipe (LLVM 19.1.7, 256 bits), private Xorg :97. It runs after all native tests, without another Godot/render workload. The existing method is unchanged: frozen occupancy, 12 warmup/60 measured render frames, then 120 actual zero-damage miss/crossing fragment probes with rotation increments. Capacities remain 24 roots/64 pieces/96 drops; geometry, effects, physics rules and lifetimes are not reduced. The old three-variety/starter default and v0.29 matching before/after reports remain available.
+
+| Roots / pieces / drops | Draw calls | Mean render-only FPS | Median / p95 frame ms | Crossing median / p95 ms | Miss median ms |
+|---|---:|---:|---:|---:|---:|
+| 4 / 8 / 12 | 226 | 8.63 | 111.609 / 150.681 | 0.021 / 0.025 | 0.021 |
+| 12 / 32 / 64 | 674 | 5.32 | 186.610 / 226.326 | 0.853 / 1.075 | 0.045 |
+| 24 / 64 / 96 | 1,206 | 3.45 | 290.583 / 354.003 | 1.669 / 1.932 | 0.075 |
+
+This is **one current-content diagnostic**, not a matching optimization comparison. It uses eight varieties/a shorter heavy blade rather than the previous seven/Chef profile; cross-version timing or draw-call differences establish no speedup. SliceSystem and the v0.29 fine-bounds optimization are unchanged. The exact oracle now covers 448 transformed/scaled cases, 14 normal/event identities, all eight blades and both fragment forms; all prior rotating positive seam cases also remain.
+
+Software rasterization and 1,206 draw calls remain the capacity bottleneck. This does not establish live-game FPS, native Windows/Forward+ or supported-PC 60 FPS, long-soak memory stability or human feel. Further geometry-preserving rendering/instancing needs a controlled profile and gameplay verification; shortening lifetimes or removing pieces/detail/effects remains outside the accepted approach. The new models use evaluated-vertex-preserving material batching within eight nodes, without regenerating prior assets.
+
+Raw report: [dense-all-cleaver.json](reports/v030/dense-all-cleaver.json).
+
+```sh
+DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_dense.gd -- --label=v030-all-cleaver --all-varieties --knife=cleaver
+```

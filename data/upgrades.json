@@ -578,5 +578,75 @@
       "suppression": 0.1
     },
     "tomato_id": "plum"
+  },
+  {
+    "id": "unlock_beefsteak",
+    "name": "Beefsteak \u00b7 Variety Unlock",
+    "category": "Varieties",
+    "description": "A broad new branch joins firm Plum cultivation to a dependable Campari harvest.",
+    "effect": "Adds large Beefsteak tomatoes to the automatic mix when the blade can handle them: $48 base value, 5 resistance.",
+    "base_cost": 1320,
+    "growth": 1,
+    "max_level": 1,
+    "requires": {
+      "plum_quality": 1,
+      "campari_frequency": 2
+    },
+    "effect_values": {
+      "unlock": 1
+    },
+    "tomato_id": "beefsteak"
+  },
+  {
+    "id": "beefsteak_frequency",
+    "name": "Beefsteak \u00b7 Harvest Frequency",
+    "category": "Varieties",
+    "description": "More substantial arrivals, with precisely the same respect for the cutting board.",
+    "effect": "+50% relative Beefsteak spawn weight per level.",
+    "base_cost": 520,
+    "growth": 1.25,
+    "max_level": 10,
+    "requires": {
+      "unlock_beefsteak": 1
+    },
+    "effect_values": {
+      "weight_bonus": 0.5
+    },
+    "tomato_id": "beefsteak"
+  },
+  {
+    "id": "beefsteak_quality",
+    "name": "Beefsteak \u00b7 Premium Quality",
+    "category": "Varieties",
+    "description": "Six carefully inspected seed chambers and an exceptionally meaty return.",
+    "effect": "+25% Beefsteak cut value per level, including separated pieces.",
+    "base_cost": 560,
+    "growth": 1.26,
+    "max_level": 10,
+    "requires": {
+      "unlock_beefsteak": 1
+    },
+    "effect_values": {
+      "value_bonus": 0.25
+    },
+    "tomato_id": "beefsteak"
+  },
+  {
+    "id": "beefsteak_dominance",
+    "name": "Beefsteak \u00b7 Harvest Dominance",
+    "category": "Varieties",
+    "description": "A heavy harvest takes precedence only when actual value per strike warrants it.",
+    "effect": "Suppresses less profitable lower-tier weight by 10% per level; actual value per strike governs eligibility.",
+    "base_cost": 1600,
+    "growth": 1.32,
+    "max_level": 10,
+    "requires": {
+      "beefsteak_frequency": 3,
+      "beefsteak_quality": 2
+    },
+    "effect_values": {
+      "suppression": 0.1
+    },
+    "tomato_id": "beefsteak"
   }
 ]

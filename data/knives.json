@@ -204,5 +204,32 @@
       ]
     ],
     "slice_sound": "chef_slice"
+  },
+  {
+    "id": "cleaver",
+    "name": "Cleaver",
+    "catalog_number": "008",
+    "description": "A broad slab of satin steel, a real hanging eye and riveted burnt-umber scales. Its contribution to the discussion is short, heavy and usually conclusive.",
+    "price": 850,
+    "model": "res://assets/models/knives/cleaver.glb",
+    "base_strength": 4,
+    "precision": "Broad straight edge",
+    "special": "None",
+    "reach_label": "Short heavy cutting edge",
+    "edge": [
+      [
+        -0.08,
+        -0.2
+      ],
+      [
+        0.84,
+        -0.2
+      ],
+      [
+        1.09,
+        -0.16
+      ]
+    ],
+    "slice_sound": "cleaver_slice"
   }
 ]

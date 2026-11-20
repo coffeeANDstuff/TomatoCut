@@ -41,9 +41,9 @@ func run() -> void:
 	await click(game.ui.content.find_child("Equip_santoku",true,false)); await frames()
 	check(game.progress.strength() == 2.5 and game.progress.equipped_combo_multiplier() == 1 and game.ui.content.find_child("EquipmentSpecial",true,false).text.contains("Dormant"),"actual native Santoku equip composes sharpness but remains dormant until Combo Cash")
 	await click(find_button(game.ui.content,"Back to the cutting board")); game.set_physics_process(false)
-	var fruit := automatic_cocktail(); var start := fruit.position
+	var fruit := automatic_cocktail(); var start := fruit.position; var initial_rotation := fruit.rotation
 	for step in range(60): fruit._physics_process(1.0/60)
-	check(fruit.variety_id == "cocktail" and fruit.position.y > start.y and fruit.rotation.length() > 1 and fruit.family.cut_value == 22.5 and game.knife.edge.size() == 4,"actual automatic Cocktail has its own quick spinning flight, quality and matching Santoku blade")
+	check(fruit.variety_id == "cocktail" and fruit.position.y > start.y and (fruit.rotation-initial_rotation).is_equal_approx(fruit.spin) and fruit.family.cut_value == 22.5 and game.knife.edge.size() == 4,"actual automatic Cocktail integrates its sampled authored spin for one second with quick flight, quality and matching Santoku blade")
 	await capture("220-moving-cocktail"); pose(fruit); var camera_pose: Transform3D = game.kitchen.camera.global_transform
 	await move_blade(Vector2(-3,0)); await move_blade(Vector2(3,0))
 	check(game.session.cuts == 1 and is_equal_approx(game.session.earnings,28.13) and game.session.bonus == 0,"actual dormant Santoku root pays ordinary captured value without an unearned combo boost")

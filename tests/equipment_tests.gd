@@ -4,7 +4,7 @@ const CRITICAL := preload("res://tests/critical_tests.gd")
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
-	check.call(p.equipment.validate().is_empty() and p.equipment.knives.size() == 7, "all seven authored knife definitions and models validate")
+	check.call(p.equipment.validate().is_empty() and p.equipment.knives.size() == 8, "all eight authored knife definitions and models validate")
 	check.call(p.owned_knives == ["rusty_butter"] and p.equipped_knife == "rusty_butter" and p.snapshot().version == 5, "fresh v5 ledger owns and equips only the free starter")
 	check.call(EquipmentCatalog.edge_points(p.equipment.definition("rusty_butter")) == SliceSystem.DEFAULT_EDGE, "starter collision retains its established edge exactly")
 	check.call(p.equipment.edge_length("plastic_picnic") > p.equipment.edge_length("rusty_butter") and p.equipment.edge_length("missing") == 0, "picnic reach comes from the authored longer cutting edge")

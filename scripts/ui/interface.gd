@@ -428,7 +428,7 @@ func catalog(category: String = selected_category) -> void:
 	var summary := "CURRENT HARVEST\n"
 	for data: Dictionary in progress.harvest.varieties:
 		if progress.harvest.unlocked(data.id,progress.levels):
-			summary += "%s  %.1f%%\n" % [data.name,float(mix.get(data.id,0))*100]
+			summary += "%s  %.1f%%%s\n" % [data.name,float(mix.get(data.id,0))*100," · needs sharpness" if not progress.harvest.can_handle(data,progress.strength()) else ""]
 	summary += "\nCalculated automatically.\nCultivation shapes the mix."
 	var summary_label := label(summary,16,true,MUTED)
 	summary_label.name = "HarvestSummary"
@@ -556,6 +556,7 @@ func render_varieties(list: VBoxContainer) -> void:
 	var mix := progress.harvest.distribution(progress.levels,progress.strength())
 	for data: Dictionary in progress.harvest.varieties:
 		var available := progress.harvest.unlocked(data.id,progress.levels)
+		var can_handle := progress.harvest.can_handle(data,progress.strength())
 		if not available and not data.unlock_upgrade in progress.discovered:
 			continue
 		var specimen := HBoxContainer.new()
@@ -581,8 +582,15 @@ func render_varieties(list: VBoxContainer) -> void:
 		var description := label(data.description,17,true,MUTED)
 		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		notes.add_child(description)
-		var status := label("Cultivated · automatically available" if available else "Awaiting Variety Unlock",16)
+		var status_text := "Awaiting Variety Unlock"
+		if available:
+			status_text = "Cultivated · needs more sharpness" if not can_handle else ("Cultivated · automatically available" if mix.has(data.id) else "Cultivated · phased out by dominance")
+		var status := label(status_text,16)
+		status.name = "HarvestStatus_"+data.id; status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		notes.add_child(status)
+		if not can_handle:
+			var readiness := label("Needs %.2f sharpness for automatic throws · maximum %d normal strikes." % [ceilf(float(data.durability)/HarvestProgression.MAX_NORMAL_STRIKES*100)/100,HarvestProgression.MAX_NORMAL_STRIKES],16,false,MUTED)
+			readiness.name = "HarvestReadiness_"+data.id; readiness.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; notes.add_child(readiness)
 		notes.add_child(label("%s base value · %s resistance" % [Progression.cash(data.base_value),str(data.durability)],16))
 		if int(data.tier) > 0:
 			var value := label("%s value: %s · premium ×%.2f" % ["Cultivated" if available else "After unlock",Progression.cash(progress.harvest.cut_value(data.id,progress.levels)),progress.harvest.premium_multiplier(data.id)],16,true)

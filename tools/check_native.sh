@@ -9,7 +9,7 @@ for flow in render_smoke harvest_render roma_render discovery_render critical_re
   stampede_render button_render giant_render rainbow_render jackpot_render \
   permanent_time_render permanent_production_render permanent_cutting_render \
   permanent_harvest_render weak_point_render heirloom_render ultimate_render \
-  stampede_combo_render golden_multiplier_render golden_jackpot_render production_polish_render campari_render santoku_render chef_render; do
+  stampede_combo_render golden_multiplier_render golden_jackpot_render production_polish_render campari_render santoku_render chef_render cleaver_render; do
   if ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy \
       --script "tests/$flow.gd" > "artifacts/native/$flow.log" 2>&1; then
     printf 'PASS: %s\n' "$flow"

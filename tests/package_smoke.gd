@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.29.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.30.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -180,7 +180,7 @@ func run() -> void:
 	for id: String in ["permanent_slice_value","starting_cash","golden_harvest","golden_frequency","golden_value"]: game.purchase_permanent(id)
 	game.ui.archive("Special Events")
 	check(game.events.catalog.validate(game.progress.prestige).is_empty() and game.ui.content.find_child("PrestigeTitle_golden_harvest",true,false) != null,"packaged event JSON, all four original golden models and illustrated event archive validate")
-	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 7,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
+	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 8,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
 	game.progress.money = 100; game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts")
 	game.start_round(); game.session.launch_clock = 1000
 	for candidate in range(1,10000):
@@ -969,7 +969,7 @@ func run() -> void:
 	game.new_game()
 	check(game.progress.prestige.level("golden_jackpot") == 0 and game.events.catalog.golden_jackpot_bonus("golden_harvest",game.progress.prestige) == 0 and game.progress.settings.reduced_motion,"packaged New Game clears finish ownership and Golden gate while preserving preferences")
 	game.finish_round(); await process_frame
-	check(game.progress.harvest.varieties.size() == 7 and game.progress.equipment.knives.size() == 7,"packaged production collection contains seven original normal varieties and seven actual knives")
+	check(game.progress.harvest.varieties.size() == 8 and game.progress.equipment.knives.size() == 8,"packaged production collection contains eight original normal varieties and eight actual knives")
 	game.progress.money = 10000
 	for polish_id: String in ["better_prices","faster_throwing","unlock_cherry"]: game.progress.purchase(polish_id)
 	check(not game.progress.purchase("unlock_grape") and not "unlock_grape" in game.progress.discovered,"packaged Grape retains its actual frequency predecessor and cannot be bought early")
@@ -1152,6 +1152,76 @@ func run() -> void:
 	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
 	check(not game.progress.harvest.unlocked("plum",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"] and game.progress.owned_modifications.is_empty() and game.ui.list_views.is_empty(),"packaged confirmed prestige resets new Plum/Chef/preparation and obsolete collection views")
 	game.new_game(); check(game.progress.prestige.levels.is_empty() and game.ui.root_views.is_empty() and game.progress.settings.reduced_motion,"packaged final New Game retains accessibility preferences and clears new normal/permanent state")
+	game.progress.settings.damage_indicators = true
+	game.finish_round(); await process_frame; game.progress.money = 100000
+	for cleaver_order: String in ["better_prices","faster_throwing","unlock_cherry","sharp_edge","unlock_roma","roma_quality","cherry_frequency","unlock_grape","grape_frequency","unlock_campari","campari_frequency","cherry_quality","cherry_quality","unlock_cocktail","cocktail_quality","roma_quality","unlock_plum","plum_quality"]: game.progress.purchase(cleaver_order)
+	check(not game.progress.purchase("unlock_beefsteak") and not "unlock_beefsteak" in game.progress.discovered,"packaged Beefsteak retains both actual paid predecessor branches")
+	game.progress.purchase("campari_frequency"); var cleaver_cash: float = game.progress.money
+	check(game.progress.purchase("unlock_beefsteak") and game.progress.money == cleaver_cash-1320 and game.progress.harvest.unlocked("beefsteak",game.progress.levels),"packaged actual 1320-dollar Beefsteak order grants paid ownership")
+	game.show_catalog(); game.ui.catalog("Varieties")
+	for cleaver_frame in range(6): await process_frame
+	check(not game.progress.harvest.distribution(game.progress.levels,game.progress.strength()).has("beefsteak") and game.ui.content.find_child("HarvestStatus_beefsteak",true,false).text.contains("needs more sharpness") and game.ui.content.find_child("HarvestReadiness_beefsteak",true,false).text.contains("1.67"),"packaged catalog honestly explains owned but power-blocked heavy fruit using the real three-normal-strike rule")
+	game.purchase("beefsteak_quality"); game.purchase("beefsteak_frequency"); game.ui.catalog("Cutting"); game.purchase("extra_cuts")
+	check(game.progress.harvest.cut_value("beefsteak",game.progress.levels) == 60 and not game.progress.harvest.distribution(game.progress.levels,game.progress.strength()).has("beefsteak"),"packaged paid heavy quality/frequency cannot bypass actual cutting readiness")
+	game.start_round(); game.session.launch_clock = 1000; var cleaver_blocked := true
+	for cleaver_attempt in range(80):
+		game.clear_field(); fruit = game.spawn_tomato(); cleaver_blocked = cleaver_blocked and fruit.variety_id != "beefsteak"
+	check(cleaver_blocked and game.session.cuts == 0 and game.session.earnings == 0,"packaged actual automatic spawn samples never launch the paid heavyweight under inadequate normal strength")
+	game.finish_round(); game.show_equipment(); cleaver_cash = game.progress.money; game.buy_knife("cleaver")
+	check(game.progress.money == cleaver_cash-850 and game.progress.equipped_knife == "rusty_butter" and "cleaver" in game.progress.owned_knives,"packaged actually saved 850-dollar Cleaver purchase remains separate from equip")
+	game.buy_knife("paring"); game.equip_knife("paring"); game.show_catalog(); game.ui.catalog("Varieties")
+	for cleaver_frame in range(6): await process_frame
+	check(game.progress.strength() == 1.75 and game.progress.harvest.distribution(game.progress.levels,game.progress.strength()).has("beefsteak") and game.ui.content.find_child("HarvestReadiness_beefsteak",true,false) == null and game.ui.content.find_child("HarvestStatus_beefsteak",true,false).text.contains("automatically available"),"packaged actual equipment readiness enables the mix and removes obsolete power warnings without free ownership")
+	check(ResourceLoader.exists("res://assets/models/knives/cleaver.glb") and load("res://assets/illustrations/catalog/beefsteak.svg").get_width() > 0 and game.audio.sounds.has("cleaver_slice"),"packaged original heavy blade, Beefsteak botanical and chop cue resolve")
+	game.start_round(); game.clear_field(); game.session.launch_clock = 1000; game.fragments.set_physics_process(false)
+	for cleaver_attempt in range(400):
+		game.clear_field(); fruit = game.spawn_tomato()
+		if fruit.variety_id == "beefsteak": break
+	fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	var cleaver_family: CutFamily = fruit.family
+	check(fruit.variety_id == "beefsteak" and fruit.collision == "hull" and fruit.durability == 5 and cleaver_family.mass == 2.4 and cleaver_family.fragment_durability == 2.5,"packaged actual automatic heavyweight retains its own hull, captured mass and root/fragment resistance")
+	game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade(); game.process_blade()
+	check(fruit.durability == 3.25 and game.session.cuts == 0 and game.session.earnings == 0 and cleaver_family.accepted_strikes == 1,"packaged actual precision hit and repeated sample respect heavy resistance and accepted-strike protection")
+	game.knife.track(Vector2(-3,0)); game.process_blade(); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(game.session.cuts == 1 and game.session.earnings == 75 and game.ui.moving.filter(func(item): return item.get("group","") == game.resistance_group(cleaver_family)).is_empty(),"packaged third actual precision hit pays 75 and clears the split heavyweight's obsolete resistance feedback")
+	game.knife.track(Vector2(-3,0)); game.process_blade()
+	check(game.session.cuts == 1 and game.fragments.pieces[0].durability == .75,"packaged actual meaty Beefsteak half resists its first precision-knife recut")
+	game.knife.track(Vector2(3,0)); game.process_blade(); game.process_blade()
+	check(game.session.cuts == 2 and game.session.tomatoes_sliced == 1 and game.session.earnings == 150,"packaged actual heavyweight root/recut preserve shared cuts, unique credit and 150 family income")
+	game.finish_round(); game.show_equipment(); game.equip_knife("cleaver")
+	check(game.progress.strength() == 4.5 and game.knife.edge.size() == 3 and game.progress.equipment.edge_length("cleaver") < game.progress.equipment.edge_length("chef") and game.progress.equipped_combo_multiplier() == 1,"packaged actual heavy Cleaver uses shorter authored geometry and composed strength rather than a borrowed value passive")
+	game.start_round(); game.clear_field(); game.session.launch_clock = 1000
+	for cleaver_attempt in range(400):
+		game.clear_field(); fruit = game.spawn_tomato()
+		if fruit.variety_id == "beefsteak": break
+	fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO; game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(fruit.durability == .5 and game.session.cuts == 0,"packaged actual unprepared heavy edge leaves only half-point Beefsteak resistance without premature money")
+	game.knife.track(Vector2(-3,0)); game.process_blade(); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(game.session.cuts == 2 and game.session.earnings == 150,"packaged actual unprepared heavy root/recut reduce needed strikes but keep the same reward")
+	game.finish_round(); game.show_equipment(); game.buy_modification("honing_kit"); game.apply_modification("honing_kit","cleaver")
+	check(game.progress.strength() == 5 and game.progress.knife_modification("cleaver") == "honing_kit","packaged saved separate kit application reaches the heavyweight threshold once")
+	game.start_round(); game.clear_field(); game.session.launch_clock = 1000
+	for cleaver_attempt in range(400):
+		game.clear_field(); fruit = game.spawn_tomato()
+		if fruit.variety_id == "beefsteak": break
+	fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO; game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(game.session.cuts == 1 and game.session.earnings == 75 and game.audio.players[(game.audio.cursor-1)%8].stream == game.audio.sounds.cleaver_slice,"packaged actual prepared heavy root splits cleanly and dispatches the original chop cue without a value multiplier")
+	game.knife.track(Vector2(-3,0)); game.process_blade(); game.finish_round(); var cleaver_saved := Progression.new()
+	check(game.store.load_into(cleaver_saved) and cleaver_saved.equipped_knife == "cleaver" and cleaver_saved.strength() == 5 and cleaver_saved.prestige.cycle_earnings == 450,"packaged three actual precision/heavy/prepared rounds bank 450 and restore paid inventory/cultivation")
+	game.show_equipment(); game.ui.equipment_shop("rusty_butter"); await game.ui.focus_control(game.ui.content.find_child("Product_cleaver",true,false))
+	check(game.ui.content.get_node("KnifeCollectionScroll").get_global_rect().encloses(game.ui.content.find_child("Product_cleaver",true,false).get_global_rect()),"packaged eighth-product focus remains reachable inside the bounded native collection")
+	game.show_catalog(); var cleaver_before: Dictionary = game.progress.snapshot(); var cleaver_store: SaveStore = game.store; var cleaver_disk := FileAccess.get_file_as_string(cleaver_store.path)
+	game.store = SaveStore.new("user://tests/missing-pack-cleaver-"+game.progress.prestige.lineage+"/ledger.json"); game.purchase("beefsteak_quality"); game.show_equipment(); game.equip_knife("rusty_butter"); game.remove_modification("honing_kit")
+	check(game.progress.snapshot() == cleaver_before and FileAccess.get_file_as_string(cleaver_store.path) == cleaver_disk and game.knife.knife_id == "cleaver","packaged failed heavy cultivation/equip/preparation writes preserve active effects and exact prior disk bytes")
+	game.store = cleaver_store; game.remove_modification("honing_kit")
+	check(game.progress.strength() == 4.5 and not is_instance_valid(game.ui.notice_label),"packaged successful heavy preparation recovery applies once and clears stale failure notice")
+	game.show_catalog(); game.purchase("better_prices"); game.ui.catalog("Combos"); game.purchase("combo_cash"); game.show_equipment(); game.buy_knife("santoku"); game.equip_knife("santoku")
+	check(game.progress.reward(2,60) == 96.75 and game.progress.equipped_combo_multiplier() == 1.5,"packaged actual Santoku retains its separately cultivated equipped combo benefit beside the heavy knife")
+	game.equip_knife("cleaver")
+	check(game.progress.reward(2,60) == 94.5 and game.progress.equipped_combo_multiplier() == 1,"packaged return to Cleaver removes the other instrument's passive without inventing heavy-cut income")
+	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(not game.progress.harvest.unlocked("beefsteak",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"] and game.progress.owned_modifications.is_empty() and game.ui.list_views.is_empty(),"packaged confirmed prestige resets new heavyweight/Cleaver/preparation and obsolete collection views")
+	game.new_game(); check(game.progress.prestige.levels.is_empty() and game.ui.root_views.is_empty() and game.progress.settings.reduced_motion,"packaged final New Game retains preferences and clears all new normal/permanent gates")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

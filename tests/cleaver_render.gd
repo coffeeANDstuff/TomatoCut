@@ -1,0 +1,92 @@
+extends "res://tests/campari_render.gd"
+
+func automatic_beefsteak() -> Tomato:
+	game.clear_field(); game.session.launch_clock = 1000; game.fragments.set_physics_process(false)
+	var fruit: Tomato
+	for i in range(400):
+		game.clear_field(); fruit = game.spawn_tomato()
+		if fruit.variety_id == "beefsteak": break
+	fruit.set_physics_process(false); return fruit
+
+func run() -> void:
+	create_timer(420).timeout.connect(func(): push_error("Cleaver native checks timed out"); quit(1))
+	DirAccess.make_dir_recursive_absolute(output)
+	game = load("res://scenes/main.tscn").instantiate(); game.save_path = "user://tests/cleaver-render.json"
+	for suffix: String in ["", ".bak"]:
+		if FileAccess.file_exists(game.save_path+suffix): DirAccess.remove_absolute(game.save_path+suffix)
+	root.add_child(game); await frames(); game.progress.money = 50000
+	await click(find_button(game.ui.content,"Seed catalog")); await click(find_button(game.ui.content,"Money")); await cultivate("better_prices")
+	await click(find_button(game.ui.content,"Harvest")); await cultivate("faster_throwing"); await click(find_button(game.ui.content,"Cutting")); await cultivate("sharp_edge"); await cultivate("extra_cuts"); await click(find_button(game.ui.content,"Varieties"))
+	for id: String in ["unlock_cherry","unlock_roma","roma_quality","cherry_frequency","unlock_grape","grape_frequency","unlock_campari","campari_frequency","cherry_quality","cherry_quality","unlock_cocktail","cocktail_quality","roma_quality","unlock_plum","plum_quality"]: await cultivate(id)
+	check(game.ui.content.find_child("Specimen_beefsteak",true,false) == null,"native Beefsteak stays hidden until both real Plum quality and second Campari frequency gates are paid")
+	await cultivate("campari_frequency"); await focus_specimen("beefsteak")
+	check(not game.progress.harvest.unlocked("beefsteak",game.progress.levels) and game.ui.content.find_child("HarvestStatus_beefsteak",true,false).text.contains("Awaiting") and game.ui.content.find_child("HarvestReadiness_beefsteak",true,false).text.contains("1.67"),"native botanical invitation honestly shows both the unpaid unlock and current cutting-power requirement")
+	await capture("237-beefsteak-invitation"); var money: float = game.progress.money; await cultivate("unlock_beefsteak")
+	check(game.progress.money == money-1320 and game.progress.harvest.unlocked("beefsteak",game.progress.levels) and not game.progress.harvest.distribution(game.progress.levels,game.progress.strength()).has("beefsteak"),"actual saved 1320-dollar native unlock grants ownership while retaining the ordinary three-strike safety")
+	await cultivate("beefsteak_quality"); await cultivate("beefsteak_frequency"); root.size = Vector2i(1280,720); await frames(); await focus_specimen("beefsteak")
+	var readiness: Label = game.ui.content.find_child("HarvestReadiness_beefsteak",true,false)
+	check(root.get_visible_rect().encloses(readiness.get_global_rect()) and game.ui.content.find_child("HarvestStatus_beefsteak",true,false).text.contains("needs more sharpness") and game.ui.content.find_child("Purchase_beefsteak_dominance",true,false) == null,"native eight-variety root catalog fits honest blocked readiness at 16:9 while advanced orders remain hidden")
+	var map: RootMap = game.ui.content.get_node("CatalogScroll"); var zoom := map.zoom; money = game.progress.money
+	await wheel_list(game.ui.content.get_node("HarvestMixScroll"))
+	check(map.zoom == zoom and game.progress.money == money and game.ui.content.get_node("HarvestMixScroll").scroll_vertical > 0,"actual native heavyweight reference scrolls independently without changing root zoom, buying produce or bypassing strength")
+	await capture("238-beefsteak-awaiting-strength"); await click(instrument_icon()); await frames(6)
+	var product: Button = game.ui.content.find_child("Product_cleaver",true,false); game.ui.content.find_child("Product_rusty_butter",true,false).grab_focus()
+	for i in range(7):
+		for down: bool in [true,false]:
+			var key := InputEventKey.new(); key.keycode = KEY_TAB; key.pressed = down; Input.parse_input_event(key)
+		await frames(1)
+	await frames()
+	check(root.gui_get_focus_owner() == product and game.ui.content.get_node("KnifeCollectionScroll").get_global_rect().encloses(product.get_global_rect()),"seven real native Tab presses expose the eighth instrument inside the bounded collection")
+	await click(product); await frames(6)
+	check(game.progress.equipped_knife == "rusty_butter" and not game.progress.harvest.can_handle(game.progress.harvest.definition("beefsteak"),game.progress.strength()),"actual original Cleaver preview grants neither heavy cutting power nor a normal spawn")
+	await capture("239-cleaver-product-study"); money = game.progress.money; await click(game.ui.content.find_child("Buy_cleaver",true,false))
+	check(game.progress.money == money-850 and game.progress.owned_knives == ["rusty_butter","cleaver"] and game.progress.equipped_knife == "rusty_butter","actual saved native Cleaver purchase spends 850 dollars while keeping equip and readiness separate")
+	await select_product("paring"); await click(game.ui.content.find_child("Buy_paring",true,false)); await click(game.ui.content.find_child("Equip_paring",true,false))
+	check(game.progress.strength() == 1.75 and game.progress.harvest.distribution(game.progress.levels,game.progress.strength()).has("beefsteak"),"actual paid precision knife plus cultivated strength satisfies the same ordinary heavyweight safety gate")
+	await click(catalog_icon()); await click(find_button(game.ui.content,"Varieties")); await focus_specimen("beefsteak")
+	check(game.ui.content.find_child("HarvestReadiness_beefsteak",true,false) == null and game.ui.content.find_child("HarvestStatus_beefsteak",true,false).text.contains("automatically available"),"actual native equipment change removes obsolete readiness warnings and updates the eight-variety automatic reference")
+	await capture("240-beefsteak-ready-reference"); await click(find_button(game.ui.content,"Back to the cutting board")); game.set_physics_process(false)
+	var fruit := automatic_beefsteak(); var start := fruit.position; var initial_rotation := fruit.rotation; var family: CutFamily = fruit.family
+	for step in range(60): fruit._physics_process(1.0/60)
+	check(fruit.variety_id == "beefsteak" and fruit.position.y > start.y and (fruit.rotation-initial_rotation).is_equal_approx(fruit.spin) and family.mass == 2.4 and family.cut_value == 60,"actual eligible automatic Beefsteak flies with its authored heavy mass, measured arc, spin and cultivated value")
+	await capture("241-moving-beefsteak"); pose(fruit); var camera_pose: Transform3D = game.kitchen.camera.global_transform
+	await move_blade(Vector2(-3,0)); await move_blade(Vector2(3,0))
+	check(fruit.durability == 3.25 and game.session.cuts == 0 and game.session.earnings == 0,"actual native precision-knife hit damages the heavyweight without paying before a split")
+	await capture("242-beefsteak-resistance"); await move_blade(Vector2(-3,0))
+	check(game.ui.moving.filter(func(item): return item.get("group","") == game.resistance_group(family)).size() == 1,"rapid native heavyweight damage updates one current family-local resistance label")
+	await move_blade(Vector2(3,0))
+	check(game.session.cuts == 1 and game.session.earnings == 75 and game.session.tomatoes_sliced == 1 and game.ui.moving.filter(func(item): return item.get("group","") == game.resistance_group(family)).is_empty(),"three actual native precision strokes split Beefsteak for 75 and retire obsolete damage feedback")
+	for step in range(18): game.fragments._physics_process(1.0/60)
+	check(game.fragments.pieces.size() == 2 and game.fragments.pieces[0].position.distance_to(game.fragments.pieces[1].position) > .1,"actual heavy Beefsteak halves separate and tumble with their own meaty six-chamber interiors")
+	await capture("243-beefsteak-open-interiors"); var at: Vector3 = game.fragments.pieces[0].global_position; game.knife.reset()
+	await move_blade(Vector2(at.x-2,at.y)); await move_blade(Vector2(at.x+2,at.y))
+	check(game.session.cuts == 1 and game.fragments.pieces[0].durability == .75,"actual native heavyweight half retains its own 2.5 resistance before recut income")
+	await move_blade(Vector2(at.x-2,at.y)); await move_blade(Vector2(at.x+2,at.y))
+	check(game.session.cuts == 2 and game.session.earnings == 150 and game.session.tomatoes_sliced == 1 and game.kitchen.camera.global_transform == camera_pose,"actual resistant heavyweight recut retains 150 per family, unique accounting and the fixed camera")
+	game.session.advance(100); game.finish_round(); await frames(); await click(instrument_icon()); await select_product("cleaver"); await click(game.ui.content.find_child("Equip_cleaver",true,false))
+	check(game.progress.strength() == 4.5 and game.progress.equipped_combo_multiplier() == 1,"actual saved native Cleaver equip composes heavy base and ordinary sharpness without a value passive")
+	await click(find_button(game.ui.content,"Back to the cutting board")); fruit = automatic_beefsteak(); pose(fruit)
+	await move_blade(Vector2(-3,0)); await move_blade(Vector2(3,0))
+	check(fruit.durability == .5 and game.session.cuts == 0 and game.knife.edge.size() == 3,"actual short heavy blade leaves only half-point Beefsteak resistance without a premature reward")
+	await move_blade(Vector2(-3,0)); await move_blade(Vector2(3,0))
+	check(game.session.cuts == 2 and game.session.earnings == 150,"actual unprepared Cleaver root/recut need fewer accepted strikes while keeping the same payout")
+	await capture("244-cleaver-heavy-recut"); game.session.advance(100); game.finish_round(); await frames(); await click(instrument_icon()); await select_product("cleaver"); await click(game.ui.content.find_child("Prepare_cleaver",true,false))
+	await click(game.ui.content.find_child("BuyModification_honing_kit",true,false)); await click(game.ui.content.find_child("Apply_honing_kit",true,false))
+	check(game.progress.strength() == 5 and game.progress.knife_modification("cleaver") == "honing_kit","actual separately bought native preparation reaches heavyweight resistance once without moving another instrument's kit")
+	await capture("245-prepared-cleaver"); await click(find_button(game.ui.content,"Back to cutting")); fruit = automatic_beefsteak(); pose(fruit)
+	await move_blade(Vector2(-3,0)); await move_blade(Vector2(3,0))
+	check(game.session.cuts == 1 and game.session.earnings == 75 and game.audio.players[(game.audio.cursor-1)%8].stream == game.audio.sounds.cleaver_slice,"actual prepared Cleaver makes a single clean heavy-root split and dispatches its original chop cue")
+	await move_blade(Vector2(-3,0)); game.session.advance(100); game.finish_round(); await frames(); var restored := Progression.new()
+	check(game.store.load_into(restored) and restored.equipped_knife == "cleaver" and restored.strength() == 5 and restored.prestige.cycle_earnings == 450,"three actual native precision/heavy/prepared rounds bank 450 and reload paid Beefsteak/Cleaver/preparation")
+	await capture("246-cleaver-results"); await click(instrument_icon()); await select_product("santoku"); await click(game.ui.content.find_child("Buy_santoku",true,false)); await click(game.ui.content.find_child("Equip_santoku",true,false))
+	await click(catalog_icon()); await click(find_button(game.ui.content,"Money")); await cultivate("better_prices"); await click(find_button(game.ui.content,"Combos")); await cultivate("combo_cash")
+	check(game.progress.equipped_combo_multiplier() == 1.5 and game.progress.reward(2,60) == 96.75,"actual native separately equipped and cultivated Santoku retains its own earned combo benefit")
+	await click(instrument_icon()); await select_product("cleaver"); await click(game.ui.content.find_child("Equip_cleaver",true,false))
+	check(game.progress.equipped_combo_multiplier() == 1 and game.progress.reward(2,60) == 94.5 and game.progress.strength() == 5,"actual native return to Cleaver removes Santoku's passive and keeps the heavy knife's assigned preparation")
+	game.progress.complete_round(float(game.progress.prestige.config.threshold),1,1); await click(archive_icon()); await click(game.ui.content.find_child("PreviewPrestige",true,false)); game.ui.prestige_confirmation.get_ok_button().pressed.emit(); await frames(6)
+	check(not game.progress.harvest.unlocked("beefsteak",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"] and game.progress.owned_modifications.is_empty() and game.ui.list_views.is_empty(),"native confirmed prestige clears new heavyweight ownership/equipment/preparation and stale collection views")
+	await permanent("permanent_slice_value"); game.show_settings(); await frames(); await click(game.ui.content.find_child("Setting_reduced_motion",true,false)); await click(game.ui.content.find_child("Setting_reduced_effects",true,false)); await click(instrument_icon()); await select_product("cleaver")
+	check(not game.ui.content.get_node("EquipmentPreview").is_processing() and game.ui.content.find_child("EquipmentSpecial",true,false).text == "Special  ·  None","new-cycle heavy Cleaver remains an unowned still product study with no gifted special")
+	await capture("247-cleaver-reduced-motion"); game.show_home(); await frames(); await click(find_button(game.ui.content,"New game")); game.ui.confirmation.get_ok_button().pressed.emit(); await frames(6)
+	check(game.progress.prestige.levels.is_empty() and game.ui.root_views.is_empty() and game.progress.settings.reduced_motion and game.progress.settings.reduced_effects,"native New Game clears all gates while retaining accessibility preferences")
+	game.queue_free(); await frames(12); await create_timer(.25).timeout; print("CLEAVER RENDER RESULT: ",failures," failures"); quit(1 if failures else 0)

@@ -273,5 +273,45 @@
     "frequency_upgrade": "plum_frequency",
     "quality_upgrade": "plum_quality",
     "dominance_upgrade": "plum_dominance"
+  },
+  {
+    "id": "beefsteak",
+    "name": "Beefsteak",
+    "catalog_number": "008",
+    "description": "Broad eight-lobed shoulders, a substantial crown and six meaty seed chambers. A valuable specimen which considers haste a matter for smaller tomatoes.",
+    "tier": 6,
+    "base_value": 48,
+    "durability": 5,
+    "fragment_durability": 2.5,
+    "base_weight": 0.35,
+    "mass": 2.4,
+    "model_scale": 1.05,
+    "radius": 0.91,
+    "gravity": 5.9,
+    "launch_min": 7.9,
+    "launch_max": 8.4,
+    "spin": 0.36,
+    "spin_z": 0.55,
+    "proxy_axes": [
+      0.83,
+      0.56,
+      0.75
+    ],
+    "proxy_lobe": 0.075,
+    "proxy_lobe_count": 8,
+    "proxy_taper": -0.1,
+    "collision": "hull",
+    "flight_description": "large & heavy \u00b7 slow measured tumble",
+    "model": "res://assets/models/tomatoes/beefsteak.glb",
+    "illustration": "res://assets/illustrations/catalog/beefsteak.svg",
+    "fragments": {
+      "half": "res://assets/models/fragments/beefsteak_half.glb",
+      "wedge": "res://assets/models/fragments/beefsteak_wedge.glb",
+      "chunk": "res://assets/models/fragments/beefsteak_chunk.glb"
+    },
+    "unlock_upgrade": "unlock_beefsteak",
+    "frequency_upgrade": "beefsteak_frequency",
+    "quality_upgrade": "beefsteak_quality",
+    "dominance_upgrade": "beefsteak_dominance"
   }
 ]

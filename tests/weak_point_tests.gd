@@ -102,10 +102,17 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	check.call(region.hit(Transform2D(0,c+Vector2(-.88,.04)),Transform2D(0,c+Vector2(-.80,.04)),SliceSystem.DEFAULT_EDGE),"actual blade tip can hit a seam while the cursor anchor remains outside it")
 	check.call(not region.hit(Transform2D(0,c+Vector2(.5,.04)),Transform2D(0,c+Vector2(.56,.04)),SliceSystem.DEFAULT_EDGE),"a handle-only pass outside the cutting edge cannot claim aimed damage")
 	var all_edges := true
+	var previous_rotating_edges := true
 	for knife: Dictionary in p.equipment.knives:
 		var edge := EquipmentCatalog.edge_points(knife)
-		all_edges = all_edges and region.hit(a,b,edge) and region.hit(Transform2D(0,c+Vector2(0,-3)),Transform2D(PI/2,c+Vector2(0,3)),edge)
-	check.call(all_edges,"all three actual knife polylines support fast horizontal and vertical aimed sweeps")
+		# Retain the exact prior positive cases for the seven earlier instruments.
+		if knife.id != "cleaver":
+			previous_rotating_edges = previous_rotating_edges and region.hit(a,b,edge) and region.hit(Transform2D(0,c+Vector2(0,-3)),Transform2D(PI/2,c+Vector2(0,3)),edge)
+		# Aim the actual cutting edge, whose offset differs from the cursor.
+		var horizontal := Vector2(0,-edge[0].y)
+		var vertical := -Transform2D(PI/2,Vector2.ZERO).basis_xform(edge[0])
+		all_edges = all_edges and region.hit(Transform2D(0,c+Vector2(-3,0)+horizontal),Transform2D(0,c+Vector2(3,0)+horizontal),edge) and region.hit(Transform2D(PI/2,c+Vector2(0,-3)+vertical),Transform2D(PI/2,c+Vector2(0,3)+vertical),edge)
+	check.call(all_edges and previous_rotating_edges,"all eight correctly aimed edges hit fast horizontal/vertical seams and all seven earlier rotating positive cases remain")
 	var marker_meshes := meshes(region.marker); var matching := marker_meshes.size() == 2
 	var actual_points := PackedVector2Array()
 	for mesh: MeshInstance3D in marker_meshes:

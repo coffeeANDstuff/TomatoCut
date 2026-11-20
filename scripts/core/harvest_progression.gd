@@ -2,6 +2,7 @@ class_name HarvestProgression
 extends RefCounted
 
 const DATA_PATH := "res://data/tomatoes.json"
+const MAX_NORMAL_STRIKES := 3
 var varieties: Array = []
 var upgrades: Dictionary = {}
 var by_id: Dictionary = {}
@@ -45,11 +46,14 @@ func cut_value(id: String, levels: Dictionary, at_level: int = -1, permanent_lev
 func cutting_profile(levels: Dictionary, strength: float) -> CuttingProfile:
 	return CuttingProfile.new(strength,coefficient("critical_slice","chance_per_level")*int(levels.get("critical_slice",0)),coefficient("critical_slice","damage_multiplier"))
 
+func can_handle(entry: Dictionary, strength: float) -> bool:
+	return not entry.is_empty() and ceilf(float(entry.durability)/maxf(.01,strength)) <= MAX_NORMAL_STRIKES
+
 func distribution(levels: Dictionary, strength: float) -> Dictionary:
 	var profile := cutting_profile(levels,strength)
 	var candidates: Array[Dictionary] = []
 	for entry: Dictionary in varieties:
-		if unlocked(entry.id,levels) and ceilf(float(entry.durability)/maxf(.01,strength)) <= 3:
+		if unlocked(entry.id,levels) and can_handle(entry,strength):
 			candidates.append(entry)
 	var weights: Dictionary = {}
 	var total := 0.0
