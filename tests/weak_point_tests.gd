@@ -106,13 +106,13 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	for knife: Dictionary in p.equipment.knives:
 		var edge := EquipmentCatalog.edge_points(knife)
 		# Retain the exact prior positive cases for the seven earlier instruments.
-		if knife.id != "cleaver":
+		if knife.id not in ["cleaver","bread"]:
 			previous_rotating_edges = previous_rotating_edges and region.hit(a,b,edge) and region.hit(Transform2D(0,c+Vector2(0,-3)),Transform2D(PI/2,c+Vector2(0,3)),edge)
 		# Aim the actual cutting edge, whose offset differs from the cursor.
 		var horizontal := Vector2(0,-edge[0].y)
 		var vertical := -Transform2D(PI/2,Vector2.ZERO).basis_xform(edge[0])
 		all_edges = all_edges and region.hit(Transform2D(0,c+Vector2(-3,0)+horizontal),Transform2D(0,c+Vector2(3,0)+horizontal),edge) and region.hit(Transform2D(PI/2,c+Vector2(0,-3)+vertical),Transform2D(PI/2,c+Vector2(0,3)+vertical),edge)
-	check.call(all_edges and previous_rotating_edges,"all eight correctly aimed edges hit fast horizontal/vertical seams and all seven earlier rotating positive cases remain")
+	check.call(all_edges and previous_rotating_edges,"all nine correctly aimed edges hit fast horizontal/vertical seams and all seven earlier rotating positive cases remain")
 	var marker_meshes := meshes(region.marker); var matching := marker_meshes.size() == 2
 	var actual_points := PackedVector2Array()
 	for mesh: MeshInstance3D in marker_meshes:

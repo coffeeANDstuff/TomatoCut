@@ -1,7 +1,7 @@
 class_name FragmentManager
 extends Node3D
 
-signal resisted(at: Vector3, remaining: float, family: CutFamily)
+signal resisted(at: Vector3, remaining: float, family: CutFamily, initial_resistance: float)
 signal critical_strike(at: Vector3)
 
 const MAX_PIECES := 64
@@ -61,9 +61,9 @@ func split(at: Vector3, velocity: Vector2, direction: Vector2, reduced: bool = f
 		acquire_piece().configure("half", ledger, at, frame, motion, tumble)
 	emit_juice(at, reduced,ledger.event_id)
 
-func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: float, reduced: bool, damage_roll: Callable = Callable(), edge: Array[Vector2] = SliceSystem.DEFAULT_EDGE) -> Array[Dictionary]:
+func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: float, reduced: bool, damage_roll: Callable = Callable(), edge: Array[Vector2] = SliceSystem.DEFAULT_EDGE, prepared: Dictionary = {}) -> Array[Dictionary]:
 	var hits: Array[Dictionary] = []
-	var sweep := SliceSystem.prepare_sweep(previous,current,edge)
+	var sweep := SliceSystem.prepare_sweep(previous,current,edge) if prepared.is_empty() else prepared
 	if not sweep.valid: return hits
 	var direction := (current.origin - previous.origin).normalized()
 	# Snapshot eligibility before creating descendants. Neither pool reuse nor
@@ -76,12 +76,12 @@ func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: f
 		var piece: FragmentPiece = candidate.piece
 		if piece.revision != candidate.revision or not piece.cuttable() or not piece.family.try_strike(stroke):
 			continue
-		var strike: Dictionary = damage_roll.call() if damage_roll.is_valid() else {"damage":strength,"critical":false}
+		var strike: Dictionary = damage_roll.call(piece.family.fragment_durability) if damage_roll.is_valid() else {"damage":strength,"critical":false}
 		var golden := piece.family.event_id == "golden_harvest" and piece.family.golden_step > 0
 		if strike.critical and (not golden or piece.durability > float(strike.damage)): critical_strike.emit(piece.position)
 		piece.durability -= float(strike.damage)
 		if piece.durability > 0:
-			resisted.emit(piece.position,piece.durability,piece.family)
+			resisted.emit(piece.position,piece.durability,piece.family,piece.family.fragment_durability)
 			continue
 		var at := piece.position
 		var motion := piece.velocity

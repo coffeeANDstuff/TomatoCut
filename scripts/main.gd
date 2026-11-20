@@ -120,7 +120,7 @@ func _physics_process(delta: float) -> void:
 func spawn_tomato() -> Tomato:
 	if state != "playing" or not session.running or tomatoes.get_child_count() >= MAX_TOMATOES:
 		return null
-	var variety := progress.harvest.choose(progress.levels, progress.strength())
+	var variety := progress.choose_variety()
 	var data := progress.harvest.definition(variety)
 	return _spawn_specimen(data,progress.harvest.cut_value(variety,progress.levels))
 
@@ -178,7 +178,8 @@ func process_blade() -> int:
 	if state != "playing" or not session.running or session.remaining <= 0:
 		return 0
 	var count := 0
-	for hit: Dictionary in fragments.slice(knife.previous, knife.current, knife.stroke_id, progress.strength(), progress.settings.reduced_effects,roll_strike,knife.edge):
+	var sweep := SliceSystem.prepare_sweep(knife.previous,knife.current,knife.edge)
+	for hit: Dictionary in fragments.slice(knife.previous, knife.current, knife.stroke_id, progress.strength(), progress.settings.reduced_effects,roll_strike,knife.edge,sweep):
 		if hit.event_id in ["jackpot_harvest","stampede_season"]: ui.dismiss_feedback(hit.event_id)
 		cut_feedback(hit.position, false, hit.value,"",hit.family)
 		if hit.golden_multiplier > 1 or hit.golden_jackpot > 0:
@@ -190,8 +191,8 @@ func process_blade() -> int:
 	for tomato: Tomato in tomatoes.get_children():
 		if tomato.sliced or tomato.is_queued_for_deletion():
 			continue
-		if tomato.intersects(knife.previous,knife.current,knife.edge) and tomato.family.try_strike(knife.stroke_id):
-			var strike := roll_strike()
+		if tomato.intersects(knife.previous,knife.current,knife.edge,sweep) and tomato.family.try_strike(knife.stroke_id):
+			var strike := roll_strike(tomato.initial_durability)
 			var weak := tomato.weak_point != null and tomato.weak_point.hit(knife.previous,knife.current,knife.edge)
 			if weak: strike.damage *= tomato.weak_point.multiplier
 			if strike.critical:
@@ -204,7 +205,7 @@ func process_blade() -> int:
 				if weak:
 					ui.popup_weak_point(kitchen.camera.unproject_position(tomato.weak_point.center_world()),tomato.weak_point.multiplier,tomato.durability,strike.critical,tomato.family.event_id)
 					audio.play("resist")
-				else: damage_feedback(tomato.position,tomato.durability,tomato.family)
+				else: damage_feedback(tomato.position,tomato.durability,tomato.family,tomato.initial_durability)
 				continue
 			tomato.sliced = true
 			tomato.family.record_split()
@@ -222,9 +223,9 @@ func process_blade() -> int:
 		ui.update_round(session)
 	return count
 
-func roll_strike() -> Dictionary:
+func roll_strike(initial_resistance: float = 1) -> Dictionary:
 	var profile := progress.cutting_profile()
-	return profile.resolve(ability_rng.randf() if profile.critical_chance > 0 else 1.0)
+	return profile.resolve(ability_rng.randf() if profile.critical_chance > 0 else 1.0,initial_resistance)
 
 func critical_feedback(at: Vector3) -> void:
 	ui.popup_critical(kitchen.camera.unproject_position(at))
@@ -238,8 +239,8 @@ func resistance_group(family: CutFamily) -> String:
 	if event.get("kind","") == "specimen" and int(event.get("active_limit",0)) == 1: return family.event_id
 	return "resistance:%d" % family.get_instance_id()
 
-func damage_feedback(at: Vector3, remaining: float, family: CutFamily = null) -> void:
-	var strikes := int(ceilf(remaining/progress.strength()))
+func damage_feedback(at: Vector3, remaining: float, family: CutFamily = null, initial_resistance: float = 1) -> void:
+	var strikes := int(ceilf(remaining/progress.cutting_profile().normal_damage(initial_resistance)))
 	ui.popup_damage("%d more %s" % [strikes,"strike" if strikes == 1 else "strikes"], kitchen.camera.unproject_position(at),resistance_group(family))
 	audio.play("resist")
 

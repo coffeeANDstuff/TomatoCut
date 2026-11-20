@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Beefsteak and Cleaver milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Big Boy and Bread Knife milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -65,6 +65,15 @@ Dotted ink focus supports keyboard controls; checkmark slips save preferences.
 Hover navigation icons for one second to see their labels.
 Move the mouse through airborne tomatoes; no click is needed.
 Ten-second starting rounds; cultivation and progress save automatically.
+Big Boy reveals after Beefsteak Quality 1 + Plum Frequency 2. Its $2200
+unlock buys ownership; 6 resistance requires adequate normal cutting damage
+for at most three strikes. Its four-resistance prepared pieces stay tough.
+The $1400 Bread Knife has 3.00 base sharpness, twelve actual scallops and
+x1.50 damage against targets authored with resistance above 1, only while
+owned/equipped. Ordinary/permanent sharpness and separate preparation compose
+before serration and critical damage. Rewards remain ordinary. Catalog mix,
+handling and readiness use the same guaranteed damage; critical luck grants
+no unsafe automatic throws. An original short rasp cue accompanies real cuts.
 Beefsteak reveals after Plum Quality 1 + Campari Frequency 2. Its $1320
 unlock buys ownership; automatic throws still require enough sharpness for
 three normal strikes or fewer. The catalog explains blocked readiness and
@@ -286,7 +295,7 @@ Source history: https://github.com/coffeeANDstuff/TomatoCut
 Milestone tag: v{VERSION}
 
 STATUS
-Eight of 25 normal varieties and eight of 25 knives are integrated.
+Nine of 25 normal varieties and nine of 25 knives are integrated.
 This is a development milestone, not the final game. Windows-native,
 Forward+ hardware, audio listening and target-PC 60 FPS remain unverified.
 '''

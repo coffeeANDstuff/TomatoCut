@@ -313,5 +313,45 @@
     "frequency_upgrade": "beefsteak_frequency",
     "quality_upgrade": "beefsteak_quality",
     "dominance_upgrade": "beefsteak_dominance"
+  },
+  {
+    "id": "big_boy",
+    "name": "Big Boy",
+    "catalog_number": "009",
+    "description": "A tall five-shouldered globe with a substantial crown and four stout seed chambers. Arrives with the quiet confidence of reinforced produce.",
+    "tier": 7,
+    "base_value": 80,
+    "durability": 6,
+    "fragment_durability": 4,
+    "base_weight": 0.32,
+    "mass": 2.9,
+    "model_scale": 1.1,
+    "radius": 1.02,
+    "gravity": 6.2,
+    "launch_min": 8.5,
+    "launch_max": 8.9,
+    "spin": 0.65,
+    "spin_z": 0.4,
+    "proxy_axes": [
+      0.79,
+      0.86,
+      0.77
+    ],
+    "proxy_lobe": 0.035,
+    "proxy_lobe_count": 5,
+    "proxy_taper": 0.08,
+    "collision": "hull",
+    "flight_description": "large & tough \u00b7 deliberate rising arc",
+    "model": "res://assets/models/tomatoes/big_boy.glb",
+    "illustration": "res://assets/illustrations/catalog/big_boy.svg",
+    "fragments": {
+      "half": "res://assets/models/fragments/big_boy_half.glb",
+      "wedge": "res://assets/models/fragments/big_boy_wedge.glb",
+      "chunk": "res://assets/models/fragments/big_boy_chunk.glb"
+    },
+    "unlock_upgrade": "unlock_big_boy",
+    "frequency_upgrade": "big_boy_frequency",
+    "quality_upgrade": "big_boy_quality",
+    "dominance_upgrade": "big_boy_dominance"
   }
 ]

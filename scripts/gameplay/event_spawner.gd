@@ -51,7 +51,7 @@ static func spawn(game, id: String) -> Tomato:
 			data = d.specimens[(i+offset)%d.specimens.size()].duplicate(true)
 			value = dedicated_value
 		else:
-			var variety: String = game.progress.harvest.choose(game.progress.levels,game.progress.strength(),game.event_rng.randf())
+			var variety: String = game.progress.choose_variety(game.event_rng.randf())
 			data = game.progress.harvest.definition(variety).duplicate(true)
 			value = game.progress.harvest.cut_value(variety,game.progress.levels)*catalog.multiplier(id,game.progress.prestige)
 		var factor := float(d.size_scale)

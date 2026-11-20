@@ -648,5 +648,75 @@
       "suppression": 0.1
     },
     "tomato_id": "beefsteak"
+  },
+  {
+    "id": "unlock_big_boy",
+    "name": "Big Boy Variety Unlock",
+    "category": "Varieties",
+    "description": "A sturdy specimen. Reinforcement is included; cultivation is sold separately.",
+    "effect": "Adds Big Boy to the eligible automatic harvest",
+    "base_cost": 2200,
+    "growth": 1,
+    "max_level": 1,
+    "requires": {
+      "beefsteak_quality": 1,
+      "plum_frequency": 2
+    },
+    "effect_values": {
+      "unlock": 1
+    },
+    "tomato_id": "big_boy"
+  },
+  {
+    "id": "big_boy_frequency",
+    "name": "Big Boy Frequency",
+    "category": "Varieties",
+    "description": "Allow the larger residents more room in the launch schedule.",
+    "effect": "+50% Big Boy spawn weight per level",
+    "base_cost": 800,
+    "growth": 1.25,
+    "max_level": 10,
+    "requires": {
+      "unlock_big_boy": 1
+    },
+    "effect_values": {
+      "weight_bonus": 0.5
+    },
+    "tomato_id": "big_boy"
+  },
+  {
+    "id": "big_boy_quality",
+    "name": "Big Boy Quality",
+    "category": "Varieties",
+    "description": "A carefully cultivated interior beneath a thoroughly determined skin.",
+    "effect": "+25% Big Boy cut value per level",
+    "base_cost": 950,
+    "growth": 1.26,
+    "max_level": 10,
+    "requires": {
+      "unlock_big_boy": 1
+    },
+    "effect_values": {
+      "value_bonus": 0.25
+    },
+    "tomato_id": "big_boy"
+  },
+  {
+    "id": "big_boy_dominance",
+    "name": "Big Boy Harvest Dominance",
+    "category": "Varieties",
+    "description": "Phase out less profitable lower tiers only when cutting power makes this investment worthwhile.",
+    "effect": "-10% lower-profit lower-tier weight per level",
+    "base_cost": 2700,
+    "growth": 1.32,
+    "max_level": 10,
+    "requires": {
+      "big_boy_frequency": 3,
+      "big_boy_quality": 2
+    },
+    "effect_values": {
+      "suppression": 0.1
+    },
+    "tomato_id": "big_boy"
   }
 ]

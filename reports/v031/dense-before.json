@@ -1,0 +1,105 @@
+{
+  "knife": "bread",
+  "label": "v031-all-bread",
+  "normal_varieties": [
+    "standard_red",
+    "cherry",
+    "roma",
+    "grape",
+    "campari",
+    "cocktail",
+    "plum",
+    "beefsteak",
+    "big_boy"
+  ],
+  "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+  "scenarios": [
+    {
+      "collision": {
+        "cross": {
+          "median_ms": 0.343,
+          "p95_ms": 0.437
+        },
+        "miss": {
+          "median_ms": 0.241,
+          "p95_ms": 0.313
+        }
+      },
+      "draw_calls_median": 226.0,
+      "drops": 12,
+      "pieces": 8,
+      "render_mean_fps": 8.91968625300928,
+      "render_median_ms": 108.411,
+      "render_p95_ms": 144.8,
+      "root_collision": {
+        "cross": {
+          "median_ms": 0.695,
+          "p95_ms": 0.956
+        },
+        "miss": {
+          "median_ms": 1.798,
+          "p95_ms": 2.096
+        }
+      },
+      "roots": 4
+    },
+    {
+      "collision": {
+        "cross": {
+          "median_ms": 2.37,
+          "p95_ms": 2.564
+        },
+        "miss": {
+          "median_ms": 0.263,
+          "p95_ms": 0.309
+        }
+      },
+      "draw_calls_median": 684.0,
+      "drops": 64,
+      "pieces": 32,
+      "render_mean_fps": 5.25697817854643,
+      "render_median_ms": 187.602,
+      "render_p95_ms": 232.01,
+      "root_collision": {
+        "cross": {
+          "median_ms": 3.561,
+          "p95_ms": 4.148
+        },
+        "miss": {
+          "median_ms": 4.801,
+          "p95_ms": 5.362
+        }
+      },
+      "roots": 12
+    },
+    {
+      "collision": {
+        "cross": {
+          "median_ms": 7.415,
+          "p95_ms": 8.244
+        },
+        "miss": {
+          "median_ms": 0.327,
+          "p95_ms": 0.5
+        }
+      },
+      "draw_calls_median": 1224.0,
+      "drops": 96,
+      "pieces": 64,
+      "render_mean_fps": 3.50079237518085,
+      "render_median_ms": 284.444,
+      "render_p95_ms": 325.875,
+      "root_collision": {
+        "cross": {
+          "median_ms": 9.488,
+          "p95_ms": 11.906
+        },
+        "miss": {
+          "median_ms": 10.046,
+          "p95_ms": 11.68
+        }
+      },
+      "roots": 24
+    }
+  ]
+}

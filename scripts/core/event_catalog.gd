@@ -58,7 +58,7 @@ func weak_point_multiplier(id: String, permanent: PrestigeProgression, at_level:
 func cut_value(id: String, progress) -> float:
 	if not unlocked(id,progress.prestige): return 0
 	var best := 1.0
-	var mix: Dictionary = progress.harvest.distribution(progress.levels,progress.strength())
+	var mix: Dictionary = progress.harvest_distribution()
 	for normal: String in mix: best = maxf(best,progress.harvest.cut_value(normal,progress.levels))
 	return best*multiplier(id,progress.prestige)
 

@@ -7,6 +7,7 @@ var gravity := 5.5
 var velocity := Vector2.ZERO
 var spin := Vector3.ZERO
 var durability := 1.0
+var initial_durability := 1.0
 var sliced := false
 var radius := 0.55
 var age := 0.0
@@ -27,6 +28,7 @@ func configure(data: Dictionary) -> void:
 	gravity = float(data.gravity)
 	launch_delay = float(data.get("launch_delay",0))
 	durability = float(data.durability)
+	initial_durability = durability
 	radius = float(data.radius)
 	collision = data.collision
 	if collision == "hull":
@@ -38,14 +40,16 @@ func configure(data: Dictionary) -> void:
 		visual = load(data.model).instantiate()
 		add_child(visual)
 
-func intersects(previous: Transform2D, current: Transform2D, edge: Array[Vector2] = SliceSystem.DEFAULT_EDGE) -> bool:
+func intersects(previous: Transform2D, current: Transform2D, edge: Array[Vector2] = SliceSystem.DEFAULT_EDGE, prepared: Dictionary = {}) -> bool:
 	if collision == "circle":
+		if not prepared.is_empty(): return SliceSystem.prepared_circle_hit(Vector2(position.x,position.y),radius,prepared)
 		return SliceSystem.swept_hit(Vector2(position.x,position.y),radius,previous,current,edge)
 	var points := PackedVector2Array()
 	for vertex: Vector3 in proxy:
 		var world := global_transform * vertex
 		points.append(Vector2(world.x,world.y))
-	return SliceSystem.swept_polygon_hit(Geometry2D.convex_hull(points),previous,current,edge)
+	var hull := Geometry2D.convex_hull(points)
+	return SliceSystem.swept_polygon_hit(hull,previous,current,edge) if prepared.is_empty() else SliceSystem.prepared_polygon_hit(hull,prepared)
 
 func _physics_process(delta: float) -> void:
 	damage_time = maxf(0, damage_time - delta)

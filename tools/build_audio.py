@@ -3,7 +3,7 @@ from pathlib import Path
 import math,random,struct,wave,sys
 out=Path(__file__).resolve().parents[1]/'assets/audio'
 only = sys.argv[sys.argv.index('--only')+1] if '--only' in sys.argv else None
-for name,duration in [('slice',.22),('steak_slice',.14),('chef_slice',.12),('cleaver_slice',.20),('resist',.11),('launch',.16),('paper',.055),('bell',.6),('purchase',.28),('discovery',.32),('critical',.14),('prestige',.48),('golden',.30),('stampede',.36),('giant',.42),('rainbow',.38),('jackpot',.46)]:
+for name,duration in [('slice',.22),('steak_slice',.14),('chef_slice',.12),('cleaver_slice',.20),('bread_slice',.16),('resist',.11),('launch',.16),('paper',.055),('bell',.6),('purchase',.28),('discovery',.32),('critical',.14),('prestige',.48),('golden',.30),('stampede',.36),('giant',.42),('rainbow',.38),('jackpot',.46)]:
  if only is not None and name != only: continue
  rng=random.Random(name); rate=24000; samples=[]; filtered=0.
  for i in range(int(rate*duration)):
@@ -12,6 +12,7 @@ for name,duration in [('slice',.22),('steak_slice',.14),('chef_slice',.12),('cle
   elif name=='steak_slice': a=(.43*filtered+.14*math.sin(2*math.pi*(470*t-900*t*t)))*math.sin(math.pi*phase)**.65*math.exp(-3*phase)
   elif name=='chef_slice': a=(.48*(rng.uniform(-1,1)-filtered)+.16*math.sin(2*math.pi*(720*t-1800*t*t)))*min(1,t*1400)*(1-phase)**2*math.exp(-2*phase)
   elif name=='cleaver_slice': a=(.25*math.sin(2*math.pi*(120*t-150*t*t))+.10*math.sin(2*math.pi*240*t)+.30*filtered)*min(1,t*1200)*(1-phase)**2*math.exp(-3*phase)
+  elif name=='bread_slice': a=(.30*(rng.uniform(-1,1)-filtered)+.14*math.sin(2*math.pi*(520*t+1300*t*t)))*min(1,t*1000)*(1-phase)**2*(.75+.25*math.sin(2*math.pi*65*t))
   elif name=='launch': a=.3*math.sin(2*math.pi*(180*t+800*t*t))*(1-phase)**2
   elif name=='paper': a=.3*filtered*(1-phase)**3
   elif name=='resist': a=(.3*math.sin(2*math.pi*(115*t-170*t*t))+.12*filtered)*(1-phase)**3

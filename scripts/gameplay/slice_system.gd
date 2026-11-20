@@ -39,6 +39,16 @@ static func swept_hit(center: Vector2, radius: float, previous: Transform2D, cur
 static func swept_polygon_hit(polygon: PackedVector2Array, previous: Transform2D, current: Transform2D, edge: Array[Vector2] = DEFAULT_EDGE) -> bool:
 	return prepared_polygon_hit(polygon,prepare_sweep(previous,current,edge))
 
+static func prepared_circle_hit(center: Vector2, radius: float, sweep: Dictionary) -> bool:
+	if not sweep.valid: return false
+	var bounds := Rect2(center-Vector2.ONE*radius,Vector2.ONE*radius*2).grow(.00001)
+	if not sweep.bounds.intersects(bounds,true): return false
+	for i in range(sweep.triangles.size()):
+		if not sweep.triangle_bounds[i].intersects(bounds,true): continue
+		var triangle: PackedVector2Array = sweep.triangles[i]
+		if triangle_hit(center,triangle[0],triangle[1],triangle[2],radius): return true
+	return false
+
 static func prepare_sweep(previous: Transform2D, current: Transform2D, edge: Array[Vector2] = DEFAULT_EDGE) -> Dictionary:
 	var triangles: Array[PackedVector2Array] = []
 	var triangle_bounds: Array[Rect2] = []

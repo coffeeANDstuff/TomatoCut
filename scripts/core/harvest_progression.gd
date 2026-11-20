@@ -46,14 +46,16 @@ func cut_value(id: String, levels: Dictionary, at_level: int = -1, permanent_lev
 func cutting_profile(levels: Dictionary, strength: float) -> CuttingProfile:
 	return CuttingProfile.new(strength,coefficient("critical_slice","chance_per_level")*int(levels.get("critical_slice",0)),coefficient("critical_slice","damage_multiplier"))
 
-func can_handle(entry: Dictionary, strength: float) -> bool:
-	return not entry.is_empty() and ceilf(float(entry.durability)/maxf(.01,strength)) <= MAX_NORMAL_STRIKES
+func can_handle(entry: Dictionary, strength: float, profile: CuttingProfile = null) -> bool:
+	if entry.is_empty(): return false
+	var damage := maxf(.01,strength) if profile == null else profile.normal_damage(float(entry.durability))
+	return ceilf(float(entry.durability)/damage) <= MAX_NORMAL_STRIKES
 
-func distribution(levels: Dictionary, strength: float) -> Dictionary:
-	var profile := cutting_profile(levels,strength)
+func distribution(levels: Dictionary, strength: float, profile: CuttingProfile = null) -> Dictionary:
+	if profile == null: profile = cutting_profile(levels,strength)
 	var candidates: Array[Dictionary] = []
 	for entry: Dictionary in varieties:
-		if unlocked(entry.id,levels) and can_handle(entry,strength):
+		if unlocked(entry.id,levels) and can_handle(entry,strength,profile):
 			candidates.append(entry)
 	var weights: Dictionary = {}
 	var total := 0.0
@@ -73,8 +75,8 @@ func distribution(levels: Dictionary, strength: float) -> Dictionary:
 		weights[id] /= total
 	return weights
 
-func choose(levels: Dictionary, strength: float, roll: float = -1.0) -> String:
-	var probabilities := distribution(levels,strength)
+func choose(levels: Dictionary, strength: float, roll: float = -1.0, profile: CuttingProfile = null) -> String:
+	var probabilities := distribution(levels,strength,profile)
 	var sample := clampf(randf() if roll < 0 else roll,0,0.999999)
 	var last := "standard_red"
 	for id: String in probabilities:

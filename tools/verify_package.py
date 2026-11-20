@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.30.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.31.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -51,6 +51,15 @@ with zipfile.ZipFile(args.archive) as z:
                       'Source/reports/v030/dense-all-cleaver.json'}
     cleaver_assets |= {'Source/assets/models/fragments/beefsteak_'+shape+'.glb' for shape in ['half','wedge','chunk']}
     assert cleaver_assets <= set(hashes), 'Missing original Beefsteak/Cleaver models, audio, art, sources or tests'
+    bread_assets = {'Source/art/big_boy.blend', 'Source/art/bread_knife.blend',
+                    'Source/assets/models/tomatoes/big_boy.glb', 'Source/assets/models/knives/bread.glb',
+                    'Source/assets/illustrations/catalog/big_boy.svg', 'Source/assets/audio/bread_slice.wav',
+                    'Source/tools/build_big_boy_assets.py', 'Source/tools/build_bread_assets.py',
+                    'Source/tools/build_big_boy_art.py', 'Source/tools/blender_meshes.py',
+                    'Source/tests/bread_tests.gd', 'Source/tests/bread_render.gd',
+                    'Source/reports/v031/dense-before.json', 'Source/reports/v031/dense-after.json'}
+    bread_assets |= {'Source/assets/models/fragments/big_boy_'+shape+'.glb' for shape in ['half','wedge','chunk']}
+    assert bread_assets <= set(hashes), 'Missing original Big Boy/Bread content, sources, tests or profile'
     campari_assets = {'Source/art/campari.blend', 'Source/art/utility_knife.blend',
                      'Source/assets/models/tomatoes/campari.glb', 'Source/assets/models/knives/utility.glb',
                      'Source/assets/illustrations/catalog/campari.svg', 'Source/tools/build_campari_art.py',

@@ -23,7 +23,7 @@ static func all_event_seed() -> int:
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new()
 	var catalog := EventCatalog.new()
-	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 5 and p.harvest.varieties.size() == 8,"five implemented events validate separately from the unchanged normal variety collection")
+	check.call(catalog.validate(p.prestige).is_empty() and catalog.definitions.size() == 5 and p.harvest.varieties.size() == 9,"five implemented events validate separately from the unchanged normal variety collection")
 	var meshes_bounded := true
 	var specimen := catalog.specimen("event_giant")
 	var paths: Array = [specimen.model]+specimen.fragments.values()

@@ -86,3 +86,29 @@ Raw report: [dense-all-cleaver.json](reports/v030/dense-all-cleaver.json).
 ```sh
 DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_dense.gd -- --label=v030-all-cleaver --all-varieties --knife=cleaver
 ```
+
+
+## Nine-variety serrated-blade profiling — v0.31 (2026-11-19, America/Los_Angeles)
+
+A matching before/after fixture cycles **all nine normal varieties** with the actual **51-point, twelve-scallop Bread edge**. Godot 4.6.3 Compatibility, Mesa llvmpipe (LLVM 19.1.7, 256 bits), private Xorg :97; each profile runs serially after native/source workloads finish. Existing render/fragment methodology is retained: frozen occupancy, 12 warmup/60 measured render frames, then 120 rotating zero-damage miss/crossing fragment probes. A new separate phase measures 120 actual whole-fruit hit-check groups: miss y=5.5, crossing y=2.4, the same -0.25 → +0.25-radian sweep across x=-6 → +6, rotating roots between probes. No accepted strikes, RNG, damage or feedback run in the geometry probes.
+
+Profiling exposed whole fruit rebuilding identical sweep triangles for every root, especially costly for serrations. Main now prepares **one sweep per input sample**, shared by roots and descendants. Circle checks reuse those exact triangles and use conservative inclusive whole/triangle bounds before the unchanged original triangle-circle routine; hulls retain their exact narrow phase. Original direct per-fruit methods remain available for the oracle and baseline reproduction. There is no persistent global sweep cache, dropped geometry/edge segment/angular step, changed population/effect/physics/lifetime or altered reward. Both conditions use the same assets, transforms, data, settings and draw counts.
+
+| Roots / pieces / drops | Whole-root cross median ms, before → after | Whole-root cross p95 ms, before → after | Whole-root miss median ms, before → after | Render-only mean FPS, before / after | Unchanged draw calls |
+|---|---:|---:|---:|---:|---:|
+| 4 / 8 / 12 | 0.695 → 0.429 | 0.956 → 0.573 | 1.798 → 0.502 | 8.92 / 9.41 | 226 |
+| 12 / 32 / 64 | 3.561 → 1.794 | 4.148 → 2.628 | 4.801 → 1.256 | 5.26 / 5.44 | 684 |
+| 24 / 64 / 96 | 9.488 → 3.589 | 11.906 → 4.260 | 10.046 → 2.288 | 3.50 / 3.66 | 1224 |
+
+At capacity the whole-root crossing median falls **62.2%**, **9.488 → 3.589ms**; distant-miss median falls **77.2%**, **10.046 → 2.288ms**, with miss p95 **11.680 → 2.451ms**. Fragment crossing remains about unchanged, **7.415 → 7.599ms**, and fragment miss **0.327 → 0.315ms**. Those separate microbenchmarks each include their own group setup; summing medians is not a measured live frame. Actual Main shares its one prepared sweep across both groups.
+
+**Render sampling runs before collision probes. Its 3.50/3.66 capacity FPS difference is variation, not an established FPS improvement from collision sharing.** The after capacity render median/p95 remains **275.441/303.419ms**, with **1,224 draw calls** on software rasterization. Native Windows/Forward+, supported-PC 60 FPS, live-game FPS improvement, extended memory soak and human feel remain unverified. Geometry-preserving GPU/render batching and hardware profiling remain production work. The shorter old eight-variety/Cleaver fixture is not a matching performance baseline for Bread.
+
+The exact original fragment oracle spans **540** transformed/scaled cases, 15 normal/event identities, nine blades and both forms. An additional **540 whole-fruit cases** compare retained legacy calls with shared preparation across the same identities/blades, plus explicit touching-circle/stationary/distant checks for every blade. Existing seven rotating positive seam cases remain. Full source passes **1,690/1,690**. Actual Bread/aimed Giant native input and both exported packs are rechecked after the change; detailed evidence is in TESTING.md.
+
+Raw matching reports: [before](reports/v031/dense-before.json) and [after](reports/v031/dense-after.json). The retained before run predates the explicit mode field and uses original per-fruit calls. Reproduce either root path with the current instrument; the old three-variety/starter default remains available:
+
+```sh
+DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_dense.gd -- --label=v031-legacy --all-varieties --knife=bread --legacy-root-sweeps
+DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_dense.gd -- --label=v031-shared --all-varieties --knife=bread
+```

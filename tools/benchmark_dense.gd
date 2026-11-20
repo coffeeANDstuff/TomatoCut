@@ -5,12 +5,14 @@ var result := {"renderer":"", "scenarios":[]}
 var label := "baseline"
 var all_varieties := false
 var knife_id := EquipmentCatalog.STARTER
+var legacy_root_sweeps := false
 
 func _initialize() -> void:
 	for argument: String in OS.get_cmdline_user_args():
 		if argument.begins_with("--label="): label = argument.trim_prefix("--label=")
 		if argument == "--all-varieties": all_varieties = true
 		if argument.begins_with("--knife="): knife_id = argument.trim_prefix("--knife=")
+		if argument == "--legacy-root-sweeps": legacy_root_sweeps = true
 	call_deferred("run")
 
 func percentile(values: Array, fraction: float) -> float:
@@ -30,6 +32,7 @@ func run() -> void:
 		push_error("Unknown benchmark knife: "+knife_id); game.queue_free(); quit(1); return
 	var edge := EquipmentCatalog.edge_points(game.progress.equipment.definition(knife_id))
 	result.normal_varieties = normals.duplicate(); result.knife = knife_id
+	result.root_sweep_mode = "per-fruit legacy" if legacy_root_sweeps else "shared"
 	for counts: Array in [[4,8,12],[12,32,64],[24,64,96]]:
 		game.clear_field(); await process_frame
 		for i in range(counts[0]):
@@ -63,7 +66,20 @@ func run() -> void:
 			probes[path] = {"median_ms":percentile(samples,.5),"p95_ms":percentile(samples,.95)}
 		var mean := 0.0
 		for frame: float in frames: mean += frame/frames.size()
-		var row := {"roots":counts[0],"pieces":counts[1],"drops":game.fragments.drops.size(),"render_median_ms":percentile(frames,.5),"render_p95_ms":percentile(frames,.95),"render_mean_fps":1000.0/mean,"draw_calls_median":percentile(draws,.5),"collision":probes}
+		# Measure whole-fruit hit checks separately: long serrated geometry also
+		# reaches Tomato.intersects, outside the fragment sweep-sharing path.
+		var root_probes := {}
+		for path: String in ["miss","cross"]:
+			var samples: Array = []; var y := 5.5 if path == "miss" else 2.4
+			var old := Transform2D(-.25,Vector2(-6,y)); var next := Transform2D(.25,Vector2(6,y))
+			for i in range(120):
+				for fruit: Tomato in game.tomatoes.get_children(): fruit.rotation.y += .013
+				var start := Time.get_ticks_usec()
+				var root_sweep: Dictionary = {} if legacy_root_sweeps else SliceSystem.prepare_sweep(old,next,edge)
+				for fruit: Tomato in game.tomatoes.get_children(): fruit.intersects(old,next,edge,root_sweep)
+				samples.append((Time.get_ticks_usec()-start)/1000.0)
+			root_probes[path] = {"median_ms":percentile(samples,.5),"p95_ms":percentile(samples,.95)}
+		var row := {"roots":counts[0],"pieces":counts[1],"drops":game.fragments.drops.size(),"render_median_ms":percentile(frames,.5),"render_p95_ms":percentile(frames,.95),"render_mean_fps":1000.0/mean,"draw_calls_median":percentile(draws,.5),"collision":probes,"root_collision":root_probes}
 		result.scenarios.append(row); print("BENCHMARK ",JSON.stringify(row))
 	var output := "res://artifacts/dense-"+label+".json"; DirAccess.make_dir_recursive_absolute("res://artifacts"); FileAccess.open(output,FileAccess.WRITE).store_string(JSON.stringify(result,"  ")+"\n")
 	game.queue_free(); await process_frame; quit()

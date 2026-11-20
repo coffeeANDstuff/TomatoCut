@@ -25,7 +25,7 @@ static func fruit(game) -> Tomato:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new(); p.money = 100000
-	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 8 and p.equipment.knives.size() == 8,"eight actual normal varieties and instruments validate with original Plum/Chef resources")
+	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 9 and p.equipment.knives.size() == 9,"nine actual normal varieties and instruments validate with original Plum/Chef resources")
 	check.call(not "unlock_plum" in p.discovered and not "chef" in p.owned_knives and p.harvest.distribution(p.levels,p.strength()) == {"standard_red":1.0},"fresh progression grants no new normal variety, instrument or automatic eligibility")
 	for i in range(ORDERS.size()-1): p.purchase(ORDERS[i])
 	check.call(not p.purchase("unlock_plum") and not "unlock_plum" in p.discovered,"Plum needs actual second Roma quality as well as the paid Cocktail quality branch")

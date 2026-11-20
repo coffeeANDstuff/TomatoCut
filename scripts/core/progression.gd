@@ -148,7 +148,15 @@ func equip_knife(id: String) -> bool:
 	return true
 
 func cutting_profile() -> CuttingProfile:
-	return harvest.cutting_profile(levels,strength())
+	var profile := harvest.cutting_profile(levels,strength())
+	profile.resistant_multiplier = equipment.resistant_multiplier(equipped_knife) if equipped_knife in owned_knives else 1.0
+	return profile
+
+func harvest_distribution() -> Dictionary:
+	return harvest.distribution(levels,strength(),cutting_profile())
+
+func choose_variety(roll: float = -1.0) -> String:
+	return harvest.choose(levels,strength(),roll,cutting_profile())
 
 func combo_window() -> float:
 	return 1.35 + effect_value("combo_window","seconds") * level("combo_window")
@@ -160,6 +168,9 @@ func equipped_combo_multiplier() -> float:
 	return knife_combo_multiplier(equipped_knife) if equipped_knife in owned_knives else 1.0
 
 func knife_special(id: String) -> String:
+	var serration := equipment.resistant_multiplier(id)
+	if serration > 1:
+		return "Serrated damage ×%.2f\n%s · resistance >1" % [serration,"Active" if id == equipped_knife and id in owned_knives else "When equipped"]
 	var potential := equipment.combo_multiplier(id)
 	if potential == 1: return str(equipment.definition(id).get("special","None"))
 	var status := "Dormant · cultivate Combo Cash"

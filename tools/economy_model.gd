@@ -35,7 +35,7 @@ static func simulate(accuracy: float, minutes: float, seed_value: int, investing
 			if session.launch_clock <= 0:
 				session.launch_clock += progress.launch_interval()
 				for i in range(progress.launch_count()):
-					var variety := progress.harvest.choose(progress.levels,progress.strength(),rng.randf())
+					var variety := progress.choose_variety(rng.randf())
 					var data := progress.harvest.definition(variety)
 					var hit_chance := accuracy*minf(1,sqrt(float(data.model_scale)))
 					var root_strikes := sample_completion(profile.completion_distribution(float(data.durability),hit_chance),rng.randf())
@@ -71,7 +71,7 @@ static func simulate(accuracy: float, minutes: float, seed_value: int, investing
 	return {"accuracy":accuracy,"seconds":snappedf(elapsed,.1),"rounds":progress.lifetime.rounds-initial_lifetime.rounds,"tomatoes":progress.lifetime.tomatoes-initial_lifetime.tomatoes,"cuts":progress.lifetime.cuts-initial_lifetime.cuts,"earned":snappedf(modeled_earnings,.01),"cycle_earned":progress.prestige.cycle_earnings,"money":snappedf(progress.money,.01),"levels":progress.levels,"purchases":purchases,"milestones":milestones,"prestige_at":prestige_at}
 
 static func rate(progress: Progression, accuracy: float) -> float:
-	var mix := progress.harvest.distribution(progress.levels,progress.strength())
+	var mix := progress.harvest_distribution()
 	var expected_cuts_per_launch := 0.0
 	var expected_value_per_launch := 0.0
 	for variety: String in mix:

@@ -248,7 +248,7 @@ func equipment_shop(id: String = "") -> void:
 	place(preview,Vector2(330,373),Vector2(505,255))
 	place(label("PLATE %s  /  A STUDY IN CULINARY AMBITION" % data.catalog_number,11,false,MUTED),Vector2(340,635),Vector2(505,25))
 	var stats := VBoxContainer.new()
-	var has_combo_bonus := progress.equipment.combo_multiplier(id) > 1
+	var has_combo_bonus := progress.equipment.combo_multiplier(id) > 1 or progress.equipment.resistant_multiplier(id) > 1
 	stats.add_theme_constant_override("separation",10 if has_combo_bonus else 16)
 	place(stats,Vector2(870,375),Vector2(340,250))
 	stats.add_child(label("THE PARTICULARS",13,false,Color("9b7740")))
@@ -424,11 +424,11 @@ func catalog(category: String = selected_category) -> void:
 		b.add_child(badge)
 		category_badges[name] = badge
 		badge.visible = not progress.unseen(name).is_empty()
-	var mix := progress.harvest.distribution(progress.levels,progress.strength())
+	var mix := progress.harvest_distribution()
 	var summary := "CURRENT HARVEST\n"
 	for data: Dictionary in progress.harvest.varieties:
 		if progress.harvest.unlocked(data.id,progress.levels):
-			summary += "%s  %.1f%%%s\n" % [data.name,float(mix.get(data.id,0))*100," · needs sharpness" if not progress.harvest.can_handle(data,progress.strength()) else ""]
+			summary += "%s  %.1f%%%s\n" % [data.name,float(mix.get(data.id,0))*100," · needs sharpness" if not progress.harvest.can_handle(data,progress.strength(),progress.cutting_profile()) else ""]
 	summary += "\nCalculated automatically.\nCultivation shapes the mix."
 	var summary_label := label(summary,16,true,MUTED)
 	summary_label.name = "HarvestSummary"
@@ -514,6 +514,10 @@ func upgrade_entry(d: Dictionary, count: int, list: VBoxContainer, category: Str
 		var comparison := "Equipped sharpness: %.2f → %.2f" % [progress.strength(),progress.strength(next_level)] if d.id == "sharp_edge" else "Rewarded cuts per family: %d → %d · maximum %d" % [progress.max_cuts(),progress.max_cuts(next_level),CutFamily.MAX_CUTS]
 		var current: Label = label(comparison,16,true); current.name = "CurrentCutting_"+d.id
 		current.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; entry.add_child(current)
+		if d.id == "sharp_edge" and progress.cutting_profile().resistant_multiplier > 1:
+			var multiplier := progress.cutting_profile().resistant_multiplier
+			var resistant := label("Damage vs resistance >1: %.2f → %.2f" % [progress.strength()*multiplier,progress.strength(next_level)*multiplier],16,true)
+			resistant.name = "CurrentResistantDamage"; resistant.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; entry.add_child(resistant)
 	if d.id in ["faster_throwing","double_toss"]:
 		var next_level := mini(int(d.max_level),progress.level(d.id)+1)
 		var comparison := "Launch interval: %.2fs → %.2fs · floor %.2fs" % [progress.launch_interval(),progress.launch_interval(next_level),progress.effect_value("faster_throwing","minimum_interval")] if d.id == "faster_throwing" else "Tomatoes per launch: %d → %d · maximum %d" % [progress.launch_count(),progress.launch_count(next_level),Progression.MAX_LAUNCH_COUNT]
@@ -553,10 +557,10 @@ func upgrade_entry(d: Dictionary, count: int, list: VBoxContainer, category: Str
 	entry.add_child(rule)
 
 func render_varieties(list: VBoxContainer) -> void:
-	var mix := progress.harvest.distribution(progress.levels,progress.strength())
+	var mix := progress.harvest_distribution()
 	for data: Dictionary in progress.harvest.varieties:
 		var available := progress.harvest.unlocked(data.id,progress.levels)
-		var can_handle := progress.harvest.can_handle(data,progress.strength())
+		var can_handle := progress.harvest.can_handle(data,progress.strength(),progress.cutting_profile())
 		if not available and not data.unlock_upgrade in progress.discovered:
 			continue
 		var specimen := HBoxContainer.new()
@@ -589,7 +593,7 @@ func render_varieties(list: VBoxContainer) -> void:
 		status.name = "HarvestStatus_"+data.id; status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		notes.add_child(status)
 		if not can_handle:
-			var readiness := label("Needs %.2f sharpness for automatic throws · maximum %d normal strikes." % [ceilf(float(data.durability)/HarvestProgression.MAX_NORMAL_STRIKES*100)/100,HarvestProgression.MAX_NORMAL_STRIKES],16,false,MUTED)
+			var readiness := label("Needs %.2f sharpness for automatic throws · maximum %d normal strikes." % [ceilf(progress.cutting_profile().minimum_strength(float(data.durability),HarvestProgression.MAX_NORMAL_STRIKES)*100)/100,HarvestProgression.MAX_NORMAL_STRIKES],16,false,MUTED)
 			readiness.name = "HarvestReadiness_"+data.id; readiness.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; notes.add_child(readiness)
 		notes.add_child(label("%s base value · %s resistance" % [Progression.cash(data.base_value),str(data.durability)],16))
 		if int(data.tier) > 0:
@@ -602,7 +606,7 @@ func render_varieties(list: VBoxContainer) -> void:
 		share.name = "SpawnShare_" + data.id
 		notes.add_child(share)
 		if available:
-			var strikes := int(ceilf(float(data.durability)/progress.strength()))
+			var strikes := int(ceilf(float(data.durability)/progress.cutting_profile().normal_damage(float(data.durability))))
 			var expected := progress.cutting_profile().expected_strikes(float(data.durability))
 			var payout := progress.reward(1,progress.harvest.cut_value(data.id,progress.levels))
 			var handling := label("%d %s to split · %s per cut" % [strikes,"strike" if strikes == 1 else "strikes",Progression.cash(payout)],18)
