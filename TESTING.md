@@ -31,6 +31,16 @@ DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_
 
 Python compilation, all shell syntax, five strict-guard contracts, actionlint and whitespace checks pass. Source/native software GL and Dummy audio do not establish native Windows input, audible quality, Forward+ hardware, supported-PC 60 FPS, extended soak or human aim/economy. Costs/art remain provisional. Current eight-variety/Cleaver profiling is a different content fixture from v0.29 seven-variety/Chef, so cross-version times cannot establish an optimization or FPS gain.
 
+### Final clean/public delivery — v0.30.0
+
+Clean source **4c9a3e597daf1e7a3a021e9ea6df04d9b64f5248** produces dirty=false metadata. Complete Full ZIP integrity/required original content and raw reports/portable modes/version-build-source identity pass (**631 payload files/622 source files**). Independent fresh extraction imports without checkout caches and passes **1,638/1,638**, zero guard errors/retries. Main and annotated **v0.30.0** are pushed.
+
+**[GitHub release run 44666377202](https://github.com/coffeeANDstuff/TomatoCut/actions/runs/44666377202)** succeeds in **2m 8s**: official engine/templates verified, five guard contracts, source regressions, both exports/embedded packs, Linux boot, complete ZIP and guarded fresh-source checks. **[v0.30.0](https://github.com/coffeeANDstuff/TomatoCut/releases/tag/v0.30.0)** is Latest through the public redirect. Public README and release prominently link Full; Full/Windows/Source ZIPs and external checksums are available.
+
+Downloaded the actual public Full ZIP. External SHA-256/internal integrity/complete manifest/required original content/source-build identity pass. All **622 source files** match the tested clean archive byte-for-byte, with immutable clean milestone metadata. Its contained Windows game pack passes **403/403** from /tmp through the strict guard, no errors/retries. This does not execute Windows natively.
+
+Canonical chat ZIP is exactly that public asset: **58,725,589 bytes**, SHA-256 **`d3a30bba43cadc48e1b088032f1bad337dd3dd4feca2aef71af73895f2aac591`**. Local clean Full stays separately under `exports/local-validation/`. Actual public sums are `exports/GITHUB-SHA256SUMS-v0.30.0.txt`; canonical public Full plus local Windows/Source hashes are separately recorded in `exports/SHA256SUMS-v0.30.0.txt` and current local SHA256SUMS.txt. Public/local executable bytes differ; lists remain distinct. This later documentation-only main commit records delivery without altering the immutable milestone tag, packaged source or raw performance data. Exports remain outside source Git. The session's private Xorg :97 was stopped after native/profile checks; no desktop/environment configuration was published.
+
 ## Plum, Chef and ordinary resistance polish — v0.29.0 (2026-11-17, America/Los_Angeles)
 
 Clean main **6aa1968** matches remote and passes **1,548/1,548** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64, Mesa llvmpipe Compatibility/Dummy audio. Resumed display sockets were stale; project native suites use a separate nonroot Xorg **:97** with the retained dummy configuration. No cloud configuration publication; test saves isolate under user://tests/.
