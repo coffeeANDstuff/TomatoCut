@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.31.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.32.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -51,6 +51,14 @@ with zipfile.ZipFile(args.archive) as z:
                       'Source/reports/v030/dense-all-cleaver.json'}
     cleaver_assets |= {'Source/assets/models/fragments/beefsteak_'+shape+'.glb' for shape in ['half','wedge','chunk']}
     assert cleaver_assets <= set(hashes), 'Missing original Beefsteak/Cleaver models, audio, art, sources or tests'
+    fillet_assets = {'Source/art/better_boy.blend', 'Source/art/fillet_knife.blend',
+                     'Source/assets/models/tomatoes/better_boy.glb', 'Source/assets/models/knives/fillet.glb',
+                     'Source/assets/illustrations/catalog/better_boy.svg', 'Source/assets/audio/fillet_slice.wav',
+                     'Source/tools/build_better_boy_assets.py', 'Source/tools/build_fillet_assets.py',
+                     'Source/tools/build_better_boy_art.py', 'Source/tests/fillet_tests.gd', 'Source/tests/fillet_render.gd',
+                     'Source/reports/v032/dense-all-fillet.json'}
+    fillet_assets |= {'Source/assets/models/fragments/better_boy_'+shape+'.glb' for shape in ['half','wedge','chunk']}
+    assert fillet_assets <= set(hashes), 'Missing original Better Boy/Fillet content, sources, tests or profile'
     bread_assets = {'Source/art/big_boy.blend', 'Source/art/bread_knife.blend',
                     'Source/assets/models/tomatoes/big_boy.glb', 'Source/assets/models/knives/bread.glb',
                     'Source/assets/illustrations/catalog/big_boy.svg', 'Source/assets/audio/bread_slice.wav',

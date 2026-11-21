@@ -112,3 +112,24 @@ Raw matching reports: [before](reports/v031/dense-before.json) and [after](repor
 DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_dense.gd -- --label=v031-legacy --all-varieties --knife=bread --legacy-root-sweeps
 DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_dense.gd -- --label=v031-shared --all-varieties --knife=bread
 ```
+
+
+## Ten-variety precision-blade diagnostic — v0.32 (2026-11-20, America/Los_Angeles)
+
+The current fixture cycles **all ten actual normal varieties**, including Better Boy, with the **five-point Fillet edge**. Godot 4.6.3 Compatibility, Mesa llvmpipe (LLVM 19.1.7, 256 bits), private Xorg :97. It runs serially after native workloads without another Godot renderer. The established method remains: frozen occupancy, 12 warmup/60 measured render frames, then separate 120-probe rotating zero-damage miss/cross phases for fragments and whole fruit. Whole-fruit checks use one shared prepared sweep per sample. Geometry, angular steps, effects, physics/lifetimes and 24-root/64-piece/96-drop capacities remain unchanged.
+
+| Roots / pieces / drops | Draw calls | Mean render-only FPS | Median / p95 frame ms | Fragment cross median / p95 ms | Root cross median / p95 ms | Fragment / root miss median ms |
+|---|---:|---:|---:|---:|---:|---:|
+| 4 / 8 / 12 | 226 | 9.51 | 102.842 / 139.537 | 0.153 / 0.183 | 0.146 / 0.163 | 0.030 / 0.149 |
+| 12 / 32 / 64 | 678 | 5.17 | 187.999 / 242.219 | 1.156 / 1.528 | 0.607 / 0.716 | 0.053 / 0.535 |
+| 24 / 64 / 96 | 1,208 | 3.54 | 278.195 / 347.139 | 2.098 / 2.670 | 1.402 / 1.546 | 0.084 / 1.127 |
+
+This is **one current-content diagnostic**, not a matching optimization comparison. Ten varieties/a five-point precision blade differ from the preceding nine-variety/51-point Bread fixture; no cross-version speedup or FPS gain follows. The retained v0.29/v0.31 controlled CPU improvements remain. Both original exact collision oracles now cover **640 cases**, **16 normal/event identities/ten blades**, with explicit edge/circle contacts and all seven earlier rotating seam cases retained. Source passes **1,732/1,732** and six affected native flows pass **146 assertions**.
+
+At full occupancy software rasterization and **1,208 draw calls** remain a bottleneck: **3.54 render-only FPS**, median/p95 **278.195/347.139ms**. Separate probe medians are not a measured live frame. Hardware/Forward+ performance, native Windows, target-PC 60 FPS, extended soak and human feel remain open. Further geometry-preserving render batching/instancing needs controlled profiling and gameplay verification; removing prepared cuts/detail/effects, reducing counts or shortening lifetimes remains outside the accepted approach.
+
+Raw report: [dense-all-fillet.json](reports/v032/dense-all-fillet.json). The historical three-variety/starter default and all earlier reports remain available.
+
+```sh
+DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_dense.gd -- --label=v032-all-fillet --all-varieties --knife=fillet
+```

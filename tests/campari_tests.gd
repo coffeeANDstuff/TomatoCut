@@ -19,7 +19,7 @@ static func fruit(game) -> Tomato:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new(); p.money = 100000
-	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 9 and p.equipment.knives.size() == 9,"nine real normal specimens and nine actual knives validate with the authored Campari profile")
+	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 10 and p.equipment.knives.size() == 10,"ten real normal specimens and ten actual knives validate with the authored Campari profile")
 	check.call(not "unlock_campari" in p.discovered and not p.harvest.unlocked("campari",p.levels) and not p.buy_knife("missing"),"fresh progression grants no Campari, Utility ownership or unknown instrument")
 	for id: String in ORDERS:
 		if id != "grape_frequency": p.purchase(id)

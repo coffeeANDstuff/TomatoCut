@@ -26,7 +26,7 @@ static func fruit(game) -> Tomato:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new(); p.money = 100000
-	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 9 and p.equipment.knives.size() == 9,"nine authored normal varieties and knives validate with original Beefsteak/Cleaver resources")
+	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 10 and p.equipment.knives.size() == 10,"ten authored normal varieties and knives validate with original Beefsteak/Cleaver resources")
 	check.call(not "unlock_beefsteak" in p.discovered and not "cleaver" in p.owned_knives and p.harvest.distribution(p.levels,p.strength()) == {"standard_red":1.0},"fresh progression grants no Beefsteak ownership, Cleaver or hidden event")
 	for i in range(ORDERS.size()-1): assert(p.purchase(ORDERS[i]))
 	check.call(not p.purchase("unlock_beefsteak") and not "unlock_beefsteak" in p.discovered,"actual Beefsteak branch needs both Plum quality and the second Campari frequency order")

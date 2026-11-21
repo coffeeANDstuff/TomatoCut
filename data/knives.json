@@ -451,5 +451,40 @@
     ],
     "resistant_damage_multiplier": 1.5,
     "slice_sound": "bread_slice"
+  },
+  {
+    "id": "fillet",
+    "name": "Fillet Knife",
+    "catalog_number": "010",
+    "description": "A fine upswept satin-steel point, sculpted honey-maple scales and a small dark finger guard. For negotiations requiring a narrower argument.",
+    "price": 2300,
+    "model": "res://assets/models/knives/fillet.glb",
+    "base_strength": 3.5,
+    "precision": "Fine upswept edge",
+    "special": "None",
+    "reach_label": "Long narrow precision edge",
+    "edge": [
+      [
+        -0.1,
+        -0.09
+      ],
+      [
+        0.4,
+        -0.085
+      ],
+      [
+        0.94,
+        -0.035
+      ],
+      [
+        1.35,
+        0.08
+      ],
+      [
+        1.6,
+        0.23
+      ]
+    ],
+    "slice_sound": "fillet_slice"
   }
 ]

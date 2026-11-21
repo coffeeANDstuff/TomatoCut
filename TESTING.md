@@ -2,6 +2,40 @@
 
 Do not mark unexecuted checks as passed. Update this document with exact commands, results and platform limitations.
 
+## Better Boy and precision Fillet — v0.32.0 (2026-11-20, America/Los_Angeles)
+
+Clean main **fe80825** matches remote and passes **1,690/1,690** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64, private nonroot Xorg :97, Mesa llvmpipe Compatibility/Dummy audio. No cloud configuration publication; saves isolate under user://tests/.
+
+**Source: 1,732/1,732, 42 new**, zero failures/errors under the strict guard. Real two-predecessor Better Boy/$3800 ownership, frequency/quality/dominance and exact normal-strength safety; maximum paid critical chance cannot admit underpowered fruit. Real $2300 Fillet purchase/equip, actual five-point fine tip, 3.5 base strength and separate preparation/normal sharpness. Actual paid permanent 20% discount pays **$3040** only on unlock; premium multiplies cultivated Better Boy once and excludes Standard Red. All five new models fit ≤8 material nodes with retained Blender/SVG/WAV/generators. Compatible schema-five round trip/old-ledger no-freebies/unowned equip/out-of-cap rejection, ten-variety root parents/nonoverlap, tenth focus, failed-write exact disk/state preservation and successful recovery pass. All earlier nine tomato/knife definitions and 42 normal orders compare unchanged as JSON; earlier assets are unchanged.
+
+Actual automatic **5 root/2.5 fragment resistance**, 2.1 mass and captured **$175 cultivated value**: **Paring 1.75** takes three/two strikes; **Fillet 4** takes two/one; **separately prepared plus paid Sharp Edge 2 Fillet 5** takes one/one. Each earns **$218.75/cut/$437.50/family**; three actually earned rounds bank/reload **$1312.50**. Preparation alone is honestly **4.5**, below the clean threshold. Actual same-sample protection, current feedback, original cue, tip reach while anchor remains outside, retained shared preparation, actual Bread swap/removal, paid critical/no extra money/stationary no RNG, max seven cuts/eight terminal pieces/**$1531.25 one unique**, confirmed resets/preferences pass. Independently paid Golden captures **$3500**, then root/recut pays **$10937.50**, ordinary price/wealth once; five paid events coexist at 15 roots. Both exact legacy oracles expand to **640** transformed cases, **16 normal/event identities/ten blades**, with both fragment forms, all blades' touching-circle/edge checks, original seven rotating positive seam cases and all ten actual mesh bounds over full turns retained.
+
+```sh
+./tools/cloud.sh ./tools/ci_godot.sh --headless --path . --editor --import --quit
+./tools/cloud.sh ./tools/ci_godot.sh --headless --path . --script tests/run_tests.gd
+blender --background --python tools/build_better_boy_assets.py
+blender --background --python tools/build_fillet_assets.py
+python3 tools/build_better_boy_art.py
+python3 tools/build_audio.py --only fillet_slice
+DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tests/fillet_render.gd
+# Full available native suite has 32 flows; this session's affected subset is recorded below.
+DISPLAY=:97 ./tools/cloud.sh ./tools/check_native.sh
+```
+
+**Iteration/evidence:** /tmp/tc-v032-baseline.log and /tmp/tc-v032-old-regressions.log each pass all 1,690 prior checks. /tmp/tc-v032-fillet-source.log passes the expanded 1,732. The first native flow passes 30 assertions; actual product review prompted narrowing only the new Fillet upper profile for a genuinely slender identity. Its lower cutting polyline, strength and prices stay unchanged. Final source/native/export validation after that visual refinement is recorded as completed below. No gameplay guard, old definition, collision or assertion is weakened.
+
+**Final native:** **146 assertions across six sequential flows** after the blade refinement: Fillet **30**, Bread **29**, Santoku **24**, Giant aiming **21**, organic roots **24**, preparation **18**. Zero strict-guard errors/failures/retries. Final source again passes **1,732/1,732**. Logs `/tmp/tc-v032-final-source.log`, `/tmp/tc-v032-native-FLOW.log` and controller `/tmp/tc-v032-validation.log`. Captures **260–272** reviewed at 16:10/16:9, including the actual narrow full blade, readiness, flight, five-chamber interiors, outside-anchor tip strike, exact earned results, separate kit/Sharp Edge order and reduced settings. Actual 60 fruit/18 fragment fixed steps verify physical motion separately from frozen mouse-accounting poses. Native confirmations use real preview/production callbacks rather than OS-dialog automation. This is an affected subset; the full available 32-flow suite is not claimed as rerun.
+
+**Current dense fixture:** All ten normal varieties/actual five-point Fillet, unchanged 24 roots/64 fragments/96 drops, serially after native tests. At capacity fragment crossing median/p95 **2.098/2.670ms**, whole-root crossing **1.402/1.546ms**, fragment/root miss **0.084/1.127ms**. Render-only **3.54 FPS**, median/p95 **278.195/347.139ms**, **1,208 draw calls** on llvmpipe. Raw all-tier evidence is retained in reports/v032/dense-all-fillet.json and PERFORMANCE_REPORT.md. This differs from nine varieties/Bread and establishes no optimization/FPS gain; matching prior CPU evidence remains.
+
+**Exports:** Rebuilt Windows/Linux embedded packs each pass **452/452**, **24 new**, sequentially from /tmp through the strict guard. Actual Linux executable boots with an isolated test save. New original assets/cue, paid Better Boy/Fillet receipts and safe harvest, actual three-family resistant/prepared cuts and fine-tip contact, unchanged rewards and $1312.50 bank/disk, tenth focus, failed-write preservation/recovery, real Bread coefficient removal/restoration and confirmed resets/preferences pass. Logs `/tmp/tc-v032-{windows,linux}-{export,pack}.log` and `/tmp/tc-v032-linux-boot.log`; zero guard errors/failures/retries. Host-engine Windows-pack checks do not execute Windows natively. Both presets embed the PCK in their executable; actual Linux boot uses TOMATOCUT_GODOT_BIN, not a nonexistent standalone PCK.
+
+Python compilation, all shell syntax, five strict-guard contracts, actionlint and whitespace checks pass. Session-private Xorg :97 stopped after native/profile work, without changing shared desktop/environment configuration.
+
+**Archive preflight:** Complete Full ZIP passes safe paths/unique entries/CRC/full SHA-256 payload manifest/required original assets and raw reports/portable modes/version-build-source identity: **680 payload files/671 source files**. All Source paths and bytes match intended tracked/new files without local strays; dirty=true metadata is honest before the stable commit. Clean/fresh-source/public delivery verification follows separately.
+
+Source/native software GL and Dummy audio do not establish human feel/balance/listening, extended soak, native Windows, Forward+ hardware or supported-PC 60 FPS. Prices/art remain provisional and prepared cuts retain the established hybrid approximation. Current ten-variety/Fillet profiling is a different content/blade fixture from nine/Bread and cannot establish an optimization/FPS gain. Earlier matching CPU improvements remain. Complete native/export/archive/public evidence follows as completed.
+
 ## Big Boy, serrated Bread and complete product framing — v0.31.0 (2026-11-19, America/Los_Angeles)
 
 Clean main **8de221b** matches remote and passes **1,638/1,638** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64, Mesa llvmpipe Compatibility/Dummy audio, private nonroot Xorg **:97**. No cloud configuration publication; saves isolate under user://tests/.

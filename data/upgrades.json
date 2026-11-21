@@ -718,5 +718,75 @@
       "suppression": 0.1
     },
     "tomato_id": "big_boy"
+  },
+  {
+    "id": "unlock_better_boy",
+    "name": "Better Boy \u00b7 Variety Unlock",
+    "category": "Varieties",
+    "description": "A premium branch joins tough Big Boy cultivation to a substantial Beefsteak harvest.",
+    "effect": "Adds premium Better Boy to the eligible automatic harvest: $140 base value, 5 resistance.",
+    "base_cost": 3800,
+    "growth": 1,
+    "max_level": 1,
+    "requires": {
+      "big_boy_quality": 1,
+      "beefsteak_frequency": 2
+    },
+    "effect_values": {
+      "unlock": 1
+    },
+    "tomato_id": "better_boy"
+  },
+  {
+    "id": "better_boy_frequency",
+    "name": "Better Boy \u00b7 Harvest Frequency",
+    "category": "Varieties",
+    "description": "A more frequent appointment with very well-regarded produce.",
+    "effect": "+50% relative Better Boy spawn weight per level.",
+    "base_cost": 1400,
+    "growth": 1.25,
+    "max_level": 10,
+    "requires": {
+      "unlock_better_boy": 1
+    },
+    "effect_values": {
+      "weight_bonus": 0.5
+    },
+    "tomato_id": "better_boy"
+  },
+  {
+    "id": "better_boy_quality",
+    "name": "Better Boy \u00b7 Premium Quality",
+    "category": "Varieties",
+    "description": "Inspect all five chambers. Invoice accordingly.",
+    "effect": "+25% Better Boy cut value per level, including separated pieces.",
+    "base_cost": 1500,
+    "growth": 1.26,
+    "max_level": 10,
+    "requires": {
+      "unlock_better_boy": 1
+    },
+    "effect_values": {
+      "value_bonus": 0.25
+    },
+    "tomato_id": "better_boy"
+  },
+  {
+    "id": "better_boy_dominance",
+    "name": "Better Boy \u00b7 Harvest Dominance",
+    "category": "Varieties",
+    "description": "Premium value earns precedence only when the blade makes it profitable.",
+    "effect": "Suppresses less profitable lower-tier weight by 10% per level.",
+    "base_cost": 4500,
+    "growth": 1.32,
+    "max_level": 10,
+    "requires": {
+      "better_boy_frequency": 3,
+      "better_boy_quality": 2
+    },
+    "effect_values": {
+      "suppression": 0.1
+    },
+    "tomato_id": "better_boy"
   }
 ]

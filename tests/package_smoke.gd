@@ -52,7 +52,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.31.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.32.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -180,7 +180,7 @@ func run() -> void:
 	for id: String in ["permanent_slice_value","starting_cash","golden_harvest","golden_frequency","golden_value"]: game.purchase_permanent(id)
 	game.ui.archive("Special Events")
 	check(game.events.catalog.validate(game.progress.prestige).is_empty() and game.ui.content.find_child("PrestigeTitle_golden_harvest",true,false) != null,"packaged event JSON, all four original golden models and illustrated event archive validate")
-	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 9,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
+	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 10,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
 	game.progress.money = 100; game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts")
 	game.start_round(); game.session.launch_clock = 1000
 	for candidate in range(1,10000):
@@ -969,7 +969,7 @@ func run() -> void:
 	game.new_game()
 	check(game.progress.prestige.level("golden_jackpot") == 0 and game.events.catalog.golden_jackpot_bonus("golden_harvest",game.progress.prestige) == 0 and game.progress.settings.reduced_motion,"packaged New Game clears finish ownership and Golden gate while preserving preferences")
 	game.finish_round(); await process_frame
-	check(game.progress.harvest.varieties.size() == 9 and game.progress.equipment.knives.size() == 9,"packaged production collection contains nine original normal varieties and nine actual knives")
+	check(game.progress.harvest.varieties.size() == 10 and game.progress.equipment.knives.size() == 10,"packaged production collection contains ten original normal varieties and ten actual knives")
 	game.progress.money = 10000
 	for polish_id: String in ["better_prices","faster_throwing","unlock_cherry"]: game.progress.purchase(polish_id)
 	check(not game.progress.purchase("unlock_grape") and not "unlock_grape" in game.progress.discovered,"packaged Grape retains its actual frequency predecessor and cannot be bought early")
@@ -1288,6 +1288,70 @@ func run() -> void:
 	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
 	check(not game.progress.harvest.unlocked("big_boy",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"] and game.progress.cutting_profile().resistant_multiplier == 1,"packaged confirmed prestige resets Big Boy, Bread, preparation and derived special")
 	game.new_game(); check(game.progress.prestige.levels.is_empty() and game.progress.settings.reduced_motion and game.ui.root_views.is_empty(),"packaged final New Game clears gates while retaining preferences")
+	game.progress.settings.damage_indicators = true
+	game.finish_round(); await process_frame; game.progress.money = 1000000
+	for fillet_order: String in ["better_prices","faster_throwing","unlock_cherry","sharp_edge","unlock_roma","roma_quality","cherry_frequency","unlock_grape","grape_frequency","unlock_campari","campari_frequency","cherry_quality","cherry_quality","unlock_cocktail","cocktail_quality","roma_quality","unlock_plum","plum_quality","campari_frequency","unlock_beefsteak","beefsteak_quality","plum_frequency","plum_frequency","unlock_big_boy","big_boy_quality","beefsteak_frequency"]: game.progress.purchase(fillet_order)
+	check(not game.progress.purchase("unlock_better_boy") and not "unlock_better_boy" in game.progress.discovered,"packaged Better Boy retains both actual paid predecessor branches")
+	game.progress.purchase("beefsteak_frequency"); var fillet_cash: float = game.progress.money
+	check(game.progress.purchase("unlock_better_boy") and game.progress.money == fillet_cash-3800,"packaged actual 3800-dollar premium unlock grants paid ownership")
+	game.show_catalog(); game.ui.catalog("Varieties"); game.purchase("better_boy_quality"); game.purchase("better_boy_frequency"); game.ui.catalog("Cutting"); game.purchase("extra_cuts"); game.ui.catalog("Varieties")
+	for fillet_frame in range(6): await process_frame
+	check(not game.progress.harvest_distribution().has("better_boy") and game.ui.content.find_child("HarvestReadiness_better_boy",true,false).text.contains("1.67"),"packaged owned premium fruit retains normal cutting readiness and honest catalog warning")
+	game.show_equipment(); fillet_cash = game.progress.money; game.buy_knife("fillet")
+	check(game.progress.money == fillet_cash-2300 and game.progress.equipped_knife == "rusty_butter" and "fillet" in game.progress.owned_knives,"packaged actual 2300-dollar Fillet purchase remains separate from equip")
+	game.buy_knife("paring"); game.equip_knife("paring"); game.show_catalog(); game.ui.catalog("Varieties")
+	for fillet_frame in range(6): await process_frame
+	check(game.progress.strength() == 1.75 and game.progress.harvest_distribution().has("better_boy") and game.ui.content.find_child("HarvestReadiness_better_boy",true,false) == null,"packaged actual paid precision equipment enables safe automatic premium throws and clears stale readiness")
+	check(ResourceLoader.exists("res://assets/models/knives/fillet.glb") and load("res://assets/illustrations/catalog/better_boy.svg").get_width() > 0 and game.audio.sounds.has("fillet_slice"),"packaged original Fillet, premium botanical and fine slice cue resolve")
+	game.start_round(); game.clear_field(); game.session.launch_clock = 1000; game.fragments.set_physics_process(false)
+	for fillet_attempt in range(500):
+		game.clear_field(); fruit = game.spawn_tomato()
+		if fruit.variety_id == "better_boy": break
+	fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO
+	var fillet_family: CutFamily = fruit.family
+	check(fruit.variety_id == "better_boy" and fruit.initial_durability == 5 and fillet_family.fragment_durability == 2.5 and fillet_family.mass == 2.1 and fillet_family.cut_value == 175,"packaged actual automatic Better Boy captures authored mass, resistance and strong premium quality once")
+	game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade(); game.process_blade()
+	check(fruit.durability == 3.25 and fillet_family.accepted_strikes == 1 and game.session.earnings == 0,"packaged actual Paring hit and repeated sample preserve premium resistance and no farming")
+	game.knife.track(Vector2(-3,0)); game.process_blade(); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(game.session.cuts == 1 and game.session.earnings == 218.75,"packaged actual third precision hit splits premium fruit for 218.75")
+	game.knife.track(Vector2(-3,0)); game.process_blade()
+	check(game.fragments.pieces[0].durability == .75 and game.session.cuts == 1,"packaged actual premium half resists its first Paring recut")
+	game.knife.track(Vector2(3,0)); game.process_blade(); game.finish_round(); game.show_equipment(); game.equip_knife("fillet")
+	check(game.progress.strength() == 4 and game.knife.edge.size() == 5 and game.progress.cutting_profile().resistant_multiplier == 1 and game.progress.equipped_combo_multiplier() == 1,"packaged actual Fillet equip supplies its five-point narrow edge without borrowed serration or combo bonus")
+	game.start_round(); game.clear_field(); game.session.launch_clock = 1000
+	for fillet_attempt in range(500):
+		game.clear_field(); fruit = game.spawn_tomato()
+		if fruit.variety_id == "better_boy": break
+	fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO; game.knife.reset(); game.knife.track(Vector2(-1.95,0)); game.knife.track(Vector2(-1.91,0)); game.process_blade()
+	check(fruit.durability == 1 and game.session.earnings == 0,"packaged actual fine Fillet tip damages premium hull while the cursor anchor stays outside")
+	game.knife.track(Vector2(-3,0)); game.process_blade(); game.knife.track(Vector2(3,0)); game.process_blade(); game.process_blade()
+	check(game.session.cuts == 2 and game.session.earnings == 437.5 and game.session.tomatoes_sliced == 1,"packaged actual Fillet root/recut lower accepted strikes while keeping 437.50 family value")
+	game.finish_round(); game.show_equipment(); game.buy_modification("honing_kit"); game.apply_modification("honing_kit","fillet")
+	check(game.progress.strength() == 4.5,"packaged actual separate preparation adds half strength without silently granting a clean premium root")
+	game.show_catalog(); game.ui.catalog("Cutting"); game.purchase("sharp_edge")
+	check(game.progress.strength() == 5 and game.progress.knife_modification("fillet") == "honing_kit","packaged actual paid ordinary sharpness and assigned preparation reach resistance five once")
+	game.start_round(); game.clear_field(); game.session.launch_clock = 1000
+	for fillet_attempt in range(500):
+		game.clear_field(); fruit = game.spawn_tomato()
+		if fruit.variety_id == "better_boy": break
+	fruit.set_physics_process(false); fruit.position = Vector3.ZERO; fruit.rotation = Vector3.ZERO; fruit.velocity = Vector2.ZERO; game.knife.reset(); game.knife.track(Vector2(-3,0)); game.knife.track(Vector2(3,0)); game.process_blade()
+	check(game.session.cuts == 1 and game.session.earnings == 218.75 and game.audio.players[(game.audio.cursor-1)%8].stream == game.audio.sounds.fillet_slice,"packaged actual cultivated-prepared premium root splits cleanly and dispatches the original fine slice cue")
+	game.knife.track(Vector2(-3,0)); game.process_blade(); game.finish_round(); var fillet_saved := Progression.new()
+	check(game.store.load_into(fillet_saved) and fillet_saved.equipped_knife == "fillet" and fillet_saved.strength() == 5 and fillet_saved.prestige.cycle_earnings == 1312.5,"packaged three actual earned premium families bank 1312.50 and reload paid cultivation/equipment/preparation")
+	game.show_equipment(); game.ui.equipment_shop("rusty_butter"); await game.ui.focus_control(game.ui.content.find_child("Product_fillet",true,false))
+	check(game.ui.content.get_node("KnifeCollectionScroll").get_global_rect().encloses(game.ui.content.find_child("Product_fillet",true,false).get_global_rect()),"packaged tenth knife focus remains framed inside the bounded collection")
+	var fillet_before: Dictionary = game.progress.snapshot(); var fillet_store: SaveStore = game.store; var fillet_disk := FileAccess.get_file_as_string(fillet_store.path)
+	game.store = SaveStore.new("user://tests/missing-pack-fillet-"+game.progress.prestige.lineage+"/ledger.json"); game.equip_knife("rusty_butter"); game.remove_modification("honing_kit")
+	check(game.progress.snapshot() == fillet_before and game.progress.strength() == 5 and FileAccess.get_file_as_string(fillet_store.path) == fillet_disk,"packaged failed Fillet equip/preparation retain active effects and exact prior good disk bytes")
+	game.store = fillet_store; game.remove_modification("honing_kit")
+	check(game.progress.strength() == 4.5 and not is_instance_valid(game.ui.notice_label),"packaged successful precision preparation recovery applies once and clears stale notice")
+	game.buy_knife("bread"); game.equip_knife("bread")
+	check(game.progress.cutting_profile().normal_damage(5) == 6 and game.progress.cutting_profile().normal_damage(1) == 4,"packaged actual Bread swap retains its own resistant-only effect")
+	game.equip_knife("fillet")
+	check(game.progress.cutting_profile().resistant_multiplier == 1 and game.progress.cutting_profile().normal_damage(5) == 4.5,"packaged return to Fillet removes serration and keeps ordinary cultivated strength")
+	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(not game.progress.harvest.unlocked("better_boy",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"] and game.progress.owned_modifications.is_empty(),"packaged confirmed prestige resets new premium fruit, precision equipment and preparation")
+	game.new_game(); check(game.progress.prestige.levels.is_empty() and game.progress.settings.reduced_motion and game.ui.root_views.is_empty(),"packaged final New Game clears gates while retaining accessibility")
 	game.queue_free()
 	await process_frame
 	# The rapid scripted cuts queue several WAV playbacks in the mixer. Allow

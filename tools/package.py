@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Big Boy and Bread Knife milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Better Boy and Fillet Knife milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -65,6 +65,14 @@ Dotted ink focus supports keyboard controls; checkmark slips save preferences.
 Hover navigation icons for one second to see their labels.
 Move the mouse through airborne tomatoes; no click is needed.
 Ten-second starting rounds; cultivation and progress save automatically.
+Better Boy reveals after Big Boy Quality 1 + Beefsteak Frequency 2. Its $3800
+unlock grants premium ownership, with separate quality/frequency/dominance.
+Automatic throws still need at most three noncritical strikes. Prepared
+pieces retain their own resistance, and rewards are captured per family.
+The $2300 Fillet Knife has 3.50 base sharpness and a real narrow five-point
+upswept edge, sculpted maple grip and original fine slice cue. Buy, equip,
+preparation and ordinary sharpness stay separate. Its precision comes from
+authored geometry; no hidden critical, serration or value bonus is granted.
 Big Boy reveals after Beefsteak Quality 1 + Plum Frequency 2. Its $2200
 unlock buys ownership; 6 resistance requires adequate normal cutting damage
 for at most three strikes. Its four-resistance prepared pieces stay tough.
@@ -295,7 +303,7 @@ Source history: https://github.com/coffeeANDstuff/TomatoCut
 Milestone tag: v{VERSION}
 
 STATUS
-Nine of 25 normal varieties and nine of 25 knives are integrated.
+Ten of 25 normal varieties and ten of 25 knives are integrated.
 This is a development milestone, not the final game. Windows-native,
 Forward+ hardware, audio listening and target-PC 60 FPS remain unverified.
 '''

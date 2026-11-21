@@ -28,7 +28,7 @@ static func fruit(game) -> Tomato:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new(); p.money = 1000000
-	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 9 and p.equipment.knives.size() == 9,"nine original normal varieties and knives validate without free Big Boy or Bread ownership")
+	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 10 and p.equipment.knives.size() == 10,"ten original normal varieties and knives validate without free Big Boy or Bread ownership")
 	check.call(not "unlock_big_boy" in p.discovered and not "bread" in p.owned_knives and p.harvest_distribution() == {"standard_red":1.0},"fresh harvest and hidden Big Boy gates remain automatic and paid")
 	CLEAVER.cultivate(p)
 	for id: String in ["unlock_beefsteak","beefsteak_quality","plum_frequency"]: p.purchase(id)
@@ -74,17 +74,17 @@ static func run(tree: SceneTree, check: Callable) -> void:
 	# Independent whole-fruit legacy calls verify shared preparation for all
 	# normal/event forms, including the former circle narrow phase.
 	var catalog := EventCatalog.new(); var targets: Array[Tomato] = []
-	for id: String in ["standard_red","cherry","roma","grape","campari","cocktail","plum","beefsteak","big_boy","event_golden","event_giant","event_rainbow_amber","event_rainbow_sage","event_rainbow_violet","event_jackpot"]:
+	for id: String in ["standard_red","cherry","roma","grape","campari","cocktail","plum","beefsteak","big_boy","better_boy","event_golden","event_giant","event_rainbow_amber","event_rainbow_sage","event_rainbow_violet","event_jackpot"]:
 		var data := p.harvest.definition(id) if p.harvest.by_id.has(id) else catalog.specimen(id)
 		var target := Tomato.new(); target.configure(data); tree.root.add_child(target); target.set_physics_process(false); targets.append(target)
 	var random := RandomNumberGenerator.new(); random.seed = 31031; var root_matches := true
-	for i in range(540):
-		var target := targets[i%15]
+	for i in range(640):
+		var target := targets[i%16]
 		target.transform = Transform3D(Basis.from_euler(Vector3(random.randf_range(-1,1),random.randf_range(-2,2),random.randf_range(-3,3))).scaled(Vector3(random.randf_range(.4,1.5),random.randf_range(.4,1.5),random.randf_range(.4,1.5))),Vector3(random.randf_range(-5,5),random.randf_range(-3,3),0))
 		var previous := Transform2D(random.randf_range(-PI,PI),Vector2(random.randf_range(-6,6),random.randf_range(-4,4))); var current := Transform2D(random.randf_range(-PI,PI),Vector2(random.randf_range(-6,6),random.randf_range(-4,4)))
-		var edge := EquipmentCatalog.edge_points(p.equipment.knives[int(i/15)%9]); var sweep := SliceSystem.prepare_sweep(previous,current,edge)
+		var edge := EquipmentCatalog.edge_points(p.equipment.knives[int(i/16)%10]); var sweep := SliceSystem.prepare_sweep(previous,current,edge)
 		root_matches = root_matches and target.intersects(previous,current,edge) == target.intersects(previous,current,edge,sweep)
-	check.call(root_matches,"540 transformed whole-fruit cases across fifteen normal/event identities and nine blades preserve legacy circle/hull hits with one shared sweep")
+	check.call(root_matches,"640 transformed whole-fruit cases across sixteen normal/event identities and ten blades preserve legacy circle/hull hits with one shared sweep")
 	for target: Tomato in targets: target.queue_free()
 	var contacts := true; var touching_hits := 0
 	for knife: Dictionary in p.equipment.knives:
@@ -93,7 +93,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 			var center := previous*edge[0]+Vector2(0,.4+offset); var expected := SliceSystem.swept_hit(center,.4,previous,current,edge)
 			touching_hits += int(expected); contacts = contacts and expected == SliceSystem.prepared_circle_hit(center,.4,sweep)
 		contacts = contacts and not SliceSystem.prepared_circle_hit(Vector2.ZERO,1,SliceSystem.prepare_sweep(previous,previous,edge)) and not SliceSystem.prepared_circle_hit(Vector2(0,20),.1,sweep)
-	check.call(contacts and touching_hits > 0,"shared circle bounds preserve legacy touching contacts for all nine blades while stationary and distant samples stay inert")
+	check.call(contacts and touching_hits > 0,"shared circle bounds preserve legacy touching contacts for all ten blades while stationary and distant samples stay inert")
 	var game: Node = load("res://scenes/main.tscn").instantiate(); game.save_path = "user://tests/bread.json"; tree.root.add_child(game); await POLISH.frames(tree)
 	game.set_physics_process(false); game.progress = p; game.ui.progress = p; game.audio.progress = p
 	game.show_catalog(); game.ui.catalog("Varieties"); await POLISH.frames(tree,6)
@@ -119,7 +119,7 @@ static func run(tree: SceneTree, check: Callable) -> void:
 			for instance: MeshInstance3D in meshes:
 				for corner in range(8):
 					framed = framed and Rect2(Vector2.ZERO,Vector2(preview.viewport.size)).grow(-3).has_point(preview.camera.unproject_position(instance.global_transform*instance.get_aabb().get_endpoint(corner)))
-	check.call(framed,"all nine actual model bounds remain framed over a full preview turn, including the long Bread tip, without moving gameplay camera")
+	check.call(framed,"all ten actual model bounds remain framed over a full preview turn, including the long Bread tip, without moving gameplay camera")
 	# Three actual earned families: ordinary strength 2, serrated 3.5, prepared 4.
 	p = profile(); p.buy_knife("steak"); p.equip_knife("steak"); game.progress = p; game.ui.progress = p; game.audio.progress = p
 	var tomato := await fruit(game); var family := tomato.family; POLISH.strike(game); game.process_blade()

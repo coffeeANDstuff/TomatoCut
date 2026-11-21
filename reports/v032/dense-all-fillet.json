@@ -1,0 +1,107 @@
+{
+  "knife": "fillet",
+  "label": "v032-all-fillet",
+  "normal_varieties": [
+    "standard_red",
+    "cherry",
+    "roma",
+    "grape",
+    "campari",
+    "cocktail",
+    "plum",
+    "beefsteak",
+    "big_boy",
+    "better_boy"
+  ],
+  "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+  "root_sweep_mode": "shared",
+  "scenarios": [
+    {
+      "collision": {
+        "cross": {
+          "median_ms": 0.153,
+          "p95_ms": 0.183
+        },
+        "miss": {
+          "median_ms": 0.03,
+          "p95_ms": 0.044
+        }
+      },
+      "draw_calls_median": 226.0,
+      "drops": 12,
+      "pieces": 8,
+      "render_mean_fps": 9.50637814597741,
+      "render_median_ms": 102.842,
+      "render_p95_ms": 139.537,
+      "root_collision": {
+        "cross": {
+          "median_ms": 0.146,
+          "p95_ms": 0.163
+        },
+        "miss": {
+          "median_ms": 0.149,
+          "p95_ms": 0.167
+        }
+      },
+      "roots": 4
+    },
+    {
+      "collision": {
+        "cross": {
+          "median_ms": 1.156,
+          "p95_ms": 1.528
+        },
+        "miss": {
+          "median_ms": 0.053,
+          "p95_ms": 0.068
+        }
+      },
+      "draw_calls_median": 678.0,
+      "drops": 64,
+      "pieces": 32,
+      "render_mean_fps": 5.16733821968318,
+      "render_median_ms": 187.999,
+      "render_p95_ms": 242.219,
+      "root_collision": {
+        "cross": {
+          "median_ms": 0.607,
+          "p95_ms": 0.716
+        },
+        "miss": {
+          "median_ms": 0.535,
+          "p95_ms": 0.657
+        }
+      },
+      "roots": 12
+    },
+    {
+      "collision": {
+        "cross": {
+          "median_ms": 2.098,
+          "p95_ms": 2.67
+        },
+        "miss": {
+          "median_ms": 0.084,
+          "p95_ms": 0.111
+        }
+      },
+      "draw_calls_median": 1208.0,
+      "drops": 96,
+      "pieces": 64,
+      "render_mean_fps": 3.54007196258285,
+      "render_median_ms": 278.195,
+      "render_p95_ms": 347.139,
+      "root_collision": {
+        "cross": {
+          "median_ms": 1.402,
+          "p95_ms": 1.546
+        },
+        "miss": {
+          "median_ms": 1.127,
+          "p95_ms": 1.479
+        }
+      },
+      "roots": 24
+    }
+  ]
+}

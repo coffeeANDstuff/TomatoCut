@@ -353,5 +353,45 @@
     "frequency_upgrade": "big_boy_frequency",
     "quality_upgrade": "big_boy_quality",
     "dominance_upgrade": "big_boy_dominance"
+  },
+  {
+    "id": "better_boy",
+    "name": "Better Boy",
+    "catalog_number": "010",
+    "description": "Six broad shoulders, a curled crown and five generously seeded chambers. Premium produce, with a remarkably confident estimate of its own worth.",
+    "tier": 8,
+    "base_value": 140,
+    "durability": 5,
+    "fragment_durability": 2.5,
+    "base_weight": 0.3,
+    "mass": 2.1,
+    "model_scale": 1.04,
+    "radius": 0.9,
+    "gravity": 5.8,
+    "launch_min": 8.2,
+    "launch_max": 8.7,
+    "spin": 0.8,
+    "spin_z": 0.5,
+    "proxy_axes": [
+      0.76,
+      0.68,
+      0.72
+    ],
+    "proxy_lobe": 0.045,
+    "proxy_lobe_count": 6,
+    "proxy_taper": -0.12,
+    "collision": "hull",
+    "flight_description": "premium yield \u00b7 broad steady arc",
+    "model": "res://assets/models/tomatoes/better_boy.glb",
+    "illustration": "res://assets/illustrations/catalog/better_boy.svg",
+    "fragments": {
+      "half": "res://assets/models/fragments/better_boy_half.glb",
+      "wedge": "res://assets/models/fragments/better_boy_wedge.glb",
+      "chunk": "res://assets/models/fragments/better_boy_chunk.glb"
+    },
+    "unlock_upgrade": "unlock_better_boy",
+    "frequency_upgrade": "better_boy_frequency",
+    "quality_upgrade": "better_boy_quality",
+    "dominance_upgrade": "better_boy_dominance"
   }
 ]
