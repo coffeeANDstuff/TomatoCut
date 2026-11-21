@@ -36,6 +36,17 @@ DISPLAY=:97 ./tools/cloud.sh ./tools/check_native.sh
 
 Python compilation, all shell syntax, five strict-guard contracts, actionlint and whitespace checks pass. Source/native software GL and Dummy audio do not establish native Windows, Forward+ hardware, supported-PC 60 FPS, extended soak, human aim/economy or listening. Prices/art remain provisional, and prepared cuts remain hybrid. Current eleven-variety/Nakiri timings differ from ten/Fillet and establish no optimization/FPS gain. Prior matching CPU evidence remains. Final affected native/export/profile/archive/public evidence is recorded as completed.
 
+
+### Verified clean/public delivery — v0.33.0
+
+Verified **2026-11-20, America/Los_Angeles**. Clean source **747e46a82e5907bc560be0b27c10bf4e6020c45b** produces dirty=false metadata. Full ZIP integrity/required original assets and raw reports/portable modes/version-build-source identity pass (**704 payload files/695 source files**). Independent fresh extraction imports without checkout caches and passes **1,784/1,784**, zero guard errors/retries. Main and annotated **v0.33.0** are pushed.
+
+**[GitHub release run 44871537336](https://github.com/coffeeANDstuff/TomatoCut/actions/runs/44871537336)** succeeds in **3m 0s**: official engine/templates verified, five guard contracts, source regressions, both exports/embedded packs, actual Linux boot, complete ZIP and guarded fresh-source checks. **[v0.33.0](https://github.com/coffeeANDstuff/TomatoCut/releases/tag/v0.33.0)** is Latest through the public redirect. Public README/release prominently link Full; Full/Windows/Source ZIPs and external checksums are available.
+
+Downloaded the actual public Full ZIP. External SHA-256/internal CRC/complete manifest/required original assets and raw reports/source-build identity pass. All **695 source files** match the tested clean archive byte-for-byte, with immutable clean milestone metadata. Its contained Windows game pack passes **477/477** from /tmp through the strict guard, zero errors/retries. This is a host-engine resource/gameplay check, not native Windows execution.
+
+Canonical chat ZIP is exactly that public asset: **64,885,964 bytes**, SHA-256 **`d0c8f7ba92b21c28a22b6860fd85906b453c2bc40d0348f5bf5c20d9aa3ebd2a`**. Local clean Full stays separately under exports/local-validation/. Actual public sums are exports/GITHUB-SHA256SUMS-v0.33.0.txt; canonical public Full plus local Windows/Source hashes are separately recorded in exports/SHA256SUMS-v0.33.0.txt and current local SHA256SUMS.txt. Public/local executable bytes differ; checksum lists remain distinct. This later documentation-only main commit records delivery without altering the immutable milestone tag, packaged source or raw performance data. Exports remain outside source Git. Session-private Xorg :97 was stopped after native/profile work; no desktop/environment configuration was published.
+
 ## Better Boy and precision Fillet — v0.32.0 (2026-11-20, America/Los_Angeles)
 
 Clean main **fe80825** matches remote and passes **1,690/1,690** baseline. Godot **4.6.3.stable.official.7d41c59c4**, Blender **4.3.2**, Linux x86-64, private nonroot Xorg :97, Mesa llvmpipe Compatibility/Dummy audio. No cloud configuration publication; saves isolate under user://tests/.
