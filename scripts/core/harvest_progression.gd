@@ -48,7 +48,7 @@ func cutting_profile(levels: Dictionary, strength: float) -> CuttingProfile:
 
 func can_handle(entry: Dictionary, strength: float, profile: CuttingProfile = null) -> bool:
 	if entry.is_empty(): return false
-	var damage := maxf(.01,strength) if profile == null else profile.normal_damage(float(entry.durability))
+	var damage := maxf(.01,strength) if profile == null else profile.normal_damage(float(entry.durability),str(entry.get("id","")))
 	return ceilf(float(entry.durability)/damage) <= MAX_NORMAL_STRIKES
 
 func distribution(levels: Dictionary, strength: float, profile: CuttingProfile = null) -> Dictionary:
@@ -61,9 +61,9 @@ func distribution(levels: Dictionary, strength: float, profile: CuttingProfile =
 	var total := 0.0
 	for entry: Dictionary in candidates:
 		var weight := float(entry.base_weight) * (1.0 + coefficient(entry.frequency_upgrade,"weight_bonus") * int(levels.get(entry.frequency_upgrade,0)))
-		var earning_potential := cut_value(entry.id,levels)/profile.expected_strikes(float(entry.durability))
+		var earning_potential := cut_value(entry.id,levels)/profile.expected_strikes(float(entry.durability),entry.id)
 		for dominant: Dictionary in candidates:
-			var dominant_potential := cut_value(dominant.id,levels)/profile.expected_strikes(float(dominant.durability))
+			var dominant_potential := cut_value(dominant.id,levels)/profile.expected_strikes(float(dominant.durability),dominant.id)
 			if int(dominant.tier) > int(entry.tier) and dominant_potential > earning_potential+0.000001:
 				weight *= maxf(0,1.0-coefficient(dominant.dominance_upgrade,"suppression")*int(levels.get(dominant.dominance_upgrade,0)))
 		if weight > 0:

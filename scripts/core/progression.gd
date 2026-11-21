@@ -150,6 +150,8 @@ func equip_knife(id: String) -> bool:
 func cutting_profile() -> CuttingProfile:
 	var profile := harvest.cutting_profile(levels,strength())
 	profile.resistant_multiplier = equipment.resistant_multiplier(equipped_knife) if equipped_knife in owned_knives else 1.0
+	profile.produce_multiplier = equipment.produce_multiplier(equipped_knife) if equipped_knife in owned_knives else 1.0
+	profile.normal_varieties = harvest.by_id
 	return profile
 
 func harvest_distribution() -> Dictionary:
@@ -168,6 +170,9 @@ func equipped_combo_multiplier() -> float:
 	return knife_combo_multiplier(equipped_knife) if equipped_knife in owned_knives else 1.0
 
 func knife_special(id: String) -> String:
+	var vegetable := equipment.produce_multiplier(id)
+	if vegetable > 1:
+		return "Produce damage ×%.2f\n%s · normal varieties" % [vegetable,"Active" if id == equipped_knife and id in owned_knives else "When equipped"]
 	var serration := equipment.resistant_multiplier(id)
 	if serration > 1:
 		return "Serrated damage ×%.2f\n%s · resistance >1" % [serration,"Active" if id == equipped_knife and id in owned_knives else "When equipped"]

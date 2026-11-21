@@ -16,6 +16,18 @@ func check(value: bool, description: String) -> void:
 		failures += 1
 		push_error(description)
 
+func specialist_fruit(game, id: String = "early_girl") -> Tomato:
+	await process_frame; game.start_round(); game.clear_field(); game.session.launch_clock = 1000; game.fragments.set_physics_process(false)
+	var result: Tomato
+	for i in range(600):
+		game.clear_field(); result = game.spawn_tomato()
+		if result.variety_id == id: break
+	result.set_physics_process(false); result.position = Vector3.ZERO; result.rotation = Vector3.ZERO; result.velocity = Vector2.ZERO
+	game.knife.reset(); game.knife.track(Vector2(-3,0)); return result
+
+func specialist_strike(game) -> void:
+	game.knife.track(Vector2(-3 if game.knife.current.origin.x > 0 else 3,0)); game.process_blade()
+
 func run() -> void:
 	create_timer(60).timeout.connect(func(): push_error("Packaged checks timed out"); quit(1))
 	var game: Node = load("res://scenes/main.tscn").instantiate()
@@ -52,7 +64,7 @@ func run() -> void:
 	game.finish_round()
 	var restored := Progression.new()
 	check(game.store.load_into(restored) and restored.level("cherry_dominance") == 10 and restored.lifetime.cuts == 2,"packaged progression saves and reloads")
-	check(ProjectSettings.get_setting("application/config/version") == "0.32.0","embedded pack identifies the current milestone version")
+	check(ProjectSettings.get_setting("application/config/version") == "0.33.0","embedded pack identifies the current milestone version")
 	game.progress.levels.merge({"unlock_roma":1,"roma_frequency":3,"roma_quality":2,"roma_dominance":10,"sharp_edge":3},true)
 	game.progress.refresh_discovery()
 	check(game.progress.harvest.distribution(game.progress.levels,game.progress.strength()) == {"roma":1.0},"packaged Roma can dominate the three-tier harvest")
@@ -180,7 +192,7 @@ func run() -> void:
 	for id: String in ["permanent_slice_value","starting_cash","golden_harvest","golden_frequency","golden_value"]: game.purchase_permanent(id)
 	game.ui.archive("Special Events")
 	check(game.events.catalog.validate(game.progress.prestige).is_empty() and game.ui.content.find_child("PrestigeTitle_golden_harvest",true,false) != null,"packaged event JSON, all four original golden models and illustrated event archive validate")
-	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 10,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
+	check(is_equal_approx(game.events.catalog.probability("golden_harvest",game.progress.prestige),.12) and game.events.catalog.cut_value("golden_harvest",game.progress) == 30 and game.progress.harvest.varieties.size() == 11,"packaged dedicated unlock and paid improvements affect events while preserving the normal harvest")
 	game.progress.money = 100; game.progress.purchase("sharp_edge"); game.progress.purchase("extra_cuts")
 	game.start_round(); game.session.launch_clock = 1000
 	for candidate in range(1,10000):
@@ -969,7 +981,7 @@ func run() -> void:
 	game.new_game()
 	check(game.progress.prestige.level("golden_jackpot") == 0 and game.events.catalog.golden_jackpot_bonus("golden_harvest",game.progress.prestige) == 0 and game.progress.settings.reduced_motion,"packaged New Game clears finish ownership and Golden gate while preserving preferences")
 	game.finish_round(); await process_frame
-	check(game.progress.harvest.varieties.size() == 10 and game.progress.equipment.knives.size() == 10,"packaged production collection contains ten original normal varieties and ten actual knives")
+	check(game.progress.harvest.varieties.size() == 11 and game.progress.equipment.knives.size() == 11,"packaged production collection contains eleven original normal varieties and ten actual knives")
 	game.progress.money = 10000
 	for polish_id: String in ["better_prices","faster_throwing","unlock_cherry"]: game.progress.purchase(polish_id)
 	check(not game.progress.purchase("unlock_grape") and not "unlock_grape" in game.progress.discovered,"packaged Grape retains its actual frequency predecessor and cannot be bought early")
@@ -1351,6 +1363,57 @@ func run() -> void:
 	check(game.progress.cutting_profile().resistant_multiplier == 1 and game.progress.cutting_profile().normal_damage(5) == 4.5,"packaged return to Fillet removes serration and keeps ordinary cultivated strength")
 	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
 	check(not game.progress.harvest.unlocked("better_boy",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"] and game.progress.owned_modifications.is_empty(),"packaged confirmed prestige resets new premium fruit, precision equipment and preparation")
+	game.new_game(); check(game.progress.prestige.levels.is_empty() and game.progress.settings.reduced_motion and game.ui.root_views.is_empty(),"packaged final New Game clears gates while retaining accessibility")
+	game.progress.settings.damage_indicators = true; game.finish_round(); await process_frame; game.progress.money = 1000000
+	for nakiri_order: String in ["better_prices","faster_throwing","unlock_cherry","sharp_edge","unlock_roma","roma_quality","cherry_frequency","unlock_grape","grape_frequency","unlock_campari","campari_frequency","cherry_quality","cherry_quality","unlock_cocktail","cocktail_quality","roma_quality","unlock_plum","plum_quality","campari_frequency","unlock_beefsteak","beefsteak_quality","plum_frequency","plum_frequency","unlock_big_boy","big_boy_quality","beefsteak_frequency","beefsteak_frequency","unlock_better_boy","better_boy_quality","cocktail_frequency","cocktail_frequency"]: game.progress.purchase(nakiri_order)
+	check(not game.progress.purchase("unlock_early_girl") and not "unlock_early_girl" in game.progress.discovered,"packaged Early Girl retains both real paid premium and lively predecessors")
+	game.progress.purchase("cocktail_frequency"); var nakiri_cash: float = game.progress.money
+	check(game.progress.purchase("unlock_early_girl") and game.progress.money == nakiri_cash-6000,"packaged actual 6000-dollar fast-variety unlock charges once")
+	game.show_catalog(); game.ui.catalog("Varieties"); game.purchase("early_girl_quality"); game.purchase("early_girl_frequency"); game.ui.catalog("Cutting"); game.purchase("extra_cuts"); game.ui.catalog("Varieties")
+	for nakiri_frame in range(6): await process_frame
+	check(not game.progress.harvest_distribution().has("early_girl") and game.ui.content.find_child("HarvestReadiness_early_girl",true,false).text.contains("1.67"),"packaged paid fast fruit remains excluded while ordinary cutting strength is insufficient")
+	game.show_equipment(); nakiri_cash = game.progress.money; game.buy_knife("nakiri")
+	check(game.progress.money == nakiri_cash-3600 and game.progress.equipped_knife == "rusty_butter" and game.progress.cutting_profile().produce_multiplier == 1,"packaged actual 3600-dollar Nakiri purchase grants neither equip nor premature specialization")
+	game.buy_knife("paring"); game.equip_knife("paring")
+	check(game.progress.strength() == 1.75 and game.progress.harvest_distribution().has("early_girl"),"packaged paid ordinary precision knife safely admits the purchased fast variety")
+	check(ResourceLoader.exists("res://assets/models/knives/nakiri.glb") and load("res://assets/illustrations/catalog/early_girl.svg").get_width() > 0 and game.audio.sounds.has("nakiri_slice"),"packaged original squared knife, three-gallery botanical study and board-crisp cue resolve")
+	fruit = await specialist_fruit(game); var nakiri_family: CutFamily = fruit.family; specialist_strike(game); game.process_blade()
+	check(fruit.variety_id == "early_girl" and fruit.durability == 3.25 and nakiri_family.fragment_durability == 3 and nakiri_family.mass == .95 and nakiri_family.cut_value == 200 and nakiri_family.accepted_strikes == 1,"packaged actual fast Early Girl captures its own light mass, resistance and quality and resists a repeated sample")
+	specialist_strike(game); specialist_strike(game)
+	check(game.session.cuts == 1 and game.session.earnings == 250,"packaged third actual Paring hit pays the ordinary 250 on a real split")
+	specialist_strike(game)
+	check(game.fragments.pieces[0].durability == 1.25 and game.session.cuts == 1,"packaged actual prepared Early Girl half retains its three-resistance authored identity")
+	specialist_strike(game); game.finish_round(); game.show_equipment(); game.buy_knife("cleaver"); game.equip_knife("cleaver"); fruit = await specialist_fruit(game); specialist_strike(game)
+	check(game.progress.strength() == 4.5 and fruit.durability == .5 and game.session.earnings == 0,"packaged equally sharp ordinary Cleaver leaves resistance without a borrowed produce bonus")
+	specialist_strike(game); specialist_strike(game); game.finish_round(); game.show_equipment(); game.equip_knife("nakiri"); var nakiri_profile: CuttingProfile = game.progress.cutting_profile()
+	check(nakiri_profile.normal_damage(5,"early_girl") == 5.625 and nakiri_profile.normal_damage(1,"standard_red") == 5.625 and nakiri_profile.normal_damage(6,"event_giant") == 4.5 and nakiri_profile.resistant_multiplier == 1,"packaged owned equipped Nakiri specializes only in actual normal identities, including weak produce, without rare serration")
+	fruit = await specialist_fruit(game); game.knife.reset(); game.knife.track(Vector2(-1.85,0)); game.knife.track(Vector2(-1.81,0)); game.process_blade()
+	check(game.session.cuts == 1 and game.session.earnings == 250 and game.knife.edge.size() == 4 and game.audio.players[(game.audio.cursor-1)%8].stream == game.audio.sounds.nakiri_slice,"packaged actual squared toe and classified damage split compact Early Girl with the anchor outside and its original cue")
+	game.knife.track(Vector2(3,0)); game.process_blade()
+	check(game.session.cuts == 1 and game.session.earnings == 250,"packaged continuing the same outside-anchor stroke cannot farm a newly opened specialist family")
+	var nakiri_piece: FragmentPiece = game.fragments.pieces[0]; nakiri_piece.durability = 20; specialist_strike(game)
+	check(nakiri_piece.durability == 14.375 and nakiri_piece.family.fragment_durability == 3 and game.session.cuts == 1,"packaged actual normal descendant receives exactly 5.625 in a controlled remaining-resistance probe, retaining authored resistance")
+	nakiri_piece.durability = 3; specialist_strike(game); game.finish_round(); var nakiri_saved := Progression.new()
+	check(game.store.load_into(nakiri_saved) and nakiri_saved.equipped_knife == "nakiri" and nakiri_saved.prestige.cycle_earnings == 1500,"packaged three real ordinary/specialized families bank the same 1500 without multiplying money")
+	fruit = await specialist_fruit(game,"big_boy"); specialist_strike(game)
+	check(is_equal_approx(fruit.durability,.375) and game.session.cuts == 0,"packaged actual unprepared specialist remains below Big Boy's clean threshold")
+	game.finish_round(); game.show_equipment(); game.buy_modification("honing_kit"); game.apply_modification("honing_kit","nakiri")
+	check(game.progress.strength() == 5 and game.progress.cutting_profile().normal_damage(6,"big_boy") == 6.25,"packaged separate paid preparation adds strength once before produce specialization")
+	fruit = await specialist_fruit(game,"big_boy"); specialist_strike(game); specialist_strike(game); game.finish_round()
+	check(game.session.cuts == 2 and game.session.earnings == 250 and game.store.load_into(nakiri_saved) and nakiri_saved.prestige.cycle_earnings == 1750,"packaged actual prepared Big Boy root/recut retain ordinary value and durable earned bank")
+	game.show_catalog(); game.ui.catalog("Cutting")
+	check(game.ui.content.find_child("CurrentProduceDamage",true,false).text.contains("6.25") and game.ui.content.find_child("CurrentProduceDamage",true,false).text.contains("6.88"),"packaged Sharp Edge current-next forecast includes actual normal-produce damage")
+	game.show_equipment(); game.ui.equipment_shop("rusty_butter"); await game.ui.focus_control(game.ui.content.find_child("Product_nakiri",true,false))
+	check(game.ui.content.get_node("KnifeCollectionScroll").get_global_rect().encloses(game.ui.content.find_child("Product_nakiri",true,false).get_global_rect()),"packaged eleventh real product keeps bounded native focus")
+	var nakiri_before: Dictionary = game.progress.snapshot(); var nakiri_store: SaveStore = game.store; var nakiri_disk := FileAccess.get_file_as_string(nakiri_store.path)
+	game.store = SaveStore.new("user://tests/missing-pack-nakiri-"+game.progress.prestige.lineage+"/ledger.json"); game.equip_knife("rusty_butter"); game.remove_modification("honing_kit")
+	check(game.progress.snapshot() == nakiri_before and game.progress.cutting_profile().normal_damage(6,"big_boy") == 6.25 and FileAccess.get_file_as_string(nakiri_store.path) == nakiri_disk,"packaged failed specialist equip/preparation preserves active state and exact prior disk bytes")
+	game.store = nakiri_store; game.remove_modification("honing_kit"); game.buy_knife("bread"); game.equip_knife("bread")
+	check(game.progress.cutting_profile().produce_multiplier == 1 and game.progress.cutting_profile().normal_damage(5,"early_girl") == 5.25 and game.progress.cutting_profile().normal_damage(1,"standard_red") == 3.5,"packaged actual Bread swap removes produce specialization and restores its own resistant-only damage")
+	game.equip_knife("nakiri"); game.show_catalog(); game.purchase("critical_slice"); nakiri_profile = game.progress.cutting_profile()
+	check(nakiri_profile.resolve(0,5,"early_girl").damage == 11.25 and nakiri_profile.resolve(0,6,"event_giant").damage == 9 and nakiri_profile.resolve(0,1,"event_golden").damage == 9,"packaged paid critical damage composes specialization once only for normal varieties and leaves dedicated event damage ordinary")
+	game.progress.complete_round(threshold,1,1); game.show_archive(); game.request_prestige(); game.ui.prestige_confirmation.get_ok_button().pressed.emit()
+	check(not game.progress.harvest.unlocked("early_girl",game.progress.levels) and game.progress.owned_knives == ["rusty_butter"] and game.progress.cutting_profile().produce_multiplier == 1,"packaged confirmed prestige resets fast harvest, specialist equipment/preparation and derived coefficient")
 	game.new_game(); check(game.progress.prestige.levels.is_empty() and game.progress.settings.reduced_motion and game.ui.root_views.is_empty(),"packaged final New Game clears gates while retaining accessibility")
 	game.queue_free()
 	await process_frame

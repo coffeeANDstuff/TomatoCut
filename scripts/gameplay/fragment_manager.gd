@@ -76,7 +76,7 @@ func slice(previous: Transform2D, current: Transform2D, stroke: int, strength: f
 		var piece: FragmentPiece = candidate.piece
 		if piece.revision != candidate.revision or not piece.cuttable() or not piece.family.try_strike(stroke):
 			continue
-		var strike: Dictionary = damage_roll.call(piece.family.fragment_durability) if damage_roll.is_valid() else {"damage":strength,"critical":false}
+		var strike: Dictionary = damage_roll.call(piece.family.fragment_durability,piece.family.variety_id) if damage_roll.is_valid() else {"damage":strength,"critical":false}
 		var golden := piece.family.event_id == "golden_harvest" and piece.family.golden_step > 0
 		if strike.critical and (not golden or piece.durability > float(strike.damage)): critical_strike.emit(piece.position)
 		piece.durability -= float(strike.damage)

@@ -486,5 +486,37 @@
       ]
     ],
     "slice_sound": "fillet_slice"
+  },
+  {
+    "id": "nakiri",
+    "name": "Nakiri",
+    "catalog_number": "011",
+    "description": "A squared vegetable blade, dark forged shoulders and an octagonal walnut grip. The department has classified every cultivated tomato as official produce.",
+    "price": 3600,
+    "model": "res://assets/models/knives/nakiri.glb",
+    "base_strength": 4,
+    "precision": "Straight vegetable edge",
+    "special": "Normal-produce specialist",
+    "reach_label": "Squared vegetable blade",
+    "edge": [
+      [
+        -0.09,
+        -0.25
+      ],
+      [
+        0.46,
+        -0.25
+      ],
+      [
+        1.08,
+        -0.245
+      ],
+      [
+        1.4,
+        -0.22
+      ]
+    ],
+    "produce_damage_multiplier": 1.25,
+    "slice_sound": "nakiri_slice"
   }
 ]

@@ -1,6 +1,6 @@
 """Validate a full package's payload hashes and optionally extract portable source.
 
-Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.32.0.zip
+Usage: python3 tools/verify_package.py exports/TomatoCut-Full-v0.33.0.zip
        --extract-source /tmp/tomatocut-review
 """
 from pathlib import Path, PurePosixPath
@@ -51,6 +51,14 @@ with zipfile.ZipFile(args.archive) as z:
                       'Source/reports/v030/dense-all-cleaver.json'}
     cleaver_assets |= {'Source/assets/models/fragments/beefsteak_'+shape+'.glb' for shape in ['half','wedge','chunk']}
     assert cleaver_assets <= set(hashes), 'Missing original Beefsteak/Cleaver models, audio, art, sources or tests'
+    nakiri_assets = {'Source/art/early_girl.blend', 'Source/art/nakiri.blend',
+                     'Source/assets/models/tomatoes/early_girl.glb', 'Source/assets/models/knives/nakiri.glb',
+                     'Source/assets/illustrations/catalog/early_girl.svg', 'Source/assets/audio/nakiri_slice.wav',
+                     'Source/tools/build_early_girl_assets.py', 'Source/tools/build_nakiri_assets.py',
+                     'Source/tools/build_early_girl_art.py', 'Source/tests/nakiri_tests.gd', 'Source/tests/nakiri_render.gd',
+                     'Source/reports/v033/dense-all-nakiri.json'}
+    nakiri_assets |= {'Source/assets/models/fragments/early_girl_'+shape+'.glb' for shape in ['half','wedge','chunk']}
+    assert nakiri_assets <= set(hashes), 'Missing original Early Girl/Nakiri content, sources, tests or profile'
     fillet_assets = {'Source/art/better_boy.blend', 'Source/art/fillet_knife.blend',
                      'Source/assets/models/tomatoes/better_boy.glb', 'Source/assets/models/knives/fillet.glb',
                      'Source/assets/illustrations/catalog/better_boy.svg', 'Source/assets/audio/fillet_slice.wav',

@@ -28,7 +28,7 @@ static func fruit(game) -> Tomato:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new(); p.money = 100000
-	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 10 and p.equipment.knives.size() == 10,"ten original normal specimens and knives validate with actual Cocktail/Santoku resources")
+	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 11 and p.equipment.knives.size() == 11,"eleven original normal specimens and knives validate with actual Cocktail/Santoku resources")
 	check.call(not "unlock_cocktail" in p.discovered and not p.harvest.unlocked("cocktail",p.levels) and p.equipped_combo_multiplier() == 1,"fresh progress grants no Cocktail, Santoku or passive combo benefit")
 	for i in range(ORDERS.size()-1): p.purchase(ORDERS[i])
 	check.call(not p.purchase("unlock_cocktail") and not "unlock_cocktail" in p.discovered,"Cocktail needs both actual Campari frequency and second Cherry quality orders")

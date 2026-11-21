@@ -5,24 +5,33 @@ var strength: float
 var critical_chance: float
 var critical_multiplier: float
 var resistant_multiplier: float
+var produce_multiplier: float
+var normal_varieties: Dictionary
 
-func _init(base_strength: float = 1, chance: float = 0, multiplier: float = 2, serrated_multiplier: float = 1) -> void:
+func _init(base_strength: float = 1, chance: float = 0, multiplier: float = 2, serrated_multiplier: float = 1, vegetable_multiplier: float = 1, varieties: Dictionary = {}) -> void:
 	strength = maxf(.01,base_strength)
 	critical_chance = clampf(chance,0,1)
 	critical_multiplier = maxf(1,multiplier)
 	resistant_multiplier = clampf(serrated_multiplier,1,2)
+	produce_multiplier = clampf(vegetable_multiplier,1,2)
+	normal_varieties = varieties
 
-func normal_damage(authored_resistance: float) -> float:
-	return strength*(resistant_multiplier if authored_resistance > 1 else 1.0)
+func damage_multiplier(authored_resistance: float, variety_id: String = "") -> float:
+	# Classification follows the actual authored variety, including Stampede
+	# copies and descendants. Unknown/dedicated event identities get no bonus.
+	return (resistant_multiplier if authored_resistance > 1 else 1.0)*(produce_multiplier if normal_varieties.has(variety_id) else 1.0)
 
-func minimum_strength(resistance: float, strikes: int) -> float:
-	return resistance/maxi(1,strikes)/(resistant_multiplier if resistance > 1 else 1.0)
+func normal_damage(authored_resistance: float, variety_id: String = "") -> float:
+	return strength*damage_multiplier(authored_resistance,variety_id)
 
-func resolve(roll: float, authored_resistance: float = 1) -> Dictionary:
+func minimum_strength(resistance: float, strikes: int, variety_id: String = "") -> float:
+	return resistance/maxi(1,strikes)/damage_multiplier(resistance,variety_id)
+
+func resolve(roll: float, authored_resistance: float = 1, variety_id: String = "") -> Dictionary:
 	var critical := is_finite(roll) and roll >= 0 and roll <= 1 and critical_chance > 0 and (critical_chance >= 1 or roll < critical_chance)
-	return {"damage":normal_damage(authored_resistance)*(critical_multiplier if critical else 1.0),"critical":critical}
+	return {"damage":normal_damage(authored_resistance,variety_id)*(critical_multiplier if critical else 1.0),"critical":critical}
 
-func completion_distribution(resistance: float, accuracy: float = 1) -> Dictionary:
+func completion_distribution(resistance: float, accuracy: float = 1, variety_id: String = "") -> Dictionary:
 	# Exact first-completion probabilities. Integer critical counts merge all
 	# paths with identical damage; no floating-point damage keys or RNG here.
 	# For balance modeling, a miss ends the attempted chain (missing mass).
@@ -30,7 +39,7 @@ func completion_distribution(resistance: float, accuracy: float = 1) -> Dictiona
 	var unfinished := {0:1.0}
 	var completed: Dictionary = {}
 	var hit := clampf(accuracy,0,1)
-	var damage_per_strike := normal_damage(resistance)
+	var damage_per_strike := normal_damage(resistance,variety_id)
 	for strikes in range(1,int(ceilf(resistance/damage_per_strike))+1):
 		var next: Dictionary = {}
 		for criticals: int in unfinished:
@@ -47,9 +56,9 @@ func completion_distribution(resistance: float, accuracy: float = 1) -> Dictiona
 		if unfinished.is_empty(): break
 	return completed
 
-func expected_strikes(resistance: float) -> float:
-	if critical_chance <= 0: return ceilf(maxf(0,resistance)/normal_damage(resistance))
+func expected_strikes(resistance: float, variety_id: String = "") -> float:
+	if critical_chance <= 0: return ceilf(maxf(0,resistance)/normal_damage(resistance,variety_id))
 	var expected := 0.0
-	var outcomes := completion_distribution(resistance)
+	var outcomes := completion_distribution(resistance,1,variety_id)
 	for strikes: int in outcomes: expected += strikes*float(outcomes[strikes])
 	return expected

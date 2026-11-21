@@ -393,5 +393,45 @@
     "frequency_upgrade": "better_boy_frequency",
     "quality_upgrade": "better_boy_quality",
     "dominance_upgrade": "better_boy_dominance"
+  },
+  {
+    "id": "early_girl",
+    "name": "Early Girl",
+    "catalog_number": "011",
+    "description": "A compact four-shouldered globe with swept-back leaves and three slender seed galleries. Punctuality has become a competitive sport.",
+    "tier": 9,
+    "base_value": 160,
+    "durability": 5,
+    "fragment_durability": 3,
+    "base_weight": 0.9,
+    "mass": 0.95,
+    "model_scale": 0.82,
+    "radius": 0.6,
+    "gravity": 9.6,
+    "launch_min": 11.4,
+    "launch_max": 12,
+    "spin": 2.7,
+    "spin_z": 1.8,
+    "proxy_axes": [
+      0.61,
+      0.58,
+      0.55
+    ],
+    "proxy_lobe": 0.018,
+    "proxy_lobe_count": 4,
+    "proxy_taper": 0.1,
+    "collision": "hull",
+    "flight_description": "fast & frequent \u00b7 quick turning arc",
+    "model": "res://assets/models/tomatoes/early_girl.glb",
+    "illustration": "res://assets/illustrations/catalog/early_girl.svg",
+    "fragments": {
+      "half": "res://assets/models/fragments/early_girl_half.glb",
+      "wedge": "res://assets/models/fragments/early_girl_wedge.glb",
+      "chunk": "res://assets/models/fragments/early_girl_chunk.glb"
+    },
+    "unlock_upgrade": "unlock_early_girl",
+    "frequency_upgrade": "early_girl_frequency",
+    "quality_upgrade": "early_girl_quality",
+    "dominance_upgrade": "early_girl_dominance"
   }
 ]

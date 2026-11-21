@@ -27,7 +27,7 @@ static func fruit(game) -> Tomato:
 
 static func run(tree: SceneTree, check: Callable) -> void:
 	var p := Progression.new(); p.money = 1000000
-	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 10 and p.equipment.knives.size() == 10,"ten original normal varieties and knives validate without free Better Boy or Fillet ownership")
+	check.call(p.harvest.validate().is_empty() and p.equipment.validate().is_empty() and p.harvest.varieties.size() == 11 and p.equipment.knives.size() == 11,"eleven original normal varieties and knives validate without free Better Boy or Fillet ownership")
 	check.call(not "unlock_better_boy" in p.discovered and not "fillet" in p.owned_knives and p.harvest_distribution() == {"standard_red":1.0},"fresh automatic harvest retains paid premium gates and starter-only inventory")
 	BREAD.cultivate(p)
 	for id: String in ["unlock_big_boy","big_boy_quality","beefsteak_frequency"]: p.purchase(id)

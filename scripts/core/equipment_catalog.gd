@@ -30,6 +30,9 @@ func combo_multiplier(id: String) -> float:
 func resistant_multiplier(id: String) -> float:
 	return float(definition(id).get("resistant_damage_multiplier",1.0))
 
+func produce_multiplier(id: String) -> float:
+	return float(definition(id).get("produce_damage_multiplier",1.0))
+
 static func edge_points(data: Dictionary) -> Array[Vector2]:
 	var points: Array[Vector2] = []
 	for point: Array in data.edge: points.append(Vector2(float(point[0]),float(point[1])))
@@ -90,6 +93,10 @@ func validate() -> PackedStringArray:
 			var multiplier: Variant = raw.resistant_damage_multiplier
 			if not (multiplier is float or multiplier is int) or not is_finite(float(multiplier)) or float(multiplier) < 1 or float(multiplier) > 2:
 				errors.append(id+": invalid resistant damage multiplier")
+		if raw.has("produce_damage_multiplier"):
+			var multiplier: Variant = raw.produce_damage_multiplier
+			if not (multiplier is float or multiplier is int) or not is_finite(float(multiplier)) or float(multiplier) < 1 or float(multiplier) > 2:
+				errors.append(id+": invalid produce damage multiplier")
 		if not raw.get("model") is String or not raw.model.ends_with(".glb") or not ResourceLoader.exists(raw.model): errors.append(id+": missing knife model")
 		var sound: Variant = raw.get("slice_sound","slice")
 		if not sound is String or sound.is_empty() or not ResourceLoader.exists("res://assets/audio/%s.wav" % sound): errors.append(id+": missing slice sound")

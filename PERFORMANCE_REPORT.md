@@ -133,3 +133,24 @@ Raw report: [dense-all-fillet.json](reports/v032/dense-all-fillet.json). The his
 ```sh
 DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_dense.gd -- --label=v032-all-fillet --all-varieties --knife=fillet
 ```
+
+
+## Eleven-variety vegetable-blade diagnostic — v0.33 (2026-11-20, America/Los_Angeles)
+
+The current fixture cycles **all eleven actual normal varieties**, including Early Girl, with the **four-point Nakiri edge**. Godot 4.6.3 Compatibility, Mesa llvmpipe (LLVM 19.1.7, 256 bits), private Xorg :97. It runs serially after native workloads with no other Godot renderer. The established method remains: frozen occupancy, 12 warmup/60 measured render frames, then separate 120-probe rotating zero-damage miss/cross phases for fragments and whole fruit. Whole-fruit checks share one prepared sweep per sample. Geometry, angular steps, effects, physics/lifetimes and 24-root/64-piece/96-drop capacities remain unchanged.
+
+| Roots / pieces / drops | Draw calls | Mean render-only FPS | Median / p95 frame ms | Fragment cross median / p95 ms | Root cross median / p95 ms | Fragment / root miss median ms |
+|---|---:|---:|---:|---:|---:|---:|
+| 4 / 8 / 12 | 226 | 9.17 | 105.522 / 137.368 | 0.026 / 0.047 | 0.142 / 0.187 | 0.026 / 0.144 |
+| 12 / 32 / 64 | 688 | 5.56 | 176.582 / 220.588 | 0.681 / 1.468 | 0.803 / 0.897 | 0.049 / 0.591 |
+| 24 / 64 / 96 | 1,234 | 3.80 | 267.422 / 294.033 | 1.642 / 1.756 | 1.325 / 1.459 | 0.081 / 1.108 |
+
+This is **one current-content diagnostic**, not a matching optimization comparison. Eleven varieties/a four-point vegetable edge differ from ten varieties/five-point Fillet; cross-version times/draw counts establish no speedup or FPS gain. The earlier v0.29/v0.31 controlled CPU improvements remain. Original exact fragment/root oracles now cover **748 cases each**, **17 normal/event identities/eleven blades**, with every blade's explicit edge/circle contacts and seven original rotating seam cases retained. Source passes **1,784/1,784** and seven affected native flows pass **178 assertions**. Normal-produce classification changes accepted damage/forecasts, not sweep geometry or the benchmark's zero-damage probes.
+
+At full occupancy software rasterization and **1,234 draw calls** remain a bottleneck: **3.80 render-only FPS**, median/p95 **267.422/294.033ms**. Separate probe medians are not a measured live frame. Hardware/Forward+ performance, native Windows, target-PC 60 FPS, extended soak and human feel remain open. Further geometry-preserving rendering/instancing needs controlled profiling and gameplay verification; removing prepared cuts/detail/effects, reducing counts or shortening lifetimes remains outside the accepted approach.
+
+Raw report: [dense-all-nakiri.json](reports/v033/dense-all-nakiri.json). The historical three-variety/starter default and all prior reports remain available.
+
+```sh
+DISPLAY=:97 ./tools/cloud.sh ./tools/ci_godot.sh --path . --rendering-method gl_compatibility --audio-driver Dummy --script tools/benchmark_dense.gd -- --label=v033-all-nakiri --all-varieties --knife=nakiri
+```

@@ -38,13 +38,13 @@ static func simulate(accuracy: float, minutes: float, seed_value: int, investing
 					var variety := progress.choose_variety(rng.randf())
 					var data := progress.harvest.definition(variety)
 					var hit_chance := accuracy*minf(1,sqrt(float(data.model_scale)))
-					var root_strikes := sample_completion(profile.completion_distribution(float(data.durability),hit_chance),rng.randf())
+					var root_strikes := sample_completion(profile.completion_distribution(float(data.durability),hit_chance,variety),rng.randf())
 					if root_strikes == 0: continue
 					var cut_value := progress.harvest.cut_value(variety,progress.levels)
 					var delay := FIRST_CUT_DELAY+(root_strikes-1)*RECUT_DELAY
 					pending.append({"at":round_elapsed+delay,"first":true,"value":cut_value})
 					for recut in range(1,progress.max_cuts()):
-						var piece_strikes := sample_completion(profile.completion_distribution(float(data.fragment_durability),hit_chance*.85),rng.randf())
+						var piece_strikes := sample_completion(profile.completion_distribution(float(data.fragment_durability),hit_chance*.85,variety),rng.randf())
 						if piece_strikes == 0: break
 						delay += piece_strikes*RECUT_DELAY
 						pending.append({"at":round_elapsed+delay,"first":false,"value":cut_value})
@@ -78,8 +78,8 @@ static func rate(progress: Progression, accuracy: float) -> float:
 		var data := progress.harvest.definition(variety)
 		var hit_chance := accuracy*minf(1,sqrt(float(data.model_scale)))
 		var profile := progress.cutting_profile()
-		var root_success := success_probability(profile.completion_distribution(float(data.durability),hit_chance))
-		var piece_success := success_probability(profile.completion_distribution(float(data.fragment_durability),hit_chance*.85))
+		var root_success := success_probability(profile.completion_distribution(float(data.durability),hit_chance,variety))
+		var piece_success := success_probability(profile.completion_distribution(float(data.fragment_durability),hit_chance*.85,variety))
 		var yield_per_tomato := 0.0
 		for cut in range(progress.max_cuts()): yield_per_tomato += pow(piece_success,cut)
 		var cuts := float(mix[variety])*root_success*yield_per_tomato

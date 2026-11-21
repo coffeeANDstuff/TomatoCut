@@ -192,7 +192,7 @@ func process_blade() -> int:
 		if tomato.sliced or tomato.is_queued_for_deletion():
 			continue
 		if tomato.intersects(knife.previous,knife.current,knife.edge,sweep) and tomato.family.try_strike(knife.stroke_id):
-			var strike := roll_strike(tomato.initial_durability)
+			var strike := roll_strike(tomato.initial_durability,tomato.variety_id)
 			var weak := tomato.weak_point != null and tomato.weak_point.hit(knife.previous,knife.current,knife.edge)
 			if weak: strike.damage *= tomato.weak_point.multiplier
 			if strike.critical:
@@ -223,9 +223,9 @@ func process_blade() -> int:
 		ui.update_round(session)
 	return count
 
-func roll_strike(initial_resistance: float = 1) -> Dictionary:
+func roll_strike(initial_resistance: float = 1, variety_id: String = "") -> Dictionary:
 	var profile := progress.cutting_profile()
-	return profile.resolve(ability_rng.randf() if profile.critical_chance > 0 else 1.0,initial_resistance)
+	return profile.resolve(ability_rng.randf() if profile.critical_chance > 0 else 1.0,initial_resistance,variety_id)
 
 func critical_feedback(at: Vector3) -> void:
 	ui.popup_critical(kitchen.camera.unproject_position(at))
@@ -240,7 +240,7 @@ func resistance_group(family: CutFamily) -> String:
 	return "resistance:%d" % family.get_instance_id()
 
 func damage_feedback(at: Vector3, remaining: float, family: CutFamily = null, initial_resistance: float = 1) -> void:
-	var strikes := int(ceilf(remaining/progress.cutting_profile().normal_damage(initial_resistance)))
+	var strikes := int(ceilf(remaining/progress.cutting_profile().normal_damage(initial_resistance,family.variety_id if family != null else "")))
 	ui.popup_damage("%d more %s" % [strikes,"strike" if strikes == 1 else "strikes"], kitchen.camera.unproject_position(at),resistance_group(family))
 	audio.play("resist")
 

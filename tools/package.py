@@ -55,7 +55,7 @@ metadata = json.dumps(info, indent=2) + '\n'
 # preserve executable source scripts after ordinary extraction.
 archive_time = time.gmtime(max(315532800, info['git']['commit_time'] or 315532800))[:6]
 compat = b'@echo off\r\ncd /d "%~dp0"\r\nstart "Tomato Cut" "TomatoCut.exe" --rendering-method gl_compatibility\r\n'
-windows_readme = f'''Tomato Cut v{VERSION} - Better Boy and Fillet Knife milestone
+windows_readme = f'''Tomato Cut v{VERSION} - Early Girl and Nakiri milestone
 
 Run TomatoCut.exe. No editor or installer is needed.
 If Vulkan is unavailable, use Play-Compatibility.bat.
@@ -65,6 +65,18 @@ Dotted ink focus supports keyboard controls; checkmark slips save preferences.
 Hover navigation icons for one second to see their labels.
 Move the mouse through airborne tomatoes; no click is needed.
 Ten-second starting rounds; cultivation and progress save automatically.
+Early Girl reveals after Better Boy Quality 1 + Cocktail Frequency 3. Its
+$6000 unlock grants a compact fast-turning variety with three kidney-shaped
+seed galleries, light mass and a genuinely higher automatic spawn weight.
+Quality, frequency and dominance remain separate paid cultivation.
+The $3600 Nakiri has 4.00 base sharpness, a squared carbon-steel blade and
+an octagonal walnut/oxblood/maple grip. Only while owned/equipped it deals
+x1.25 damage to cultivated normal varieties and their descendants, including
+Stampede copies. Dedicated Golden/Giant/Rainbow/Jackpot specimens keep raw
+damage. Cultivation and assigned preparation compose before specialization
+and critical damage. Cut rewards stay ordinary; no extra income is granted.
+Readiness, handling, dominance and economy forecasts share this exact rule.
+An original short board-crisp slice cue accompanies actual cuts.
 Better Boy reveals after Big Boy Quality 1 + Beefsteak Frequency 2. Its $3800
 unlock grants premium ownership, with separate quality/frequency/dominance.
 Automatic throws still need at most three noncritical strikes. Prepared
@@ -303,7 +315,7 @@ Source history: https://github.com/coffeeANDstuff/TomatoCut
 Milestone tag: v{VERSION}
 
 STATUS
-Ten of 25 normal varieties and ten of 25 knives are integrated.
+Eleven of 25 normal varieties and eleven of 25 knives are integrated.
 This is a development milestone, not the final game. Windows-native,
 Forward+ hardware, audio listening and target-PC 60 FPS remain unverified.
 '''

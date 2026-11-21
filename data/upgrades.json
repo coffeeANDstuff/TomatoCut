@@ -788,5 +788,75 @@
       "suppression": 0.1
     },
     "tomato_id": "better_boy"
+  },
+  {
+    "id": "unlock_early_girl",
+    "name": "Early Girl \u00b7 Variety Unlock",
+    "category": "Varieties",
+    "description": "A quick branch joins premium Better Boy cultivation to a lively Cocktail harvest.",
+    "effect": "Adds fast, frequent Early Girl to the eligible automatic harvest: $160 base value, 5 resistance.",
+    "base_cost": 6000,
+    "growth": 1,
+    "max_level": 1,
+    "requires": {
+      "better_boy_quality": 1,
+      "cocktail_frequency": 3
+    },
+    "effect_values": {
+      "unlock": 1
+    },
+    "tomato_id": "early_girl"
+  },
+  {
+    "id": "early_girl_frequency",
+    "name": "Early Girl \u00b7 Harvest Frequency",
+    "category": "Varieties",
+    "description": "Reserve more places for produce that refuses to wait.",
+    "effect": "+50% relative Early Girl spawn weight per level.",
+    "base_cost": 2200,
+    "growth": 1.25,
+    "max_level": 10,
+    "requires": {
+      "unlock_early_girl": 1
+    },
+    "effect_values": {
+      "weight_bonus": 0.5
+    },
+    "tomato_id": "early_girl"
+  },
+  {
+    "id": "early_girl_quality",
+    "name": "Early Girl \u00b7 Premium Quality",
+    "category": "Varieties",
+    "description": "Three fine seed galleries, inspected at considerable speed.",
+    "effect": "+25% Early Girl cut value per level, including separated pieces.",
+    "base_cost": 2400,
+    "growth": 1.26,
+    "max_level": 10,
+    "requires": {
+      "unlock_early_girl": 1
+    },
+    "effect_values": {
+      "value_bonus": 0.25
+    },
+    "tomato_id": "early_girl"
+  },
+  {
+    "id": "early_girl_dominance",
+    "name": "Early Girl \u00b7 Harvest Dominance",
+    "category": "Varieties",
+    "description": "The earliest arrival earns precedence only when the blade makes it profitable.",
+    "effect": "Suppresses less profitable lower-tier weight by 10% per level.",
+    "base_cost": 6800,
+    "growth": 1.32,
+    "max_level": 10,
+    "requires": {
+      "early_girl_frequency": 3,
+      "early_girl_quality": 2
+    },
+    "effect_values": {
+      "suppression": 0.1
+    },
+    "tomato_id": "early_girl"
   }
 ]
